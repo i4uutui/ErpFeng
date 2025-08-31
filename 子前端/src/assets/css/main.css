@@ -1,0 +1,13 @@
+.el-form--inline .el-form-item__content{
+  width: 230px;
+}
+.el-cascader{
+  width: 100%;
+}
+
+.el-table .el-table__cell{
+  text-align: center;
+}
+.headerScroll{
+  width: 140px;
+}
