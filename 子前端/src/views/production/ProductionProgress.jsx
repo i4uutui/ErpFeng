@@ -2,6 +2,7 @@ import { defineComponent, onMounted, ref, reactive, computed } from 'vue'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
 import EquipmentTable from '@/components/production/equipmentTable.vue';
+import "@/assets/css/production.scss"
 
 export default defineComponent({
   setup(){
@@ -164,7 +165,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%", height: '400px' }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
+                <ElTable data={ tableData.value } border stripe style={{ width: "100%", height: '400px' }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle } class="production">
                   <ElTableColumn prop="notice.notice" label="生产订单号" width="100" />
                   <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" width="120" />
                   <ElTableColumn prop="customer_order" label="客户订单号" width="120" />
@@ -180,18 +181,29 @@ export default defineComponent({
                   <ElTableColumn prop="part.part_code" label="部件编码" width="110" />
                   <ElTableColumn prop="part.part_name" label="部件名称" width="110" />
                   <ElTableColumn label="预计生产起始时间" width="170">
-                    {({row}) => <el-date-picker v-model={ row.start_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 140px" onChange={ (value) => dateChange(value) }></el-date-picker>}
+                    {({row}) => <ElDatePicker v-model={ row.start_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 140px" onChange={ (value) => dateChange(value) }></ElDatePicker>}
                   </ElTableColumn>
                   {cycle.value && Array.isArray(cycle.value) && cycle.value.map((e, index) => (
                     <>
                       <ElTableColumn label={ e.name } width="90" align="center">
-                        <ElTableColumn label="预排交期" width="90" align="center" />
+                        <ElTableColumn label="预排交期" width="130" align="center">
+                          {({row}) => <ElDatePicker v-model={ row.start_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 100px" onChange={ (value) => dateChange(value) }></ElDatePicker>}
+                        </ElTableColumn>
                       </ElTableColumn>
                       <ElTableColumn label="最短周期" width="90" align="center">
                         <ElTableColumn label="制程日总负荷" width="90" align="center" />
                       </ElTableColumn>
-                      <ElTableColumn label="1" width="90" align="center">
-                        <ElTableColumn label="完成数量" width="90" align="center" />
+                      <ElTableColumn width="100" align="center">
+                        {{
+                          header: () => (
+                            <ElInput v-model={ e.sort_date } style="width: 70px" />
+                          ),
+                          default: () => (
+                            <>
+                              <ElTableColumn label="完成数量" width="100" align="center" />
+                            </>
+                          )
+                        }}
                       </ElTableColumn>
                     </>
                   ))}
@@ -209,15 +221,6 @@ export default defineComponent({
                       </ElTableColumn>
                     ))
                   }
-                  {/*
-                    <ElTableColumn label="操作" width="140" fixed="right">
-                      {(scope) => (
-                        <>
-                          <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                        </>
-                      )}
-                    </ElTableColumn>
-                  */}
                 </ElTable>
               </>
             )

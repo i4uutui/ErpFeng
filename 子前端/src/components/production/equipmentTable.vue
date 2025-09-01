@@ -15,6 +15,7 @@
                 </template>
               </template>
               <th class="total-column">负荷极限</th>
+              <th class="date-column" v-for="date in dateList" :key="date.dateStr">{{ date.dateStr }}</th>
             </tr>
           </thead>
           <tbody>
@@ -37,6 +38,9 @@
               
               <td class="total-column">
                 {{ calculateTotalEfficiency(group.equipments) }}
+              </td>
+              <td class="date-column" v-for="date in dateList" :key="date.dateStr">
+                {{ getDateData(group, date.dateStr) }}
               </td>
             </tr>
           </tbody>
@@ -67,12 +71,10 @@ const groupedData = computed(() => {
   
   return Object.values(groups).sort((a, b) => a.processName.localeCompare(b.processName));
 });
-
 // 计算最大设备数量，用于确定列数
 const maxDevices = computed(() => {
   return Math.max(...groupedData.value.map(group => group.equipments.length), 1);
 });
-
 // 计算一组设备的总效能
 const calculateTotalEfficiency = (equipments) => {
   return equipments.reduce((total, equipment) => {
@@ -80,6 +82,35 @@ const calculateTotalEfficiency = (equipments) => {
     const efficiency = Number(equipment.equipment_efficiency) || 0;
     return total + efficiency;
   }, 0);
+};
+// 生成近3个月的日期列表（从今天开始）
+const dateList = computed(() => {
+  const dates = [];
+  const today = new Date();
+  
+  // 计算3个月前的日期
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(today.getMonth() - 3);
+  
+  // 从今天开始往前推，直到3个月前
+  let currentDate = new Date(today);
+  while (currentDate >= threeMonthsAgo) {
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    dates.push({
+      date: new Date(currentDate),
+      dateStr: `${year}/${month}/${day}`
+    });
+    
+    // 向前推一天
+    currentDate.setDate(currentDate.getDate() - 1);
+  }
+  
+  return dates;
+});
+const getDateData = (group, dateStr) => {
+  return '/';
 };
 </script>
 

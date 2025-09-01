@@ -1,17 +1,17 @@
 /*
- Navicat Premium Data Transfer
+ Navicat MySQL Data Transfer
 
- Source Server         : ceshi
+ Source Server         : thinkphp_demo
  Source Server Type    : MySQL
- Source Server Version : 50740
+ Source Server Version : 50722 (5.7.22)
  Source Host           : localhost:3306
  Source Schema         : ceshi
 
  Target Server Type    : MySQL
- Target Server Version : 50740
+ Target Server Version : 50722 (5.7.22)
  File Encoding         : 65001
 
- Date: 30/08/2025 15:49:04
+ Date: 01/09/2025 12:21:15
 */
 
 SET NAMES utf8mb4;
@@ -500,18 +500,19 @@ CREATE TABLE `sub_process_cycle`  (
   `company_id` int(11) NOT NULL COMMENT '企业id，关联企业信息表',
   `user_id` int(11) NOT NULL COMMENT '发布的用户id，关联用户表',
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '仓库名称',
+  `sort_date` int(5) NULL DEFAULT NULL COMMENT '最短交货时间',
   `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '仓库类型表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '仓库类型表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_process_cycle
 -- ----------------------------
-INSERT INTO `sub_process_cycle` VALUES (1, 1, 1, '备料组', 1, '2025-08-21 09:30:12', '2025-08-21 09:30:12');
-INSERT INTO `sub_process_cycle` VALUES (2, 1, 1, '设备组', 1, '2025-08-21 09:30:39', '2025-08-21 09:30:51');
-INSERT INTO `sub_process_cycle` VALUES (3, 1, 1, '生产组', 1, '2025-08-21 09:30:45', '2025-08-21 09:30:45');
+INSERT INTO `sub_process_cycle` VALUES (1, 1, 1, '备料组', NULL, 1, '2025-08-21 09:30:12', '2025-08-21 09:30:12');
+INSERT INTO `sub_process_cycle` VALUES (2, 1, 1, '设备组', NULL, 1, '2025-08-21 09:30:39', '2025-08-21 09:30:51');
+INSERT INTO `sub_process_cycle` VALUES (3, 1, 1, '生产组', NULL, 1, '2025-08-21 09:30:45', '2025-08-21 09:30:45');
 
 -- ----------------------------
 -- Table structure for sub_product_code
@@ -717,7 +718,7 @@ CREATE TABLE `sub_warehouse_cycle`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产制程表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产制程表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_warehouse_cycle
