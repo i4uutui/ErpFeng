@@ -42,7 +42,7 @@ export default defineComponent({
     const loadStats = computed(() => {
       if (!tableData.value.length) return { stats: [], dates: [] };
       
-      // 1. 收集所有唯一制程
+      // 收集所有唯一制程
       const cycleMap = new Map();
       tableData.value.forEach(item => {
         item.cycleChild.forEach(cycleChild => {
@@ -57,8 +57,8 @@ export default defineComponent({
           }
         });
       });
-      // 2. 计算极限负荷（相同cycle.id的equipment_efficiency累加，去重equipment.id）
-      const equipmentMap = new Map(); // 用于去重equipment.id (key: cycleId-equipmentId)
+      // 计算极限负荷
+      const equipmentMap = new Map(); // 去重
       tableData.value.forEach(item => {
         item.bom?.children?.forEach(child => {
           const { equipment } = child;
@@ -68,7 +68,6 @@ export default defineComponent({
               equipmentMap.set(key, true);
               const cycleData = cycleMap.get(equipment.cycle.id);
               if (cycleData) {
-                // 转换为数字累加（处理字符串格式的效率值）
                 cycleData.maxLoad += Number(equipment.equipment_efficiency || 0);
               }
             }
@@ -76,42 +75,48 @@ export default defineComponent({
         });
       });
 
-      // 3. 生成日期列表
+      // 生成日期列表
       const today = dayjs().startOf('day');
-      const maxDeliveryTime = dayjs(Math.max(...tableData.value.map(item => new Date(item.delivery_time))));
-      const endDate = maxDeliveryTime.startOf('day');
-      
+      const end = dayjs(endDate.value).startOf('day');
       const dateList = [];
-      if (today.isAfter(endDate)) {
-        dateList.push(endDate.format('YYYY-MM-DD'));
+      
+      if (today.isAfter(end)) {
+        dateList.push(end.format('YYYY-MM-DD'));
       } else {
         let current = today;
-        while (current.isSameOrBefore(endDate)) {
+        while (current.isSameOrBefore(end)) {
           dateList.push(current.format('YYYY-MM-DD'));
           current = current.add(1, 'day');
         }
       }
 
-      // 4. 初始化日期数据
+      // 初始化日期数据
       cycleMap.forEach(data => {
         dateList.forEach(date => {
           data.dateData[date] = 0;
         });
       });
 
-      // 5. 计算日期对应的负荷数据
-      tableData.value.forEach(item => {
-        item.cycleChild.forEach(cycleChild => {
-          if (!cycleChild.end_date || !cycleChild.load) return;
-          const cycleData = cycleMap.get(cycleChild.cycle.id);
-          const loadDate = dayjs(cycleChild.end_date).format('YYYY-MM-DD');
-          if (cycleData && dateList.includes(loadDate)) {
-            cycleData.dateData[loadDate] += Number(cycleChild.load || 0);
-          }
+      // 计算日期对应的负荷数据
+      dateList.forEach(targetDate => {
+        tableData.value.forEach(item => {
+          // 获取当前行的生产起始日期
+          const startDate = dayjs(item.start_date).startOf('day');
+          if (!startDate.isValid()) return; // 跳过无效的起始日期
+          
+          item.cycleChild.forEach(cycleChild => {
+            const cycleData = cycleMap.get(cycleChild.cycle.id);
+            if (!cycleData) return;
+            
+            const endDate = dayjs(cycleChild.end_date).startOf('day');
+            if (!endDate.isValid()) return; // 跳过无效的结束日期
+            
+            cycleData.dateData[targetDate] += Number(cycleChild.load || 0);
+          });
         });
       });
 
-      // 6. 格式化结果
+      // 格式化结果
       return {
         stats: Array.from(cycleMap.values()).map(stat => ({
           ...stat,
@@ -271,6 +276,19 @@ export default defineComponent({
         return { backgroundColor: '#fbe1e5' }
       }
     }
+    const loadCellStyle = ({ row, column }) => {
+      if (column.label && loadStats.value.dates.includes(column.label)) {
+        const currentLoad = Number(row.dateData[column.label]);
+        const maxLoad = Number(row.maxLoad);
+        if (currentLoad > maxLoad) {
+          return { 
+            backgroundColor: '#ff4d4f', 
+            color: '#fff',
+            fontWeight: 'bold'
+          };
+        }
+      }
+    }
     const getColumnStyle = (columnNumber, startNumber, number) => {
       const offset = columnNumber - startNumber;
       const group = Math.floor(offset / number);
@@ -291,7 +309,7 @@ export default defineComponent({
             // ),
             header: () => {
               if(loadStats.value?.dates?.length && loadStats.value?.stats?.length){
-                return <ElTable data={loadStats.value.stats} border style={{ width: "100%", marginBottom: '16px' }} size="small" >
+                return <ElTable data={loadStats.value.stats} border style={{ width: "100%" }} size="small" cellStyle={ loadCellStyle }>
                   <ElTableColumn prop="name" label="制程" width="100" align="center" />
                   <ElTableColumn label="极限负荷" width="100" align="center" >
                     {{
@@ -323,8 +341,8 @@ export default defineComponent({
                   <ElTableColumn label="委外/库存数量" width="100" />
                   <ElTableColumn prop="out_number" label="生产数量" width="100" />
                   <ElTableColumn prop="delivery_time" label="客户交期" width="110" />
-                  <ElTableColumn prop="part.part_code" label="部件编码" width="110" />
-                  <ElTableColumn prop="part.part_name" label="部件名称" width="110" />
+                  <ElTableColumn prop="part_code" label="部件编码" width="110" />
+                  <ElTableColumn prop="part_name" label="部件名称" width="110" />
                   <ElTableColumn label="预计生产起始时间" width="170">
                     {({row}) => <ElDatePicker v-model={ row.start_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 140px" onBlur={ (value) => dateChange(value, row) }></ElDatePicker>}
                   </ElTableColumn>

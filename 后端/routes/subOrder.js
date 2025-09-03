@@ -418,11 +418,8 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
     },
     attributes: ['id', 'archive', 'product_id', 'part_id'],
     include: [
-      {
-        model: SubProcessBomChild,
-        as: 'children',
-        attributes: ['id', 'order_number', 'all_time', 'time'],
-      }
+      { model: SubProcessBomChild, as: 'children', attributes: ['id', 'order_number', 'all_time', 'time'] },
+      { model: SubPartCode, as: 'part', attributes: ['id', 'part_code', 'part_name'] }
     ],
     order: [
       ['id', 'DESC'],
@@ -461,6 +458,8 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
       product_name: noticeRow.product.product_name,
       product_drawing: noticeRow.product.drawing,
       part_id: item.part_id,
+      part_code: item.part.part_code,
+      part_name: item.part.part_name,
       bom_id: item.id,
       order_number: noticeRow.sale.order_number,
       customer_order: noticeRow.sale.customer_order,
@@ -471,7 +470,7 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
     }
     objData.push(obj)
   })
-  const strArr = ['company_id', 'user_id', 'notice_number', 'delivery_time', 'customer_abbreviation', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'bom_id', 'order_number', 'customer_order', 'rece_time', 'out_number', 'start_date', 'remarks'] 
+  const strArr = ['company_id', 'user_id', 'notice_number', 'delivery_time', 'customer_abbreviation', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'part_name', 'part_code', 'bom_id', 'order_number', 'customer_order', 'rece_time', 'out_number', 'start_date', 'remarks'] 
 
   const result = await SubProductionProgress.bulkCreate(objData, {updateOnDuplicate:strArr})
   const dataValue = result.map(e => e.toJSON())

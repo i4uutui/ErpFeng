@@ -59,6 +59,16 @@ const SubProductionProgress = sequelize.define('SubProductionProgress', {
     allowNull: false,
     comment: '部件编码id'
   },
+  part_code: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+    comment: '部件编码'
+  },
+  part_name: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+    comment: '部件名称'
+  },
   bom_id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,

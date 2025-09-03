@@ -14,9 +14,8 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
       is_deleted: 1,
       company_id,
     },
-    attributes: ['id', 'notice_number', 'delivery_time', 'customer_abbreviation', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'bom_id', 'order_number', 'customer_order', 'rece_time', 'out_number', 'start_date', 'remarks', 'created_at'],
+    attributes: ['id', 'notice_number', 'delivery_time', 'customer_abbreviation', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'part_code', 'part_name', 'bom_id', 'order_number', 'customer_order', 'rece_time', 'out_number', 'start_date', 'remarks', 'created_at'],
     include: [
-      { model: SubPartCode, as: 'part', attributes: ['id', 'part_code', 'part_name'] },
       { model: SubProcessCycleChild, as: 'cycleChild', attributes: ['cycle_id', 'id', 'end_date', 'load', 'order_number', 'progress_id'], include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort_date'] }] },
       {
         model: SubProcessBom,
