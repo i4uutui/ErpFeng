@@ -1,4 +1,5 @@
 import { defineComponent, onMounted, ref, reactive, computed } from 'vue'
+import dayjs from 'dayjs';
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
 import EquipmentTable from '@/components/production/equipmentTable.vue';
@@ -30,54 +31,105 @@ export default defineComponent({
       remarks: '',
     })
     let tableData = ref([])
-    let cycle = ref([])
+    let endDate = ref('')
     let uniqueEquipments = ref([])
     
     const maxBomLength = computed(() => {
       if (tableData.value.length === 0) return 0;
       return Math.max(...tableData.value.map(item => item.bom?.children?.length || 0));
     });
-    
-    const processedTableData = computed(() => {
-      return tableData.value.map(item => {
-        const bom = { ...item.bom, children: [...(item.bom?.children || [])] };
-        const newItem = { ...item, bom };
-        
-        while (newItem.bom.children.length < maxBomLength.value) {
-          newItem.bom.children.push({
-            process: {
-              process_code: '',
-              process_name: '',
-              section_points: '',
-            },
-            equipment: {
-              equipment_code: '',
-              equipment_name: '',
-              cycle: {
-                name: ''
-              }
-            },
-            all_time: '',
-            all_time: '',
-            price: '',
-            time: '',
-            add_finish: '',
-            order_number: ''
-          });
-        }
-        return newItem;
+    // 计算负荷统计数据
+    const loadStats = computed(() => {
+      if (!tableData.value.length) return { stats: [], dates: [] };
+      
+      // 1. 收集所有唯一制程
+      const cycleMap = new Map();
+      tableData.value.forEach(item => {
+        item.cycleChild.forEach(cycleChild => {
+          const { id, name } = cycleChild.cycle;
+          if (!cycleMap.has(id)) {
+            cycleMap.set(id, {
+              id,
+              name,
+              maxLoad: 0, // 极限负荷
+              dateData: {} // 日期数据
+            });
+          }
+        });
       });
+      // 2. 计算极限负荷（相同cycle.id的equipment_efficiency累加，去重equipment.id）
+      const equipmentMap = new Map(); // 用于去重equipment.id (key: cycleId-equipmentId)
+      tableData.value.forEach(item => {
+        item.bom?.children?.forEach(child => {
+          const { equipment } = child;
+          if (equipment && equipment.id) {
+            const key = `${equipment.id}`;
+            if (!equipmentMap.has(key)) {
+              equipmentMap.set(key, true);
+              const cycleData = cycleMap.get(equipment.cycle.id);
+              if (cycleData) {
+                // 转换为数字累加（处理字符串格式的效率值）
+                cycleData.maxLoad += Number(equipment.equipment_efficiency || 0);
+              }
+            }
+          }
+        });
+      });
+
+      // 3. 生成日期列表
+      const today = dayjs().startOf('day');
+      const maxDeliveryTime = dayjs(Math.max(...tableData.value.map(item => new Date(item.delivery_time))));
+      const endDate = maxDeliveryTime.startOf('day');
+      
+      const dateList = [];
+      if (today.isAfter(endDate)) {
+        dateList.push(endDate.format('YYYY-MM-DD'));
+      } else {
+        let current = today;
+        while (current.isSameOrBefore(endDate)) {
+          dateList.push(current.format('YYYY-MM-DD'));
+          current = current.add(1, 'day');
+        }
+      }
+
+      // 4. 初始化日期数据
+      cycleMap.forEach(data => {
+        dateList.forEach(date => {
+          data.dateData[date] = 0;
+        });
+      });
+
+      // 5. 计算日期对应的负荷数据
+      tableData.value.forEach(item => {
+        item.cycleChild.forEach(cycleChild => {
+          if (!cycleChild.end_date || !cycleChild.load) return;
+          const cycleData = cycleMap.get(cycleChild.cycle.id);
+          const loadDate = dayjs(cycleChild.end_date).format('YYYY-MM-DD');
+          if (cycleData && dateList.includes(loadDate)) {
+            cycleData.dateData[loadDate] += Number(cycleChild.load || 0);
+          }
+        });
+      });
+
+      // 6. 格式化结果
+      return {
+        stats: Array.from(cycleMap.values()).map(stat => ({
+          ...stat,
+          maxLoad: stat.maxLoad.toFixed(1) // 保留一位小数
+        })),
+        dates: dateList
+      };
     });
     
-    onMounted(() => {
-      fetchProductList()
-      getProcessCycle()
+    onMounted(async () => {
+      await fetchProductList()
     })
     
     // 获取列表
     const fetchProductList = async () => {
       const res = await request.get('/api/production_progress');
       tableData.value = res.data;
+      endDate.value = tableData.value[0].delivery_time
       // 集合equipment并且去重
       uniqueEquipments.value = [...res.data
         .flatMap(item => item?.bom?.children ?? [])
@@ -87,10 +139,6 @@ export default defineComponent({
         .values()
       ];
     };
-    const getProcessCycle = async () => {
-      const res = await request.get('/api/getProcessCycle')
-      cycle.value = res.data
-    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
@@ -104,19 +152,89 @@ export default defineComponent({
         }
       })
     }
-    const handleUplate = (row) => {
-      dialogVisible.value = true;
-      form.value = {
-        id: row.id,
-        part_id: row.part_id,
-        out_number: row.out_number,
-        order_number: row.order_number,
-        remarks: row.remarks,
-      };
+    // 更新制程组的最短交货时间
+    const sortDateBlur = async ({ id, sort_date }) => {
+      const params = {
+        id,
+        sort_date
+      }
+      await request.put('/api/process_cycle', params);
+      getProcessCycle()
+    }
+    // 批量更新起始生产时间
+    const set_production_date = async (params, type) => {
+      const res = await request.put('/api/set_production_date', { params, type });
+      if(res && res.code == 200){
+        ElMessage.success('修改成功');
+        fetchProductList();
+      }
     }
     // 选择生产起始时间
-    const dateChange = (value) => {
-      console.log(value)
+    const dateChange = async (value, row) => {
+      const time = row.start_date
+      ElMessageBox.confirm('是否同步更新相同产品的生产起始时间？', '提示', {
+        confirmButtonText: '同步更新',
+        cancelButtonText: '不同步',
+        type: 'warning',
+        closeOnClickModal: false,
+        closeOnPressEscape: false,
+        distinguishCancelAndClose: true
+      }).then(() => {
+        const table  = tableData.value.filter(e => e.product_id == row.product_id)
+        let params = []
+        table.forEach(e => {
+          params.push({
+            id: e.id,
+            start_date: time
+          })
+        })
+        set_production_date(params, 'start_date')
+      }).catch((action) => {
+        if(action == 'close') return
+        const params = [{ id: row.id, start_date: time }]
+        set_production_date(params, 'start_date')
+      })
+    }
+    const paiChange = (value, row, param) => {
+      if(param.start_date == null) {
+        ElMessage.error('请先选择起始生产时间')
+        row.end_date = ''
+        return
+      }
+      const time = row.end_date
+      ElMessageBox.confirm('是否同步更新相同产品相同制程组的预排交期？', '提示', {
+        confirmButtonText: '同步更新',
+        cancelButtonText: '不同步',
+        type: 'warning',
+        closeOnClickModal: false,
+        closeOnPressEscape: false,
+        distinguishCancelAndClose: true
+      }).then(() => {
+        let arr = []
+        tableData.value.forEach(e => {
+          if(e.product_id == param.product_id){
+            e.cycleChild.forEach(o => {
+              if(o.cycle.id == row.cycle.id){
+                arr.push(o)
+              }
+            })
+            return arr
+          }
+        })
+        
+        let params = []
+        arr.forEach(e => {
+          params.push({
+            id: e.id,
+            end_date: time
+          })
+        })
+        set_production_date(params, 'end_date')
+      }).catch((action) => {
+        if(action == 'close') return
+        const params = [{ id: row.id, end_date: time }]
+        set_production_date(params, 'end_date')
+      })
     }
     // 取消弹窗
     const handleClose = () => {
@@ -124,7 +242,8 @@ export default defineComponent({
     }
     const columnLength = 15 // 表示前面不需要颜色的列数
     const headerCellStyle = ({ rowIndex, columnIndex, column, row }) => {
-      let cycleLength = cycle.value.length * 3
+      if(!tableData.value.length) return
+      let cycleLength = tableData.value[0].cycleChild.length * 3
       if(rowIndex == 1 && columnIndex >= 0 && columnIndex < cycleLength || rowIndex == 0 && columnIndex >= columnLength && columnIndex < columnLength + cycleLength){
         if(rowIndex == 0){
           return { backgroundColor: getColumnStyle(columnIndex, columnLength, 3) }
@@ -140,13 +259,15 @@ export default defineComponent({
       }
     }
     const cellStyle = ({ columnIndex, rowIndex, column }) => {
-      if(columnIndex >= columnLength && columnIndex < columnLength + cycle.value.length * 3){
+      if(!tableData.value.length) return
+      let cycleLength = tableData.value[0].cycleChild.length * 3
+      if(columnIndex >= columnLength && columnIndex < columnLength + cycleLength){
         return { backgroundColor: getColumnStyle(columnIndex, columnLength, 3) }
       }
       if(columnIndex == columnLength - 1){
         return { backgroundColor: '#A8EAE4' }
       }
-      if(columnIndex >= columnLength + cycle.value.length * 3 && Math.floor((columnIndex) / 8) % 2 == 0){
+      if(columnIndex >= columnLength + cycleLength && Math.floor((columnIndex) / 8) % 2 == 0){
         return { backgroundColor: '#fbe1e5' }
       }
     }
@@ -155,49 +276,85 @@ export default defineComponent({
       const group = Math.floor(offset / number);
       return group % 2 === 0 ? '#C9E4B4' : '#A8EAE4';
     }
-
+    const getCycleChildren = () => {
+      return tableData.value[0]?.cycleChild || [];
+    };
+    const getCycleItem = (row, index) => {
+      return row.cycleChild[index] || {};
+    };
     return() => (
       <>
         <ElCard>
           {{
-            header: () => (
-              <EquipmentTable dataValue={ uniqueEquipments.value }></EquipmentTable>
-            ),
+            // header: () => (
+            //   <EquipmentTable dataValue={ uniqueEquipments.value } endDate={ endDate.value } />
+            // ),
+            header: () => {
+              if(loadStats.value?.dates?.length && loadStats.value?.stats?.length){
+                return <ElTable data={loadStats.value.stats} border style={{ width: "100%", marginBottom: '16px' }} size="small" >
+                  <ElTableColumn prop="name" label="制程" width="100" align="center" />
+                  <ElTableColumn label="极限负荷" width="100" align="center" >
+                    {{
+                      default: ({ row }) => row.maxLoad
+                    }}
+                  </ElTableColumn>
+                  {loadStats.value.dates.map(date => (
+                    <ElTableColumn key={date} label={date} width="120" align="center" >
+                      {{
+                        default: ({ row }) => row.dateData[date].toFixed(1)
+                      }}
+                    </ElTableColumn>
+                  ))}
+                </ElTable>
+              }
+            },
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%", height: '400px' }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle } class="production">
-                  <ElTableColumn prop="notice.notice" label="生产订单号" width="100" />
-                  <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" width="120" />
+                  <ElTableColumn prop="notice_number" label="生产订单号" width="100" />
+                  <ElTableColumn prop="customer_abbreviation" label="客户名称" width="120" />
                   <ElTableColumn prop="customer_order" label="客户订单号" width="120" />
                   <ElTableColumn prop="rece_time" label="接单日期" width="110" />
-                  <ElTableColumn prop="product.product_code" label="产品编码" width="100" />
-                  <ElTableColumn prop="product.product_name" label="产品名称" width="100" />
-                  <ElTableColumn prop="product.drawing" label="工程图号" width="100" />
+                  <ElTableColumn prop="product_code" label="产品编码" width="100" />
+                  <ElTableColumn prop="product_name" label="产品名称" width="100" />
+                  <ElTableColumn prop="product_drawing" label="工程图号" width="100" />
                   <ElTableColumn prop="remarks" label="生产特别要求" width="170" />
                   <ElTableColumn prop="out_number" label="订单数量" width="100" />
                   <ElTableColumn label="委外/库存数量" width="100" />
                   <ElTableColumn prop="out_number" label="生产数量" width="100" />
-                  <ElTableColumn prop="notice.delivery_time" label="客户交期" width="110" />
+                  <ElTableColumn prop="delivery_time" label="客户交期" width="110" />
                   <ElTableColumn prop="part.part_code" label="部件编码" width="110" />
                   <ElTableColumn prop="part.part_name" label="部件名称" width="110" />
                   <ElTableColumn label="预计生产起始时间" width="170">
-                    {({row}) => <ElDatePicker v-model={ row.start_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 140px" onChange={ (value) => dateChange(value) }></ElDatePicker>}
+                    {({row}) => <ElDatePicker v-model={ row.start_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 140px" onBlur={ (value) => dateChange(value, row) }></ElDatePicker>}
                   </ElTableColumn>
-                  {cycle.value && Array.isArray(cycle.value) && cycle.value.map((e, index) => (
+                  {getCycleChildren().map((cycle, index) => (
                     <>
-                      <ElTableColumn label={ e.name } width="90" align="center">
+                      <ElTableColumn label={ cycle.cycle.name } width="90" align="center">
                         <ElTableColumn label="预排交期" width="130" align="center">
-                          {({row}) => <ElDatePicker v-model={ row.start_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 100px" onChange={ (value) => dateChange(value) }></ElDatePicker>}
+                          {{
+                            default: ({ row }) => {
+                              const cycleData = getCycleItem(row, index);
+                              return <ElDatePicker v-model={ cycleData.end_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 100px" onBlur={ (value) => paiChange(value, cycleData, row) }></ElDatePicker>
+                            }
+                          }}
                         </ElTableColumn>
                       </ElTableColumn>
                       <ElTableColumn label="最短周期" width="90" align="center">
-                        <ElTableColumn label="制程日总负荷" width="90" align="center" />
+                        <ElTableColumn label="制程日总负荷" width="90" align="center">
+                          {{
+                            default: ({ row }) => {
+                              const cycleData = getCycleItem(row, index);
+                              return <span>{ cycleData.load }</span>
+                            }
+                          }}
+                        </ElTableColumn>
                       </ElTableColumn>
-                      <ElTableColumn width="100" align="center">
+                      <ElTableColumn width="90" align="center">
                         {{
-                          header: () => (
-                            <ElInput v-model={ e.sort_date } style="width: 70px" />
-                          ),
+                          header: () => {
+                            return <ElInput v-model={ cycle.cycle.sort_date } style="width: 70px" onBlur={ () => sortDateBlur(cycle.cycle) } />
+                          },
                           default: () => (
                             <>
                               <ElTableColumn label="完成数量" width="100" align="center" />

@@ -273,7 +273,7 @@ router.post('/cope_bom', authMiddleware, async (req, res) => {
       childModel: SubProcessBomChild,
       mainFields: ['product_id', 'part_id', 'archive'],
       childForeignKey: 'process_bom_id',
-      childFields: ['process_id', 'equipment_id', 'time', 'price', 'cycle_id']
+      childFields: ['process_id', 'equipment_id', 'time', 'price']
     }
   };
   const { mainModel, childModel, mainFields, childForeignKey, childFields } = configMap[type];

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, Op } = require('../models')
+const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessCycleChild, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -392,17 +392,25 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
   // 验证数据是否存在
   const notice = await SubProductNotice.findOne({
     where: { id },
+    attributes: ['id', 'product_id', 'sale_id', 'customer_id', 'is_notice', 'notice', 'delivery_time'],
     include: [
-      { model: SubSaleOrder, as: 'sale' },
-      { model: SubCustomerInfo, as: 'customer' },
-      { model: SubProductCode, as: 'product' }
+      { model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number', 'customer_order', 'rece_time'] },
+      { model: SubCustomerInfo, as: 'customer', attributes: ['id', 'customer_abbreviation'] },
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing'] },
     ]
   });
   if (!notice) return res.json({ message: '数据不存在，或已被删除', code: 401 });
   const noticeRow = notice.toJSON()
   if(noticeRow.is_notice == 0) return res.json({ message: '此订单已有排产记录，不能重复排产', code: 401 })
-  
-  // 通过产品id查找工艺BOSS中相同的产品id数据
+
+  const allCycles = await SubProcessCycle.findAll({
+    where: { company_id },
+    attributes: ['id'],
+  })
+  if(allCycles.length == 0) return res.json({ message: '未配置制程组，请先配置生产制程组', code: 401 })
+  const cycle = allCycles.map(o => o.toJSON())
+
+  // 通过产品id查找工艺BOM中相同的产品id数据
   const bom = await SubProcessBom.findAll({
     where: {
       product_id: noticeRow.product_id,
@@ -410,16 +418,10 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
     },
     attributes: ['id', 'archive', 'product_id', 'part_id'],
     include: [
-      { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'] },
-      { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
       {
         model: SubProcessBomChild,
         as: 'children',
-        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'all_time', 'all_load', 'add_finish', 'order_number'],
-        include: [
-          { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name', 'section_points'] },
-          { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'equipment_code', 'equipment_name'] },
-        ]
+        attributes: ['id', 'order_number', 'all_time', 'time'],
       }
     ],
     order: [
@@ -430,15 +432,19 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
   const bomRows = bom.map(e => {
     const data = e.toJSON()
     data.children.forEach(o => {
-      if(o.order_number == null){
-        wait.push({ ...o, order_number: noticeRow.sale.order_number })
-        o.order_number = noticeRow.sale.order_number
+      const orders = Number(noticeRow.sale.order_number)
+      const obj = {
+        ...o,
+        order_number: orders,
+        all_time: (orders * o.time / 60 / 60).toFixed(1)
       }
+      o.order_number = orders
+      wait.push(obj)
     })
     return data
   })
   if(wait.length != 0){
-    SubProcessBomChild.bulkCreate(wait, {updateOnDuplicate:["order_number"]})
+    SubProcessBomChild.bulkCreate(wait, {updateOnDuplicate:["order_number", 'all_time']})
   }
   noticeRow.bom = bomRows
   
@@ -447,9 +453,13 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
     const obj = {
       company_id,
       user_id: userId,
-      notice_id: id,
-      customer_id: noticeRow.customer_id,
+      notice_number: noticeRow.notice,
+      delivery_time: noticeRow.delivery_time,
+      customer_abbreviation: noticeRow.customer.customer_abbreviation,
       product_id: item.product_id,
+      product_code: noticeRow.product.product_code,
+      product_name: noticeRow.product.product_name,
+      product_drawing: noticeRow.product.drawing,
       part_id: item.part_id,
       bom_id: item.id,
       order_number: noticeRow.sale.order_number,
@@ -461,7 +471,25 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
     }
     objData.push(obj)
   })
-  const result = await SubProductionProgress.bulkCreate(objData, {updateOnDuplicate:['company_id', 'user_id', 'notice_id', 'customer_id', 'product_id', 'part_id', 'bom_id', 'order_number', 'out_number', 'remarks']})
+  const strArr = ['company_id', 'user_id', 'notice_number', 'delivery_time', 'customer_abbreviation', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'bom_id', 'order_number', 'customer_order', 'rece_time', 'out_number', 'start_date', 'remarks'] 
+
+  const result = await SubProductionProgress.bulkCreate(objData, {updateOnDuplicate:strArr})
+  const dataValue = result.map(e => e.toJSON())
+
+  const allCycleChildData = [];
+  // 遍历每条新创建的进度
+  dataValue.forEach(progress => {
+    const progressId = progress.id;
+    const cycleChildDataForProgress = cycle.map(cycle => ({
+      cycle_id: cycle.id,
+      progress_id: progressId
+    }));
+
+    // 将当前进度的子周期数据合并到总列表
+    allCycleChildData.push(...cycleChildDataForProgress);
+  })
+  // 批量插入
+  await SubProcessCycleChild.bulkCreate(allCycleChildData)
   
   if(objData.length){
     // 设置此数据为已排产

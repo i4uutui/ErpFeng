@@ -21,7 +21,7 @@ export default defineComponent({
         { required: true, message: '请选择设备编码', trigger: 'blur' },
       ],
       time: [
-        { required: true, message: '请输入单件工时', trigger: 'blur' },
+        { required: true, message: '请输入单件工时(秒)', trigger: 'blur' },
       ],
       price: [
         { required: true, message: '请输入加工单价', trigger: 'blur' },
@@ -36,9 +36,6 @@ export default defineComponent({
       ]
     })
     let tableData = ref([])
-    let currentPage = ref(1);
-    let pageSize = ref(10);
-    let total = ref(0);
     let edit = ref(0)
 
     const maxBomLength = computed(() => {
@@ -83,7 +80,6 @@ export default defineComponent({
         },
       });
       tableData.value = res.data;
-      total.value = res.total;
     };
     const handleSubmit = async (formEl) => {
       if (!formEl) return
@@ -199,16 +195,6 @@ export default defineComponent({
     const goArchive = () => {
       window.open('/product/process-bom-archive', '_blank')
     }
-    // 分页相关
-    function pageSizeChange(val) {
-      currentPage.value = 1;
-      pageSize.value = val;
-      fetchProductList()
-    }
-    function currentPageChange(val) {
-      currentPage.value = val;
-      fetchProductList();
-    }
     return() => (
       <>
         <ElCard>
@@ -245,7 +231,7 @@ export default defineComponent({
                         <ElTableColumn prop={`children[${index}].process.process_name`} label="工艺名称" />
                         <ElTableColumn prop={`children[${index}].equipment.equipment_code`} label="设备编码" />
                         <ElTableColumn prop={`children[${index}].equipment.equipment_name`} label="设备名称" />
-                        <ElTableColumn prop={`children[${index}].time`} label="单件工时" />
+                        <ElTableColumn prop={`children[${index}].time`} label="单件工时(秒)" />
                         <ElTableColumn prop={`children[${index}].price`} label="加工单价" />
                         <ElTableColumn prop={`children[${index}].process.section_points`} label="段数点数" />
                         <ElTableColumn prop={`children[${index}].equipment.cycle.name`} label="生产制程" />
@@ -261,7 +247,6 @@ export default defineComponent({
                     )}
                   </ElTableColumn>
                 </ElTable>
-                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>
             )
           }}
@@ -286,8 +271,8 @@ export default defineComponent({
                         <ElFormItem label="设备编码" prop={ `children[${index}].equipment_id` } rules={ rules.equipment_id }>
                           <MySelect v-model={ e.equipment_id } apiUrl="/api/getEquipmentCode" query="equipment_code" itemValue="equipment_code" placeholder="请选择设备编码" />
                         </ElFormItem>
-                        <ElFormItem label="单件工时" prop={ `children[${index}].time` } rules={ rules.time }>
-                          <ElInput v-model={ e.time } placeholder="请输入单件工时" />
+                        <ElFormItem label="单件工时(秒)" prop={ `children[${index}].time` } rules={ rules.time }>
+                          <ElInput v-model={ e.time } placeholder="请输入单件工时(秒)" />
                         </ElFormItem>
                         <ElFormItem label="加工单价" prop={ `children[${index}].price` } rules={ rules.price }>
                           <div class="flex">

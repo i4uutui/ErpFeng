@@ -19,13 +19,18 @@ const SubProductionProgress = sequelize.define('SubProductionProgress', {
     allowNull: false,
     comment: '发布的用户id'
   },
-  notice_id: {
-    type: DataTypes.INTEGER(11),
+  notice_number: {
+    type: DataTypes.STRING(50),
     allowNull: false,
-    comment: '生产通知单id'
+    comment: '生产通知单'
   },
-  customer_id: {
-    type: DataTypes.INTEGER(11),
+  delivery_time: {
+    type: DataTypes.STRING(20),
+    allowNull: false,
+    comment: '客户交期'
+  },
+  customer_abbreviation: {
+    type: DataTypes.STRING(100),
     allowNull: false,
     comment: '客户id'
   },
@@ -33,6 +38,21 @@ const SubProductionProgress = sequelize.define('SubProductionProgress', {
     type: DataTypes.INTEGER(11),
     allowNull: false,
     comment: '产品编码id'
+  },
+  product_code: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+    comment: '产品编码'
+  },
+  product_name: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+    comment: '产品名称'
+  },
+  product_drawing: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+    comment: '产品图号'
   },
   part_id: {
     type: DataTypes.INTEGER(11),
@@ -50,7 +70,7 @@ const SubProductionProgress = sequelize.define('SubProductionProgress', {
     comment: '生产数量'
   },
   customer_order: {
-    type: DataTypes.INTEGER(20),
+    type: DataTypes.STRING(50),
     allowNull: true,
     comment: '客户订单号'
   },

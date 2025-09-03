@@ -459,7 +459,7 @@ router.get('/process_cycle', authMiddleware, async (req, res) => {
     offset
   })
   const totalPages = Math.ceil(count / pageSize);
-  row = rows.map(e => e.toJSON())
+  const row = rows.map(e => e.toJSON())
   
   // 返回所需信息
   res.json({ 
@@ -488,7 +488,7 @@ router.post('/process_cycle', authMiddleware, async (req, res) => {
   const { id: userId, company_id } = req.user;
   
   const processCycle = await SubProcessCycle.create({
-    name, company_id,
+    name,
     user_id: userId
   })
   
@@ -510,7 +510,7 @@ router.post('/process_cycle', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.put('/process_cycle', authMiddleware, async (req, res) => {
-  const { name, id } = req.body;
+  const { name, sort_date, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证是否存在
@@ -519,8 +519,11 @@ router.put('/process_cycle', authMiddleware, async (req, res) => {
     return res.json({ message: '生产制程不存在', code: 401 });
   }
   
+  let cycleWhere = {}
+  if(name) cycleWhere.name = name
+  if(sort_date) cycleWhere.sort_date = sort_date
   await processCycle.update({
-    name, company_id,
+    ...cycleWhere,
     user_id: userId
   }, { where: { id } })
   

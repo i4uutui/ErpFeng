@@ -5,15 +5,6 @@
           <thead>
             <tr>
               <th class="process-column">制程</th>
-              <template v-for="device in maxDevices" :key="device">
-                <template v-for="col in 5" :key="`${device}-${col}`">
-                  <th :class="['device-column', `device-group-${device % 2 + 1}`]" v-if="col === 1">设备编码</th>
-                  <th :class="['device-column', `device-group-${device % 2 + 1}`]" v-if="col === 2">设备名称</th>
-                  <th :class="['device-column', `device-group-${device % 2 + 1}`]" v-if="col === 3">设备数量 </th>
-                  <th :class="['device-column', `device-group-${device % 2 + 1}`]" v-if="col === 4">工作时长(H) </th>
-                  <th :class="['device-column', `device-group-${device % 2 + 1}`]" v-if="col === 5">设备效能 </th>
-                </template>
-              </template>
               <th class="total-column">负荷极限</th>
               <th class="date-column" v-for="date in dateList" :key="date.dateStr">{{ date.dateStr }}</th>
             </tr>
@@ -21,20 +12,6 @@
           <tbody>
             <tr v-for="(group, groupIndex) in groupedData" :key="groupIndex">
               <td class="process-column">{{ group.processName }}</td>
-              
-              <template v-for="(equipment, eqIndex) in group.equipments" :key="eqIndex">
-                <td :class="`device-group-${(eqIndex + 1) % 2 + 1}`">{{ equipment.equipment_code }}</td>
-                <td :class="`device-group-${(eqIndex + 1) % 2 + 1}`">{{ equipment.equipment_name }}</td>
-                <td :class="`device-group-${(eqIndex + 1) % 2 + 1}`">{{ equipment.equipment_quantity }}</td>
-                <td :class="`device-group-${(eqIndex + 1) % 2 + 1}`">{{ equipment.working_hours }}</td>
-                <td :class="`device-group-${(eqIndex + 1) % 2 + 1}`">{{ equipment.equipment_efficiency }}</td>
-              </template>
-              
-              <template v-for="emptyDevice in (maxDevices - group.equipments.length)" :key="`empty-device-${groupIndex}-${emptyDevice}`">
-                <template v-for="col in 5" :key="`empty-${groupIndex}-${emptyDevice}-${col}`">
-                  <td :class="`device-group-${(group.equipments.length + emptyDevice) % 2 + 1}`"></td>
-                </template>
-              </template>
               
               <td class="total-column">
                 {{ calculateTotalEfficiency(group.equipments) }}
@@ -53,7 +30,9 @@
 import { ref, computed } from 'vue';
 
 const props = defineProps({
-  dataValue: Array
+  dataValue: Array,
+  // 接收指定结束日期，格式建议为 'YYYY-MM-DD' 字符串
+  endDate: String
 })
 
 const groupedData = computed(() => {
@@ -68,33 +47,33 @@ const groupedData = computed(() => {
     }
     groups[processName].equipments.push(equipment);
   });
-  
+  console.log(Object.values(groups).sort((a, b) => a.processName.localeCompare(b.processName)));
   return Object.values(groups).sort((a, b) => a.processName.localeCompare(b.processName));
 });
-// 计算最大设备数量，用于确定列数
-const maxDevices = computed(() => {
-  return Math.max(...groupedData.value.map(group => group.equipments.length), 1);
-});
-// 计算一组设备的总效能
+
 const calculateTotalEfficiency = (equipments) => {
   return equipments.reduce((total, equipment) => {
-    // 确保值是数字，如果是字符串则转换
     const efficiency = Number(equipment.equipment_efficiency) || 0;
     return total + efficiency;
   }, 0);
 };
-// 生成近3个月的日期列表（从今天开始）
+
+// 生成从今天到指定结束日期的日期列表
 const dateList = computed(() => {
   const dates = [];
   const today = new Date();
+  // 将传入的结束日期字符串转换为Date对象
+  const endDate = new Date(props.endDate);
   
-  // 计算3个月前的日期
-  const threeMonthsAgo = new Date();
-  threeMonthsAgo.setMonth(today.getMonth() - 3);
+  // 验证结束日期是否有效且不早于今天
+  if (isNaN(endDate.getTime()) || endDate < today) {
+    // console.warn('结束日期无效或早于今天，将使用今天作为结束日期');
+    endDate.setTime(today.getTime());
+  }
   
-  // 从今天开始往前推，直到3个月前
+  // 从今天开始往后推，直到结束日期
   let currentDate = new Date(today);
-  while (currentDate >= threeMonthsAgo) {
+  while (currentDate <= endDate) {
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const day = String(currentDate.getDate()).padStart(2, '0');
@@ -103,12 +82,13 @@ const dateList = computed(() => {
       dateStr: `${year}/${month}/${day}`
     });
     
-    // 向前推一天
-    currentDate.setDate(currentDate.getDate() - 1);
+    // 向后推一天
+    currentDate.setDate(currentDate.getDate() + 1);
   }
   
   return dates;
 });
+
 const getDateData = (group, dateStr) => {
   return '/';
 };

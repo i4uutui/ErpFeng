@@ -6,6 +6,7 @@ const AdCompanyInfo = require('./AdCompanyInfo.js') // 客户企业信息表
 const AdUser = require('./AdUser.js') // 子后台用户表
 const AdOrganize = require('./AdOrganize.js') // 组织架构信息表
 const SubProcessCycle = require('./SubProcessCycle.js') // 生产制程表
+const SubProcessCycleChild = require('./SubProcessCycleChild.js') // 生产制程子表
 const SubWarehouseCycle = require('./SubWarehouseCycle.js') // 仓库类型表
 const SubProductNotice = require('./SubProductNotice.js') // 生产通知单信息表
 const SubProductQuotation = require('./SubProductQuotation.js') // 产品报价信息表
@@ -73,11 +74,15 @@ SubOutsourcingQuote.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as:
 SubOutsourcingQuote.belongsTo(SubProcessBomChild, { foreignKey: 'process_bom_children_id', as: 'processChildren' })
 SubOutsourcingQuote.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
 
-SubProductionProgress.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
-SubProductionProgress.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
+// SubProductionProgress.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
+// SubProductionProgress.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubProductionProgress.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 SubProductionProgress.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
 SubProductionProgress.belongsTo(SubProcessBom, { foreignKey: 'bom_id', as: 'bom' })
+SubProductionProgress.hasMany(SubProcessCycleChild, { foreignKey: 'progress_id', as: 'cycleChild' })
+SubProcessCycle.hasMany(SubProcessCycleChild, { foreignKey: 'cycle_id', as: 'cycleChild' })
+SubProcessCycleChild.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
+SubProcessCycleChild.belongsTo(SubProductionProgress, { foreignKey: 'progress_id', as: 'progress' })
 
 module.exports = {
   Op,
@@ -87,6 +92,7 @@ module.exports = {
   AdUser,
   AdOrganize,
   SubProcessCycle,
+  SubProcessCycleChild,
   SubWarehouseCycle,
   SubProductNotice,
   SubProductQuotation,
