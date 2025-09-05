@@ -79,11 +79,6 @@ const SubOutsourcingQuote = sequelize.define('SubOutsourcingQuote', {
     allowNull: true,
     comment: ' 备注 '
   },
-  status: {
-    type: DataTypes.INTEGER(2),
-    allowNull: false,
-    comment: ' 报价单的状态：1已报价，2：已委外，3：已入库 '
-  },
   is_deleted: {
     type: DataTypes.TINYINT(1),
     allowNull: true,

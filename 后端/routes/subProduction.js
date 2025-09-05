@@ -67,8 +67,9 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
         if(matchedBomChildren && matchedBomChildren.length > 0){
           // 计算bom.children.all_load和cycleChild.load
           matchedBomChildren.forEach(bomChild => {
-            if (bomChild.all_time && dayDiff + 1 > 0) {
-              bomChild.all_load = parseFloat((bomChild.all_time / (dayDiff + 1)).toFixed(1));
+            if (bomChild.all_time) {
+              const d = dayDiff + 1 > 0 ? dayDiff + 1 : 1
+              bomChild.all_load = parseFloat((bomChild.all_time / d).toFixed(1));
               cycleChild.load = cycleChild.load + bomChild.all_load
             }
           });

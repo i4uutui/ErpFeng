@@ -92,25 +92,6 @@ export default defineComponent({
         }
       })
     }
-    const makeJson = async (value) => {
-      if(value.length == 0) return ElMessage.error('请先选择报价单')
-      const res = await request.put('/api/set_outsourcing_quote', {
-        allSelect: value
-      });
-      if(res && res.code == 200){
-        ElMessage.success('操作成功');
-        dialogVisible.value = false;
-        fetchProductList();
-      }
-    }
-    // 委外加工
-    const handleJob = async () => {
-      makeJson(allSelect.value)
-    }
-    const handleMakeJob = (row) => {
-      const JSONObj = [{ id: row.id, status: 2 }]
-      makeJson(JSONObj)
-    }
     const handleSelectionChange = (select) => {
       allSelect.value = select.map(e => {
         return { id: e.id, status: 2 }
@@ -140,9 +121,6 @@ export default defineComponent({
       edit.value = 0;
       dialogVisible.value = false;
       resetForm()
-    }
-    const processChange = ({ children }) => {
-      procedure.value = children.map(e => e)
     }
     const resetForm = () => {
       form.value = {
@@ -176,43 +154,35 @@ export default defineComponent({
                 <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } v-permission={ 'OutsourcingQuote:add' }>
                   添加委外报价
                 </ElButton>
-                <ElButton style="margin-top: -5px" type="primary" onClick={ handleJob } v-permission={ 'OutsourcingQuote:allQuote' }>
-                  批量委外加工
-                </ElButton>
               </div>
             ),
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }} onSelectionChange={ (select) => handleSelectionChange(select) }>
-                  <ElTableColumn type="selection" width="55" />
-                  <ElTableColumn label="状态" width="100">
-                    {() => <span style="color: red">已报价</span>}
-                  </ElTableColumn>
                   <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width="100" />
-                  <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="170" />
+                  <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="100" />
                   <ElTableColumn prop="notice.notice" label="生产订单" width="120" />
-                  <ElTableColumn prop="processBom.product.product_code" label="产品编码" width="100" />
-                  <ElTableColumn prop="processBom.product.product_name" label="产品名称" width="100" />
+                  <ElTableColumn prop="processBom.product.product_code" label="产品编码" width="90" />
+                  <ElTableColumn prop="processBom.product.product_name" label="产品名称" width="90" />
                   <ElTableColumn prop="processBom.product.drawing" label="工程图号" width="100" />
-                  <ElTableColumn label="型号/规格">
+                  <ElTableColumn label="型号/规格" width="120">
                     {({ row }) => (
                       <span>{row.processBom.product.model}/{row.processBom.product.specification}</span>
                     )}
                   </ElTableColumn>
-                  <ElTableColumn prop="processBom.part.part_code" label="部件编码" width="100" />
-                  <ElTableColumn prop="processBom.part.part_name" label="部件名称" width="100" />
+                  <ElTableColumn prop="processBom.part.part_code" label="部件编码" width="90" />
+                  <ElTableColumn prop="processBom.part.part_name" label="部件名称" width="90" />
                   <ElTableColumn prop="processChildren.process.process_code" label="工艺编码" width="100" />
                   <ElTableColumn prop="processChildren.process.process_name" label="工艺名称" width="120" />
                   <ElTableColumn prop="price" label="加工单价" width="100" />
-                  <ElTableColumn prop="transaction_currency" label="交易币别" width="120" />
-                  <ElTableColumn prop="other_transaction_terms" label="交易条件" width="170" />
+                  <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
+                  <ElTableColumn prop="other_transaction_terms" label="交易条件" width="100" />
                   <ElTableColumn prop="remarks" label="备注" width="170" />
-                  <ElTableColumn prop="created_at" label="创建时间" width="170" />
-                  <ElTableColumn label="操作" width="160" fixed="right">
+                  <ElTableColumn prop="created_at" label="创建时间" width="120" />
+                  <ElTableColumn label="操作" width="100" fixed="right">
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) } v-permission={ 'OutsourcingQuote:edit' }>修改</ElButton>
-                        <ElButton size="small" type="primary" onClick={ () => handleMakeJob(scope.row) } v-permission={ 'OutsourcingQuote:quote' }>委外加工</ElButton>
                       </>
                     )}
                   </ElTableColumn>
