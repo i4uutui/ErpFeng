@@ -104,6 +104,11 @@ export default defineComponent({
             header: () => (
               <div class="flex flex-wrap">
                 <div class="pr10 pb20 flex">
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ addOutSourcing }>
+                    新增委外加工
+                  </ElButton>
+                </div>
+                <div class="pr10 pb20 flex">
                   <span style="width: 90px">供应商名称:</span>
                   <ElInput v-model={ supplier_abbreviation.value } style="width: 160px" placeholder="请输入"/>
                 </div>
@@ -120,9 +125,6 @@ export default defineComponent({
                   <ElInput v-model={ notice.value } style="width: 160px" placeholder="请输入"/>
                 </div>
                 <div class="pr10 pb20">
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ addOutSourcing }>
-                    新增委外加工
-                  </ElButton>
                   <ElButton style="margin-top: -5px" type="primary" onClick={ search }>
                     查询
                   </ElButton>
@@ -135,6 +137,7 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe onSelectionChange={ (select) => handleSelectionChange(select) }>
+                  <ElTableColumn type="selection" width="55" />
                   <ElTableColumn prop="processBom.part.part_code" label="部位编码" />
                   <ElTableColumn prop="processBom.part.part_name" label="部位名称" />
                   <ElTableColumn prop="processChildren.process.process_code" label="工艺编码" />

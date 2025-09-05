@@ -368,7 +368,7 @@ const routes = [
         name: 'OutsourcingOrder',
         component: () => import('@/views/Outsourcing/OutsourcingOrder.jsx'),
         meta: {
-          title: '委外加工',
+          title: '委外加工单',
           parent: '委外管理',
           menu: true,
           buttons: [
