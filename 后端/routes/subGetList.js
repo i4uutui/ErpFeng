@@ -207,11 +207,10 @@ router.get('/getProcessBomChildren', authMiddleware, async (req, res) => {
   
   const whereQuery = {
     process_bom_id,
-    company_id
   }
   const rows = await SubProcessBomChild.findAll({
     where: whereQuery,
-    attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'long'],
+    attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price'],
     include: [
       { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name', 'section_points'] },
       { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'equipment_code', 'equipment_name'] }

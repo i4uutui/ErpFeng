@@ -11,7 +11,7 @@
  Target Server Version : 50722 (5.7.22)
  File Encoding         : 65001
 
- Date: 03/09/2025 20:13:34
+ Date: 05/09/2025 10:45:24
 */
 
 SET NAMES utf8mb4;
@@ -342,7 +342,6 @@ CREATE TABLE `sub_outsourcing_quote`  (
   `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '交易条件',
   `ment` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '加工要求',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
-  `status` int(2) NULL DEFAULT NULL COMMENT '报价单的状态：1已报价，2：已委外，3：已入库',
   `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -352,7 +351,7 @@ CREATE TABLE `sub_outsourcing_quote`  (
 -- ----------------------------
 -- Records of sub_outsourcing_quote
 -- ----------------------------
-INSERT INTO `sub_outsourcing_quote` VALUES (4, 1, 1, 6, 1, 36, 5, 58, 58, 311, '￥', '自己拉货', NULL, '请准备一辆货车', 2, 1, '2025-08-25 15:05:25', '2025-08-25 15:07:03');
+INSERT INTO `sub_outsourcing_quote` VALUES (4, 1, 1, 6, 1, 36, 34, 58, 58, 311, '￥', '自己拉货', NULL, '请准备一辆货车', 1, '2025-08-25 15:05:25', '2025-09-05 10:25:26');
 
 -- ----------------------------
 -- Table structure for sub_part_code
@@ -460,14 +459,14 @@ INSERT INTO `sub_process_bom_child` VALUES (25, 40, 3, 3, 1, 8, 2, 33.3, NULL, N
 INSERT INTO `sub_process_bom_child` VALUES (26, 40, 3, 4, 2, 9, 2, 37.5, NULL, NULL, 15000, '2025-09-02 16:40:56', '2025-09-02 16:55:06');
 INSERT INTO `sub_process_bom_child` VALUES (27, 39, 4, 3, 1, 7, 2, 29.2, NULL, NULL, 15000, '2025-09-02 16:41:33', '2025-09-02 16:55:06');
 INSERT INTO `sub_process_bom_child` VALUES (28, 39, 3, 4, 2, 5, 2, 20.8, NULL, NULL, 15000, '2025-09-02 16:41:33', '2025-09-02 16:55:06');
-INSERT INTO `sub_process_bom_child` VALUES (29, 38, 4, 4, 1, 10, 3, 41.7, NULL, NULL, 15000, '2025-09-02 16:42:22', '2025-09-02 16:55:06');
+INSERT INTO `sub_process_bom_child` VALUES (29, 38, 4, 4, 1, 10, 3, 41.7, NULL, NULL, 15000, '2025-09-02 16:42:22', '2025-09-04 11:40:39');
 INSERT INTO `sub_process_bom_child` VALUES (30, 38, 4, 5, 2, 11, 2, 45.8, NULL, NULL, 15000, '2025-09-02 16:42:22', '2025-09-02 16:55:06');
 INSERT INTO `sub_process_bom_child` VALUES (31, 38, 3, 3, 3, 8, 3, 33.3, NULL, NULL, 15000, '2025-09-02 16:42:22', '2025-09-02 16:55:06');
 INSERT INTO `sub_process_bom_child` VALUES (32, 37, 3, 4, 1, 11, 2, 45.8, NULL, NULL, 15000, '2025-09-02 16:42:42', '2025-09-02 16:55:06');
 INSERT INTO `sub_process_bom_child` VALUES (33, 36, 4, 4, 1, 9, 2, 37.5, NULL, NULL, 15000, '2025-09-02 16:43:07', '2025-09-02 16:55:06');
 INSERT INTO `sub_process_bom_child` VALUES (34, 36, 3, 3, 2, 6, 1, 25.0, NULL, NULL, 15000, '2025-09-02 16:43:07', '2025-09-02 16:55:06');
 INSERT INTO `sub_process_bom_child` VALUES (35, 35, 3, 3, 1, 12, 2, 50.0, NULL, NULL, 15000, '2025-09-02 16:44:24', '2025-09-02 16:55:06');
-INSERT INTO `sub_process_bom_child` VALUES (36, 42, 4, 5, 1, 8, 3, 40.0, NULL, NULL, 18000, '2025-09-03 09:44:44', '2025-09-03 09:47:13');
+INSERT INTO `sub_process_bom_child` VALUES (36, 42, 4, 5, 1, 8, 3, 15.5, NULL, 11000, 7000, '2025-09-03 09:44:44', '2025-09-04 11:45:55');
 INSERT INTO `sub_process_bom_child` VALUES (37, 42, 4, 4, 2, 6, 2, 30.0, NULL, NULL, 18000, '2025-09-03 09:44:44', '2025-09-03 09:47:13');
 INSERT INTO `sub_process_bom_child` VALUES (38, 42, 4, 4, 3, 9, 2, 45.0, NULL, NULL, 18000, '2025-09-03 09:44:44', '2025-09-03 09:47:13');
 INSERT INTO `sub_process_bom_child` VALUES (39, 43, 3, 3, 1, 7, 2, 35.0, NULL, NULL, 18000, '2025-09-03 09:45:15', '2025-09-03 09:47:13');
@@ -477,7 +476,7 @@ INSERT INTO `sub_process_bom_child` VALUES (42, 44, 3, 3, 2, 7, 2, 35.0, NULL, N
 INSERT INTO `sub_process_bom_child` VALUES (43, 44, 4, 5, 3, 14, 2, 70.0, NULL, NULL, 18000, '2025-09-03 09:46:03', '2025-09-03 09:47:13');
 INSERT INTO `sub_process_bom_child` VALUES (44, 45, 3, 5, 1, 5, 2, 25.0, NULL, NULL, 18000, '2025-09-03 09:47:04', '2025-09-03 09:47:13');
 INSERT INTO `sub_process_bom_child` VALUES (45, 45, 3, 4, 2, 7, 2, 35.0, NULL, NULL, 18000, '2025-09-03 09:47:04', '2025-09-03 09:47:13');
-INSERT INTO `sub_process_bom_child` VALUES (46, 45, 3, 3, 3, 8, 3, 40.0, NULL, NULL, 18000, '2025-09-03 09:47:04', '2025-09-03 09:47:13');
+INSERT INTO `sub_process_bom_child` VALUES (46, 45, 3, 3, 3, 8, 3, 40.0, NULL, NULL, 18000, '2025-09-03 09:47:04', '2025-09-04 11:41:47');
 INSERT INTO `sub_process_bom_child` VALUES (47, 45, 3, 4, 4, 9, 3, 45.0, NULL, NULL, 18000, '2025-09-03 09:47:04', '2025-09-03 09:47:13');
 
 -- ----------------------------
@@ -527,9 +526,9 @@ CREATE TABLE `sub_process_cycle`  (
 -- ----------------------------
 -- Records of sub_process_cycle
 -- ----------------------------
-INSERT INTO `sub_process_cycle` VALUES (1, 1, 1, '备料组', 7, 1, '2025-08-21 09:30:12', '2025-09-02 15:20:09');
-INSERT INTO `sub_process_cycle` VALUES (2, 1, 1, '设备组', 2, 1, '2025-08-21 09:30:39', '2025-09-01 15:12:56');
-INSERT INTO `sub_process_cycle` VALUES (3, 1, 1, '生产组', 4, 1, '2025-08-21 09:30:45', '2025-09-01 15:13:20');
+INSERT INTO `sub_process_cycle` VALUES (1, 1, 1, '备料组', 3, 1, '2025-08-21 09:30:12', '2025-09-04 15:45:29');
+INSERT INTO `sub_process_cycle` VALUES (2, 1, 1, '设备组', 4, 1, '2025-08-21 09:30:39', '2025-09-04 15:46:36');
+INSERT INTO `sub_process_cycle` VALUES (3, 1, 1, '生产组', 5, 1, '2025-08-21 09:30:45', '2025-09-04 15:45:43');
 
 -- ----------------------------
 -- Table structure for sub_process_cycle_child
@@ -550,39 +549,39 @@ CREATE TABLE `sub_process_cycle_child`  (
 -- ----------------------------
 -- Records of sub_process_cycle_child
 -- ----------------------------
-INSERT INTO `sub_process_cycle_child` VALUES (184, 1, 202, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
+INSERT INTO `sub_process_cycle_child` VALUES (184, 1, 202, '2025-09-06', NULL, NULL, '2025-09-03 13:30:54', '2025-09-04 14:04:44');
 INSERT INTO `sub_process_cycle_child` VALUES (185, 2, 202, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
 INSERT INTO `sub_process_cycle_child` VALUES (186, 3, 202, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
-INSERT INTO `sub_process_cycle_child` VALUES (187, 1, 203, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
+INSERT INTO `sub_process_cycle_child` VALUES (187, 1, 203, '2025-09-06', NULL, NULL, '2025-09-03 13:30:54', '2025-09-04 14:04:44');
 INSERT INTO `sub_process_cycle_child` VALUES (188, 2, 203, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
 INSERT INTO `sub_process_cycle_child` VALUES (189, 3, 203, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
-INSERT INTO `sub_process_cycle_child` VALUES (190, 1, 204, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
+INSERT INTO `sub_process_cycle_child` VALUES (190, 1, 204, '2025-09-06', NULL, NULL, '2025-09-03 13:30:54', '2025-09-04 14:04:44');
 INSERT INTO `sub_process_cycle_child` VALUES (191, 2, 204, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
 INSERT INTO `sub_process_cycle_child` VALUES (192, 3, 204, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
-INSERT INTO `sub_process_cycle_child` VALUES (193, 1, 205, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
+INSERT INTO `sub_process_cycle_child` VALUES (193, 1, 205, '2025-09-06', NULL, NULL, '2025-09-03 13:30:54', '2025-09-04 14:04:44');
 INSERT INTO `sub_process_cycle_child` VALUES (194, 2, 205, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
 INSERT INTO `sub_process_cycle_child` VALUES (195, 3, 205, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
-INSERT INTO `sub_process_cycle_child` VALUES (196, 1, 206, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
+INSERT INTO `sub_process_cycle_child` VALUES (196, 1, 206, '2025-09-06', NULL, NULL, '2025-09-03 13:30:54', '2025-09-04 14:04:44');
 INSERT INTO `sub_process_cycle_child` VALUES (197, 2, 206, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
 INSERT INTO `sub_process_cycle_child` VALUES (198, 3, 206, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
-INSERT INTO `sub_process_cycle_child` VALUES (199, 1, 207, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
+INSERT INTO `sub_process_cycle_child` VALUES (199, 1, 207, '2025-09-06', NULL, NULL, '2025-09-03 13:30:54', '2025-09-04 14:04:44');
 INSERT INTO `sub_process_cycle_child` VALUES (200, 2, 207, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
 INSERT INTO `sub_process_cycle_child` VALUES (201, 3, 207, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
-INSERT INTO `sub_process_cycle_child` VALUES (202, 1, 208, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
+INSERT INTO `sub_process_cycle_child` VALUES (202, 1, 208, '2025-09-06', NULL, NULL, '2025-09-03 13:30:54', '2025-09-04 14:04:44');
 INSERT INTO `sub_process_cycle_child` VALUES (203, 2, 208, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
 INSERT INTO `sub_process_cycle_child` VALUES (204, 3, 208, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
-INSERT INTO `sub_process_cycle_child` VALUES (205, 1, 209, '2025-09-06', NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 20:08:16');
+INSERT INTO `sub_process_cycle_child` VALUES (205, 1, 209, '2025-09-07', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 14:03:48');
 INSERT INTO `sub_process_cycle_child` VALUES (206, 2, 209, NULL, NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 13:30:56');
-INSERT INTO `sub_process_cycle_child` VALUES (207, 3, 209, '2025-09-15', NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 20:12:25');
-INSERT INTO `sub_process_cycle_child` VALUES (208, 1, 210, '2025-09-06', NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 20:08:16');
+INSERT INTO `sub_process_cycle_child` VALUES (207, 3, 209, '2025-09-11', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 15:46:47');
+INSERT INTO `sub_process_cycle_child` VALUES (208, 1, 210, '2025-09-07', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 14:03:48');
 INSERT INTO `sub_process_cycle_child` VALUES (209, 2, 210, NULL, NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 13:30:56');
-INSERT INTO `sub_process_cycle_child` VALUES (210, 3, 210, '2025-09-15', NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 20:12:25');
-INSERT INTO `sub_process_cycle_child` VALUES (211, 1, 211, '2025-09-06', NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 20:08:16');
+INSERT INTO `sub_process_cycle_child` VALUES (210, 3, 210, '2025-09-11', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 15:46:47');
+INSERT INTO `sub_process_cycle_child` VALUES (211, 1, 211, '2025-09-07', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 14:03:48');
 INSERT INTO `sub_process_cycle_child` VALUES (212, 2, 211, NULL, NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 13:30:56');
-INSERT INTO `sub_process_cycle_child` VALUES (213, 3, 211, '2025-09-15', NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 20:12:25');
-INSERT INTO `sub_process_cycle_child` VALUES (214, 1, 212, '2025-09-06', NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 20:08:16');
+INSERT INTO `sub_process_cycle_child` VALUES (213, 3, 211, '2025-09-11', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 15:46:47');
+INSERT INTO `sub_process_cycle_child` VALUES (214, 1, 212, '2025-09-07', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 14:03:48');
 INSERT INTO `sub_process_cycle_child` VALUES (215, 2, 212, NULL, NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 13:30:56');
-INSERT INTO `sub_process_cycle_child` VALUES (216, 3, 212, '2025-09-15', NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 20:12:25');
+INSERT INTO `sub_process_cycle_child` VALUES (216, 3, 212, '2025-09-11', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 15:46:47');
 
 -- ----------------------------
 -- Table structure for sub_product_code
@@ -712,17 +711,17 @@ CREATE TABLE `sub_production_progress`  (
 -- ----------------------------
 -- Records of sub_production_progress
 -- ----------------------------
-INSERT INTO `sub_production_progress` VALUES (202, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 18, NULL, NULL, 41, 15000, 'hui11111111', '2025-07-10', 15000, NULL, NULL, 1, '2025-09-03 13:30:54', '2025-09-03 14:22:23');
-INSERT INTO `sub_production_progress` VALUES (203, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 18, NULL, NULL, 40, 15000, 'hui11111111', '2025-07-10', 15000, NULL, NULL, 1, '2025-09-03 13:30:54', '2025-09-03 14:22:19');
-INSERT INTO `sub_production_progress` VALUES (204, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 12, NULL, NULL, 39, 15000, 'hui11111111', '2025-07-10', 15000, NULL, NULL, 1, '2025-09-03 13:30:54', '2025-09-03 14:22:17');
-INSERT INTO `sub_production_progress` VALUES (205, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 9, NULL, NULL, 38, 15000, 'hui11111111', '2025-07-10', 15000, NULL, NULL, 1, '2025-09-03 13:30:54', '2025-09-03 14:22:25');
-INSERT INTO `sub_production_progress` VALUES (206, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 5, NULL, NULL, 37, 15000, 'hui11111111', '2025-07-10', 15000, NULL, NULL, 1, '2025-09-03 13:30:54', '2025-09-03 14:22:26');
-INSERT INTO `sub_production_progress` VALUES (207, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 6, NULL, NULL, 36, 15000, 'hui11111111', '2025-07-10', 15000, NULL, NULL, 1, '2025-09-03 13:30:54', '2025-09-03 14:22:27');
-INSERT INTO `sub_production_progress` VALUES (208, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 6, NULL, NULL, 35, 15000, 'hui11111111', '2025-07-10', 15000, NULL, NULL, 1, '2025-09-03 13:30:54', '2025-09-03 14:22:28');
-INSERT INTO `sub_production_progress` VALUES (209, 1, 1, '2222', '2025-10-11 00:00:00', '东莞鞋厂', 10, '1233', '212', '月1', 10, NULL, NULL, 45, 18000, 'G2222222', '2025-07-07', 18000, '2025-09-01', NULL, 1, '2025-09-03 13:30:56', '2025-09-03 14:22:29');
-INSERT INTO `sub_production_progress` VALUES (210, 1, 1, '2222', '2025-10-11 00:00:00', '东莞鞋厂', 10, '1233', '212', '月1', 15, NULL, NULL, 44, 18000, 'G2222222', '2025-07-07', 18000, '2025-09-01', NULL, 1, '2025-09-03 13:30:56', '2025-09-03 14:22:30');
-INSERT INTO `sub_production_progress` VALUES (211, 1, 1, '2222', '2025-10-11 00:00:00', '东莞鞋厂', 10, '1233', '212', '月1', 16, NULL, NULL, 43, 18000, 'G2222222', '2025-07-07', 18000, '2025-09-01', NULL, 1, '2025-09-03 13:30:56', '2025-09-03 14:22:31');
-INSERT INTO `sub_production_progress` VALUES (212, 1, 1, '2222', '2025-10-11 00:00:00', '东莞鞋厂', 10, '1233', '212', '月1', 20, NULL, NULL, 42, 18000, 'G2222222', '2025-07-07', 18000, '2025-09-01', NULL, 1, '2025-09-03 13:30:56', '2025-09-03 14:22:33');
+INSERT INTO `sub_production_progress` VALUES (202, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 18, NULL, NULL, 41, 15000, 'hui11111111', '2025-07-10', 15000, '2025-09-05', NULL, 1, '2025-09-03 13:30:54', '2025-09-04 14:03:36');
+INSERT INTO `sub_production_progress` VALUES (203, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 18, NULL, NULL, 40, 15000, 'hui11111111', '2025-07-10', 15000, '2025-09-05', NULL, 1, '2025-09-03 13:30:54', '2025-09-04 14:03:36');
+INSERT INTO `sub_production_progress` VALUES (204, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 12, NULL, NULL, 39, 15000, 'hui11111111', '2025-07-10', 15000, '2025-09-05', NULL, 1, '2025-09-03 13:30:54', '2025-09-04 14:03:36');
+INSERT INTO `sub_production_progress` VALUES (205, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 9, NULL, NULL, 38, 15000, 'hui11111111', '2025-07-10', 15000, '2025-09-05', NULL, 1, '2025-09-03 13:30:54', '2025-09-04 14:03:36');
+INSERT INTO `sub_production_progress` VALUES (206, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 5, NULL, NULL, 37, 15000, 'hui11111111', '2025-07-10', 15000, '2025-09-05', NULL, 1, '2025-09-03 13:30:54', '2025-09-04 14:03:36');
+INSERT INTO `sub_production_progress` VALUES (207, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 6, NULL, NULL, 36, 15000, 'hui11111111', '2025-07-10', 15000, '2025-09-05', NULL, 1, '2025-09-03 13:30:54', '2025-09-04 14:03:36');
+INSERT INTO `sub_production_progress` VALUES (208, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 6, NULL, NULL, 35, 15000, 'hui11111111', '2025-07-10', 15000, '2025-09-05', NULL, 1, '2025-09-03 13:30:54', '2025-09-04 14:03:36');
+INSERT INTO `sub_production_progress` VALUES (209, 1, 1, '2222', '2025-10-11 00:00:00', '东莞鞋厂', 10, '1233', '212', '月1', 10, NULL, NULL, 45, 18000, 'G2222222', '2025-07-07', 18000, '2025-09-04', NULL, 1, '2025-09-03 13:30:56', '2025-09-04 14:02:45');
+INSERT INTO `sub_production_progress` VALUES (210, 1, 1, '2222', '2025-10-11 00:00:00', '东莞鞋厂', 10, '1233', '212', '月1', 15, NULL, NULL, 44, 18000, 'G2222222', '2025-07-07', 18000, '2025-09-04', NULL, 1, '2025-09-03 13:30:56', '2025-09-04 14:02:45');
+INSERT INTO `sub_production_progress` VALUES (211, 1, 1, '2222', '2025-10-11 00:00:00', '东莞鞋厂', 10, '1233', '212', '月1', 16, NULL, NULL, 43, 18000, 'G2222222', '2025-07-07', 18000, '2025-09-04', NULL, 1, '2025-09-03 13:30:56', '2025-09-04 14:02:45');
+INSERT INTO `sub_production_progress` VALUES (212, 1, 1, '2222', '2025-10-11 00:00:00', '东莞鞋厂', 10, '1233', '212', '月1', 20, NULL, NULL, 42, 18000, 'G2222222', '2025-07-07', 18000, '2025-09-04', NULL, 1, '2025-09-03 13:30:56', '2025-09-04 14:02:45');
 
 -- ----------------------------
 -- Table structure for sub_sales_order

@@ -2,4 +2,16 @@
   .el-input__prefix{
     display: none;
   }
+  .el-table__inner-wrapper .el-table__body-wrapper .el-scrollbar .el-table__body .el-table__row{
+    padding: 0;
+    .el-table__cell{
+      padding: 0;
+      .cell{
+        padding: 0;
+        .myCell{
+          padding: 8px 12px;
+        }
+      }
+    }
+  }
 }
