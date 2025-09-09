@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, Op } = require('../models');
+const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubWarehouseType, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -238,6 +238,14 @@ router.get('/getProcessCycle', authMiddleware, async (req, res) => {
   })
   const cycleRows = rows.map(e => e.toJSON())
   res.json({ data: cycleRows, code: 200 })
+})
+
+router.get('/getWarehouseType', authMiddleware, async (req, res) => {
+  const { company_id } = req.user;
+  
+  const rows = await SubWarehouseType.findAll()
+  const typeRows = rows.map(e => e.toJSON())
+  res.json({ data: typeRows, code: 200 })
 })
 
 module.exports = router;  

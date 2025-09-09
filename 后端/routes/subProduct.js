@@ -3,6 +3,8 @@ const router = express.Router();
 const { SubMaterialBom, SubMaterialCode, SubMaterialBomChild, SubPartCode, SubProductCode, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, Op, sequelize } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
+const MainDataService = require('../middleware/qrcodeService');
+const BaseConfig = require('../config/BaseConfig')
 
 // 获取材料BOM信息表
 router.get('/material_bom', authMiddleware, async (req, res) => {
@@ -194,8 +196,24 @@ router.post('/process_bom', authMiddleware, async (req, res) => {
     user_id: userId
   })
   const childrens = children.map(e => ({ process_bom_id: process.id, ...e }))
-  await SubProcessBomChild.bulkCreate(childrens);
+  const bomChild = await SubProcessBomChild.bulkCreate(childrens);
+
+  const updateData = [];
+  for (const e of bomChild) {
+    const data = e.toJSON();
+    const qr_code = await MainDataService.generateAndUploadQrcode( `${BaseConfig.bomQrCode_url}?id=${data.id}` );
+    updateData.push({
+      id: data.id,
+      qr_code
+    });
+  }
   
+  if (updateData.length > 0) {
+    await SubProcessBomChild.bulkCreate(updateData, {
+      updateOnDuplicate: ['qr_code']
+    });
+  }
+
   res.json({ message: '添加成功', code: 200 });
 });
 // 更新工艺BOM
@@ -213,10 +231,10 @@ router.put('/process_bom', authMiddleware, async (req, res) => {
   }, {
     where: { id }
   })
-  SubProcessBomChild.bulkCreate(children, {
+  await SubProcessBomChild.bulkCreate(children, {
     updateOnDuplicate: ['process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price']
   })
-  
+
   res.json({ message: '修改成功', code: 200 });
 });
 // 添加工艺BOM存档

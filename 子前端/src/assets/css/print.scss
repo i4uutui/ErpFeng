@@ -1,7 +1,13 @@
 @media print {
   @page {
     margin-bottom: 0mm; //去掉页脚
-    margin-top: 1mm;
+    margin: 1mm 10mm;
+  }
+  body,
+  html {
+    height: auto !important;
+    padding: 0px;
+    margin: 0px;
   }
  .el-table{
    max-width: 100%;
@@ -14,7 +20,9 @@
  }
 }
 .printTable{
-  position: absolute;
+  // position: absolute;
   left: -5000px;
   top: 0;
+  visibility: hidden;
+  position: relative;
 }

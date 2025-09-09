@@ -4,7 +4,8 @@ import $router from "@/router";
 import { getItem } from "@/assets/js/storage";
 
 const service = axios.create({
-	baseURL: "http://localhost:3000/",
+	baseURL: "http://localhost:3000",
+	// baseURL: 'http://8.129.3.181:998/',
 	timeout: 5000,
 });
 

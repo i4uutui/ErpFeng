@@ -19,6 +19,11 @@ const SubWarehouseCycle = sequelize.define('SubWarehouseCycle', {
     allowNull: false,
     comment: '发布的用户id'
   },
+  ware_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    comment: '仓库类型id'
+  },
   name: {
     type: DataTypes.STRING(100),
     allowNull: false,

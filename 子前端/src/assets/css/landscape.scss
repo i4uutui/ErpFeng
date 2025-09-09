@@ -1,0 +1,83 @@
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 5mm 1.5cm;
+  }
+  body{
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .print-header{
+    max-width: 270mm;
+    padding: 20px 0;
+    page-break-after: avoid !important;
+  }
+  .popTitle{
+    page-break-after: avoid !important;
+  }
+  .print-table {
+    width: 100%;
+    max-width: 270mm; /* 小于A4横向宽度（297mm），预留边距 */
+  }
+  .table-row td img {
+    max-width: 100px; /* 缩小二维码尺寸，避免超出单元格 */
+    max-height: 100px;
+  }
+  .table-row td {
+    padding: 12px 8px !important; /* 减小内边距 */
+    text-align: center;
+  }
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+    page-break-inside: avoid;
+  }
+
+  .table-header th {
+    border: 1px solid #ccc;
+    padding: 12px 8px;
+    background-color: #f5f5f5;
+  }
+
+  /* 关键修复：确保行不被分割 */
+  .table-row {
+    page-break-inside: avoid !important;
+    -webkit-region-break-inside: avoid !important;
+    display: table-row; /* 确保行元素类型正确 */
+  }
+  .table-row td:last-child { /* 二维码所在列 */
+    page-break-inside: avoid !important;
+    white-space: nowrap; /* 避免内容换行导致高度增加 */
+  }
+  /* 移除可能导致内容溢出的固定高度 */
+  #printTable {
+    page-break-before: auto !important;
+    page-break-after: auto !important;
+  }
+  .printTable {
+    position: static !important;
+    left: 0 !important;
+    visibility: visible !important;
+    height: auto !important;
+  }
+  .table-row td {
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+    vertical-align: top; /* 确保内容顶部对齐 */
+  }
+
+  /* 强制表头在每页重复 */
+  thead {
+    display: table-header-group;
+  }
+
+  /* 禁止在表头前分页 */
+  thead tr {
+    page-break-after: avoid !important;
+  }
+}
+/* 调整表格样式使其更适合打印 */
+.print-table .el-table__cell {
+  padding: 8px 10px !important;
+  font-size: 12px !important;
+}

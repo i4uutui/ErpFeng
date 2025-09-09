@@ -7,6 +7,7 @@ const AdUser = require('./AdUser.js') // 子后台用户表
 const AdOrganize = require('./AdOrganize.js') // 组织架构信息表
 const SubProcessCycle = require('./SubProcessCycle.js') // 生产制程表
 const SubProcessCycleChild = require('./SubProcessCycleChild.js') // 生产制程子表
+const SubWarehouseType = require('./SubWarehouseType.js') // 仓库类型
 const SubWarehouseCycle = require('./SubWarehouseCycle.js') // 仓库类型表
 const SubProductNotice = require('./SubProductNotice.js') // 生产通知单信息表
 const SubProductQuotation = require('./SubProductQuotation.js') // 产品报价信息表
@@ -25,6 +26,7 @@ const SubProcessBomChild = require('./SubProcessBomChild.js') // 工艺BOM信息
 const SubSaleOrder = require('./SubSaleOrder.js') // 销售订单表
 const SubMaterialQuote = require('./SubMaterialQuote.js') // 材料报价表
 const SubOutsourcingQuote = require('./SubOutsourcingQuote.js') // 委外报价信息表
+const SubOutsourcingOrder = require('./SubOutsourcingOrder.js') // 委外加工单
 const SubProductionProgress = require('./SubProductionProgress.js') // 生产进度表
 
 // AdUser.hasOne(AdCompanyInfo, { foreignKey: 'id', sourceKey: 'company_id', as: 'company' })
@@ -34,6 +36,8 @@ AdOrganize.hasMany(AdOrganize, { foreignKey: 'pid', as: 'children' });
 AdOrganize.belongsTo(AdUser, { foreignKey: 'menber_id', as: 'menber' });
 
 SubEquipmentCode.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
+
+SubWarehouseCycle.belongsTo(SubWarehouseType, { foreignKey: 'ware_id', as: 'ware' })
 
 SubSaleOrder.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubSaleOrder.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
@@ -73,6 +77,10 @@ SubOutsourcingQuote.belongsTo(SubSupplierInfo, { foreignKey: 'supplier_id', as: 
 SubOutsourcingQuote.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as: 'processBom' })
 SubOutsourcingQuote.belongsTo(SubProcessBomChild, { foreignKey: 'process_bom_children_id', as: 'processChildren' })
 SubOutsourcingQuote.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
+SubOutsourcingOrder.belongsTo(SubSupplierInfo, { foreignKey: 'supplier_id', as: 'supplier' })
+SubOutsourcingOrder.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as: 'processBom' })
+SubOutsourcingOrder.belongsTo(SubProcessBomChild, { foreignKey: 'process_bom_children_id', as: 'processChildren' })
+SubOutsourcingOrder.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
 
 // SubProductionProgress.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
 // SubProductionProgress.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
@@ -93,6 +101,7 @@ module.exports = {
   AdOrganize,
   SubProcessCycle,
   SubProcessCycleChild,
+  SubWarehouseType,
   SubWarehouseCycle,
   SubProductNotice,
   SubProductQuotation,
@@ -111,6 +120,7 @@ module.exports = {
   SubSaleOrder,
   SubMaterialQuote,
   SubOutsourcingQuote,
+  SubOutsourcingOrder,
   SubProductionProgress
 }
 

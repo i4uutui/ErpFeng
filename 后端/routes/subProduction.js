@@ -40,7 +40,6 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
       },
     ],
     order: [['created_at', 'DESC']],
-    limit: 20
   })
   const today = dayjs();
   const fromData = rows.map((item, idx) => {
@@ -142,6 +141,50 @@ router.put('/set_production_date', authMiddleware, async (req, res) => {
   }
   
   res.json({ message: '修改成功', code: 200 });
+})
+
+router.get('/workOrder', authMiddleware, async (req, res) => {
+  const { notice_number } = req.query;
+  const { company_id } = req.user;
+  
+  let wheres = {}
+  if(notice_number) wheres.notice_number = notice_number
+  const rows = await SubProductionProgress.findAll({
+    where: {
+      is_deleted: 1,
+      company_id,
+      ...wheres
+    },
+    attributes: ['id', 'notice_number', 'delivery_time', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'part_code', 'part_name', 'bom_id', 'out_number'],
+    include: [
+      // { model: SubProcessCycleChild, as: 'cycleChild', attributes: ['cycle_id', 'id', 'end_date'], include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }] },
+      {
+        model: SubProcessBom,
+        as: 'bom',
+        attributes: ['id'],
+        include: [
+          {
+            model: SubProcessBomChild,
+            as: 'children',
+            attributes: ['id', 'qr_code'],
+            include: [
+              { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
+              {
+                model: SubEquipmentCode,
+                as: 'equipment',
+                attributes: ['id', 'equipment_name', 'equipment_code'],
+                include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }]
+              },
+            ]
+          }
+        ]
+      },
+    ],
+    order: [['created_at', 'DESC']],
+  })
+  const fromData = rows.map(e => e.toJSON())
+
+  res.json({ data: formatArrayTime(fromData), code: 200 });
 })
 
 module.exports = router;

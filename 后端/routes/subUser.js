@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
-const { AdUser, AdOrganize, SubProcessCycle, SubWarehouseCycle, Op } = require('../models')
+const { AdUser, AdOrganize, SubProcessCycle, SubWarehouseCycle, Op, SubWarehouseType } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
@@ -535,45 +535,43 @@ router.put('/process_cycle', authMiddleware, async (req, res) => {
 
 // 仓库类型
 router.get('/warehouse_cycle', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
-  const offset = (page - 1) * pageSize;
+  const { ware_id } = req.query;
   const { company_id } = req.user;
   
-  const { count, rows } = await SubWarehouseCycle.findAndCountAll({
+  let whereQuery = {}
+  if(ware_id) whereQuery.ware_id = ware_id
+  const rows = await SubWarehouseCycle.findAll({
     where: {
       is_deleted: 1,
-      company_id
+      company_id,
+      ...whereQuery
     },
+    include: [
+      { model: SubWarehouseType, as: 'ware', attributes: ['id', 'name'] }
+    ],
     order: [['created_at', 'DESC']],
-    limit: parseInt(pageSize),
-    offset
   })
-  const totalPages = Math.ceil(count / pageSize);
-  row = rows.map(e => e.toJSON())
+  const data = rows.map(e => e.toJSON())
   
   // 返回所需信息
   res.json({ 
-    data: formatArrayTime(row), 
-    total: count, 
-    totalPages, 
-    currentPage: parseInt(page), 
-    pageSize: parseInt(pageSize),
+    data: formatArrayTime(data), 
     code: 200 
   });
 })
 router.post('/warehouse_cycle', authMiddleware, async (req, res) => {
-  const { name } = req.body;
+  const { name, ware_id } = req.body;
   const { id: userId, company_id } = req.user;
   
-  const warehouse = await SubWarehouseCycle.create({
-    name, company_id,
+  await SubWarehouseCycle.create({
+    name, company_id, ware_id,
     user_id: userId
   })
   
   res.json({ msg: '添加成功', code: 200 });
 })
 router.put('/warehouse_cycle', authMiddleware, async (req, res) => {
-  const { name, id } = req.body;
+  const { name, ware_id, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证是否存在
@@ -583,7 +581,7 @@ router.put('/warehouse_cycle', authMiddleware, async (req, res) => {
   }
   
   await warehouse.update({
-    name, company_id,
+    name, company_id, ware_id,
     user_id: userId
   }, { where: { id } })
   

@@ -1,4 +1,4 @@
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, onMounted, reactive } from 'vue';
 import { getItem } from "@/assets/js/storage";
 import request from '@/utils/request';
 import dayjs from "dayjs"
@@ -9,16 +9,46 @@ export default defineComponent({
   setup() {
     const user = ref()
     const nowDate = ref()
-    let supplier_abbreviation = ref('')
-    let product_name = ref('')
-    let product_code = ref('')
-    let notice = ref('')
+    const formRef = ref(null);
+    const rules = reactive({
+      supplier_id: [
+        { required: true, message: '请选择供应商编码', trigger: 'blur' }
+      ],
+      process_bom_id: [
+        { required: true, message: '请选择工艺BOM表', trigger: 'blur' }
+      ],
+      process_index: [
+        { required: true, message: '请选择工序', trigger: 'blur' }
+      ],
+      // transaction_currency: [
+      //   { required: true, message: '请输入交易币别', trigger: 'blur' }
+      // ],
+      // other_transaction_terms: [
+      //   { required: true, message: '请输入交易条件', trigger: 'blur' }
+      // ],
+    })
+    let dialogVisible = ref(false)
+    let form = ref({
+      notice_id: '',
+      supplier_id: '',
+      process_bom_id: '',
+      process_index: '',
+      price: '',
+      number: '',
+      ment: '',
+      transaction_currency: '',
+      other_transaction_terms: '',
+      remarks: ''
+    })
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(30);
     let total = ref(0);
     let isPrint = ref(false)
     let allSelect = ref([])
+    let edit = ref(0)
+    let bomList = ref([]) // 工艺Bom列表
+    let procedure = ref([]) // 工序列表
     
     const printObj = ref({
       id: "printTable", // 这里是要打印元素的ID
@@ -45,34 +75,64 @@ export default defineComponent({
       user.value = getItem('user')
       nowDate.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
       fetchProductList()
+      getProcessBomList()
     })
     
     // 获取列表
     const fetchProductList = async () => {
-      const res = await request.post('/api/outsourcing_quote', {
+      const res = await request.post('/api/outsourcing_order', {
         page: currentPage.value,
         pageSize: pageSize.value,
-        supplier_abbreviation: supplier_abbreviation.value,
-        product_name: product_name.value,
-        product_code: product_code.value,
-        notice: notice.value,
       });
       tableData.value = res.data;
       total.value = res.total;
     };
-    const setWarehousing = (value) => {
-      ElMessage.error('等待实现......')
+    const getProcessBomList = async () => {
+      const res = await request.get('/api/getProcessBom')
+      bomList.value = res.data
     }
-    // 点击入库按钮
-    const handleWarehousing = (row) => {
-      ElMessageBox.confirm('是否确认入库？', '提示', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning',
-      }).then(res => {
-        const all = [row.id]
-        setWarehousing(all)
-      }).catch({})
+    const getProcessBomChildren = async (value) => {
+      const res = await request.get(`/api/getProcessBomChildren?process_bom_id=${value}`)
+      procedure.value = res.data
+    }
+    const handleSubmit = async (formEl) => {
+      if (!formEl) return
+      await formEl.validate(async (valid, fields) => {
+        if (valid){
+          if(!edit.value){
+            const res = await request.post('/api/add_outsourcing_order', form.value);
+            if(res && res.code == 200){
+              ElMessage.success('添加成功');
+              dialogVisible.value = false;
+              fetchProductList();
+            }
+            
+          }else{
+            // 修改
+            const myForm = {
+              id: edit.value,
+              ...form.value
+            }
+            const res = await request.put('/api/outsourcing_order', myForm);
+            if(res && res.code == 200){
+              ElMessage.success('修改成功');
+              dialogVisible.value = false;
+              fetchProductList();
+            }
+          }
+        }
+      })
+    }
+    const changeBomSelect = (value) => {
+      procedure.value = []
+      form.value.process_bom_children_id = ''
+      getProcessBomChildren(value)
+    }
+    const handleUplate = (row) => {
+      edit.value = row.id;
+      dialogVisible.value = true;
+      form.value = { ...row };
+      getProcessBomChildren(row.process_bom_id)
     }
     // 用户主动多选，然后保存到allSelect
     const handleSelectionChange = (select) => {
@@ -84,7 +144,29 @@ export default defineComponent({
     }
     // 新增委外加工
     const addOutSourcing = () => {
-      
+      edit.value = 0;
+      dialogVisible.value = true;
+      resetForm()
+    }
+    // 取消弹窗
+    const handleClose = () => {
+      edit.value = 0;
+      dialogVisible.value = false;
+      resetForm()
+    }
+    const resetForm = () => {
+      form.value = {
+        notice_id: '',
+        supplier_id: '',
+        process_bom_id: '',
+        process_index: '',
+        price: '',
+        number: '',
+        ment: '',
+        transaction_currency: '',
+        other_transaction_terms: '',
+        remarks: ''
+      }
     }
     // 分页相关
     function pageSizeChange(val) {
@@ -103,34 +185,13 @@ export default defineComponent({
           {{
             header: () => (
               <div class="flex flex-wrap">
-                <div class="pr10 pb20 flex">
+                <div class="pr10 flex">
                   <ElButton style="margin-top: -5px" type="primary" onClick={ addOutSourcing }>
                     新增委外加工
                   </ElButton>
-                </div>
-                <div class="pr10 pb20 flex">
-                  <span style="width: 90px">供应商名称:</span>
-                  <ElInput v-model={ supplier_abbreviation.value } style="width: 160px" placeholder="请输入"/>
-                </div>
-                <div class="pr10 pb20 flex">
-                  <span style="width: 74px">产品编码:</span>
-                  <ElInput v-model={ product_code.value } style="width: 160px" placeholder="请输入"/>
-                </div>
-                <div class="pr10 pb20 flex">
-                  <span style="width: 74px">产品名称:</span>
-                  <ElInput v-model={ product_name.value } style="width: 160px" placeholder="请输入"/>
-                </div>
-                <div class="pr10 pb20 flex">
-                  <span style="width: 74px">生产订单:</span>
-                  <ElInput v-model={ notice.value } style="width: 160px" placeholder="请输入"/>
-                </div>
-                <div class="pr10 pb20">
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ search }>
-                    查询
-                  </ElButton>
-                  <ElButton style="margin-top: -5px" type="primary" v-permission={ 'OutsourcingOrder:print' } v-print={ printObj.value }>
+                  {/* <ElButton style="margin-top: -5px" type="primary" v-permission={ 'OutsourcingOrder:print' } v-print={ printObj.value }>
                     委外加工单打印
-                  </ElButton>
+                  </ElButton> */}
                 </div>
               </div>
             ),
@@ -142,24 +203,26 @@ export default defineComponent({
                   <ElTableColumn prop="processBom.part.part_name" label="部位名称" />
                   <ElTableColumn prop="processChildren.process.process_code" label="工艺编码" />
                   <ElTableColumn prop="processChildren.process.process_name" label="工艺名称" />
-                  <ElTableColumn label="加工要求">
-                    {({ row }) => <ElInput v-model={ row.ment } placeholder="请输入加工要求" />}
-                  </ElTableColumn>
+                  <ElTableColumn prop="ment" label="加工要求" />
                   <ElTableColumn prop="notice.sale.unit" label="单位" />
-                  <ElTableColumn label="委外数量">
-                    {({ row }) => <el-input v-model={ row.number } type='number' placeholder="请输入委外数量" />}
+                  <ElTableColumn prop="number" label="委外数量" />
+                  <ElTableColumn prop="price" label="加工单价" />
+                  <ElTableColumn prop="transaction_currency" label="交易币别" />
+                  <ElTableColumn prop="other_transaction_terms" label="交易条件" />
+                  <ElTableColumn prop="delivery_time" label="要求交期" />
+                  <ElTableColumn prop="remarks" label="备注" />
+                  <ElTableColumn label="操作" width="100" fixed="right">
+                    {(scope) => (
+                      <>
+                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) } v-permission={ 'OutsourcingQuote:edit' }>修改</ElButton>
+                      </>
+                    )}
                   </ElTableColumn>
-                  <ElTableColumn label="加工单价">
-                    {({ row }) => <el-input v-model={ row.now_price } type="number" placeholder="请输入加工单价" />}
-                  </ElTableColumn>
-                  <ElTableColumn prop="notice.sale.delivery_time" label="要求交期" />
                 </ElTable>
                 <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
 
 
-
-
-                <div class="printTable" id='totalTable2'>
+                {/* <div class="printTable" id='totalTable2'>
                   <div id="printTable">
                     <div class="flex row-between" style="padding: 20px;width: 640px;">
                       <div>
@@ -193,11 +256,66 @@ export default defineComponent({
                       <div>日期：{ nowDate.value }</div>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </>
             )
           }}
         </ElCard>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改委外加工' : '添加委外加工' } onClose={ () => handleClose() }>
+          {{
+            default: () => (
+              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+                <ElFormItem label="供应商编码" prop="supplier_id">
+                  <MySelect v-model={ form.value.supplier_id } apiUrl="/api/getSupplierInfo" query="supplier_code" itemValue="supplier_code" placeholder="请选择供应商编码" />
+                </ElFormItem>
+                <ElFormItem label="生产订单" prop="notice_id">
+                  <MySelect v-model={ form.value.notice_id } apiUrl="/api/getProductNotice" query="notice" itemValue="notice" placeholder="请选择生产订单" />
+                </ElFormItem>
+                <ElFormItem label="工艺BOM" prop="process_bom_id">
+                  <ElSelect v-model={ form.value.process_bom_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择工艺BOM" onChange={ (value) => changeBomSelect(value) }>
+                    {bomList.value.map((e, index) => {
+                      return <ElOption value={ e.id } label={ e.name } key={ index } />
+                    })}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="工艺工序" prop="process_bom_children_id">
+                  <ElSelect v-model={ form.value.process_bom_children_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择工艺工序">
+                    {procedure.value.map((e, index) => {
+                      return <ElOption value={ e.id } label={ e.name } key={ index } />
+                    })}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="加工单价" prop="price">
+                  <ElInput v-model={ form.value.price } placeholder="请输入加工单价" />
+                </ElFormItem>
+                <ElFormItem label="委外数量" prop="number">
+                  <ElInput v-model={ form.value.number } placeholder="请输入委外数量" />
+                </ElFormItem>
+                <ElFormItem label="加工要求" prop="ment">
+                  <ElInput v-model={ form.value.ment } placeholder="请输入加工要求" />
+                </ElFormItem>
+                <ElFormItem label="交易币别" prop="transaction_currency">
+                  <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
+                </ElFormItem>
+                <ElFormItem label="交易条件" prop="other_transaction_terms">
+                  <ElInput v-model={ form.value.other_transaction_terms } placeholder="请输入交易条件" />
+                </ElFormItem>
+                <ElFormItem label="要求交期" prop="delivery_time">
+                  <ElDatePicker v-model={ form.value.delivery_time } type="date" placeholder="请选择交期" clearable={ false } />
+                </ElFormItem>
+                <ElFormItem label="备注" prop="remarks">
+                  <ElInput v-model={ form.value.remarks } placeholder="请输入备注" />
+                </ElFormItem>
+              </ElForm>
+            ),
+            footer: () => (
+              <span class="dialog-footer">
+                <ElButton onClick={ handleClose }>取消</ElButton>
+                <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
+              </span>
+            )
+          }}
+        </ElDialog>
       </>
     )
   }

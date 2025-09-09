@@ -61,6 +61,11 @@ const SubProcessBomChild = sequelize.define('SubProcessBomChild', {
     allowNull: true,
     comment: ' 订单尾数 '
   },
+  qr_code: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    comment: ' 二维码地址 '
+  },
 }, {
   sequelize,
   modelName: 'sub_process_bom_child',

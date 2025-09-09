@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize');
 
-const SubOutsourcingQuote = sequelize.define('SubOutsourcingQuote', {
+const SubOutsourcingOrder = sequelize.define('SubOutsourcingOrder', {
   id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
@@ -45,17 +45,11 @@ const SubOutsourcingQuote = sequelize.define('SubOutsourcingQuote', {
     defaultValue: null,
     comment: ' 加工单价 '
   },
-  now_price: {
-    type: DataTypes.INTEGER(11),
-    allowNull: true,
-    defaultValue: null,
-    comment: ' 实际单价 '
-  },
   number: {
     type: DataTypes.INTEGER(11),
     allowNull: true,
     defaultValue: null,
-    comment: ' 委外实际数量 '
+    comment: ' 委外数量 '
   },
   transaction_currency: {
     type: DataTypes.STRING(10),
@@ -72,6 +66,11 @@ const SubOutsourcingQuote = sequelize.define('SubOutsourcingQuote', {
     allowNull: true,
     comment: ' 加工要求 '
   },
+  delivery_time: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+    comment: ' 要求交期 '
+  },
   remarks: {
     type: DataTypes.TEXT,
     allowNull: true,
@@ -85,12 +84,12 @@ const SubOutsourcingQuote = sequelize.define('SubOutsourcingQuote', {
   },
 }, {
   sequelize,
-  modelName: 'sub_outsourcing_quote',
-  tableName: 'sub_outsourcing_quote',
+  modelName: 'sub_outsourcing_order',
+  tableName: 'sub_outsourcing_order',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
-  comment: '委外报价信息表'
+  comment: '委外加工单'
 })
 
-module.exports = SubOutsourcingQuote;
+module.exports = SubOutsourcingOrder;

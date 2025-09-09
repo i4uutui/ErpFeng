@@ -37,6 +37,7 @@ export default defineComponent({
     })
     let tableData = ref([])
     let edit = ref(0)
+    let loading = ref(false)
 
     const maxBomLength = computed(() => {
       if (tableData.value.length === 0) return 0;
@@ -85,6 +86,7 @@ export default defineComponent({
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
         if (valid){
+          loading.value = true
           const low = { ...form.value, archive: 1 }
           low.children.forEach((e, index) => e.process_index = index + 1)
           if(!edit.value){
@@ -109,6 +111,7 @@ export default defineComponent({
               fetchProductList();
             }
           }
+          loading.value = false
         }
       })
     }
@@ -296,7 +299,7 @@ export default defineComponent({
             footer: () => (
               <span class="dialog-footer">
                 <ElButton onClick={ handleClose }>取消</ElButton>
-                <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
+                <ElButton type="primary" loading={ loading.value } onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
               </span>
             )
           }}
