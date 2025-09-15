@@ -62,7 +62,7 @@ export default defineComponent({
               <div class="flex">
                 <div class="pr10 flex">
                   <span style="width: 120px">生产订单号:</span>
-                  <ElSelect v-model={ notice_number.value } multiple={false} filterable remote remote-show-suffix valueKey="id" query="notice_number" itemValue="notice_number" placeholder="请选择生产订单号" onChange={ () => fetchProductList() }>
+                  <ElSelect v-model={ notice_number.value } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单号" onChange={ () => fetchProductList() }>
                     {noticeList.value.map((e, index) => <ElOption value={ e.notice_number } label={ e.notice_number } key={ index } />)}
                   </ElSelect>
                 </div>
@@ -110,11 +110,11 @@ export default defineComponent({
                         <tr>
                           <th colspan="4" class="header-cell">
                             <div class="flex row-between print-header">
-                              <div>生产订单号:{ notice_number.value }</div>
-                              <div>产品编码:{ tableData.value[0]?.product_code }</div>
-                              <div>产品名称:{ tableData.value[0]?.product_name }</div>
-                              <div>工程图号:{ tableData.value[0]?.product_drawing }</div>
-                              <div>客户交期:{ tableData.value[0]?.delivery_time }</div>
+                              <div>生产订单号：{ notice_number.value }</div>
+                              <div>产品编码：{ tableData.value[0]?.product_code }</div>
+                              <div>产品名称：{ tableData.value[0]?.product_name }</div>
+                              <div>工程图号：{ tableData.value[0]?.product_drawing }</div>
+                              <div>客户交期：{ tableData.value[0]?.delivery_time }</div>
                             </div>
                           </th>
                         </tr>
@@ -143,21 +143,6 @@ export default defineComponent({
                         })}
                       </tbody>
                     </table>
-                    {/* <ElTable data={ tableData.value } border stripe style={{ width: "100%" }} class="print-table">
-                      <ElTableColumn prop='part_code' label="部件编码" width="100" />
-                      <ElTableColumn prop='part_name' label="部件名称" width="100" />
-                      <ElTableColumn prop='out_number' label="生产数量" width="100" />
-                      <ElTableColumn label="派工二维码">
-                        {{
-                          default: ({row}) => {
-                            const divDom = <div class="flex">
-                              {row.bom.children.map(e => <div style={{ marginRight: '10px' }}><img src='https://www-static.qbox.me/_next/static/media/bg-1.7610da8412b7a7da494f91ee11a2c771.png' width={ 100 } height={ 100 } /><div style={{ textAlign: 'center' }}>{ e.equipment.cycle.name }:{e.process.process_name}</div></div>)}
-                            </div>
-                            return divDom
-                          }
-                        }}
-                      </ElTableColumn>
-                    </ElTable> */}
                   </div>
                 </div>
               </>

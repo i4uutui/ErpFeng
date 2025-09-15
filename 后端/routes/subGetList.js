@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubWarehouseType, Op } = require('../models');
+const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubWarehouseType, SubOutsourcingOrder, SubMaterialMent, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -61,10 +61,10 @@ router.get('/getProductsCode', authMiddleware, async (req, res) => {
   const { product_code } = req.query;
   const { company_id } = req.user;
   
+  let productWhere = {}
+  if(product_code) productWhere.product_code = { [Op.like]: `%${product_code}%` }
   const config = {
-    where: { is_deleted: 1, company_id, product_code: {
-      [Op.like]: `%${product_code}%`
-    } },
+    where: { is_deleted: 1, company_id, ...productWhere },
     order: [['created_at', 'DESC']],
   }
   const { count, rows } = await SubProductCode.findAndCountAll(config);
@@ -77,10 +77,10 @@ router.get('/getPartCode', authMiddleware, async (req, res) => {
   const { part_code } = req.query;
   const { company_id } = req.user;
   
+  let partWhere = {}
+  if(part_code) partWhere.part_code = { [Op.like]: `%${part_code}%` }
   const config = {
-    where: { is_deleted: 1, company_id, part_code: {
-      [Op.like]: `%${part_code}%`
-    } },
+    where: { is_deleted: 1, company_id, ...partWhere },
     order: [['created_at', 'DESC']],
   }
   const { count, rows } = await SubPartCode.findAndCountAll(config);
@@ -93,10 +93,10 @@ router.get('/getMaterialCode', authMiddleware, async (req, res) => {
   const { material_code } = req.query;
   const { company_id } = req.user;
   
+  let materialWhere = {}
+  if(material_code) productWhere.material_code = { [Op.like]: `%${material_code}%` }
   const config = {
-    where: { is_deleted: 1, company_id, material_code: {
-      [Op.like]: `%${material_code}%`
-    } },
+    where: { is_deleted: 1, company_id, ...materialWhere },
     order: [['created_at', 'DESC']],
   }
   const { count, rows } = await SubMaterialCode.findAndCountAll(config);
@@ -144,10 +144,10 @@ router.get('/getSupplierInfo', authMiddleware, async (req, res) => {
   
   const { company_id } = req.user;
   
+  let supplierWhere = {}
+  if(supplier_code) supplierWhere.supplier_code = { [Op.like]: `%${supplier_code}%` }
   const config = {
-    where: { is_deleted: 1, company_id, supplier_code: {
-      [Op.like]: `%${supplier_code}%`
-    } },
+    where: { is_deleted: 1, company_id, ...supplierWhere },
     order: [['created_at', 'DESC']],
   }
   const { count, rows } = await SubSupplierInfo.findAndCountAll(config);
@@ -162,13 +162,17 @@ router.get('/getProductNotice', authMiddleware, async (req, res) => {
   
   const { company_id } = req.user;
   
+  let noticeWhere = {}
+  if(notice) noticeWhere.notice = { [Op.like]: `%${notice}%` }
   const config = {
-    where: { is_deleted: 1, company_id, notice: {
-      [Op.like]: `%${notice}%`
-    } },
+    where: { is_deleted: 1, company_id, ...noticeWhere },
     order: [['created_at', 'DESC']],
+    include: [
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name'] },
+      { model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number', 'delivery_time'] },
+    ]
   }
-  const { count, rows } = await SubProductNotice.findAndCountAll(config);
+  const rows = await SubProductNotice.findAll(config);
   const row = rows.map(e => e.toJSON())
   
   res.json({ data: formatArrayTime(row), code: 200 });
@@ -247,5 +251,56 @@ router.get('/getWarehouseType', authMiddleware, async (req, res) => {
   const typeRows = rows.map(e => e.toJSON())
   res.json({ data: typeRows, code: 200 })
 })
+
+router.get('/getOutsourcingQuote', authMiddleware, async (req, res) => {
+  const { company_id } = req.user;
+  
+  const rows = await SubOutsourcingOrder.findAll({
+    where: {
+      is_deleted: 1,
+      company_id,
+    },
+    attributes: ['id', 'supplier_id', 'notice_id'],
+    include: [
+      { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_abbreviation', 'supplier_code'] },
+      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice'] },
+      {
+        model: SubProcessBom,
+        as: 'processBom',
+        attributes: ['id', 'product_id'],
+        include: [
+          { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code'] },
+        ]
+      },
+    ],
+    order: [['created_at', 'DESC']],
+  })
+  const fromData = rows.map(item => item.toJSON())
+  
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(fromData), 
+    code: 200 
+  });
+});
+
+router.get('/getMaterialMent', authMiddleware, async (req, res) => {
+  const { company_id } = req.user;
+  
+  const rows = await SubMaterialMent.findAll({
+    where: {
+      is_deleted: 1,
+      company_id,
+    },
+    order: [['created_at', 'DESC']],
+  })
+  const fromData = rows.map(item => item.dataValues)
+  
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(fromData), 
+    code: 200 
+  });
+});
 
 module.exports = router;  

@@ -358,8 +358,6 @@ const routes = [
           buttons: [
             { code: 'OutsourcingQuote:add', label: '添加委外报价' },
             { code: 'OutsourcingQuote:edit', label: '修改' },
-            { code: 'OutsourcingQuote:quote', label: '委外加工' },
-            { code: 'OutsourcingQuote:allQuote', label: '批量委外加工' },
           ]
         }
       },
@@ -372,9 +370,8 @@ const routes = [
           parent: '委外管理',
           menu: true,
           buttons: [
+            { code: 'OutsourcingOrder:add', label: '新增委外加工' },
             { code: 'OutsourcingOrder:print', label: '打印' },
-            { code: 'OutsourcingOrder:wareh', label: '入库' },
-            { code: 'OutsourcingOrder:allWareh', label: '批量入库' },
           ]
         }
       },
@@ -435,6 +432,26 @@ const routes = [
         component: () => import('@/views/Warehouse/WarehouseRate.jsx'),
         meta: {
           title: '仓库管理',
+          parent: '仓库管理',
+          menu: true
+        }
+      },
+      {
+        path: '/warehouse/house-in',
+        name: 'HouseIn',
+        component: () => import('@/views/Warehouse/HouseIn.jsx'),
+        meta: {
+          title: '入库管理',
+          parent: '仓库管理',
+          menu: true
+        }
+      },
+      {
+        path: '/warehouse/house-out',
+        name: 'HouseOut',
+        component: () => import('@/views/Warehouse/HouseOut.jsx'),
+        meta: {
+          title: '出库管理',
           parent: '仓库管理',
           menu: true
         }

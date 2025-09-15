@@ -23,6 +23,7 @@ app.use('/api', require('./routes/subPurchase')); // 采购管理
 app.use('/api', require('./routes/subProduct')); // bom表管理
 app.use('/api', require('./routes/subOutSourcing')); // 委外管理
 app.use('/api', require('./routes/subProduction')); // 生产管理
+app.use('/api', require('./routes/subWareHouse')); // 仓库管理
 app.use('/api', require('./routes/subGetList')); // 获取其他列表相关的接口
 app.use('/upload', require('./routes/upload'));
 

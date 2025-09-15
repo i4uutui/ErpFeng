@@ -1,6 +1,6 @@
 <template>
   <ElSelect v-model="valueData" :multiple="multiple" filterable remote remote-show-suffix valueKey="id" :placeholder="placeholder" @change="changeSelect">
-    <ElOption v-for="(item, index) in option" :value="item.id" :label="item[itemValue]" :key="index">
+    <ElOption v-for="(item, index) in option" :value="item[itemId]" :label="item[itemValue]" :key="index">
       <div v-if="arrValue.length">
         <span v-for="(o, idx) in arrValue" :key="idx">
           <span v-if="arrValue.length == idx + 1">{{ getNestedProperty(item, o) }}</span>
@@ -21,6 +21,10 @@ const props = defineProps({
   itemValue: {
     type: String,
     default: ''
+  },
+  itemId: {
+    type: String,
+    default: 'id'
   },
   arrValue: {
     type: Array,

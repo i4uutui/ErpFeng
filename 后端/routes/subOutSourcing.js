@@ -42,7 +42,7 @@ router.post('/outsourcing_quote', authMiddleware, async (req, res) => {
     offset
   })
   const totalPages = Math.ceil(count / pageSize)
-  const fromData = rows.map(item => item.dataValues)
+  const fromData = rows.map(item => item.toJSON())
   
   // 返回所需信息
   res.json({ 
@@ -99,18 +99,22 @@ router.put('/outsourcing_quote', authMiddleware, async (req, res) => {
 
 // 委外加工
 router.post('/outsourcing_order', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.body;
+  const { page = 1, pageSize = 10, notice, supplier_code } = req.body;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
   
+  const whereNotice = {}
+  const whereSupplier = {}
+  if(notice) whereNotice.notice = notice
+  if(supplier_code) whereSupplier.supplier_code = supplier_code
   const { count, rows } = await SubOutsourcingOrder.findAndCountAll({
     where: {
       is_deleted: 1,
       company_id,
     },
     include: [
-      { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_abbreviation', 'supplier_code'] },
-      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice', 'sale_id'], include: [{ model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number', 'unit', 'delivery_time'] }] },
+      { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_abbreviation', 'supplier_code'], where: { ...whereSupplier } },
+      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice', 'sale_id'], where: { ...whereNotice }, include: [{ model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number', 'unit', 'delivery_time'] }] },
       {
         model: SubProcessBom,
         as: 'processBom',
@@ -148,33 +152,36 @@ router.post('/outsourcing_order', authMiddleware, async (req, res) => {
   });
 });
 router.post('/add_outsourcing_order', authMiddleware, async (req, res) => {
-  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, price, number, transaction_currency, other_transaction_terms, ment, delivery_time, remarks } = req.body;
+  const { data } = req.body;
   const { id: userId, company_id } = req.user;
+
+  const noticeList = data.map(e => e.notice_id)
+  if(noticeList.length){
+    const notice = await SubProductNotice.findAll({
+      where: {
+        id: {
+          [Op.in]: noticeList
+        },
+        is_deleted: 1
+      }
+    })
+    if(notice.length == 0) return res.json({ message: '生产订单不存在或已删除', code: 401 })
+  }
   
-  const notice = await SubProductNotice.findOne({
-    where: {
-      id: notice_id,
-      is_deleted: 1
-    }
-  })
-  if(!notice) return res.json({ message: '该生产订单不存在或已删除', code: 401 })
+  const arrData = data.map(e => ({ ...e, company_id, user_id: userId }))
+  await SubOutsourcingOrder.bulkCreate(arrData)
   
-  await SubOutsourcingOrder.create({
-    notice_id, supplier_id, process_bom_id, process_bom_children_id, price, number, transaction_currency, other_transaction_terms, ment, delivery_time, remarks, company_id,
-    user_id: userId,
-  })
-  
-  res.json({ message: '添加成功', code: 200 });
+  res.json({ message: '提交成功', code: 200 });
 })
 router.put('/outsourcing_order', authMiddleware, async (req, res) => {
-  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, price, number, transaction_currency, other_transaction_terms, ment, remarks, status, delivery_time, id } = req.body;
+  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, unit, price, number, transaction_currency, other_transaction_terms, ment, remarks, status, delivery_time, id } = req.body;
   const { id: userId, company_id } = req.user;
 
   const result = await SubOutsourcingOrder.findByPk(id)
   if(!result) res.json({ message: '未找到该委外加工信息', code: 401 })
   
   const obj = {
-    notice_id, supplier_id, process_bom_id, process_bom_children_id, price, number, transaction_currency, other_transaction_terms, ment, remarks, status, delivery_time, company_id,
+    notice_id, supplier_id, process_bom_id, process_bom_children_id, unit, price, number, transaction_currency, other_transaction_terms, ment, remarks, status, delivery_time, company_id,
     user_id: userId
   }
   const updateResult = await SubOutsourcingOrder.update(obj, {

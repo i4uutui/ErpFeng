@@ -11,3 +11,10 @@
 .headerScroll{
   width: 140px;
 }
+.cardHeaderFrom.el-form--inline .el-form-item__content{
+  width: auto !important;
+}
+.cardHeaderFrom.el-form--inline .el-form-item{
+  margin-right: 10px;
+  margin-bottom: 10px;
+}

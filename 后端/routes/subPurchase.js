@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialBom, SubMaterialBomChild, SubSaleOrder, Op } = require('../models')
+const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialMent, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -186,74 +186,59 @@ router.put('/material_quote', authMiddleware, async (req, res) => {
 
 
 
-
-// 采购单（先确认是否有报价单，如果有，再去查些报价单中的材料是否有材料bom，生产通知单暂定）
-router.get('/purchase_order', authMiddleware, async (req, res) => {
-  const { supplier_abbreviation, product_code, product_name, notice } = req.query;
+router.post('/material_ment', authMiddleware, async (req, res) => {
+  const { page = 1, pageSize = 10, notice, supplier_code, product_code } = req.body;
+  const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
   
-  let supplierWhere = {}
-  let productWhere = {}
-  let noticeWhere = {}
-  if(notice) noticeWhere.notice = { [Op.like]: `%${notice}%` }
-  if(product_name) productWhere.product_name = { [Op.like]: `%${product_name}%` }
-  if(product_code) productWhere.product_code = { [Op.like]: `%${product_code}%` }
-  if(supplier_abbreviation) supplierWhere.supplier_abbreviation = { [Op.like]: `%${supplier_abbreviation}%` }
-  const rows = await SubMaterialQuote.findAll({
+  let whereMent = {}
+  if(notice) whereMent.notice = notice
+  if(supplier_code) whereMent.supplier_code = supplier_code
+  if(product_code) whereMent.product_code = product_code
+  const { count, rows } = await SubMaterialMent.findAndCountAll({
     where: {
       is_deleted: 1,
       company_id,
+      ...whereMent
     },
-    include: [
-      { model: SubMaterialCode, as: 'material' },
-      { model: SubSupplierInfo, as: 'supplier', where: supplierWhere },
-      { 
-        model: SubProductNotice, 
-        as: 'notice', 
-        where: noticeWhere,
-        include: [
-          { model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number', 'actual_number'] }
-        ]
-      },
-      { model: SubProductCode, as: 'product', where: productWhere }
-    ],
     order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
   })
-  if(rows.length == 0) return res.json({ message: '未找到对应的报价单', code: 404 });
-  const quote = rows.map(e => e.toJSON())
+  const totalPages = Math.ceil(count / pageSize)
+  const fromData = rows.map(item => item.dataValues)
   
-  const materialIds = [...new Set(quote.map(item => item.material_id))]
-  const boms = await SubMaterialBom.findAll({
-    where: {
-      is_deleted: 1,
-      company_id,
-      archive: 0
-    },
-    attributes: ['id', 'product_id', 'part_id', 'archive'],
-    include: [
-      {
-        model: SubMaterialBomChild,
-        as: 'children',
-        attributes: ['id', 'material_bom_id', 'material_id'],
-        where: {
-          material_id: materialIds
-        }
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(fromData), 
+    total: count, 
+    totalPages, 
+    currentPage: parseInt(page), 
+    pageSize: parseInt(pageSize),
+    code: 200 
+  });
+});
+router.post('/add_material_ment', authMiddleware, async (req, res) => {
+  const { data } = req.body;
+  const { id: userId, company_id } = req.user;
+
+  const noticeList = data.map(e => e.notice_id)
+  if(noticeList.length){
+    const notice = await SubProductNotice.findAll({
+      where: {
+        id: {
+          [Op.in]: noticeList
+        },
+        is_deleted: 1
       }
-    ],
-    order: [
-      ['id', 'DESC']
-    ],
-  })
-  const bom = boms.map(e => e.toJSON())
-
-  const bomMaterialIds = [...new Set(bom.flatMap(item => item.children).map(child => child.material_id))];
-  const result = [...new Map(quote.filter(item => bomMaterialIds.includes(item.material_id)).map(item => [item.material_id, item])).values()];
-  for (let i = 0; i < result.length; i++) {
-    const element = result[i];
-    element.notice = formatObjectTime(element.notice)
+    })
+    if(notice.length == 0) return res.json({ message: '生产订单不存在或已删除', code: 401 })
   }
-
-  res.json({ data: formatArrayTime(result), code: 200 });
+  
+  const arrData = data.map(e => ({ ...e, company_id, user_id: userId }))
+  await SubMaterialMent.bulkCreate(arrData)
+  
+  res.json({ message: '提交成功', code: 200 });
 })
 
 

@@ -174,7 +174,7 @@ export default defineComponent({
                   <ElInput v-model={ form.value.notice } placeholder="请输入生产订单号" />
                 </ElFormItem>
                 <ElFormItem label="交货日期" prop="delivery_time">
-                  <ElDatePicker v-model={ form.value.delivery_time } type="datetime" placeholder="请选择交货日期" />
+                  <ElDatePicker v-model={ form.value.delivery_time } clearable={ false } value-format="YYYY-MM-DD" type="datetime" placeholder="请选择交货日期" />
                 </ElFormItem>
               </ElForm>
             ),

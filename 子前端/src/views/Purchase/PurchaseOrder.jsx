@@ -1,24 +1,73 @@
-import { defineComponent, ref, watch, onMounted } from 'vue'
-import { numberToChinese } from '@/utils/tool.js'
+import { defineComponent, ref, onMounted, reactive } from 'vue';
 import { getItem } from "@/assets/js/storage";
-import dayjs from "dayjs"
+import { getRandomString } from '@/utils/tool'
 import request from '@/utils/request';
+import dayjs from "dayjs"
 import "@/assets/css/print.scss"
+import "@/assets/css/landscape.scss"
 
 export default defineComponent({
-  setup(){
+  setup() {
+    const status = reactive({
+      1: '待审核',
+      2: '已审核'
+    })
     const user = ref()
     const nowDate = ref()
+    const formRef = ref(null);
+    const rules = reactive({
+      supplier_id: [
+        { required: true, message: '请选择供应商编码', trigger: 'blur' }
+      ],
+    })
+    let dialogVisible = ref(false)
+    let form = ref({
+      notice_id: '',
+      notice: '',
+      supplier_id: '',
+      supplier_code: '',
+      supplier_abbreviation: '',
+      product_id: '',
+      product_code: '',
+      product_name: '',
+      material_id: '',
+      material_code: '',
+      material_name: '',
+      model_spec: '',
+      other_features: '',
+      unit: '',
+      price: '',
+      order_number: '',
+      number: '',
+      delivery_time: '',
+    })
     let tableData = ref([])
-    let supplier_abbreviation = ref('')
-    let product_code = ref('')
-    let product_name = ref('')
-    let notice = ref('')
+    let currentPage = ref(1);
+    let pageSize = ref(30);
+    let total = ref(0);
     let isPrint = ref(false)
+    let allSelect = ref([])
+    let edit = ref(0)
+    let notice_number = ref('')
+    let supplier_code = ref('')
+    let product_code = ref('')
+    let noticeList = ref([])
+    let supplierList = ref([])
+    let productList = ref([])
+    let supplierInfo = ref([]) // 供应商编码列表
+    let proList = ref([]) // 产品编码列表
+    let materialList = ref([]) // 材料编码列表
+    let productNotice = ref([]) // 获取生产订单通知单列表
+    // 用来打印用的
+    let supplierName = ref('')
+    let productName = ref('')
+    let productCode = ref('')
+    let noticeNumber = ref('')
+
     
     const printObj = ref({
       id: "printTable", // 这里是要打印元素的ID
-      popTitle: "采购单", // 打印的标题
+      popTitle: "委外加工单", // 打印的标题
       // preview: true, // 是否启动预览模式，默认是false
       zIndex: 20003, // 预览窗口的z-index，默认是20002，最好比默认值更高
       previewBeforeOpenCallback() { console.log('正在加载预览窗口！'); }, // 预览窗口打开之前的callback
@@ -37,178 +86,439 @@ export default defineComponent({
       clickMounted() { console.log('点击v-print绑定的按钮了！') },
     })
     
-    // watch(() => tableData.value, () => {
-    //   const tds1 = document.querySelectorAll('#totalTable1 .el-table__footer-wrapper tr>td');
-    //   tds1[1].colSpan = 6;
-    //   tds1[1].style.textAlign = 'left';
-    //   const tds2 = document.querySelectorAll('#totalTable2 .el-table__footer-wrapper tr>td');
-    //   tds2[1].colSpan = 6;
-    //   tds2[1].style.textAlign = 'left';
-    // })
     onMounted(() => {
       user.value = getItem('user')
       nowDate.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
+      fetchProductList()
+      getProductsList() // 产品编码列表
+      getMaterialCode() // 材料编码列表
+      getSupplierInfo() // 供应商编码列表
+      getProductNotice() // 获取生产订单通知单列表
     })
     
     // 获取列表
     const fetchProductList = async () => {
-      const res = await request.get('/api/purchase_order', {
-        params: {
-          supplier_abbreviation: supplier_abbreviation.value,
-          product_code: product_code.value,
-          product_name: product_name.value,
-          notice: notice.value,
-        },
+      const res = await request.post('/api/material_ment', {
+        page: currentPage.value,
+        pageSize: pageSize.value,
+        notice: notice_number.value,
+        supplier_code: supplier_code.value,
+        product_code: product_code.value
       });
       tableData.value = res.data;
-      if(res.total == 0) return ElMessage.error('数据为空！')
-    };
-    const onActualNumber = async (notice) => {
-      if(!notice) return ElMessage.error('该采购单未生成生产通知单，无法修改')
-      const { id, actual_number } = notice.sale
-      const res = await request.put('/api/sale_order', { id, actual_number });
+      total.value = res.total;
+      getNoticeList() //获取订单号用来筛选
+
+      // 打印的时候用的
+      const data = res.data[0]
+      supplierName.value = data.supplier_abbreviation
+      productName.value = data.product_name
+      productCode.value = data.product_code
+      noticeNumber.value = data.notice
+    }
+    const getNoticeList = async () => {
+      const res = await request.get('/api/getMaterialMent')
+      noticeList.value = Array.from(res.data.map(e => e.notice) .reduce((map, item) => {
+        map.set(item, item);
+        return map;
+      }, new Map()).values())
+      supplierList.value = Array.from(res.data.map(e => e.supplier_code) .reduce((map, item) => {
+        map.set(item, item);
+        return map;
+      }, new Map()).values())
+      productList.value = Array.from(res.data.map(e => e.product_code).reduce((map, item) => {
+        map.set(item, item)
+        return map;
+      }, new Map()).values())
+    }
+    const getProductsList = async () => {
+      const res = await request.get('/api/getProductsCode')
+      proList.value = res.data
+    }
+    const getMaterialCode = async () => {
+      const res = await request.get(`/api/getMaterialCode`)
+      materialList.value = res.data
+    }
+    const getSupplierInfo = async () => {
+      const res = await request.get('/api/getSupplierInfo')
+      supplierInfo.value = res.data
+    }
+    const getProductNotice = async () => {
+      const res = await request.get('/api/getProductNotice')
+      productNotice.value = res.data
+    }
+    const handleSubmit = async (formEl) => {
+      if (!formEl) return
+      await formEl.validate(async (valid, fields) => {
+        if (valid){
+          if(!edit.value){
+            const obj = JSON.parse(JSON.stringify(form.value))
+            obj.id = getRandomString() // 临时ID
+            tableData.value = [obj, ...tableData.value]
+            // 重置
+            dialogVisible.value = false;
+          }else{
+            if(form.value.status){
+              // 修改
+              const myForm = {
+                id: edit.value,
+                ...form.value
+              }
+              const res = await request.put('/api/outsourcing_order', myForm);
+              if(res && res.code == 200){
+                ElMessage.success('修改成功');
+                dialogVisible.value = false;
+                fetchProductList();
+              }
+            }else{
+              const obj = JSON.parse(JSON.stringify(form.value))
+              tableData.value = tableData.value.map(o => {
+                if(o.id == edit.value){
+                  return obj
+                }
+                return o
+              })
+              // 重置
+              dialogVisible.value = false;
+            }
+          }
+        }
+      })
+    }
+    const setApiData = async (data) => {
+      const res = await request.post('/api/add_material_ment', { data })
       if(res && res.code == 200){
-        ElMessage.success('修改成功');
+        ElMessage.success('提交成功');
+        fetchProductList();
       }
     }
-    // 统计合计
-    const getSummaries = ({ columns, data }) => {
-      const sums = [];
-      // 计算product_price的总和
-      const totalPrice = data.reduce((sum, item) => {
-        return sum + Number(item.quote.product_price);
-      }, 0);
-      
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '合计';
-          return;
-        }
-        if (index === 2) {
-          sums[index] = totalPrice;
-          return;
-        }
-        if (index === 1) {
-          sums[index] = `人民币大写：${numberToChinese(totalPrice)}`;
-          return;
-        }
-      });
-      return sums;
+    const handleStatusData = async (row) => {
+      const data = {
+        notice_id: row.notice_id,
+        notice: row.notice,
+        supplier_id: row.supplier_id,
+        supplier_code: row.supplier_code,
+        supplier_abbreviation: row.supplier_abbreviation,
+        product_id: row.product_id,
+        product_code: row.product_code,
+        product_name: row.product_name,
+        material_id: row.material_id,
+        material_code: row.material_code,
+        material_name: row.material_name,
+        model_spec: row.model_spec,
+        other_features: row.other_features,
+        unit: row.unit,
+        price: row.price,
+        order_number: row.order_number,
+        number: row.number,
+        delivery_time: row.delivery_time,
+      }
+      setApiData([data])
     }
-
+    // 批量提交本地数据进行审核
+    const setStatusAllData = () => {
+      const json = allSelect.value.length ? allSelect.value.filter(o => !o.status) : tableData.value.filter(o => !o.status)
+      if(json.length == 0){
+        ElMessage.error('暂无可提交的数据')
+      }
+      const data = json.map(e => {
+        return {
+          notice_id: e.notice_id,
+          notice: e.notice,
+          supplier_id: e.supplier_id,
+          supplier_code: e.supplier_code,
+          supplier_abbreviation: e.supplier_abbreviation,
+          product_id: e.product_id,
+          product_code: e.product_code,
+          product_name: e.product_name,
+          material_id: e.material_id,
+          material_code: e.material_code,
+          material_name: e.material_name,
+          model_spec: e.model_spec,
+          other_features: e.other_features,
+          unit: e.unit,
+          price: e.price,
+          order_number: e.order_number,
+          number: e.number,
+          delivery_time: e.delivery_time,
+        }
+      })
+      setApiData(data)
+    }
+    const handleUplate = (row) => {
+      edit.value = row.id;
+      dialogVisible.value = true;
+      form.value = { ...row };
+    }
+    // 用户主动多选，然后保存到allSelect
+    const handleSelectionChange = (select) => {
+      allSelect.value = JSON.parse(JSON.stringify(select))
+    }
+    // 新增委外加工
+    const addOutSourcing = () => {
+      edit.value = 0;
+      dialogVisible.value = true;
+      resetForm()
+    }
+    // 取消弹窗
+    const handleClose = () => {
+      edit.value = 0;
+      dialogVisible.value = false;
+      resetForm()
+    }
+    const resetForm = () => {
+      form.value = {
+        notice_id: '',
+        notice: '',
+        supplier_id: '',
+        supplier_code: '',
+        supplier_abbreviation: '',
+        product_id: '',
+        product_code: '',
+        product_name: '',
+        material_id: '',
+        material_code: '',
+        material_name: '',
+        model_spec: '',
+        other_features: '',
+        unit: '',
+        price: '',
+        order_number: '',
+        number: '',
+        delivery_time: '',
+      }
+    }
+    const supplierChange = (value) => {
+      const supplier = supplierList.value.find(e => e.id == value)
+      form.value.supplier_code = supplier.supplier_code
+      form.value.supplier_abbreviation = supplier.supplier_abbreviation
+    }
+    const noticeChange = (value) => {
+      const notice = productNotice.value.find(e => e.id == value)
+      form.value.notice = notice.notice
+      form.value.product_id = notice.product_id
+      form.value.product_code = notice.product.product_code
+      form.value.product_name = notice.product.product_name
+      form.value.order_number = notice.sale.order_number
+      form.value.number = notice.sale.order_number
+      form.value.delivery_time = notice.sale.delivery_time
+    }
+    const productChange = (value) => {
+      const product = proList.value.find(e => e.id == value)
+      form.value.product_code = product.product_code
+      form.value.product_name = product.product_name
+    }
+    const materialChange = (value) => {
+      const material = materialList.value.find(e => e.id == value)
+      form.value.material_code = material.material_code
+      form.value.material_name = material.material_name
+      form.value.model_spec = `${material.model}/${material.specification}`
+      form.value.other_features = material.other_features
+      form.value.unit = material.usage_unit
+    }
+    // 分页相关
+    function pageSizeChange(val) {
+      currentPage.value = 1;
+      pageSize.value = val;
+      fetchProductList()
+    }
+    function currentPageChange(val) {
+      currentPage.value = val;
+      fetchProductList();
+    }
+    
     return() => (
       <>
         <ElCard>
           {{
             header: () => (
-              <div class="flex">
-                <div class="pr10 flex">
-                  <span>供应商名称:</span>
-                  <ElInput v-model={ supplier_abbreviation.value } style="width: 160px" placeholder="请输入"/>
-                </div>
-                <div class="pr10 flex">
-                  <span>产品编码:</span>
-                  <ElInput v-model={ product_code.value } style="width: 160px" placeholder="请输入"/>
-                </div>
-                <div class="pr10 flex">
-                  <span>产品名称:</span>
-                  <ElInput v-model={ product_name.value } style="width: 160px" placeholder="请输入"/>
-                </div>
-                <div class="pr10 flex">
-                  <span>生产订单:</span>
-                  <ElInput v-model={ notice.value } style="width: 160px" placeholder="请输入"/>
-                </div>
-                <div class="pr10">
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList }>
-                    查询
-                  </ElButton>
-                  <ElButton style="margin-top: -5px" type="primary" v-permission={ 'PurchaseOrder:print' } v-print={ printObj.value }>
-                    打印
-                  </ElButton>
-                </div>
-              </div>
+              <ElForm inline={ true } class="cardHeaderFrom">
+                <ElFormItem>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ addOutSourcing }> 新增采购单 </ElButton>
+                </ElFormItem>
+                <ElFormItem>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ setStatusAllData }> 批量提交审核 </ElButton>
+                </ElFormItem>
+                <ElFormItem>
+                  <ElButton style="margin-top: -5px" type="primary" v-print={ printObj.value }> 采购单打印 </ElButton>
+                </ElFormItem>
+                <ElFormItem label="生产订单号:">
+                  <ElSelect v-model={ notice_number.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择生产订单号" onChange={ () => fetchProductList() }>
+                    {noticeList.value.map((e, index) => <ElOption value={ e } label={ e } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="供应商编码:">
+                  <ElSelect v-model={ supplier_code.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择供应商编码" onChange={ () => fetchProductList() }>
+                    {supplierList.value.map((e, index) => <ElOption value={ e } label={ e } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="产品编码:">
+                  <ElSelect v-model={ product_code.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择产品编码" onChange={ () => fetchProductList() }>
+                    {productList.value.map((e, index) => <ElOption value={ e } label={ e } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+              </ElForm>
             ),
             default: () => (
               <>
-                <div id="totalTable1">
-                  <ElTable data={ tableData.value } border stripe style={{ width: "1040px" }}>
-                    <ElTableColumn prop="material.material_code" label="材料编码" width="120" />
-                    <ElTableColumn prop="material.material_name" label="材料名称" width="120" />
-                    <ElTableColumn label="型号&规格" width="160">
-                      {{
-                        default: ({ row }) => {
-                          const model = row.material.model
-                          const spec = row.material.specification
-                          return `${model}&${spec}`;
-                        }
-                      }}
-                    </ElTableColumn>
-                    <ElTableColumn prop="material.other_features" label="其它特性" width="120" />
-                    <ElTableColumn prop="material.purchase_unit" label="单位" width="100" />
-                    <ElTableColumn prop="price" label="单价" width="100" />
-                    <ElTableColumn prop="notice.sale.order_number" label="预计数量" width="100" />
-                    <ElTableColumn label="实际数量" width="100">
-                      {{
-                        default: ({ row }) => <ElInput v-model={ row.notice.sale.actual_number } style="width: 70px" placeholder="请输入实际数量" onBlur={ () => onActualNumber(row.notice) } />
-                      }}
-                    </ElTableColumn>
-                    <ElTableColumn prop="notice.delivery_time" label="交货时间" width="120" />
-                  </ElTable>
-                  <div id="extraPrintContent" class="flex" style="justify-content: space-between; padding-top: 6px;width: 940px">
-                    <div>核准：</div>
-                    <div>审查：</div>
-                    <div>制表：{ user.value?.name }</div>
-                    <div>日期：{ nowDate.value }</div>
-                  </div>
-                </div>
+                <ElTable data={ tableData.value } border stripe onSelectionChange={ (select) => handleSelectionChange(select) }>
+                  <ElTableColumn type="selection" width="55" />
+                  <ElTableColumn label="状态" width='80'>
+                    {({row}) => {
+                      const spanDom = <span>{ status[row.status] }</span>
+                      return spanDom
+                    }}
+                  </ElTableColumn>
+                  <ElTableColumn prop="notice" label="生产订单号" width='90' />
+                  <ElTableColumn prop="supplier_code" label="供应商编码" width='100' />
+                  <ElTableColumn prop="supplier_abbreviation" label="供应商名称" width='90' />
+                  <ElTableColumn prop="product_code" label="产品编码" width='100' />
+                  <ElTableColumn prop="product_name" label="产品名称" width='120' />
+                  <ElTableColumn prop="material_code" label="材料编码" width='100' />
+                  <ElTableColumn prop="material_name" label="材料名称" width='100' />
+                  <ElTableColumn prop="model_spec" label="型号&规格" width='100' />
+                  <ElTableColumn prop="other_features" label="其它特性" width='100' />
+                  <ElTableColumn prop="unit" label="单位" width='100' />
+                  <ElTableColumn prop="price" label="单价" width='100' />
+                  <ElTableColumn prop="order_number" label="预计数量" width='100' />
+                  <ElTableColumn prop="number" label="实际数量" width='100' />
+                  <ElTableColumn prop="delivery_time" label="交货时间" width='80' />
+                  <ElTableColumn label="操作" width="150" fixed="right">
+                    {({row}) => (
+                      <>
+                        {!row.status ? <>
+                          <ElButton size="small" type="default" onClick={ () => handleUplate(row) }>修改</ElButton>
+                          <ElButton size="small" type="primary" onClick={ () => handleStatusData(row) }>提交</ElButton>
+                        </> : ''}
+                      </>
+                    )}
+                  </ElTableColumn>
+                </ElTable>
+                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
                 <div class="printTable" id='totalTable2'>
                   <div id="printTable">
-                    <div class="flex row-between" style="padding: 20px;width: 640px;">
-                      <div>
-                        供应商:{ supplier_abbreviation.value }
-                      </div>
-                      <div>
-                        产品编码:{ product_code.value }
-                      </div>
-                      <div>
-                        产品名称:{ product_name.value }
-                      </div>
-                      <div>
-                        生产订单:{ notice.value }
-                      </div>
-                    </div>
-                    <ElTable data={ tableData.value } border stripe style={{ width: "780px" }}>
-                      <ElTableColumn prop="material.material_code" label="材料编码" width="80" />
-                      <ElTableColumn prop="material.material_name" label="材料名称" width="80" />
-                      <ElTableColumn label="型号&规格" width="120">
-                        {{
-                          default: ({ row }) => {
-                            const model = row.material.model
-                            const spec = row.material.specification
-                            return `${model}&${spec}`;
-                          }
-                        }}
-                      </ElTableColumn>
-                      <ElTableColumn prop="material.other_features" label="其它特性" width="100" />
-                      <ElTableColumn prop="material.purchase_unit" label="单位" width="60" />
-                      <ElTableColumn prop="material.unit_price" label="单价" width="80" />
-                      <ElTableColumn prop="notice.sale.order_number" label="预计数量" width="80" />
-                      <ElTableColumn prop="notice.sale.actual_number" label="实际数量" width="80" />
-                      <ElTableColumn prop="notice.delivery_time" label="交货时间" width="100" />
-                    </ElTable>
-                    <div id="extraPrintContent" class="flex" style="justify-content: space-between; padding-top: 6px;width: 780px">
-                      <div>核准：</div>
-                      <div>审查：</div>
-                      <div>制表：{ user.value?.name }</div>
-                      <div>日期：{ nowDate.value }</div>
-                    </div>
+                    <table class="print-table">
+                      <thead>
+                        <tr>
+                          <th colspan="9" class="title-cell">
+                            <div class="popTitle" style={{ textAlign: 'center', fontSize: '36px' }}>采购单</div>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th colspan="9" class="header-cell">
+                            <div class="flex row-between print-header">
+                              <div>供应商：{ supplierName.value }</div>
+                              <div>产品编码：{ productName.value }</div>
+                              <div>产品名称：{ productCode.value }</div>
+                              <div>生产订单：{ noticeNumber.value }</div>
+                            </div>
+                          </th>
+                        </tr>
+                        <tr class="table-header">
+                          <th>材料编码</th>
+                          <th>材料名称</th>
+                          <th>型号&规格</th>
+                          <th>其它特性</th>
+                          <th>单位</th>
+                          <th>单价</th>
+                          <th>数量</th>
+                          <th>交货时间</th>
+                          <th>状态</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(allSelect.value.length ? allSelect.value : tableData.value).map(e => {
+                          const tr = <tr class="table-row">
+                            <td>{ e.material_code }</td>
+                            <td>{ e.material_name }</td>
+                            <td>{ e.model_spec }</td>
+                            <td>{ e.other_features }</td>
+                            <td>{ e.unit }</td>
+                            <td>{ e.price }</td>
+                            <td>{ e.number }</td>
+                            <td>{ e.delivery_time }</td>
+                            <td>{ status[e.status] }</td>
+                          </tr>
+                          return tr
+                        })}
+                        <tr class="header-cell">
+                          <td colspan="9">
+                            <div class="flex row-between print-header">
+                              <div>核准：</div>
+                              <div>审查：</div>
+                              <div>制表：{ user.value?.name }</div>
+                              <div>日期：{ nowDate.value }</div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </>
             )
           }}
         </ElCard>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改委外加工' : '添加委外加工' } onClose={ () => handleClose() }>
+          {{
+            default: () => (
+              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+                <ElFormItem label="供应商编码" prop="supplier_id">
+                  <ElSelect v-model={ form.value.supplier_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择供应商编码" onChange={ (row) => supplierChange(row) }>
+                    {supplierInfo.value.map((e, index) => <ElOption value={ e.id } label={ e.supplier_code } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="生产订单" prop="notice_id">
+                  <ElSelect v-model={ form.value.notice_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单" onChange={ (row) => noticeChange(row) }>
+                    {productNotice.value.map((e, index) => <ElOption value={ e.id } label={ e.notice } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="产品编码" prop="product_id">
+                  <ElSelect v-model={ form.value.product_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择产品编码" onChange={ (row) => productChange(row) }>
+                    {proList.value.map((e, index) => {
+                      return <ElOption value={ e.id } label={ e.product_code } key={ index } />
+                    })}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="材料编码" prop="material_id">
+                  <ElSelect v-model={ form.value.material_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料编码" onChange={ (row) => materialChange(row) }>
+                    {materialList.value.map((e, index) => {
+                      return <ElOption value={ e.id } label={ e.material_code } key={ index } />
+                    })}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="型号&规格" prop="model_spec">
+                  <ElInput v-model={ form.value.model_spec } placeholder="请输入型号&规格" />
+                </ElFormItem>
+                <ElFormItem label="其它特性" prop="other_features">
+                  <ElInput v-model={ form.value.other_features } placeholder="请输入其它特性" />
+                </ElFormItem>
+                <ElFormItem label="单位" prop="unit">
+                  <ElInput v-model={ form.value.unit } placeholder="请输入单位" />
+                </ElFormItem>
+                <ElFormItem label="单价" prop="price">
+                  <ElInput v-model={ form.value.price } placeholder="请输入单价" />
+                </ElFormItem>
+                {/* <ElFormItem label="预计数量" prop="order_number">
+                  <ElInput v-model={ form.value.order_number } disabled placeholder="请输入预计数量" />
+                </ElFormItem> */}
+                <ElFormItem label="实际数量" prop="number">
+                  <ElInput v-model={ form.value.number } placeholder="请输入实际数量" />
+                </ElFormItem>
+                <ElFormItem label="交货时间" prop="delivery_time">
+                  <ElDatePicker v-model={ form.value.delivery_time } value-format="YYYY-MM-DD" type="date" placeholder="请选择交货时间" clearable={ false } />
+                </ElFormItem>
+              </ElForm>
+            ),
+            footer: () => (
+              <span class="dialog-footer">
+                <ElButton onClick={ handleClose }>取消</ElButton>
+                <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
+              </span>
+            )
+          }}
+        </ElDialog>
       </>
     )
   }
-})
+});

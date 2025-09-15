@@ -11,7 +11,7 @@
  Target Server Version : 50722 (5.7.22)
  File Encoding         : 65001
 
- Date: 09/09/2025 22:50:12
+ Date: 15/09/2025 22:34:53
 */
 
 SET NAMES utf8mb4;
@@ -111,7 +111,7 @@ INSERT INTO `ad_user` VALUES (1, 1, 'admin1', '$2b$10$qJOWecY5nOd6ICarLgePce3XPy
 INSERT INTO `ad_user` VALUES (2, 2, 'admin99', '$2b$10$Ukc2Byd6TFsl0u2p68J0leC7tVgwp4LDWr7s6YV0EWpc6xR3dZyMm', NULL, NULL, 1, 0, 1, 1, '2025-07-07 14:00:05', '2025-07-08 14:21:48');
 INSERT INTO `ad_user` VALUES (3, 1, '2121', '$2b$10$EpPaXdgc4ugWWT1Qi.DFSeRoz9XyBa3N7mKkNGuXEBvmy.pe8HEWq', NULL, NULL, 1, 0, 1, 1, '2025-07-08 10:35:09', '2025-07-08 14:21:49');
 INSERT INTO `ad_user` VALUES (4, 1, '121', '$2b$10$4ZYMcp6ZeDQauRLCZCb1mOBIUy9ML4gbRTZDizJU3VaOt83D8ZJnu', '2132', '[[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EmployeeInfo\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"SalesOrder\"],[\"订单管理\",\"ProductDelivery\"]]', 2, 1, 1, 1, '2025-07-08 14:10:45', '2025-07-08 14:40:30');
-INSERT INTO `ad_user` VALUES (5, 1, 'admin2', '$2b$10$qJOWecY5nOd6ICarLgePce3XPyVtXXrp1dkbB9ZQvtydVrKLz8uGG', '哈哈', '[[\"系统管理\"],[\"系统管理\",\"OrganizeManagement\"],[\"系统管理\",\"ProcessCycle\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\"],[\"基础资料\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"基础资料\",\"EmployeeInfo\"],[\"订单管理\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"SalesOrder\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductNotice\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"订单管理\",\"ProductDelivery\"],[\"产品信息\"],[\"产品信息\",\"MaterialBOM\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品信息\",\"MaterialBOMArchive\"],[\"产品信息\",\"ProcessBOM\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品信息\",\"ProcessBOMArchive\"]]', 2, 1, 1, 1, '2025-07-08 14:20:13', '2025-08-23 11:25:17');
+INSERT INTO `ad_user` VALUES (5, 1, 'admin2', '$2b$10$qJOWecY5nOd6ICarLgePce3XPyVtXXrp1dkbB9ZQvtydVrKLz8uGG', '哈哈', '[[\"系统管理\"],[\"系统管理\",\"OrganizeManagement\"],[\"系统管理\",\"ProcessCycle\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\"],[\"基础资料\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"基础资料\",\"EmployeeInfo\"],[\"订单管理\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"SalesOrder\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductNotice\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"订单管理\",\"ProductDelivery\"],[\"产品信息\"],[\"产品信息\",\"MaterialBOM\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品信息\",\"MaterialBOMArchive\"],[\"产品信息\",\"ProcessBOM\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品信息\",\"ProcessBOMArchive\"],[\"委外管理\"],[\"委外管理\",\"OutsourcingOrder\"],[\"委外管理\",\"OutsourcingQuote\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"]]', 2, 1, 1, 1, '2025-07-08 14:20:13', '2025-09-11 13:50:04');
 
 -- ----------------------------
 -- Table structure for sub_customer_info
@@ -294,6 +294,45 @@ INSERT INTO `sub_material_code` VALUES (2, 1, 1, '123', '121', '2121', '21', '21
 INSERT INTO `sub_material_code` VALUES (3, 1, 1, '789', '555', '535', '35353', '353', '353', '5353', '535', '353', 1, '2025-08-17 09:38:16', '2025-08-17 09:38:16');
 
 -- ----------------------------
+-- Table structure for sub_material_ment
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_material_ment`;
+CREATE TABLE `sub_material_ment`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
+  `company_id` int(11) NOT NULL COMMENT '企业id',
+  `user_id` int(11) NOT NULL COMMENT '发布的用户id',
+  `notice_id` int(11) NULL DEFAULT NULL COMMENT '生产订单ID',
+  `notice` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生产订单',
+  `supplier_id` int(11) NULL DEFAULT NULL COMMENT '供应商ID',
+  `supplier_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '供应商编码',
+  `supplier_abbreviation` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '供应商名称',
+  `product_id` int(11) NULL DEFAULT NULL COMMENT '产品Id',
+  `product_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品编码',
+  `product_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品名称',
+  `material_id` int(11) NULL DEFAULT NULL COMMENT '材料ID',
+  `material_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '材料编码',
+  `material_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '材料名称',
+  `model_spec` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '型号&规格',
+  `other_features` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '其它特性',
+  `unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '单位',
+  `price` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '单价',
+  `order_number` int(10) NULL DEFAULT NULL COMMENT '预计数量',
+  `number` int(10) NULL DEFAULT NULL COMMENT '实际数量',
+  `delivery_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交货时间',
+  `status` int(1) NULL DEFAULT 1 COMMENT '状态：1待审核，2已审核',
+  `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料报价单表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of sub_material_ment
+-- ----------------------------
+INSERT INTO `sub_material_ment` VALUES (1, 1, 1, 7, '11111', 1, '123', '2121', 19, 'A001', '圆珠笔', 2, '123', '121', '2121/21', '2121', '21', '26', 15000, 15000, '2025-10-31', 1, 1, '2025-09-14 16:26:30', '2025-09-14 16:32:51');
+INSERT INTO `sub_material_ment` VALUES (2, 1, 1, 6, '2222', 2, '1234', '151', 10, '1233', '212', 2, '123', '121', '2121/21', '2121', '21', '22', 18000, 13000, '2025-07-07', 1, 1, '2025-09-14 16:33:27', '2025-09-14 16:33:27');
+
+-- ----------------------------
 -- Table structure for sub_material_quote
 -- ----------------------------
 DROP TABLE IF EXISTS `sub_material_quote`;
@@ -335,6 +374,7 @@ CREATE TABLE `sub_outsourcing_order`  (
   `supplier_id` int(11) NULL DEFAULT NULL COMMENT '供应商ID',
   `process_bom_id` int(11) NULL DEFAULT NULL COMMENT '工艺BOM id',
   `process_bom_children_id` int(5) NULL DEFAULT NULL COMMENT '工艺BOM副表的id',
+  `unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '单位',
   `price` int(11) NULL DEFAULT NULL COMMENT '加工单价',
   `number` int(11) NULL DEFAULT NULL COMMENT '委外数量',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
@@ -342,16 +382,19 @@ CREATE TABLE `sub_outsourcing_order`  (
   `ment` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '加工要求',
   `delivery_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '要求交期',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
+  `status` int(1) NULL DEFAULT 1 COMMENT '状态：1待审核，2已审核',
   `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '委外报价信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '委外报价信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_outsourcing_order
 -- ----------------------------
-INSERT INTO `sub_outsourcing_order` VALUES (5, 1, 1, 6, 1, 39, 28, 27, 8000, '￥￥', '无', '无', '2025-09-30', '无', 1, '2025-09-09 16:49:05', '2025-09-09 16:58:17');
+INSERT INTO `sub_outsourcing_order` VALUES (5, 1, 1, 6, 1, 39, 28, '个', 27, 8000, '￥￥', '无', '无', '2025-09-30', '无', 1, 1, '2025-09-09 16:49:05', '2025-09-11 10:41:03');
+INSERT INTO `sub_outsourcing_order` VALUES (6, 1, 1, 7, 2, 38, 29, '个', 22, 13000, '￥', '无34', '无2', '2025-09-24', '无5', 1, 1, '2025-09-11 11:36:37', '2025-09-11 11:45:00');
+INSERT INTO `sub_outsourcing_order` VALUES (7, 1, 1, 5, 2, 38, 29, '顿', 3, 1600, '￥', '无5', '无', '2025-09-25', '无6', 1, 1, '2025-09-11 11:43:43', '2025-09-11 11:43:43');
 
 -- ----------------------------
 -- Table structure for sub_outsourcing_quote
@@ -818,6 +861,75 @@ CREATE TABLE `sub_supplier_info`  (
 -- ----------------------------
 INSERT INTO `sub_supplier_info` VALUES (1, 1, 1, '123', '2121', '13', '15', '1515', '212', '5151', '15', '15151', '1515', '15', 1, '2025-07-10 00:03:15', '2025-07-10 00:03:15');
 INSERT INTO `sub_supplier_info` VALUES (2, 1, 1, '1234', '151', '153333333', '1', '515', '155', '511', '515', '15', '1', '515', 1, '2025-07-10 00:03:27', '2025-07-10 00:03:37');
+
+-- ----------------------------
+-- Table structure for sub_warehouse_apply
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_warehouse_apply`;
+CREATE TABLE `sub_warehouse_apply`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+  `user_id` int(11) NOT NULL COMMENT '发布的用户id',
+  `company_id` int(11) NOT NULL COMMENT '所属企业id',
+  `ware_id` int(11) NULL DEFAULT NULL COMMENT '仓库类型ID',
+  `house_id` int(11) NULL DEFAULT NULL COMMENT '仓库ID',
+  `item_id` int(11) NULL DEFAULT NULL COMMENT '物料ID',
+  `code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '物料编码',
+  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '物料名称',
+  `mode` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '规格型号',
+  `quantity` int(20) NULL DEFAULT NULL COMMENT '数量',
+  `type` tinyint(1) NULL DEFAULT NULL COMMENT '1:入库 2:出库',
+  `status` tinyint(1) NULL DEFAULT 0 COMMENT '0:待审核 1:已通过 2:已拒绝',
+  `apply_id` int(11) NULL DEFAULT NULL COMMENT '申请人ID',
+  `apply_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '申请时间',
+  `approve_id` int(11) NULL DEFAULT NULL COMMENT '审核人ID',
+  `approve_time` timestamp NULL DEFAULT NULL COMMENT '审核时间',
+  `is_deleted` tinyint(1) UNSIGNED ZEROFILL NULL DEFAULT 1 COMMENT '1：未删除；0：已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '出库入库申请表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sub_warehouse_apply
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for sub_warehouse_content
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_warehouse_content`;
+CREATE TABLE `sub_warehouse_content`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+  `user_id` int(11) NOT NULL COMMENT '发布的用户id',
+  `company_id` int(11) NOT NULL COMMENT '所属企业id',
+  `ware_id` int(11) NULL DEFAULT NULL COMMENT '仓库类型ID',
+  `house_id` int(11) NULL DEFAULT NULL COMMENT '仓库ID',
+  `item_id` int(11) NULL DEFAULT NULL COMMENT '物料ID',
+  `code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '物料编码',
+  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '物料名称',
+  `mode` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '规格型号',
+  `other_features` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '其他特性',
+  `unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '采购单位',
+  `inv_unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '库存单位',
+  `initial` int(20) NULL DEFAULT NULL COMMENT '期初数量',
+  `number_in` int(20) NULL DEFAULT NULL COMMENT '入库数量',
+  `number_out` int(20) NULL DEFAULT NULL COMMENT '出库数量',
+  `number_new` int(20) NULL DEFAULT NULL COMMENT '最新库存',
+  `price` decimal(10, 1) NULL DEFAULT NULL COMMENT '内部单价',
+  `price_total` decimal(20, 1) NULL DEFAULT NULL COMMENT '存货金额',
+  `price_in` decimal(20, 1) NULL DEFAULT NULL COMMENT '入库金额',
+  `price_out` decimal(10, 1) NULL DEFAULT NULL COMMENT '出库金额',
+  `last_in_time` timestamp NULL DEFAULT NULL COMMENT '最后入库时间',
+  `last_out_time` timestamp NULL DEFAULT NULL COMMENT '最后出库时间',
+  `is_deleted` int(1) UNSIGNED ZEROFILL NULL DEFAULT 1 COMMENT '1：未删除；0：已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '仓库列表数据表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sub_warehouse_content
+-- ----------------------------
+INSERT INTO `sub_warehouse_content` VALUES (6, 1, 1, 1, 6, 2, '123', '121', '2121 / 21', '2121', NULL, '件', 536, NULL, NULL, NULL, 12.0, NULL, NULL, NULL, NULL, NULL, 1, '2025-09-15 17:39:13', '2025-09-15 17:39:13');
 
 -- ----------------------------
 -- Table structure for sub_warehouse_cycle

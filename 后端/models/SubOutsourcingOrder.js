@@ -39,6 +39,11 @@ const SubOutsourcingOrder = sequelize.define('SubOutsourcingOrder', {
     allowNull: false,
     comment: ' 工艺BOM副表的id '
   },
+  unit: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    comment: ' 单位 '
+  },
   price: {
     type: DataTypes.INTEGER(11),
     allowNull: true,
@@ -75,6 +80,12 @@ const SubOutsourcingOrder = sequelize.define('SubOutsourcingOrder', {
     type: DataTypes.TEXT,
     allowNull: true,
     comment: ' 备注 '
+  },
+  status: {
+    type: DataTypes.TINYINT(1),
+    allowNull: true,
+    defaultValue: 1,
+    comment: ' 是否已审核：1 - 待审核，2 - 已审核 '
   },
   is_deleted: {
     type: DataTypes.TINYINT(1),

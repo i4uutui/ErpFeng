@@ -191,7 +191,7 @@ export default defineComponent({
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
                 <ElFormItem label="接单日期" prop="rece_time">
-                  <ElDatePicker v-model={ form.value.rece_time } type="datetime" placeholder="请选择接单日期" />
+                  <ElDatePicker v-model={ form.value.rece_time } clearable={ false } value-format="YYYY-MM-DD" type="datetime" placeholder="请选择接单日期" />
                 </ElFormItem>
                 <ElFormItem label="客户名称" prop="customer_id">
                   <MySelect v-model={ form.value.customer_id } apiUrl="/api/getCustomerInfo" query="customer_abbreviation" itemValue="customer_abbreviation" placeholder="请选择客户名称" />
@@ -212,10 +212,10 @@ export default defineComponent({
                   <ElInput v-model={ form.value.unit } placeholder="请输入单位" />
                 </ElFormItem>
                 <ElFormItem label="交货日期" prop="delivery_time">
-                  <ElDatePicker v-model={ form.value.delivery_time } type="datetime" placeholder="请选择交货日期" />
+                  <ElDatePicker v-model={ form.value.delivery_time } clearable={ false } value-format="YYYY-MM-DD" type="datetime" placeholder="请选择交货日期" />
                 </ElFormItem>
                 <ElFormItem label="送货日期" prop="goods_time">
-                  <ElDatePicker v-model={ form.value.goods_time } type="datetime" placeholder="请选择送货日期" />
+                  <ElDatePicker v-model={ form.value.goods_time } clearable={ false } value-format="YYYY-MM-DD" type="datetime" placeholder="请选择送货日期" />
                 </ElFormItem>
                 <ElFormItem label="送货地点" prop="goods_address">
                   <ElInput v-model={ form.value.goods_address } placeholder="请输入送货地点" />
