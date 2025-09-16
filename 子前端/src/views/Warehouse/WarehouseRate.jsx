@@ -33,8 +33,11 @@ export default defineComponent({
       inv_unit: '',
       price: ''
     })
+    let isPartId = ref(false) // 临时
     let wareType = ref([])
+    let menuWareIndex = ref('')
     let wareActive = ref('')
+    let tabsActive = ref('')
     let houseList = ref([])
     let tabList = ref([])
     let materialList = ref([])
@@ -54,6 +57,7 @@ export default defineComponent({
       const res = await request.get('/api/getWarehouseType')
       wareType.value = res.data
       wareActive.value = res.data[0].id
+      menuWareIndex.value = res.data[0].id
       fetchTabList()
     }
     // 获取Tab列表
@@ -66,6 +70,7 @@ export default defineComponent({
         },
       });
       tabList.value = res.data;
+      tabsActive.value = res.data[0].id
     };
     // 初始化新增
     const handleSubmit = async (formEl) => {
@@ -114,6 +119,13 @@ export default defineComponent({
       }else if(ware == 3){
         itemList.value = productList.value
       }
+      if(!isPartId.value && tabsActive.value){
+        isPartId.value = true
+        form.value.house_id = tabsActive.value
+      }
+    }
+    const menuChange = (value) => {
+      menuWareIndex.value = value
     }
     const houseChange = async (value) => {
 
@@ -127,11 +139,14 @@ export default defineComponent({
     }
     // 添加
     const handleAdd = () => {
+      form.value.ware_id = Number(menuWareIndex.value)
+      form.value.house_id = Number(tabsActive.value)
+      wareChange(menuWareIndex.value)
       dialogVisible.value = true;
-      resetForm()
     };
     // 取消弹窗
     const handleClose = () => {
+      isPartId.value = false
       dialogVisible.value = false;
       resetForm()
     }
@@ -152,7 +167,7 @@ export default defineComponent({
       fetchTabList()
     }
     const onTabClick = (pane) => {
-      const row = tabList.value[pane.index]
+      // const row = tabList.value[pane.index]
     }
     const getitemCode = (row) => {
       return row[itemCode[form.value.ware_id]]
@@ -167,13 +182,13 @@ export default defineComponent({
             </ElFormItem>
           </ElForm>
           <div class='flex wareHouse' style={{ alignItems: 'flex-start', height: '100%' }}>
-            <ElMenu default-active="1">
+            <ElMenu default-active="1" onSelect={ (row) => menuChange(row) }>
               {wareType.value.map((e, index) => <ElMenuItem index={ e.id.toString() } key={ index } onClick={ (row) => menuClick(row) }>{e.name}</ElMenuItem>)}
             </ElMenu>
             <div class="right" style={{ paddingLeft: '20px' }}>
-              <ElTabs type="card" onTabClick={ (pane, e) => onTabClick(pane, e) }>
+              <ElTabs v-model={ tabsActive.value } type="card" onTabChange={ (pane) => onTabClick(pane) }>
                 {tabList.value.map((item, index) => (
-                  <ElTabPane label={ item.name }></ElTabPane>
+                  <ElTabPane label={ item.name } name={ item.id } key={ item.id }></ElTabPane>
                 ))}
               </ElTabs>
             </div>
@@ -184,17 +199,17 @@ export default defineComponent({
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
                 <ElFormItem label="仓库类型" prop="ware_id">
-                  <ElSelect v-model={ form.value.ware_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择仓库类型" onChange={ (row) => wareChange(row) }>
+                  <ElSelect v-model={ form.value.ware_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择仓库类型" onChange={ (row) => wareChange(row) }>
                     {wareType.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="仓库名称" prop="house_id">
-                  <ElSelect v-model={ form.value.house_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择仓库名称" onChange={ (row) => houseChange(row) }>
+                  <ElSelect v-model={ form.value.house_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择仓库名称" onChange={ (row) => houseChange(row) }>
                     {houseList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="物料编码" prop="item_id">
-                  <ElSelect v-model={ form.value.item_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择物料编码" onChange={ (row) => itemChange(row) }>
+                  <ElSelect v-model={ form.value.item_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择物料编码" onChange={ (row) => itemChange(row) }>
                     {itemList.value.map((e, index) => <ElOption value={ e.id } label={ getitemCode(e) } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
