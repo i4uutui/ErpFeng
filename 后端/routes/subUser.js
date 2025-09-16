@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
-const { AdUser, AdOrganize, SubProcessCycle, SubWarehouseCycle, Op, SubWarehouseType } = require('../models')
+const { AdUser, AdOrganize, SubProcessCycle, SubWarehouseCycle, Op, SubConstType } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
@@ -13,7 +13,7 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
  *   get:
  *     summary: 获取后台用户列表（分页）
  *     tags:
- *       - 系统管理
+ *       - 系统管理(User)
  *     parameters:
  *       - name: page
  *         schema:
@@ -29,46 +29,47 @@ router.get('/user', authMiddleware, async (req, res) => {
   const offset = (page - 1) * pageSize;
   const { company_id, id: userId } = req.user;
   // 查询当前页的数据，排除当前登录用户，只显示其创建的用户
-  const { count, rows } = await AdUser.findAndCountAll({
-    where: {
-      is_deleted: 1,
-      parent_id: userId,
-      company_id,
-    },
-    include: [{
-      model: AdOrganize,
-      as: 'organize',
-      where: { is_deleted: 1 },
-      required: false
-    }],
-    order: [['created_at', 'DESC']],
-    limit: parseInt(pageSize),
-    offset
-  })
-  const totalPages = Math.ceil(count / pageSize)
-  const fromData = rows.map(item => {
-    const data = item.toJSON()
-    const { password, ...userData } = data
-    return userData
-  })
+  try {
+    const { count, rows } = await AdUser.findAndCountAll({
+      where: {
+        is_deleted: 1,
+        parent_id: userId,
+        company_id,
+      },
+      attributes: ['id', 'name', 'parent_id', 'username', 'parent_id', 'status', 'created_at'],
+      include: [{
+        model: AdOrganize,
+        as: 'organize',
+        where: { is_deleted: 1 },
+        required: false
+      }],
+      order: [['created_at', 'DESC']],
+      limit: parseInt(pageSize),
+      offset
+    })
+    const totalPages = Math.ceil(count / pageSize)
 
-  const result = fromData.map(user => {
-    const organizeNames = user.organize?.map(pos => pos.label);
-    return {
-      ...user,
-      organizeNames,
-    };
-  })
+    const result = rows.map(user => {
+      const data = user.toJSON()
+      const organizeNames = data.organize?.map(pos => pos.label);
+      return {
+        ...data,
+        organizeNames,
+      };
+    })
 
-  // 返回所需信息
-  res.json({ 
-    data: formatArrayTime(result), 
-    total: count, 
-    totalPages, 
-    currentPage: parseInt(page), 
-    pageSize: parseInt(pageSize),
-    code: 200
-  });
+    // 返回所需信息
+    res.json({ 
+      data: formatArrayTime(result), 
+      total: count, 
+      totalPages, 
+      currentPage: parseInt(page), 
+      pageSize: parseInt(pageSize),
+      code: 200
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // 添加用户
@@ -78,7 +79,7 @@ router.get('/user', authMiddleware, async (req, res) => {
  *   post:
  *     summary: 新增用户
  *     tags:
- *       - 系统管理
+ *       - 系统管理(User)
  *     parameters:
  *       - name: username
  *         schema:
@@ -132,7 +133,7 @@ router.post('/user', authMiddleware, async (req, res) => {
  *   put:
  *     summary: 更新用户
  *     tags:
- *       - 系统管理
+ *       - 系统管理(User)
  *     parameters:
  *       - name: id
  *         schema:
@@ -198,7 +199,7 @@ router.put('/user', authMiddleware, async (req, res) => {
  *   delete:
  *     summary: 删除用户
  *     tags:
- *       - 系统管理
+ *       - 系统管理(User)
  *     parameters:
  *       - name: id
  *         schema:
@@ -271,7 +272,7 @@ function buildOrgTree(nodes) {
  *     summary: 组织结构
  *     description: 本接口不需要传参数，直接调用即可
  *     tags:
- *       - 系统管理
+ *       - 系统管理(User)
  */
 router.get('/organize', authMiddleware, async (req, res) => {
   const { company_id } = req.user;
@@ -308,7 +309,7 @@ router.get('/organize', authMiddleware, async (req, res) => {
  *   post:
  *     summary: 新增组织节点
  *     tags:
- *       - 系统管理
+ *       - 系统管理(User)
  *     parameters:
  *       - name: pid
  *         schema:
@@ -352,7 +353,7 @@ router.post('/organize', authMiddleware, async (req, res) => {
  *   put:
  *     summary: 修改组织节点
  *     tags:
- *       - 系统管理
+ *       - 系统管理(User)
  *     parameters:
  *       - name: id
  *         schema:
@@ -400,7 +401,7 @@ router.put('/organize', authMiddleware, async (req, res) => {
  *   delete:
  *     summary: 删除组织节点
  *     tags:
- *       - 系统管理
+ *       - 系统管理(User)
  *     parameters:
  *       - name: id
  *         schema:
@@ -433,7 +434,7 @@ router.delete('/organize', authMiddleware, async (req, res) => {
  *   get:
  *     summary: 获取生产制程列表（分页）
  *     tags:
- *       - 系统管理
+ *       - 系统管理(User)
  *     parameters:
  *       - name: page
  *         schema:
@@ -454,6 +455,7 @@ router.get('/process_cycle', authMiddleware, async (req, res) => {
       is_deleted: 1,
       company_id
     },
+    attributes: ['id', 'name', 'created_at'],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
     offset
@@ -477,7 +479,7 @@ router.get('/process_cycle', authMiddleware, async (req, res) => {
  *   post:
  *     summary: 新增生产制程
  *     tags:
- *       - 系统管理
+ *       - 系统管理(User)
  *     parameters:
  *       - name: name
  *         schema:
@@ -500,7 +502,7 @@ router.post('/process_cycle', authMiddleware, async (req, res) => {
  *   put:
  *     summary: 修改生产制程
  *     tags:
- *       - 系统管理
+ *       - 系统管理(User)
  *     parameters:
  *       - name: id
  *         schema:
@@ -533,7 +535,18 @@ router.put('/process_cycle', authMiddleware, async (req, res) => {
 
 
 
-// 仓库类型
+/**
+ * @swagger
+ * /api/warehouse_cycle:
+ *   get:
+ *     summary: 仓库名列表
+ *     tags:
+ *       - 系统管理(User)
+ *     parameters:
+ *       - name: ware_id
+ *         schema:
+ *           type: int
+ */
 router.get('/warehouse_cycle', authMiddleware, async (req, res) => {
   const { ware_id } = req.query;
   const { company_id } = req.user;
@@ -546,8 +559,9 @@ router.get('/warehouse_cycle', authMiddleware, async (req, res) => {
       company_id,
       ...whereQuery
     },
+    attributes: ['id', 'name', 'ware_id', 'created_at'],
     include: [
-      { model: SubWarehouseType, as: 'ware', attributes: ['id', 'name'] }
+      { model: SubConstType, as: 'ware', attributes: ['id', 'name'], where: { type: 'house' } }
     ],
     order: [['created_at', 'DESC']],
   })
@@ -559,6 +573,21 @@ router.get('/warehouse_cycle', authMiddleware, async (req, res) => {
     code: 200 
   });
 })
+/**
+ * @swagger
+ * /api/warehouse_cycle:
+ *   post:
+ *     summary: 新增仓库
+ *     tags:
+ *       - 系统管理(User)
+ *     parameters:
+ *       - name: name
+ *         schema:
+ *           type: string
+ *       - name: ware_id
+ *         schema:
+ *           type: int
+ */
 router.post('/warehouse_cycle', authMiddleware, async (req, res) => {
   const { name, ware_id } = req.body;
   const { id: userId, company_id } = req.user;
@@ -570,6 +599,24 @@ router.post('/warehouse_cycle', authMiddleware, async (req, res) => {
   
   res.json({ msg: '添加成功', code: 200 });
 })
+/**
+ * @swagger
+ * /api/warehouse_cycle:
+ *   put:
+ *     summary: 修改仓库
+ *     tags:
+ *       - 系统管理(User)
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ *       - name: name
+ *         schema:
+ *           type: string
+ *       - name: ware_id
+ *         schema:
+ *           type: int
+ */
 router.put('/warehouse_cycle', authMiddleware, async (req, res) => {
   const { name, ware_id, id } = req.body;
   const { id: userId, company_id } = req.user;

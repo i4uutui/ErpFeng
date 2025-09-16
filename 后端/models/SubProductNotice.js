@@ -47,13 +47,13 @@ const SubProductNotice = sequelize.define('SubProductNotice', {
     comment: ' 交货日期 '
   },
   is_notice: {
-    type: DataTypes.TINYINT(1),
+    type: DataTypes.INTEGER(1),
     allowNull: true,
     defaultValue: 1,
     comment: ' 是否已排产：1 - 未排产，0 - 已排产 '
   },
   is_deleted: {
-    type: DataTypes.TINYINT(1),
+    type: DataTypes.INTEGER(1),
     allowNull: true,
     defaultValue: 1,
     comment: ' 是否删除：1 - 未删除，0 - 已删除 '

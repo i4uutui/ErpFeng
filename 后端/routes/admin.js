@@ -6,7 +6,21 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
-// 总后台登录
+/**
+ * @swagger
+ * /admin/login:
+ *   post:
+ *     summary: 总后台登录
+ *     tags:
+ *       - 登录(Admin)
+ *     parameters:
+ *       - name: username
+ *         schema:
+ *           type: string
+ *       - name: password
+ *         schema:
+ *           type: string
+ */
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   
@@ -24,7 +38,26 @@ router.post('/login', async (req, res) => {
   res.json({ token, code: 200 });
 });
 
-// 获取企业列表
+/**
+ * @swagger
+ * /admin/company:
+ *   get:
+ *     summary: 获取企业列表
+ *     tags:
+ *       - 总后台数据(Admin)
+ *     parameters:
+ *       - name: page
+ *         schema:
+ *           type: string
+ *           default: 1
+ *       - name: pageSize
+ *         schema:
+ *           type: string
+ *           default: 10
+ *       - name: name
+ *         schema:
+ *           type: string
+ */
 router.get('/company', async (req, res) => {
   const { page = 1, pageSize = 10, name = '' } = req.query;
   const offset = (page - 1) * pageSize;
@@ -52,7 +85,30 @@ router.get('/company', async (req, res) => {
     code: 200 
   });
 })
-// 添加企业信息
+/**
+ * @swagger
+ * /admin/company:
+ *   post:
+ *     summary: 添加企业信息
+ *     tags:
+ *       - 总后台数据(Admin)
+ *     parameters:
+ *       - name: logo
+ *         schema:
+ *           type: string
+ *       - name: name
+ *         schema:
+ *           type: string
+ *       - name: person
+ *         schema:
+ *           type: string
+ *       - name: contact
+ *         schema:
+ *           type: string
+ *       - name: address
+ *         schema:
+ *           type: string
+ */
 router.post('/company', async (req, res) => {
   const { logo, name, person, contact, address } = req.body
   
@@ -62,7 +118,33 @@ router.post('/company', async (req, res) => {
   
   res.json({ message: '添加成功', code: 200 })
 })
-// 更新企业信息
+/**
+ * @swagger
+ * /admin/company:
+ *   put:
+ *     summary: 更新企业信息
+ *     tags:
+ *       - 总后台数据(Admin)
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: string
+ *       - name: logo
+ *         schema:
+ *           type: string
+ *       - name: name
+ *         schema:
+ *           type: string
+ *       - name: person
+ *         schema:
+ *           type: string
+ *       - name: contact
+ *         schema:
+ *           type: string
+ *       - name: address
+ *         schema:
+ *           type: string
+ */
 router.put('/company', async (req, res) => {
   const { logo, name, person, contact, address, id } = req.body
   
@@ -76,7 +158,23 @@ router.put('/company', async (req, res) => {
   res.json({ message: '修改成功', code: 200 })
 })
 
-// 获取子后台用户列表（分页）
+/**
+ * @swagger
+ * /admin/user:
+ *   get:
+ *     summary: 获取子后台用户列表（分页）
+ *     tags:
+ *       - 总后台数据(Admin)
+ *     parameters:
+ *       - name: page
+ *         schema:
+ *           type: string
+ *           default: 1
+ *       - name: pageSize
+ *         schema:
+ *           type: string
+ *           default: 10
+ */
 router.get('/user', async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
@@ -107,7 +205,27 @@ router.get('/user', async (req, res) => {
   });
 });
 
-// 添加子后台用户
+/**
+ * @swagger
+ * /admin/user:
+ *   post:
+ *     summary: 添加子后台用户
+ *     tags:
+ *       - 总后台数据(Admin)
+ *     parameters:
+ *       - name: username
+ *         schema:
+ *           type: string
+ *       - name: password
+ *         schema:
+ *           type: string
+ *       - name: status
+ *         schema:
+ *           type: string
+ *       - name: company_id
+ *         schema:
+ *           type: string
+ */
 router.post('/user', async (req, res) => {
   const { username, password, status, company_id } = req.body;
   
@@ -130,7 +248,30 @@ router.post('/user', async (req, res) => {
   res.json({ data: '添加成功', code: 200 });
 });
 
-// 更新子管理员接口
+/**
+ * @swagger
+ * /admin/user:
+ *   put:
+ *     summary: 更新子管理员接口
+ *     tags:
+ *       - 总后台数据(Admin)
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: string
+ *       - name: username
+ *         schema:
+ *           type: string
+ *       - name: password
+ *         schema:
+ *           type: string
+ *       - name: status
+ *         schema:
+ *           type: string
+ *       - name: company_id
+ *         schema:
+ *           type: string
+ */
 router.put('/user', async (req, res) => {
   const { username, password, status, company_id, id } = req.body;
   

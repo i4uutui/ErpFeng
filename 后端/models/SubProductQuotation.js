@@ -55,7 +55,7 @@ const SubProductQuotation = sequelize.define('SubProductQuotation', {
     comment: '交易条件'
   },
   is_deleted: {
-    type: DataTypes.TINYINT(3),
+    type: DataTypes.INTEGER(1),
     allowNull: true,
     defaultValue: 1,
     comment: '是否删除：1-未删除，0-已删除'

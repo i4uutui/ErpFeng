@@ -35,7 +35,7 @@ const AdUser = sequelize.define("AdUser", {
     comment: ' 权限字符串 '
   },
   type: {
-    type: DataTypes.TINYINT(1),
+    type: DataTypes.INTEGER(1),
     allowNull: true,
     comment: ' 账号类型：1 - 子管理员账号，2 - 普通子账号 '
   },
@@ -45,13 +45,13 @@ const AdUser = sequelize.define("AdUser", {
     comment: ' 上级的 id'
   },
   status: {
-    type: DataTypes.TINYINT(3).UNSIGNED,
+    type: DataTypes.INTEGER(3),
     allowNull: true,
     defaultValue: 1,
     comment: ' 账户状态：1 - 正常，0 - 禁用 '
   },
   is_deleted: {
-    type: DataTypes.TINYINT(3),
+    type: DataTypes.INTEGER(3),
     allowNull: true,
     defaultValue: 1,
     comment: ' 是否删除：1 - 未删除，0 - 已删除 '

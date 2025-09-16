@@ -18,7 +18,18 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// 图片上传接口
+/**
+ * @swagger
+ * /upload/image:
+ *   post:
+ *     summary: 图片上传接口
+ *     tags:
+ *       - 上传(Upload)
+ *     parameters:
+ *       - name: file
+ *         schema:
+ *           type: file
+ */
 router.post('/image', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: '未上传图片', code: 400 });

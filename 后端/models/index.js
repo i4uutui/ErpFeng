@@ -7,7 +7,7 @@ const AdUser = require('./AdUser.js') // 子后台用户表
 const AdOrganize = require('./AdOrganize.js') // 组织架构信息表
 const SubProcessCycle = require('./SubProcessCycle.js') // 生产制程表
 const SubProcessCycleChild = require('./SubProcessCycleChild.js') // 生产制程子表
-const SubWarehouseType = require('./SubWarehouseType.js') // 仓库类型
+const SubConstType = require('./SubConstType.js') // 仓库类型
 const SubWarehouseCycle = require('./SubWarehouseCycle.js') // 仓库类型表
 const SubWarehouseContent = require('./SubWarehouseContent.js') // 仓库列表数据表
 const SubWarehouseApply = require('./SubWarehouseApply.js') // 出库入库申请表
@@ -40,7 +40,7 @@ AdOrganize.belongsTo(AdUser, { foreignKey: 'menber_id', as: 'menber' });
 
 SubEquipmentCode.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
 
-SubWarehouseCycle.belongsTo(SubWarehouseType, { foreignKey: 'ware_id', as: 'ware' })
+SubWarehouseCycle.belongsTo(SubConstType, { foreignKey: 'ware_id', as: 'ware' })
 
 SubSaleOrder.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubSaleOrder.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
@@ -104,7 +104,7 @@ module.exports = {
   AdOrganize,
   SubProcessCycle,
   SubProcessCycleChild,
-  SubWarehouseType,
+  SubConstType,
   SubWarehouseCycle,
   SubWarehouseContent,
   SubWarehouseApply,

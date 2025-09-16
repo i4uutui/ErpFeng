@@ -35,7 +35,7 @@ const SubProcessBom = sequelize.define('SubProcessBom', {
     comment: '是否已存档，1未存，0已存'
   },
   is_deleted: {
-    type: DataTypes.TINYINT(1),
+    type: DataTypes.INTEGER(1),
     allowNull: true,
     defaultValue: 1,
     comment: '是否删除：1-未删除，0-已删除'

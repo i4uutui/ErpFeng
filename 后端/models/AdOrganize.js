@@ -35,7 +35,7 @@ const AdOrganize = sequelize.define('AdOrganize', {
     comment: ' 节点名称，如部门名称 '
   },
   is_deleted: {
-    type: DataTypes.TINYINT(1),
+    type: DataTypes.INTEGER(1),
     allowNull: true,
     defaultValue: 1,
     comment: ' 是否删除：1 - 未删除，0 - 已删除 '

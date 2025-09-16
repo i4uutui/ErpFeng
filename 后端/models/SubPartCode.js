@@ -70,7 +70,7 @@ const SubPartCode = sequelize.define('SubPartCode', {
     comment: '备注'
   },
   is_deleted: {
-    type: DataTypes.INTEGER(1).UNSIGNED.ZEROFILL,
+    type: DataTypes.INTEGER(1),
     allowNull: true,
     defaultValue: 1,
     comment: '1：未删除；0：已删除'

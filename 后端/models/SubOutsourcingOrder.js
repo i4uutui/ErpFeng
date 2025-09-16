@@ -82,13 +82,13 @@ const SubOutsourcingOrder = sequelize.define('SubOutsourcingOrder', {
     comment: ' 备注 '
   },
   status: {
-    type: DataTypes.TINYINT(1),
+    type: DataTypes.INTEGER(1),
     allowNull: true,
     defaultValue: 1,
     comment: ' 是否已审核：1 - 待审核，2 - 已审核 '
   },
   is_deleted: {
-    type: DataTypes.TINYINT(1),
+    type: DataTypes.INTEGER(1),
     allowNull: true,
     defaultValue: 1,
     comment: ' 是否删除：1 - 未删除，0 - 已删除 '
