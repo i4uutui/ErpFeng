@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
-const { AdUser, AdOrganize, SubProcessCycle, SubWarehouseCycle, Op, SubConstType } = require('../models')
+const { AdUser, AdOrganize, SubProcessCycle, SubWarehouseCycle, SubApprovalFlow, SubApprovalHistory, SubApprovalRecord, SubApprovalStep, Op, SubConstType } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
@@ -634,6 +634,36 @@ router.put('/warehouse_cycle', authMiddleware, async (req, res) => {
   
   res.json({ msg: "修改成功", code: 200 });
 })
+/**
+ * @swagger
+ * /api/approval_flow:
+ *   put:
+ *     summary: 新增审批流程
+ *     tags:
+ *       - 系统管理(User)
+ *     parameters:
+ *       - name: source_type
+ *         schema:
+ *           type: string
+ *       - name: steps
+ *         schema:
+ *           type: array
+ */
+router.post('/approval_flow', async (req, res) => {
+  const { source_type, steps } = req.body;
+  const { id: userId, company_id } = req.user;
+  // 创建流程
+  const flow = await SubApprovalFlow.create({ source_type, company_id });
+  // 创建步骤
+  const stepList = steps.map((step, index) => ({
+    flow_id: flow.id,
+    step: index + 1,
+    user_id: step.user_id,
+    company_id
+  }));
+  await SubApprovalStep.bulkCreate(stepList);
+  res.json({ code: 200, data: null });
+});
 
 
 module.exports = router;   

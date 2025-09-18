@@ -33,6 +33,16 @@ const routes = [
         }
       },
       {
+        path: '/system/approval-step',
+        name: 'ApprovalStep',
+        component: () => import('@/views/System/ApprovalStep.jsx'),
+        meta: {
+          title: '审核管理',
+          parent: '系统管理',
+          menu: true,
+        }
+      },
+      {
         path: '/system/organize',
         name: 'OrganizeManagement',
         component: () => import('@/views/System/OrganizeManagement.jsx'),

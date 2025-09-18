@@ -5,6 +5,10 @@ const AdAdmin = require('./AdAdmin.js') // 产品报价信息表
 const AdCompanyInfo = require('./AdCompanyInfo.js') // 客户企业信息表
 const AdUser = require('./AdUser.js') // 子后台用户表
 const AdOrganize = require('./AdOrganize.js') // 组织架构信息表
+const SubApprovalFlow = require('./SubApprovalFlow.js') // 审批流程配置表
+const SubApprovalHistory = require('./SubApprovalHistory.js') // 审批操作历史表
+const SubApprovalRecord = require('./SubApprovalRecord.js') // 审批记录表
+const SubApprovalStep = require('./SubApprovalStep.js') // 审批步骤配置表
 const SubProcessCycle = require('./SubProcessCycle.js') // 生产制程表
 const SubProcessCycleChild = require('./SubProcessCycleChild.js') // 生产制程子表
 const SubConstType = require('./SubConstType.js') // 仓库类型
@@ -102,6 +106,10 @@ module.exports = {
   AdCompanyInfo,
   AdUser,
   AdOrganize,
+  SubApprovalFlow,
+  SubApprovalHistory,
+  SubApprovalRecord,
+  SubApprovalStep,
   SubProcessCycle,
   SubProcessCycleChild,
   SubConstType,
