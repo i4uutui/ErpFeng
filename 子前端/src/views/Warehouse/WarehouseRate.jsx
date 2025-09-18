@@ -54,7 +54,7 @@ export default defineComponent({
     
     // 获取仓库类型列表
     const getWareTypeList = async () => {
-      const res = await request.get('/api/getConstType', { params: { type: 'house' } })
+      const res = await request.post('/api/getConstType', { type: 'house' })
       wareType.value = res.data
       wareActive.value = res.data[0].id
       menuWareIndex.value = res.data[0].id

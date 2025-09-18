@@ -78,10 +78,11 @@ router.get('/getCustomerInfo', authMiddleware, async (req, res) => {
   const { customer_abbreviation } = req.query;
   const { company_id } = req.user;
   
+  let customerWhere = {}
+  if(customer_abbreviation) customerWhere.customer_abbreviation = { [Op.like]: `%${customer_abbreviation}%` }
+
   const config = {
-    where: { is_deleted: 1, company_id, customer_abbreviation: {
-      [Op.like]: `%${customer_abbreviation}%`
-    } },
+    where: { is_deleted: 1, company_id, ...customerWhere },
     order: [['created_at', 'DESC']],
   }
   const { count, rows } = await SubCustomerInfo.findAndCountAll(config);
@@ -381,7 +382,7 @@ router.get('/getProcessCycle', authMiddleware, async (req, res) => {
 /**
  * @swagger
  * /api/getConstType:
- *   get:
+ *   post:
  *     summary: 获取常量
  *     tags:
  *       - 常用列表(GetList)
@@ -390,8 +391,8 @@ router.get('/getProcessCycle', authMiddleware, async (req, res) => {
  *         schema:
  *           type: string
  */
-router.get('/getConstType', authMiddleware, async (req, res) => {
-  const { type } = req.query
+router.post('/getConstType', authMiddleware, async (req, res) => {
+  const { type } = req.body
   const { company_id } = req.user;
   
   if(!type) return res.json({ message: '缺少常量类型', code: 401 })
@@ -400,7 +401,7 @@ router.get('/getConstType', authMiddleware, async (req, res) => {
     where: {
       type
     },
-    attributes: ['id', 'name']
+    attributes: ['id', 'name', 'type']
   })
   const typeRows = rows.map(e => e.toJSON())
   res.json({ data: typeRows, code: 200 })

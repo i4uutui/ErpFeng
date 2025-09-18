@@ -33,7 +33,7 @@ export default defineComponent({
       tableData.value = res.data;
     };
     const getWareTypeList = async () => {
-      const res = await request.get('/api/getConstType', { params: { type: 'house' } })
+      const res = await request.post('/api/getConstType', { type: 'house' })
       wareType.value = res.data
     }
     const handleSubmit = async (formEl) => {

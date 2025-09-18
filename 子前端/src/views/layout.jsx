@@ -2,9 +2,13 @@ import Mhead from '@/components/main/mhead';
 import LeftMenu from '@/components/main/leftMenu';
 import { defineComponent } from 'vue';
 import { RouterView } from 'vue-router'
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
+    const user = getItem('user')
+    const company = getItem('company')
+
     return() => (
       <ElContainer style={{ height: "100vh" }}>
         <ElHeader height='64px' style={{ borderBottom: "1px solid #eee", backgroundColor: '#FFF' }}>
@@ -20,10 +24,10 @@ export default defineComponent({
             开发者 ┃ 东莞元方企业管理咨询有限公司 ┃ 徐庆华 18666885858
             </div>
             <div class="flex-1 text-center">
-            使用企业 ┃ 东莞市骏宏达铝业科技有限公司
+            使用企业 ┃ { company.name }
             </div>
             <div class="flex-1 text-right">
-              使用者 ┃ ADMI001
+              使用者 ┃ { user.username }
             </div>
           </div>
         </ElFooter>

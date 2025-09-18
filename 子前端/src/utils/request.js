@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ElMessage } from "element-plus";
+// import { ElMessage } from "element-plus";
 import $router from "@/router";
 import { getItem } from "@/assets/js/storage";
 
@@ -26,23 +26,14 @@ service.interceptors.request.use(config => {
 // 响应拦截器
 service.interceptors.response.use(response => {
 		const res = response.data;
-		if (res.code == 200) {
-			return res;
-		}else if (res.code == 402) {
-			ElMessage({
-				message: res.message || "Error",
-				type: "error",
-				duration: 3 * 1000,
-			});
+		if (res.code == 402) {
+			ElMessage.error(res.message || "Error")
 			localStorage.clear();
 			$router.push("/login");
-		}else{
-			return ElMessage({
-				message: res.message || "Error",
-				type: "error",
-				duration: 3 * 1000,
-			});
+		}else if(res.code == 401){
+			ElMessage.error(res.message || "Error")
 		}
+		return res;
 	}, error => {
 		const { status } = error.response || {};
 		if (status === 402) {
@@ -50,11 +41,7 @@ service.interceptors.response.use(response => {
 			localStorage.clear();
 			$router.push("/");
 		} else {
-			ElMessage({
-				message: error.message,
-				type: "error",
-				duration: 3 * 1000,
-			});
+			ElMessage.error(res.message || "Error")
 		}
 		return Promise.reject(error);
 	}

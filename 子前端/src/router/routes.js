@@ -220,19 +220,19 @@ const routes = [
           ]
         }
       },
-      {
-        path: '/order/product-delivery',
-        name: 'ProductDelivery',
-        component: () => import('@/views/Order/ProductDelivery.jsx'),
-        meta: {
-          title: '产品出货单',
-          parent: '订单管理',
-          menu: true,
-          buttons: [
-            { code: 'ProductDelivery:print', label: '打印' },
-          ]
-        }
-      },
+      // {
+      //   path: '/order/product-delivery',
+      //   name: 'ProductDelivery',
+      //   component: () => import('@/views/Order/ProductDelivery.jsx'),
+      //   meta: {
+      //     title: '产品出货单',
+      //     parent: '订单管理',
+      //     menu: true,
+      //     buttons: [
+      //       { code: 'ProductDelivery:print', label: '打印' },
+      //     ]
+      //   }
+      // },
       // 产品信息
       // {
       //   path: '/product/product-bom',
@@ -437,21 +437,21 @@ const routes = [
         }
       },
       {
-        path: '/warehouse/house-in',
-        name: 'HouseIn',
-        component: () => import('@/views/Warehouse/HouseIn.jsx'),
+        path: '/warehouse/material-house',
+        name: 'MaterialHouse',
+        component: () => import('@/views/Warehouse/MaterialHouse.jsx'),
         meta: {
-          title: '入库管理',
+          title: '材料出入库',
           parent: '仓库管理',
           menu: true
         }
       },
       {
-        path: '/warehouse/house-out',
-        name: 'HouseOut',
-        component: () => import('@/views/Warehouse/HouseOut.jsx'),
+        path: '/warehouse/product-house',
+        name: 'ProductHouse',
+        component: () => import('@/views/Warehouse/ProductHouse.jsx'),
         meta: {
-          title: '出库管理',
+          title: '成品出入库',
           parent: '仓库管理',
           menu: true
         }

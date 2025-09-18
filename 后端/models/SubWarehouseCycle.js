@@ -26,8 +26,8 @@ const SubWarehouseCycle = sequelize.define('SubWarehouseCycle', {
   },
   name: {
     type: DataTypes.STRING(100),
-    allowNull: false,
-    comment: '名称'
+    allowNull: true,
+    comment: '仓库名称'
   },
   is_deleted: {
     type: DataTypes.INTEGER(1),
