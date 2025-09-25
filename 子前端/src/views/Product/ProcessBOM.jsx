@@ -92,7 +92,7 @@ export default defineComponent({
           if(!edit.value){
             const res = await request.post('/api/process_bom', low);
             if(res && res.code == 200){
-              ElMessage.success('添加成功');
+              ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
             }
@@ -157,7 +157,7 @@ export default defineComponent({
       if(!filtered.length) filtered = [{ process_id: '', equipment_id: '', time: '', price: '' }]
       form.value = { children: filtered, id, product_id, part_id };
     }
-    // 添加
+    // 新增
     const handleAdd = () => {
       edit.value = 0;
       dialogVisible.value = true;
@@ -206,7 +206,7 @@ export default defineComponent({
               <div class="flex row-between">
                 <div>
                   <ElButton style="margin-top: -5px" type="primary" v-permission={ 'ProcessBOM:add' } onClick={ handleAdd } >
-                    添加工艺BOM
+                    新增工艺BOM
                   </ElButton>
                   <ElButton style="margin-top: -5px" type="primary" v-permission={ 'ProcessBOM:archive' } onClick={ handleArchive } >
                     存档
@@ -254,7 +254,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺BOM信息' : '添加工艺BOM信息' } bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺BOM信息' : '新增工艺BOM信息' } bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">

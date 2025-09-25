@@ -4,6 +4,7 @@ const router = express.Router();
 const { SubProductionProgress, SubProductNotice, SubProductCode, SubCustomerInfo, SubSaleOrder, SubPartCode, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessBom, SubProcessCycleChild, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
+const { PreciseMath } = require('../middleware/tool');
 
 // 获取生产进度表列表
 router.get('/production_progress', authMiddleware, async (req, res) => {
@@ -185,6 +186,45 @@ router.get('/workOrder', authMiddleware, async (req, res) => {
   const fromData = rows.map(e => e.toJSON())
 
   res.json({ data: formatArrayTime(fromData), code: 200 });
+})
+
+// 移动端移动端报工单获取数据
+router.get('/mobile_process_bom', async (req, res) => {
+  const { id } = req.query;
+
+  const result = await SubProcessBomChild.findByPk(id, {
+    include: [
+      { model: SubProcessBom, as: 'parent', include: [{ model: SubProductionProgress, as: 'production' }] },
+      { model: SubProcessCode, as: 'process' }
+    ]
+  })
+  if(!result) return res.json({ message: '数据出错，请检查正确的地址或二维码' })
+  const dataValue = result.toJSON()
+
+  res.json({ data: formatObjectTime(dataValue), code: 200 });
+})
+// 移动端报工单
+router.post('/mobile_work_order', async (req, res) => {
+  const { number, id } = req.body
+  const quantity = Number(number)
+
+  if(!quantity || quantity <= 0) return res.json({ message: '数量输入错误，请重新输入', code: 401 })
+
+  const result = await SubProcessBomChild.findByPk(id)
+  const dataValue = result.toJSON()
+
+  dataValue.add_finish = dataValue.add_finish ? PreciseMath.add(dataValue.add_finish, quantity) : quantity
+  dataValue.order_number = PreciseMath.sub(dataValue.order_number, quantity)
+  dataValue.all_time = (dataValue.order_number * dataValue.time / 60 / 60).toFixed(1)
+
+  const resData = await SubProcessBomChild.update({
+    add_finish: dataValue.add_finish,
+    order_number: dataValue.order_number,
+    all_time: dataValue.all_time
+  }, { where: { id } })
+  console.log(resData);
+
+  res.json({ message: '操作成功', code: 200 })
 })
 
 module.exports = router;

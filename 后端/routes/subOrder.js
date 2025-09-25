@@ -425,6 +425,8 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
       ['id', 'DESC'],
     ],
   })
+  const bomResult =  bom.map(e => e.toJSON())
+  if(bomResult.length == 0) return res.json({ message: '该订单无工艺BOM，或工艺BOM未存档，暂时无法排产', code: 401 })
   let wait = []
   const bomRows = bom.map(e => {
     const data = e.toJSON()

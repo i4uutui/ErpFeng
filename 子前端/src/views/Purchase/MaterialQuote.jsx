@@ -68,7 +68,7 @@ export default defineComponent({
           if(!edit.value){
             const res = await request.post('/api/material_quote', form.value);
             if(res && res.code == 200){
-              ElMessage.success('添加成功');
+              ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
             }
@@ -94,7 +94,7 @@ export default defineComponent({
       dialogVisible.value = true;
       form.value = { ...row };
     }
-    // 添加
+    // 新增
     const handleAdd = () => {
       edit.value = 0;
       dialogVisible.value = true;
@@ -137,29 +137,29 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" v-permission={ 'MaterialQuote:add' } onClick={ handleAdd } >
-                  添加材料报价
+                  新增材料报价
                 </ElButton>
               </div>
             ),
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
-                  <ElTableColumn prop="supplier.supplier_code" label="供应商编码" />
-                  <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" />
-                  <ElTableColumn prop="notice.notice" label="生产订单号" />
-                  <ElTableColumn prop="material.material_code" label="材料编码" />
-                  <ElTableColumn prop="material.material_name" label="材料名称" />
-                  <ElTableColumn prop="material.model" label="型号" />
-                  <ElTableColumn prop="material.specification" label="规格" />
-                  <ElTableColumn prop="material.other_features" label="其他特性" />
-                  <ElTableColumn prop="material.purchase_unit" label="采购单位" />
-                  <ElTableColumn prop="price" label="采购单价" />
-                  <ElTableColumn prop="delivery" label="送货方式" />
-                  <ElTableColumn prop="packaging" label="包装要求" />
-                  <ElTableColumn prop="transaction_currency" label="交易币别" />
-                  <ElTableColumn prop="other_transaction_terms" label="其它交易条件" />
-                  <ElTableColumn prop="remarks" label="备注" />
-                  <ElTableColumn prop="created_at" label="创建时间" />
+                  <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width="100" />
+                  <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="100" />
+                  <ElTableColumn prop="notice.notice" label="生产订单号" width="100" />
+                  <ElTableColumn prop="material.material_code" label="材料编码" width="100" />
+                  <ElTableColumn prop="material.material_name" label="材料名称" width="100" />
+                  <ElTableColumn prop="material.model" label="型号" width="100" />
+                  <ElTableColumn prop="material.specification" label="规格" width="100" />
+                  <ElTableColumn prop="material.other_features" label="其他特性" width="100" />
+                  <ElTableColumn prop="material.purchase_unit" label="采购单位" width="100" />
+                  <ElTableColumn prop="price" label="采购单价" width="100" />
+                  <ElTableColumn prop="delivery" label="送货方式" width="100" />
+                  <ElTableColumn prop="packaging" label="包装要求" width="100" />
+                  <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
+                  <ElTableColumn prop="other_transaction_terms" label="其它交易条件" width="120" />
+                  <ElTableColumn prop="remarks" label="备注" width="100" />
+                  <ElTableColumn prop="created_at" label="创建时间" width="100" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
@@ -173,7 +173,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改材料报价' : '添加材料报价' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改材料报价' : '新增材料报价' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">

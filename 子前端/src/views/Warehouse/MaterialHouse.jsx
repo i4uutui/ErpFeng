@@ -1,11 +1,15 @@
-import { defineComponent, onMounted, reactive, ref } from 'vue'
-import { getRandomString, PreciseMath } from '@/utils/tool'
+import { defineComponent, onMounted, reactive, ref, nextTick } from 'vue'
+import { getRandomString, PreciseMath, numberToChinese } from '@/utils/tool'
+import { getItem } from '@/assets/js/storage';
 import request from '@/utils/request';
+import dayjs from "dayjs"
+import "@/assets/css/print.scss"
+import "@/assets/css/landscape.scss"
 
 export default defineComponent({
   setup(){
     const statusType = reactive({
-      0: '待审核',
+      0: '待审批',
       1: '已通过',
       2: '已拒绝'
     })
@@ -13,8 +17,13 @@ export default defineComponent({
       1: '入库',
       2: '出库'
     })
-    const statusList = ref([{ id: 0, name: '待审核' }, { id: 1, name: '已通过' }, { id: 2, name: '已拒绝' }])
+    const statusList = ref([{ id: 0, name: '待审批' }, { id: 1, name: '已通过' }, { id: 2, name: '已拒绝' }])
     const operate = reactive([{ id: 1, name: '入库' }, { id: 2, name: '出库' }])
+    const approval = getItem('approval').filter(e => e.type == 'material_warehouse')
+    const user = getItem('user')
+    const nowDate = ref()
+    const formHeight = ref(0);
+    const formCard = ref(null)
     const formRef = ref(null)
     const rules = ref({})
     let form = ref({
@@ -29,6 +38,7 @@ export default defineComponent({
       code: '',
       name: '',
       model_spec: '',
+      other_features: '',
       quantity: '',
       buy_price: '',
     })
@@ -51,8 +61,40 @@ export default defineComponent({
     let cycleId = ref('')
     let materialId = ref('')
     let statusId = ref('')
+    let dateTime = ref([])
+
+    const printObj = ref({
+      id: "printTable", // 这里是要打印元素的ID
+      popTitle: "委外加工单", // 打印的标题
+      // preview: true, // 是否启动预览模式，默认是false
+      zIndex: 20003, // 预览窗口的z-index，默认是20002，最好比默认值更高
+      previewBeforeOpenCallback() { console.log('正在加载预览窗口！'); }, // 预览窗口打开之前的callback
+      previewOpenCallback() { console.log('已经加载完预览窗口，预览打开了！') }, // 预览窗口打开时的callback
+      beforeOpenCallback(vue) {
+        console.log('开始打印之前！')
+      }, // 开始打印之前的callback
+      openCallback(vue) {
+        console.log('监听到了打印窗户弹起了！')
+      }, // 调用打印时的callback
+      closeCallback() {
+        console.log('关闭了打印工具！')
+        isPrint.value = false
+      }, // 关闭打印的callback(点击弹窗的取消和打印按钮都会触发)
+      clickMounted() { console.log('点击v-print绑定的按钮了！') },
+    })
 
     onMounted(async () => {
+      nowDate.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
+      // 获取最近一年的日期
+      const today = dayjs()
+      const lastYearStart = today.subtract(1, 'year').startOf('day').format('YYYY-MM-DD')
+      const lastYearEnd = today.endOf('day').format('YYYY-MM-DD')
+      dateTime.value = [lastYearStart, lastYearEnd]
+
+      nextTick(() => {
+        getFormHeight();
+      })
+
       await getConstType()
       await getSupplierInfo() // 获取供应商
       await getProcessCycle() // 获取制程
@@ -69,6 +111,8 @@ export default defineComponent({
         plan_id: supplierId.value ? supplierId.value : cycleId.value,
         item_id: materialId.value,
         status: statusId.value,
+        source_type: 'material_warehouse',
+        apply_time: dateTime.value
       })
       tableData.value = res.data
     }
@@ -109,8 +153,56 @@ export default defineComponent({
       form.value.house_id = res.data[0].id
       form.value.house_name = res.data[0].name
     }
+    // 反审批
+    const handleBackApproval = async ({ id }) => {
+      const res = await request.post('/api/approval_backFlow', { id })
+      if(res.code == 200){
+        ElMessage.success('反审批成功')
+        filterQuery()
+      }
+    }
+    // 处理审批
+    const approvalApi = async (action, data) => {
+      const res = await request.post('/api/handleApproval', {
+        data,
+        action,
+        ware_id: form.value.ware_id
+      })
+      if(res.code == 200){
+        ElMessage.success('审批成功')
+        filterQuery()
+      }
+    }
+    const handleApproval = async (row) => {
+      if(row.status == 1) return ElMessage.error('该数据已通过审批，无需再重复审批')
+      const data = [row.id]
+      handleApprovalDialog(data)
+    }
+    // 批量处理审批
+    const setApprovalAllData = () => {
+      const json = allSelect.value.length ? allSelect.value.filter(o => o.status == 0) : tableData.value.filter(o => o.status == 0)
+      if(json.length == 0){
+        ElMessage.error('暂无可提交的数据')
+      }
+      const data = json.map(e => e.id)
+      handleApprovalDialog(data)
+    }
+    const handleApprovalDialog = (data) => {
+      ElMessageBox.confirm('是否确认审批？', '提示', {
+        confirmButtonText: '提交',
+        cancelButtonText: '取消',
+        type: 'warning',
+        distinguishCancelAndClose: true,
+      }).then(() => {
+        approvalApi(1, data)
+      }).catch((action) => {
+        if(action === 'cancel'){
+          approvalApi(2, data)
+        }
+      })
+    }
     const setApiData = async (data) => {
-      const res = await request.post('/api/add_wareHouse_order', { data })
+      const res = await request.post('/api/add_wareHouse_order', { data, type: 'material_warehouse' })
       if(res && res.code == 200){
         ElMessage.success('提交成功');
         filterQuery();
@@ -118,21 +210,30 @@ export default defineComponent({
     }
     const handleStatusData = async (row) => {
       const data = getFormData(row)
-      setApiData([data])
+      handleWareHouseDialog([data])
     }
-    // 批量提交审核
+    // 批量提交审批
     const setStatusAllData = async () => {
-      const json = allSelect.value.length ? allSelect.value.filter(o => o.status == undefined) : tableData.value.filter(o => o.status == undefined)
+      const json = allSelect.value.length ? allSelect.value.filter(o => !o.approval || o.status == 2) : tableData.value.filter(o => !o.approval || o.status == 2)
       if(json.length == 0){
         ElMessage.error('暂无可提交的数据')
       }
       const data = json.map(e => {
         return getFormData(e)
       })
-      setApiData(data)
+      handleWareHouseDialog(data)
+    }
+    const handleWareHouseDialog = (data) => {
+      ElMessageBox.confirm('是否确认提交？审批期间不可修改。', '提示', {
+        confirmButtonText: '提交',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        setApiData(data)
+      }).catch(() => {})
     }
     const getFormData = (e) => {
-      return {
+      const obj = {
         ware_id: 1,
         house_id: e.house_id,
         house_name: e.house_name,
@@ -144,9 +245,15 @@ export default defineComponent({
         code: e.code,
         name: e.name,
         model_spec: e.model_spec,
+        other_features: e.other_features,
         quantity: e.quantity,
         buy_price: e.buy_price,
+        status: e.status
       }
+      if(e.status == 2){
+        obj.id = e.id
+      }
+      return obj
     }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
@@ -154,7 +261,11 @@ export default defineComponent({
         if (valid){
           if(!edit.value){
             const obj = JSON.parse(JSON.stringify(form.value))
-            const res = await request.post('/api/queryWarehouse', obj)
+            const quantity = Number(obj.quantity)
+            if(!(quantity || quantity > 0)){
+              return ElMessage.error('非法数量，请输入正整数的数量')
+            }
+            const res = await request.post('/api/queryWarehouse', obj) // 用来做检查的接口
             if(res.code != 200) return
             obj.id = getRandomString() // 临时ID
             console.log(obj);
@@ -162,7 +273,7 @@ export default defineComponent({
             dialogVisible.value = false;
             
           }else{
-            if(form.value.status >= 0){
+            if(form.value.approval){
               // 修改
               const myForm = {
                 id: edit.value,
@@ -222,6 +333,7 @@ export default defineComponent({
       form.value.code = obj.material_code
       form.value.name = obj.material_name
       form.value.model_spec = `${obj.model}/${obj.specification}`
+      form.value.other_features = obj.other_features
     }
     const formOperateSelect = async (value) => {
       typeId.value = '' // 重新选择出入库后，重置出入库方式
@@ -253,6 +365,7 @@ export default defineComponent({
           code: '',
           name: '',
           model_spec: '',
+          other_features: '',
           quantity: '',
           buy_price: '',
         }
@@ -262,6 +375,18 @@ export default defineComponent({
     const handleSelectionChange = (select) => {
       allSelect.value = JSON.parse(JSON.stringify(select))
     }
+    const dateChange = (value) => {
+      console.log(value);
+    }
+    // 计算页面中表单的高度
+    const getFormHeight = async () => {
+      await nextTick()
+      if (formCard.value) {
+        const offsetH = formCard.value.$el.offsetHeight;
+        formHeight.value = offsetH; // 选择需要的高度类型
+        console.log(offsetH);
+      }
+    };
     const getConstList = () => {
       if (!constType.value) return [];
 
@@ -277,21 +402,36 @@ export default defineComponent({
     const getTitleValue = () => {
       return form.value.operate ? operateValue[form.value.operate] : ''
     }
+    const getTotalNumber = (value) => {
+      return (allSelect.value.length ? allSelect.value : tableData.value).reduce((sum, item) => {
+        return PreciseMath.add(sum, (Number(item[value]) || 0))
+      }, 0)
+    }
 
     return() => (
       <>
-        <ElCard bodyStyle={{ height: "calc(100vh - 144px )" }}>
+        <ElCard style={{ height: '100%' }}>
           {{
             header: () => (
-              <ElForm inline={ true } class="cardHeaderFrom">
-                <ElFormItem v-permission={ 'OutsourcingOrder:add' }>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => handleAdd(1) }>添加入库单</ElButton>
+              <ElForm ref={ formCard } inline={ true } class="cardHeaderFrom">
+                <ElFormItem v-permission={ 'MaterialHouse:addIn' }>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => handleAdd(1) }>新增入库单</ElButton>
                 </ElFormItem>
-                <ElFormItem>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => handleAdd(2) }>添加出库单</ElButton>
+                <ElFormItem v-permission={ 'MaterialHouse:addOut' }>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => handleAdd(2) }>新增出库单</ElButton>
                 </ElFormItem>
-                <ElFormItem>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => setStatusAllData() }> 批量提交审核 </ElButton>
+                <ElFormItem v-permission={ 'MaterialHouse:set' }>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => setStatusAllData() }> 批量提交 </ElButton>
+                </ElFormItem>
+                {
+                  approval.findIndex(e => e.user_id == user.id) >= 0 ? 
+                  <ElFormItem>
+                    <ElButton style="margin-top: -5px" type="primary" onClick={ () => setApprovalAllData() }> 批量审批 </ElButton>
+                  </ElFormItem> : 
+                  <></>
+                }
+                <ElFormItem v-permission={ 'MaterialHouse:print' }>
+                  <ElButton style="margin-top: -5px" type="primary" v-print={ printObj.value }> 出入库打印 </ElButton>
                 </ElFormItem>
                 <ElFormItem label="仓库名称:">
                   <ElSelect v-model={ houseId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择仓库名称">
@@ -323,10 +463,13 @@ export default defineComponent({
                     {materialList.value.map((e, index) => <ElOption value={ e.id } label={ e.material_name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="审核状态:">
-                  <ElSelect v-model={ statusId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择审核状态">
+                <ElFormItem label="审批状态:">
+                  <ElSelect v-model={ statusId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择审批状态">
                     {statusList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="周期:">
+                  <el-date-picker v-model={ dateTime.value } type="daterange" clearable={ false } range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="YYYY-MM-DD" onChange={ (row) => dateChange(row) } />
                 </ElFormItem>
                 <ElFormItem>
                   <ElButton style="margin-top: -5px" type="primary" onClick={ () => filterQuery() }>筛选</ElButton>
@@ -335,9 +478,9 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }} onSelectionChange={ (select) => handleSelectionChange(select) }>
-                  <ElTableColumn type="selection" width="55" />
-                  <ElTableColumn label="审核状态" width="100">
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 220}px)` } style={{ width: "100%" }} onSelectionChange={ (select) => handleSelectionChange(select) }>
+                  <ElTableColumn type="selection" width="55" fixed="left" />
+                  <ElTableColumn label="审批状态" width="100">
                     {({row}) => <span>{row.status >= 0 ? statusType[row.status] : ''}</span>}
                   </ElTableColumn>
                   <ElTableColumn prop="house_name" label="仓库名称" width="100" />
@@ -350,27 +493,110 @@ export default defineComponent({
                   <ElTableColumn prop="plan" label="供应商/制程" width="120" />
                   <ElTableColumn prop="code" label="物料编码" width="90" />
                   <ElTableColumn prop="name" label="物料名称" width="100" />
-                  <ElTableColumn prop="quantity" label="数量" />
+                  <ElTableColumn prop="quantity" label="数量">
+                    {({row}) => <span>{ row.quantity ? row.quantity : 0 }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="model_spec" label="规格型号" width="110" />
-                  <ElTableColumn prop="buy_price" label="单价(元)" width="110" />
+                  <ElTableColumn prop="other_features" label="其他特性" width="110" />
+                  <ElTableColumn prop="buy_price" label="单价(元)" width="110">
+                    {({row}) => <span>{ row.buy_price ? row.buy_price : 0 }</span>}
+                  </ElTableColumn>
                   <ElTableColumn label="总价(元)" width="110">
-                    {({row}) => <span>{ row.status ? row.total_price : PreciseMath.mul(row.buy_price, row.quantity) }</span>}
+                    {({row}) => <span>{ row.approval ? row.total_price : PreciseMath.mul(row.buy_price, row.quantity) }</span>}
                   </ElTableColumn>
                   <ElTableColumn prop="apply_name" label="申请人" width="90" />
                   <ElTableColumn prop="apply_time" label="申请时间" width="110" />
-                  <ElTableColumn prop="approve_name" label="审核人" width="90" />
-                  <ElTableColumn prop="approve_time" label="审核时间" width="110" />
                   <ElTableColumn label="操作" width="150" fixed="right">
-                    {({row}) => (
-                      <>
-                        {row.status == undefined || row.status == 2 ? <>
-                          <ElButton size="small" type="default" onClick={ () => handleUplate(row) }>修改</ElButton>
-                          <ElButton size="small" type="primary" onClick={ () => handleStatusData(row) }>提交</ElButton>
-                        </> : ''}
-                      </>
-                    )}
+                    {{
+                      default: ({ row }) => {
+                        let dom = []
+                        if(row.status == undefined || row.status == 2){
+                          dom.push(<>
+                            <ElButton size="small" type="default" v-permission={ 'MaterialHouse:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
+                            <ElButton size="small" type="primary" v-permission={ 'MaterialHouse:set' } onClick={ () => handleStatusData(row) }>提交</ElButton>
+                          </>)
+                        }
+                        if(row.status == 0 && approval.findIndex(e => e.user_id == user.id) >= 0){
+                          dom.push(<>
+                            <ElButton size="small" type="primary" onClick={ () => handleApproval(row) }>审批</ElButton>
+                          </>)
+                        }
+                        if(row.status == 1 && approval.findIndex(e => e.user_id == user.id) >= 0){
+                          dom.push(<>
+                            <ElButton size="small" type="primary" onClick={ () => handleBackApproval(row) }>反审批</ElButton>
+                          </>)
+                        }
+                        return dom
+                      }
+                    }}
                   </ElTableColumn>
                 </ElTable>
+                <div class="printTable" id='totalTable2'>
+                  <div id="printTable">
+                    <table class="print-table">
+                      <thead>
+                        <tr>
+                          <th colspan="9" class="title-cell">
+                            <div class="popTitle" style={{ textAlign: 'center', fontSize: '36px' }}>{ tableData.value.length ? `${operateValue[tableData.value[0].operate]}单` : '' }</div>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th colspan="9" class="header-cell">
+                            <div class="flex row-between print-header">
+                              <div>仓库类别：材料仓</div>
+                              <div>仓库名称：{ tableData.value.length ? tableData.value[0].house_name : '' }</div>
+                              <div>统计周期：{ dateTime.value[0] } 至 {dateTime.value[1]}</div>
+                            </div>
+                          </th>
+                        </tr>
+                        <tr class="table-header">
+                          <th>序号</th>
+                          <th>状态</th>
+                          <th>供应商/制程</th>
+                          <th>物料编码</th>
+                          <th>物料名称</th>
+                          <th>规格型号</th>
+                          <th>数量</th>
+                          <th>单价</th>
+                          <th>总价</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(allSelect.value.length ? allSelect.value : tableData.value).map((e, index) => {
+                          const tr = <tr class="table-row">
+                            <td>{ index + 1 }</td>
+                            <td>{ e.status >= 0 ? statusType[e.status] : '' }</td>
+                            <td>{ e.plan }</td>
+                            <td>{ e.code }</td>
+                            <td>{ e.name }</td>
+                            <td>{ e.model_spec }</td>
+                            <td>{ e.quantity }</td>
+                            <td>{ e.buy_price ? e.buy_price : 0 }</td>
+                            <td>{ e.approval ? e.total_price : PreciseMath.mul(e.buy_price, e.quantity) }</td>
+                          </tr>
+                          return tr
+                        })}
+                        <tr class="table-row">
+                          <td>统计</td>
+                          <td colSpan={ 5 }>人民币大写：{ numberToChinese(getTotalNumber('total_price')) }</td>
+                          <td>{ getTotalNumber('quantity') }</td>
+                          <td>/</td>
+                          <td>{ getTotalNumber('total_price') }</td>
+                        </tr>
+                        <tr class="header-cell">
+                          <td colspan="9">
+                            <div class="flex row-between print-header">
+                              <div>核准：</div>
+                              <div>审查：</div>
+                              <div>制表：{ user.name }</div>
+                              <div>日期：{ nowDate.value }</div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </>
             )
           }}

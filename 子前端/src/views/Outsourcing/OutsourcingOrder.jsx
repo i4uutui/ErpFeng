@@ -8,11 +8,14 @@ import "@/assets/css/landscape.scss"
 
 export default defineComponent({
   setup() {
-    const status = reactive({
-      1: '待审核',
-      2: '已审核'
+    const statusType = reactive({
+      0: '待审批',
+      1: '已通过',
+      2: '已拒绝'
     })
-    const user = ref()
+    const statusList = ref([{ id: 0, name: '待审批' }, { id: 1, name: '已通过' }, { id: 2, name: '已拒绝' }])
+    const approval = getItem('approval').filter(e => e.type == 'material_warehouse')
+    const user = getItem('user')
     const nowDate = ref()
     const formRef = ref(null);
     const rules = reactive({
@@ -39,9 +42,6 @@ export default defineComponent({
       delivery_time: ''
     })
     let tableData = ref([])
-    let currentPage = ref(1);
-    let pageSize = ref(30);
-    let total = ref(0);
     let isPrint = ref(false)
     let allSelect = ref([])
     let edit = ref(0)
@@ -60,7 +60,7 @@ export default defineComponent({
     let productName = ref('')
     let productCode = ref('')
     let noticeNumber = ref('')
-
+    let statusId = ref('')
     
     const printObj = ref({
       id: "printTable", // 这里是要打印元素的ID
@@ -84,7 +84,6 @@ export default defineComponent({
     })
     
     onMounted(() => {
-      user.value = getItem('user')
       nowDate.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
       fetchProductList()
       getProcessBomList() // 工艺Bom列表
@@ -95,14 +94,12 @@ export default defineComponent({
     // 获取列表
     const fetchProductList = async () => {
       const res = await request.post('/api/outsourcing_order', {
-        page: currentPage.value,
-        pageSize: pageSize.value,
         notice: notice_number.value,
         supplier_code: supplier_code.value,
-        product_code: product_code.value
+        product_code: product_code.value,
+        status: statusId.value,
       });
       tableData.value = res.data;
-      total.value = res.total;
       getNoticeList() //获取订单号用来筛选
 
       // 打印的时候用的
@@ -154,6 +151,7 @@ export default defineComponent({
             obj.processChildren = procedure.value.find(o => o.id == obj.process_bom_children_id)
             obj.supplier = supplierInfo.value.find(o => o.id == obj.supplier_id)
             obj.id = getRandomString() // 临时ID
+            console.log(obj);
             tableData.value = [obj, ...tableData.value]
             // 重置
             procedure.value = []
@@ -192,52 +190,93 @@ export default defineComponent({
       })
     }
     const setApiData = async (data) => {
-      const res = await request.post('/api/add_outsourcing_order', { data })
+      const res = await request.post('/api/add_outsourcing_order', { data, type: 'outsourcing_order' })
       if(res && res.code == 200){
         ElMessage.success('提交成功');
         fetchProductList();
       }
     }
     const handleStatusData = async (row) => {
-      const data = {
-        notice_id: row.notice_id,
-        supplier_id: row.supplier_id,
-        process_bom_id: row.process_bom_id,
-        process_bom_children_id: e.process_bom_children_id,
-        price: row.price,
-        number: e.number,
-        ment: row.ment,
-        unit: row.unit,
-        transaction_currency: row.transaction_currency,
-        other_transaction_terms: row.other_transaction_terms,
-        remarks: row.remarks,
-        delivery_time: row.delivery_time
-      }
+      const data = getFormData(row)
       setApiData([data])
     }
     // 批量提交本地数据进行审核
     const setStatusAllData = () => {
-      const json = allSelect.value.length ? allSelect.value.filter(o => !o.status) : tableData.value.filter(o => !o.status)
+      const json = allSelect.value.length ? allSelect.value.filter(o => !o.approval || o.status == 2) : tableData.value.filter(o => !o.approval || o.status == 2)
       if(json.length == 0){
         ElMessage.error('暂无可提交的数据')
       }
       const data = json.map(e => {
-        return {
-          notice_id: e.notice_id,
-          supplier_id: e.supplier_id,
-          process_bom_id: e.process_bom_id,
-          process_bom_children_id: e.process_bom_children_id,
-          price: e.price,
-          number: e.number,
-          ment: e.ment,
-          unit: e.unit,
-          transaction_currency: e.transaction_currency,
-          other_transaction_terms: e.other_transaction_terms,
-          remarks: e.remarks,
-          delivery_time: e.delivery_time
-        }
+        return getFormData(e)
       })
       setApiData(data)
+    }
+    const getFormData = (e) => {
+      const obj = {
+        notice_id: e.notice_id,
+        supplier_id: e.supplier_id,
+        process_bom_id: e.process_bom_id,
+        process_bom_children_id: e.process_bom_children_id,
+        price: e.price,
+        number: e.number,
+        ment: e.ment,
+        unit: e.unit,
+        transaction_currency: e.transaction_currency,
+        other_transaction_terms: e.other_transaction_terms,
+        remarks: e.remarks,
+        delivery_time: e.delivery_time
+      }
+      if(e.status == 2){
+        obj.id = e.id
+      }
+      return obj
+    }
+    // 反审批
+    const handleBackApproval = async ({ id }) => {
+      const res = await request.post('/api/handleOutsourcingBackFlow', { id })
+      if(res.code == 200){
+        ElMessage.success('反审批成功')
+        fetchProductList()
+      }
+    }
+    // 处理审批
+    const approvalApi = async (action, data) => {
+      const res = await request.post('/api/handleOutsourcingApproval', {
+        data,
+        action
+      })
+      if(res.code == 200){
+        ElMessage.success('审批成功')
+        fetchProductList()
+      }
+    }
+    const handleApproval = async (row) => {
+      if(row.status == 1) return ElMessage.error('该数据已通过审批，无需再重复审批')
+      const data = [row.id]
+      handleApprovalDialog(data)
+    }
+    // 批量处理审批
+    const setApprovalAllData = () => {
+      const json = allSelect.value.length ? allSelect.value.filter(o => o.status == 0) : tableData.value.filter(o => o.status == 0)
+      if(json.length == 0){
+        ElMessage.error('暂无可提交的数据')
+      }
+      const data = json.map(e => e.id)
+      handleApprovalDialog(data)
+    }
+    const handleApprovalDialog = (data) => {
+      ElMessageBox.confirm('是否确认审批？', '提示', {
+        confirmButtonText: '提交',
+        cancelButtonText: '取消',
+        type: 'warning',
+        distinguishCancelAndClose: true,
+      }).then(() => {
+        approvalApi(1, data)
+      }).catch((action) => {
+        if(action === 'cancel'){
+          approvalApi(2, data)
+        }
+      })
     }
     const changeBomSelect = (value) => {
       procedure.value = []
@@ -282,17 +321,6 @@ export default defineComponent({
         delivery_time: ''
       }
     }
-    // 分页相关
-    function pageSizeChange(val) {
-      currentPage.value = 1;
-      pageSize.value = val;
-      fetchProductList()
-    }
-    function currentPageChange(val) {
-      currentPage.value = val;
-      fetchProductList();
-    }
-    
     return() => (
       <>
         <ElCard>
@@ -300,28 +328,43 @@ export default defineComponent({
             header: () => (
               <ElForm inline={ true } class="cardHeaderFrom">
                 <ElFormItem v-permission={ 'OutsourcingOrder:add' }>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ addOutSourcing }> 新增委外加工 </ElButton>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ addOutSourcing }> 新增委外加工单 </ElButton>
                 </ElFormItem>
-                <ElFormItem>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ setStatusAllData }> 批量提交审核 </ElButton>
+                <ElFormItem v-permission={ 'OutsourcingOrder:set' }>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ setStatusAllData }> 批量提交 </ElButton>
                 </ElFormItem>
+                {
+                  approval.findIndex(e => e.user_id == user.id) >= 0 ? 
+                  <ElFormItem>
+                    <ElButton style="margin-top: -5px" type="primary" onClick={ () => setApprovalAllData() }> 批量审批 </ElButton>
+                  </ElFormItem> : 
+                  <></>
+                }
                 <ElFormItem v-permission={ 'OutsourcingOrder:print' }>
                   <ElButton style="margin-top: -5px" type="primary" v-print={ printObj.value }> 委外加工单打印 </ElButton>
                 </ElFormItem>
                 <ElFormItem label="生产订单号:">
-                  <ElSelect v-model={ notice_number.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择生产订单号" onChange={ () => fetchProductList() }>
+                  <ElSelect v-model={ notice_number.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择生产订单号">
                     {noticeList.value.map((e, index) => <ElOption value={ e.notice } label={ e.notice } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="供应商编码:">
-                  <ElSelect v-model={ supplier_code.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择供应商编码" onChange={ () => fetchProductList() }>
+                  <ElSelect v-model={ supplier_code.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择供应商编码">
                     {supplierList.value.map((e, index) => <ElOption value={ e.supplier_code } label={ e.supplier_code } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="产品编码:">
-                  <ElSelect v-model={ product_code.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择产品编码" onChange={ () => fetchProductList() }>
+                  <ElSelect v-model={ product_code.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择产品编码">
                     {productList.value.map((e, index) => <ElOption value={ e.product_code } label={ e.product_code } key={ index } />)}
                   </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="审批状态:">
+                  <ElSelect v-model={ statusId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择审批状态">
+                    {statusList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => fetchProductList() }>筛选</ElButton>
                 </ElFormItem>
               </ElForm>
             ),
@@ -331,7 +374,7 @@ export default defineComponent({
                   <ElTableColumn type="selection" width="55" />
                   <ElTableColumn label="状态" width='80'>
                     {({row}) => {
-                      const spanDom = <span>{ status[row.status] }</span>
+                      const spanDom = <span>{ statusType[row.status] }</span>
                       return spanDom
                     }}
                   </ElTableColumn>
@@ -351,28 +394,41 @@ export default defineComponent({
                   <ElTableColumn prop="delivery_time" label="要求交期" width='120' />
                   <ElTableColumn prop="remarks" label="备注" width='100' />
                   <ElTableColumn label="操作" width="150" fixed="right">
-                    {({row}) => (
-                      <>
-                        {!row.status ? <>
-                          <ElButton size="small" type="default" onClick={ () => handleUplate(row) } v-permission={ 'OutsourcingQuote:edit' }>修改</ElButton>
-                          <ElButton size="small" type="primary" onClick={ () => handleStatusData(row) }>提交</ElButton>
-                        </> : ''}
-                      </>
-                    )}
+                    {{
+                      default: ({ row }) => {
+                        let dom = []
+                        if(row.status == undefined || row.status == 2){
+                          dom.push(<>
+                            <ElButton size="small" type="default" v-permission={ 'OutsourcingOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
+                            <ElButton size="small" type="primary" v-permission={ 'OutsourcingOrder:set' } onClick={ () => handleStatusData(row) }>提交</ElButton>
+                          </>)
+                        }
+                        if(row.status == 0 && approval.findIndex(e => e.user_id == user.id) >= 0){
+                          dom.push(<>
+                            <ElButton size="small" type="primary" onClick={ () => handleApproval(row) }>审批</ElButton>
+                          </>)
+                        }
+                        if(row.status == 1 && approval.findIndex(e => e.user_id == user.id) >= 0){
+                          dom.push(<>
+                            <ElButton size="small" type="primary" onClick={ () => handleBackApproval(row) }>反审批</ElButton>
+                          </>)
+                        }
+                        return dom
+                      }
+                    }}
                   </ElTableColumn>
                 </ElTable>
-                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
                 <div class="printTable" id='totalTable2'>
                   <div id="printTable">
                     <table class="print-table">
                       <thead>
                         <tr>
-                          <th colspan="9" class="title-cell">
+                          <th colspan="11" class="title-cell">
                             <div class="popTitle" style={{ textAlign: 'center', fontSize: '36px' }}>委外加工单</div>
                           </th>
                         </tr>
                         <tr>
-                          <th colspan="9" class="header-cell">
+                          <th colspan="11" class="header-cell">
                             <div class="flex row-between print-header">
                               <div>供应商：{ supplierName.value }</div>
                               <div>产品编码：{ productName.value }</div>
@@ -382,6 +438,8 @@ export default defineComponent({
                           </th>
                         </tr>
                         <tr class="table-header">
+                          <th>序号</th>
+                          <th>状态</th>
                           <th>部件编码</th>
                           <th>部件名称</th>
                           <th>工艺编码</th>
@@ -394,8 +452,10 @@ export default defineComponent({
                         </tr>
                       </thead>
                       <tbody>
-                        {(allSelect.value.length ? allSelect.value : tableData.value).map(e => {
+                        {(allSelect.value.length ? allSelect.value : tableData.value).map((e, index) => {
                           const tr = <tr class="table-row">
+                            <td>{ index + 1 }</td>
+                            <td>{ statusType[e.status] }</td>
                             <td>{ e.processBom.part.part_code }</td>
                             <td>{ e.processBom.part.part_name }</td>
                             <td>{ e.processChildren.process.process_code }</td>
@@ -409,11 +469,11 @@ export default defineComponent({
                           return tr
                         })}
                         <tr class="header-cell">
-                          <td colspan="9">
+                          <td colspan="11">
                             <div class="flex row-between print-header">
                               <div>核准：</div>
                               <div>审查：</div>
-                              <div>制表：{ user.value?.name }</div>
+                              <div>制表：{ user.name }</div>
                               <div>日期：{ nowDate.value }</div>
                             </div>
                           </td>
@@ -426,7 +486,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改委外加工' : '添加委外加工' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改委外加工' : '新增委外加工' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">

@@ -28,6 +28,11 @@ const SubApprovalHistory = sequelize.define('SubApprovalHistory', {
     allowNull: false,
     comment: '操作人ID'
   },
+  user_name: {
+    type: DataTypes.STRING(30),
+    allowNull: false,
+    comment: '操作人名称'
+  },
   action: {
     type: DataTypes.TINYINT(1),
     allowNull: false,

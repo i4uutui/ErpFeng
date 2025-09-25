@@ -15,7 +15,7 @@ export default defineComponent({
       equipment_used: [
         { required: true, message: '请输入使用设备', trigger: 'blur' },
       ],
-      times: [
+      time: [
         { required: true, message: '请输入单件工时', trigger: 'blur' },
       ],
       price: [
@@ -34,7 +34,7 @@ export default defineComponent({
       process_code: '',
       process_name: '',
       equipment_used: '',
-      times: '',
+      time: '',
       price: '',
       section_points: '',
       total_processing_price: '',
@@ -68,7 +68,7 @@ export default defineComponent({
           if(!edit.value){
             const res = await request.post('/api/process_code', form.value);
             if(res && res.code == 200){
-              ElMessage.success('添加成功');
+              ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
             }
@@ -111,7 +111,7 @@ export default defineComponent({
       dialogVisible.value = true;
       form.value = { ...row };
     }
-    // 添加
+    // 新增
     const handleAdd = () => {
       edit.value = 0;
       dialogVisible.value = true;
@@ -129,7 +129,7 @@ export default defineComponent({
         process_code: '',
         process_name: '',
         equipment_used: '',
-        times: '',
+        time: '',
         price: '',
         section_points: '',
         total_processing_price: '',
@@ -154,7 +154,7 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" v-permission={ 'ProcessCode:add' } onClick={ handleAdd } >
-                  添加工艺编码
+                  新增工艺编码
                 </ElButton>
               </div>
             ),
@@ -163,7 +163,7 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="process_code" label="工艺编码" />
                   <ElTableColumn prop="process_name" label="工艺名称" />
-                  <ElTableColumn prop="times" label="单件工时(时)" />
+                  <ElTableColumn prop="time" label="单件工时(秒)" />
                   <ElTableColumn prop="price" label="加工单价" />
                   <ElTableColumn prop="section_points" label="段数点数" />
                   <ElTableColumn prop="total_processing_price" label="加工总价" />
@@ -182,7 +182,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺编码' : '添加工艺编码' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺编码' : '新增工艺编码' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
@@ -195,8 +195,8 @@ export default defineComponent({
                 <ElFormItem label="使用设备" prop="equipment_id">
                   <MySelect v-model={ form.value.equipment_id } apiUrl="/api/getEquipmentCode" query="equipment_code" itemValue="equipment_code" placeholder="请选择设备" />
                 </ElFormItem>
-                <ElFormItem label="单件工时(时)" prop="times">
-                  <ElInput v-model={ form.value.times } type="number" placeholder="请输入单件工时(时)" />
+                <ElFormItem label="单件工时(秒)" prop="time">
+                  <ElInput v-model={ form.value.time } type="number" placeholder="请输入单件工时(秒)" />
                 </ElFormItem>
                 <ElFormItem label="加工单价" prop="price">
                   <ElInput v-model={ form.value.price } type="number" placeholder="请输入加工单价" />

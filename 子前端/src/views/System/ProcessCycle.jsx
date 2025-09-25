@@ -46,7 +46,7 @@ export default defineComponent({
             }
             const res = await request.post('/api/process_cycle', formValue);
             if(res && res.code == 200){
-              ElMessage.success('添加成功');
+              ElMessage.success('新增成功');
             }
             
           }else{
@@ -71,7 +71,7 @@ export default defineComponent({
       form.value.name = row.name;
       dialogVisible.value = true;
     }
-    // 添加管理员
+    // 新增管理员
     const handleAdd = () => {
       edit.value = 0;
       form.value.name = '';
@@ -101,7 +101,7 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" v-permission={ 'ProcessCycle:add' } onClick={ handleAdd } >
-                  添加生产制程
+                  新增生产制程
                 </ElButton>
               </div>
             ),
@@ -123,7 +123,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改生产制程' : '添加生产制程' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改生产制程' : '新增生产制程' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } rules={ rules } label-width="80px">

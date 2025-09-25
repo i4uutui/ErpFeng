@@ -84,6 +84,12 @@ const SubWarehouseApply = sequelize.define('SubWarehouseApply', {
     defaultValue: null,
     comment: '规格型号'
   },
+  other_features: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
+    defaultValue: null,
+    comment: '其他特性'
+  },
   quantity: {
     type: DataTypes.INTEGER(20),
     allowNull: true,
@@ -102,12 +108,6 @@ const SubWarehouseApply = sequelize.define('SubWarehouseApply', {
     defaultValue: null,
     comment: '总价'
   },
-  status: {
-    type: DataTypes.INTEGER(1),
-    allowNull: true,
-    defaultValue: 0,
-    comment: '0:待审核 1:已通过 2:已拒绝'
-  },
   apply_id: {
     type: DataTypes.INTEGER,
     allowNull: true,
@@ -121,28 +121,22 @@ const SubWarehouseApply = sequelize.define('SubWarehouseApply', {
     comment: '申请人名称'
   },
   apply_time: {
-    type: DataTypes.STRING(30),
+    type: DataTypes.DATE,
     allowNull: true,
     defaultValue: null,
     comment: '申请时间'
   },
-  approve_id: {
-    type: DataTypes.INTEGER,
+  step: {
+    type: DataTypes.INTEGER(2),
     allowNull: true,
-    defaultValue: null,
-    comment: '审核人ID'
+    defaultValue: 0,
+    comment: '审核当前在第几步，默认0，每审核一步加1'
   },
-  approve_name: {
-    type: DataTypes.STRING(50),
+  status: {
+    type: DataTypes.INTEGER(1),
     allowNull: true,
-    defaultValue: null,
-    comment: '审核人名称'
-  },
-  approve_time: {
-    type: DataTypes.STRING(30),
-    allowNull: true,
-    defaultValue: null,
-    comment: '审核时间'
+    defaultValue: 0,
+    comment: '状态（0审批中/1通过/2拒绝）'
   },
   is_deleted: {
     type: DataTypes.INTEGER(1),

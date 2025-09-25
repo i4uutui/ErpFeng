@@ -55,7 +55,7 @@ export default defineComponent({
           if(!edit.value){
             const res = await request.post('/api/product_quotation', form.value);
             if(res && res.code == 200){
-              ElMessage.success('添加成功');
+              ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
             }
@@ -81,7 +81,7 @@ export default defineComponent({
       dialogVisible.value = true;
       form.value = { ...row };
     }
-    // 添加
+    // 新增
     const handleAdd = () => {
       edit.value = 0;
       dialogVisible.value = true;
@@ -120,7 +120,7 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" v-permission={ 'ProductQuote:add' } onClick={ handleAdd } >
-                  添加产品报价
+                  新增产品报价
                 </ElButton>
               </div>
             ),
@@ -154,7 +154,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改产品报价' : '添加产品报价' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改产品报价' : '新增产品报价' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">

@@ -31,8 +31,8 @@ const loginFormRef = ref(null);
 const loading = ref(false);
 
 const loginForm = reactive({
-  username: 'admin',
-  password: 'admin123',
+  username: process.env.NODE_ENV === 'development' ? 'admin' : '',
+  password: process.env.NODE_ENV === 'development' ? 'admin123' : '',
 });
 
 const loginRules = reactive({

@@ -10,8 +10,8 @@ export default defineComponent({
     const router = useRouter();
     const loginFormRef = ref(null);
     const loginForm = reactive({
-      username: 'admin1',
-      password: 'admin123',
+      username: process.env.NODE_ENV === 'development' ? 'admin1' : '',
+      password: process.env.NODE_ENV === 'development' ? 'admin123' : '',
     });
     const loginRules = reactive({
       username: [
@@ -26,7 +26,7 @@ export default defineComponent({
       loginFormRef.value.validate((valid) => {
         if (!valid) return false;
         request.post('api/login', loginForm).then(res => {
-          console.log(res);
+          if(res.code != 200) return
           setItem('token', res.token);
           setItem('user', res.user)
           setItem('company', res.company)

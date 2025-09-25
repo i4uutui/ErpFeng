@@ -75,7 +75,7 @@ export default defineComponent({
           if(!edit.value){
             const res = await request.post('/api/part_code', form.value);
             if(res && res.code == 200){
-              ElMessage.success('添加成功');
+              ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
             }
@@ -119,7 +119,7 @@ export default defineComponent({
       const rows = { ...row }
       form.value = rows;
     }
-    // 添加
+    // 新增
     const handleAdd = () => {
       edit.value = 0;
       dialogVisible.value = true;
@@ -163,7 +163,7 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" v-permission={ 'PartCode:add' } onClick={ handleAdd } >
-                  添加部件编码
+                  新增部件编码
                 </ElButton>
               </div>
             ),
@@ -194,7 +194,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改部件编码' : '添加部件编码' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改部件编码' : '新增部件编码' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="80px">

@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const dayjs = require('dayjs')
 const pool = require('../config/database');
-const { AdUser, AdOrganize, SubProcessCycle, SubWarehouseCycle, SubApprovalFlow, SubApprovalHistory, SubApprovalRecord, SubApprovalStep, Op, SubConstType } = require('../models')
+const { AdUser, AdOrganize, SubProcessCycle, SubWarehouseApply, SubWarehouseCycle, SubApprovalUser, SubApprovalHistory, SubApprovalStep, SubWarehouseContent, Op, SubConstType } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
+const { PreciseMath, processStockOut } = require('../middleware/tool')
 
 // 获取后台用户列表（分页）
 /**
@@ -36,7 +38,7 @@ router.get('/user', authMiddleware, async (req, res) => {
         parent_id: userId,
         company_id,
       },
-      attributes: ['id', 'name', 'parent_id', 'username', 'parent_id', 'status', 'created_at'],
+      attributes: ['id', 'name', 'parent_id', 'username', 'parent_id', 'status', 'power', 'created_at'],
       include: [{
         model: AdOrganize,
         as: 'organize',
@@ -175,7 +177,7 @@ router.put('/user', authMiddleware, async (req, res) => {
 
   // 先查询原始密码
   const adminRows = await AdUser.findOne({
-    id, company_id
+    where: { id, company_id }
   })
   
   // 如果密码字段存在且不为空，则加密新密码
@@ -636,9 +638,9 @@ router.put('/warehouse_cycle', authMiddleware, async (req, res) => {
 })
 /**
  * @swagger
- * /api/approval_flow:
- *   put:
- *     summary: 新增审批流程
+ * /api/get_approval_flow:
+ *   get:
+ *     summary: 获取审批流程
  *     tags:
  *       - 系统管理(User)
  *     parameters:
@@ -649,21 +651,342 @@ router.put('/warehouse_cycle', authMiddleware, async (req, res) => {
  *         schema:
  *           type: array
  */
-router.post('/approval_flow', async (req, res) => {
-  const { source_type, steps } = req.body;
+router.get('/get_approval_flow', authMiddleware, async (req, res) => {
   const { id: userId, company_id } = req.user;
-  // 创建流程
-  const flow = await SubApprovalFlow.create({ source_type, company_id });
-  // 创建步骤
-  const stepList = steps.map((step, index) => ({
-    flow_id: flow.id,
-    step: index + 1,
-    user_id: step.user_id,
-    company_id
-  }));
-  await SubApprovalStep.bulkCreate(stepList);
+
+  const step = await SubApprovalStep.findAll({
+    where: { company_id, is_deleted: 1 },
+    attributes: ['id', 'step', 'type', 'user_id', 'user_name'],
+    order: [
+      ['type', 'DESC'],
+      ['step', 'ASC']
+    ],
+  })
+  const fromData = step.map(e => e.toJSON())
+  res.json({ code: 200, data: formatArrayTime(fromData) });
+})
+/**
+ * @swagger
+ * /api/approval_flow:
+ *   post:
+ *     summary: 保存审批流程
+ *     tags:
+ *       - 系统管理(User)
+ *     parameters:
+ *       - name: source_type
+ *         schema:
+ *           type: string
+ *       - name: steps
+ *         schema:
+ *           type: array
+ */
+router.post('/approval_flow', authMiddleware, async (req, res) => {
+  const { steps } = req.body;
+  const { id: userId, company_id } = req.user;
+  
+  // 将数据库中存在但前端未传过来的数据的is_deleted设为0
+  const stepIds = steps.filter(step => step.id).map(o => o.id); // 提取前端数据中的所有id
+  const step = await SubApprovalStep.findAll({
+    where: {
+      company_id,
+      is_deleted: 1,
+      id: {
+        [Op.notIn]: stepIds
+      }
+    },
+    attributes: ['id', 'is_deleted', 'type', 'step', 'company_id']
+  })
+  const result = step.map(e => {
+    const item = e.toJSON()
+    item.is_deleted = 0
+    return item
+  })
+  if(result.length){
+    await SubApprovalStep.bulkCreate(result, {
+      updateOnDuplicate: ['is_deleted', 'type', 'step', 'company_id']
+    });
+  }
+  // 批量更新有ID和无ID的的数据
+  const base = steps.map(o => {
+    o.company_id = company_id
+    return o
+  })
+  if(base.length){
+    await SubApprovalStep.bulkCreate(base, {
+      updateOnDuplicate: ['is_deleted', 'type', 'step', 'company_id', 'user_id', 'user_name']
+    });
+  }
   res.json({ code: 200, data: null });
 });
+/**
+ * @swagger
+ * /api/approval_flow:
+ *   post:
+ *     summary: 处理审批流程
+ *     tags:
+ *       - 系统管理(User)
+ *     parameters:
+ *       - name: data
+ *         schema:
+ *           type: array
+ *       - name: action
+ *         schema:
+ *           type: int
+ *       - name: type
+ *         schema:
+ *           type: string
+ */
+router.post('/handleApproval', authMiddleware, async (req, res) => {
+  const { data, action, ware_id } = req.body;
+  const { id: userId, company_id, name } = req.user;
 
+  if(data.length == 0) return res.json({ code: 401, message: '请选择需要审批的数据' })
+  const result = await SubWarehouseApply.findAll({
+    where: {
+      id: data,
+      company_id,
+      status: 0,
+    },
+    include: [
+      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], separate: true, }
+    ],
+    order: [
+      ['created_at', 'DESC']
+    ],
+  })
+  const warehouse = result.map(e => e.toJSON())
+
+  let approval = []
+  let approvalData = [] // 储存需要放入库存的数据
+  const dataValue = warehouse.map(e => {
+    const item = e.approval[e.step]
+    if(item.user_id == userId){
+      item.status = action
+      if(action == 1){
+        e.step++
+        if(e.step == e.approval.length){
+          e.status = 1
+          approvalData.push(e)
+        }
+      }
+      if(action == 2){
+        e.step = 0
+        e.status = 2
+      }
+      approval.push(item)
+    }
+    return e
+  })
+
+  if(approvalData.length){
+    // 获取仓库列表数据
+    const wareData = await SubWarehouseContent.findAll({
+      where: {
+        company_id,
+        ware_id
+      }
+    })
+    const wareValue = wareData.map(e => e.toJSON())
+    // 临时储存仓库中没有的数据，单独处理仓库的没有的数据
+    let dataArr = []
+    // 仓库中的有的数据，使用wareList保存起来
+    let wareList = []
+    approvalData.forEach(async e => {
+      const wareItem = wareValue.find(o => o.item_id == e.item_id)
+      if(wareItem){ // 仓库里面有数据
+        // 期初入库（非正常入库）
+        if(e.type == 5 || e.type == 11){
+          wareItem.initial = PreciseMath.add(wareItem.initial, e.quantity)
+          // 最新库存
+          wareItem.number_new = PreciseMath.add(wareItem.initial, wareItem.number_in)
+          // 存货金额
+          wareItem.price_total = wareItem.price ? PreciseMath.mul(wareItem.price, wareItem.number_new) : 0
+          wareItem.last_in_time = dayjs().toDate()
+        }
+        // 4采购入库/10生产入库13退货入库 /6 and 12盘银入库（加）
+        if(e.type == 4 || e.type == 10 || e.type == 13 || e.type == 6 || e.type == 12){
+          wareItem.number_in = PreciseMath.add(wareItem.number_in, e.quantity)
+          // 最新库存
+          wareItem.number_new = PreciseMath.add(wareItem.initial, wareItem.number_in)
+          // 存货金额
+          wareItem.price_total = wareItem.price ? PreciseMath.mul(wareItem.price, wareItem.number_new) : 0
+          wareItem.last_in_time = dayjs().toDate()
+        }
+        // 出库
+        if(e.type == 7 || e.type == 8 || e.type == 9 || e.type == 14 || e.type == 15 || e.type == 16){
+          // 出库减库存
+          const stock = await processStockOut({ number_in: wareItem.number_in, initial: wareItem.initial }, e.quantity)
+          if(stock == false) return res.json({ code: 401, message: '库存不足' })
+          wareItem.number_in = stock.number_in
+          wareItem.initial = stock.initial
+          // 减掉库存后最新库存
+          wareItem.number_new = PreciseMath.add(wareItem.initial, wareItem.number_in)
+          // 最新出库数量
+          wareItem.number_out = PreciseMath.add(wareItem.number_out, e.quantity)
+          // 出库后存货金额
+          wareItem.price_total = wareItem.price ? PreciseMath.mul(wareItem.price, wareItem.number_new) : 0
+          wareItem.price_out = wareItem.price ? PreciseMath.sub(wareItem.price, wareItem.number_out) : 0
+          wareItem.last_out_time = dayjs().toDate()
+        }
+        wareList.push(wareItem)
+      }else{ // 仓库没有数据，暂时先保存起来，待会再处理
+        dataArr.push(e)
+      }
+    })
+    const processArray = (arr) => {
+      if(!arr.length) return []
+      const grouped = {};
+      arr.forEach(item => {
+        const { item_id, quantity, type } = item;
+        
+        // 如果该item_id还没有分组，初始化
+        if (!grouped[item_id]) {
+          grouped[item_id] = {
+            user_id: userId,
+            company_id,
+            ware_id: item.ware_id,
+            house_id: item.house_id,
+            item_id,
+            code: item.code,
+            name: item.name,
+            model_spec: item.model_spec,
+            other_features: item.other_features,
+            unit: '',
+            inv_unit: '',
+            initial: 0,
+            number_in: 0,
+            number_out: 0,
+            price_total: 0,
+            price: 0,
+            number_new: 0,
+            price_in: 0,
+            price_out: 0,
+            last_in_time: dayjs().toDate(),
+            last_out_time: null
+          };
+        }
+        
+        // 判断type属于哪一组
+        if ([5, 11].includes(type)) {
+          // type等于5或11
+          grouped[item_id].initial = PreciseMath.add(grouped[item_id].initial, quantity);
+        } else if ([4, 10, 13, 6, 12].includes(type)) {
+          // type等于4或10或13或6或12
+          grouped[item_id].number_in = PreciseMath.add(grouped[item_id].number_in, quantity);
+        }
+      });
+      return Object.values(grouped).map(item => {
+        if (item.initial > 0 || item.number_in > 0) {
+          // 最新库存
+          item.number_new = PreciseMath.add(item.initial, item.number_in);
+        }
+        return item;
+      });
+    }
+    const regend = [...processArray(dataArr), ...wareList]
+
+    await SubWarehouseContent.bulkCreate(regend, {
+      updateOnDuplicate: [ 'user_id', 'company_id', 'ware_id', 'house_id', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'unit', 'inv_unit', 'initial', 'number_in', 'number_out', 'price_total', 'price', 'number_new', 'price_in', 'price_out', 'last_in_time', 'last_out_time' ]
+    })
+  }
+  
+  if(!approval.length) return res.json({ message: '暂无可审核的数据', code: 401 })
+  await SubApprovalUser.bulkCreate(approval, {
+    updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status']
+  })
+  await SubWarehouseApply.bulkCreate(dataValue, {
+    updateOnDuplicate: ['status', 'step']
+  })
+  res.json({ message: '审核成功', code: 200 })
+})
+
+/**
+ * @swagger
+ * /api/approval_backFlow:
+ *   post:
+ *     summary: 反审核
+ *     tags:
+ *       - 系统管理(User)
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ */
+router.post('/approval_backFlow', authMiddleware, async (req, res) => {
+  const { id } = req.body;
+  const { id: userId, company_id } = req.user;
+
+  const result = await SubWarehouseApply.findByPk(id)
+  if(!result) return res.json({ message: '数据出错，请联系管理员', code: 401 })
+  if(result.status != 1) return res.json({ message: '此数据未审核通过，不能进行反审核' })
+  const dataValue = result.toJSON()
+
+  const approval = await SubApprovalUser.findAll({
+    where: {
+      company_id,
+      source_id: id
+    }
+  })
+  const approvalValue = approval.map(e => {
+    const item = e.toJSON()
+    item.status = 0
+    return item
+  })
+
+  const ware = await SubWarehouseContent.findByPk(dataValue.item_id)
+  const wareData = ware.toJSON()
+  // 期初入库（非正常入库）
+  if(dataValue.type == 5 || dataValue.type == 11){
+    wareData.initial = PreciseMath.sub(wareData.initial, dataValue.quantity)
+    // 最新库存
+    wareData.number_new = PreciseMath.add(wareData.initial, wareData.number_in)
+    // 存货金额
+    wareData.price_total = wareData.price ? PreciseMath.mul(wareData.price, wareData.number_new) : 0
+  }
+  // 4采购入库/10生产入库13退货入库 /6 and 12盘银入库（加）
+  if(dataValue.type == 4 || dataValue.type == 10 || dataValue.type == 13 || dataValue.type == 6 || dataValue.type == 12){
+    wareData.number_in = PreciseMath.sub(wareData.number_in, dataValue.quantity)
+    // 最新库存
+    wareData.number_new = PreciseMath.add(wareData.initial, wareData.number_in)
+    // 存货金额
+    wareData.price_total = wareData.price ? PreciseMath.mul(wareData.price, wareData.number_new) : 0
+  }
+  // 出库
+  if(dataValue.type == 7 || dataValue.type == 8 || dataValue.type == 9 || dataValue.type == 14 || dataValue.type == 15 || dataValue.type == 16){
+    wareData.number_in = PreciseMath.add(wareData.number_in, dataValue.quantity)
+    // 最新库存
+    wareData.number_new = PreciseMath.add(wareData.initial, wareData.number_in)
+    // 存货金额
+    wareData.price_total = wareData.price ? PreciseMath.mul(wareData.price, wareData.number_new) : 0
+  }
+
+  await SubWarehouseApply.update({
+    user_id: dataValue.user_id,
+    company_id: dataValue.company_id,
+    status: 0,
+    step: 0
+  },{
+    where: {
+      id: dataValue.id
+    }
+  })
+  await SubApprovalUser.bulkCreate(approvalValue, {
+    updateOnDuplicate: ['company_id', 'status']
+  })
+  await SubWarehouseContent.update({
+    initial: wareData.initial,
+    number_new: wareData.number_new,
+    number_in: wareData.number_in,
+    price_total: wareData.price_total,
+    company_id: wareData.company_id,
+    user_id: wareData.user_id
+  }, {
+    where: {
+      id: wareData.id
+    }
+  })
+
+  res.json({ code: 200, message: '操作成功' })
+})
 
 module.exports = router;   

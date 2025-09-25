@@ -1,10 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialMent, Op } = require('../models')
+const dayjs = require('dayjs')
+const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialMent, SubApprovalUser, SubApprovalStep, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
-// 获取供应商列表（分页）
+/**
+ * @swagger
+ * /api/supplier_info:
+ *   get:
+ *     summary: 获取供应商列表（分页）
+ *     tags:
+ *       - 采购单(Purchase)
+ *     parameters:
+ *       - name: page
+ *         schema:
+ *           type: array
+ *       - name: pageSize
+ *         schema:
+ *           type: string
+ */
 router.get('/supplier_info', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
@@ -35,7 +50,48 @@ router.get('/supplier_info', authMiddleware, async (req, res) => {
   });
 });
 
-// 添加供应商信息
+/**
+ * @swagger
+ * /api/supplier_info:
+ *   post:
+ *     summary: 添加供应商信息
+ *     tags:
+ *       - 采购单(Purchase)
+ *     parameters:
+ *       - name: supplier_code
+ *         schema:
+ *           type: string
+ *       - name: supplier_abbreviation
+ *         schema:
+ *           type: string
+ *       - name: contact_person
+ *         schema:
+ *           type: string
+ *       - name: contact_information
+ *         schema:
+ *           type: string
+ *       - name: supplier_full_name
+ *         schema:
+ *           type: string
+ *       - name: supplier_address
+ *         schema:
+ *           type: string
+ *       - name: supplier_category
+ *         schema:
+ *           type: string
+ *       - name: supply_method
+ *         schema:
+ *           type: string
+ *       - name: transaction_method
+ *         schema:
+ *           type: string
+ *       - name: transaction_currency
+ *         schema:
+ *           type: string
+ *       - name: other_transaction_terms
+ *         schema:
+ *           type: string
+ */
 router.post('/supplier_info', authMiddleware, async (req, res) => {
   const { supplier_code, supplier_abbreviation, contact_person, contact_information, supplier_full_name, supplier_address, supplier_category, supply_method, transaction_method, transaction_currency, other_transaction_terms } = req.body;
   
@@ -59,7 +115,51 @@ router.post('/supplier_info', authMiddleware, async (req, res) => {
   res.json({ message: "添加成功", code: 200 });
 });
 
-// 更新供应商信息接口
+/**
+ * @swagger
+ * /api/supplier_info:
+ *   put:
+ *     summary: 更新供应商信息接口
+ *     tags:
+ *       - 采购单(Purchase)
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ *       - name: supplier_code
+ *         schema:
+ *           type: string
+ *       - name: supplier_abbreviation
+ *         schema:
+ *           type: string
+ *       - name: contact_person
+ *         schema:
+ *           type: string
+ *       - name: contact_information
+ *         schema:
+ *           type: string
+ *       - name: supplier_full_name
+ *         schema:
+ *           type: string
+ *       - name: supplier_address
+ *         schema:
+ *           type: string
+ *       - name: supplier_category
+ *         schema:
+ *           type: string
+ *       - name: supply_method
+ *         schema:
+ *           type: string
+ *       - name: transaction_method
+ *         schema:
+ *           type: string
+ *       - name: transaction_currency
+ *         schema:
+ *           type: string
+ *       - name: other_transaction_terms
+ *         schema:
+ *           type: string
+ */
 router.put('/supplier_info', authMiddleware, async (req, res) => {
   const { supplier_code, supplier_abbreviation, contact_person, contact_information, supplier_full_name, supplier_address, supplier_category, supply_method, transaction_method, transaction_currency, other_transaction_terms, id } = req.body;
   
@@ -94,7 +194,21 @@ router.put('/supplier_info', authMiddleware, async (req, res) => {
 
 
 
-// 材料报价
+/**
+ * @swagger
+ * /api/material_quote:
+ *   get:
+ *     summary: 材料报价
+ *     tags:
+ *       - 采购单(Purchase)
+ *     parameters:
+ *       - name: page
+ *         schema:
+ *           type: array
+ *       - name: pageSize
+ *         schema:
+ *           type: string
+ */
 router.get('/material_quote', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
@@ -132,7 +246,42 @@ router.get('/material_quote', authMiddleware, async (req, res) => {
     code: 200 
   });
 });
-
+/**
+ * @swagger
+ * /api/material_quote:
+ *   post:
+ *     summary: 新增材料报价
+ *     tags:
+ *       - 采购单(Purchase)
+ *     parameters:
+ *       - name: supplier_id
+ *         schema:
+ *           type: int
+ *       - name: notice_id
+ *         schema:
+ *           type: int
+ *       - name: material_id
+ *         schema:
+ *           type: int
+ *       - name: price
+ *         schema:
+ *           type: int
+ *       - name: delivery
+ *         schema:
+ *           type: string
+ *       - name: packaging
+ *         schema:
+ *           type: string
+ *       - name: transaction_currency
+ *         schema:
+ *           type: string
+ *       - name: other_transaction_terms
+ *         schema:
+ *           type: string
+ *       - name: remarks
+ *         schema:
+ *           type: string
+ */
 router.post('/material_quote', authMiddleware, async (req, res) => {
   const { supplier_id, notice_id, material_id, price, delivery, packaging, transaction_currency, other_transaction_terms, remarks } = req.body;
   
@@ -155,6 +304,45 @@ router.post('/material_quote', authMiddleware, async (req, res) => {
 
   res.json({ message: "添加成功", code: 200 });
 });
+/**
+ * @swagger
+ * /api/material_quote:
+ *   put:
+ *     summary: 修改材料报价
+ *     tags:
+ *       - 采购单(Purchase)
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ *       - name: supplier_id
+ *         schema:
+ *           type: int
+ *       - name: notice_id
+ *         schema:
+ *           type: int
+ *       - name: material_id
+ *         schema:
+ *           type: int
+ *       - name: price
+ *         schema:
+ *           type: int
+ *       - name: delivery
+ *         schema:
+ *           type: string
+ *       - name: packaging
+ *         schema:
+ *           type: string
+ *       - name: transaction_currency
+ *         schema:
+ *           type: string
+ *       - name: other_transaction_terms
+ *         schema:
+ *           type: string
+ *       - name: remarks
+ *         schema:
+ *           type: string
+ */
 router.put('/material_quote', authMiddleware, async (req, res) => {
   const { supplier_id, notice_id, material_id, price, delivery, packaging, transaction_currency, other_transaction_terms, remarks, id } = req.body;
   
@@ -185,60 +373,231 @@ router.put('/material_quote', authMiddleware, async (req, res) => {
 
 
 
-
+/**
+ * @swagger
+ * /api/material_ment:
+ *   post:
+ *     summary: 获取采购单的列表
+ *     tags:
+ *       - 采购单(Purchase)
+ *     parameters:
+ *       - name: page
+ *         schema:
+ *           type: array
+ *       - name: pageSize
+ *         schema:
+ *           type: string
+ *       - name: notice
+ *         schema:
+ *           type: string
+ *       - name: supplier_code
+ *         schema:
+ *           type: string
+ *       - name: product_code
+ *         schema:
+ *           type: string
+ */
 router.post('/material_ment', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10, notice, supplier_code, product_code } = req.body;
-  const offset = (page - 1) * pageSize;
+  const { notice, supplier_code, product_code, status } = req.body;
   const { company_id } = req.user;
   
   let whereMent = {}
   if(notice) whereMent.notice = notice
   if(supplier_code) whereMent.supplier_code = supplier_code
   if(product_code) whereMent.product_code = product_code
-  const { count, rows } = await SubMaterialMent.findAndCountAll({
+  whereMent.status = status ? status : [0, 2]
+  const rows = await SubMaterialMent.findAll({
     where: {
       is_deleted: 1,
       company_id,
       ...whereMent
     },
+    include: [
+      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], separate: true, }
+    ],
     order: [['created_at', 'DESC']],
-    limit: parseInt(pageSize),
-    offset
   })
-  const totalPages = Math.ceil(count / pageSize)
   const fromData = rows.map(item => item.dataValues)
   
   // 返回所需信息
   res.json({ 
     data: formatArrayTime(fromData), 
-    total: count, 
-    totalPages, 
-    currentPage: parseInt(page), 
-    pageSize: parseInt(pageSize),
     code: 200 
   });
 });
+/**
+ * @swagger
+ * /api/add_material_ment:
+ *   post:
+ *     summary: 创建采购单审批
+ *     tags:
+ *       - 采购单(Purchase)
+ *     parameters:
+ *       - name: data
+ *         schema:
+ *           type: array
+ *       - name: type
+ *         schema:
+ *           type: string
+ */
 router.post('/add_material_ment', authMiddleware, async (req, res) => {
-  const { data } = req.body;
+  const { data, type } = req.body;
+  const { id: userId, company_id, name } = req.user;
+
+  if(!data.length) return res.json({ code: 401, message: '请选择订单数据' })
+  const step = await SubApprovalStep.findAll({
+    where: {
+      is_deleted: 1,
+      company_id,
+      type
+    },
+    attributes: ['id', 'user_id', 'user_name', 'type', 'step', 'company_id']
+  })
+  if(!step.length) return res.json({ code: 401, message: '未配置审批流程，请先联系管理员' })
+  const steps = step.map(e => e.toJSON())
+
+  const dataValue = data.map(e => {
+    e.company_id = company_id
+    e.user_id = userId
+    e.apply_id = userId,
+    e.apply_name = name,
+    e.apply_time = dayjs().toDate(),
+    e.status = 0
+    return e
+  })
+  const result = await SubMaterialMent.bulkCreate(dataValue, {
+    updateOnDuplicate: ['company_id', 'user_id', 'apply_id', 'apply_name', 'apply_time', 'status', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'price', 'order_number', 'number', 'delivery_time']
+  })
+
+  // 创建审批流程
+  const resData = result.flatMap(e => {
+    const item = e.toJSON()
+    return steps.map(o => {
+      const { id, ...newData } = o;
+      return {
+        ...newData,
+        source_id: item.id, 
+        user_time: null,
+        status: 0,
+      };
+    })
+  })
+  await SubApprovalUser.bulkCreate(resData, {
+    updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status']
+  })
+
+  res.json({ message: '提交成功', code: 200 });
+})
+/**
+ * @swagger
+ * /api/handlePurchaseApproval:
+ *   post:
+ *     summary: 采购单处理审批的功能
+ *     tags:
+ *       - 采购单(Purchase)
+ *     parameters:
+ *       - name: data
+ *         schema:
+ *           type: array
+ *       - name: action
+ *         schema:
+ *           type: int
+ */
+router.post('/handlePurchaseApproval', authMiddleware, async (req, res) => {
+  const { data, action } = req.body;
   const { id: userId, company_id } = req.user;
 
-  const noticeList = data.map(e => e.notice_id)
-  if(noticeList.length){
-    const notice = await SubProductNotice.findAll({
-      where: {
-        id: {
-          [Op.in]: noticeList
-        },
-        is_deleted: 1
+  if(data.length == 0) return res.json({ code: 401, message: '请选择需要审批的数据' })
+  const result = await SubMaterialMent.findAll({
+    where: {
+      id: data,
+      company_id,
+      status: 0,
+    },
+    include: [
+      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], separate: true, }
+    ],
+    order: [
+      ['created_at', 'DESC']
+    ],
+  })
+  const purchase = result.map(e => e.toJSON())
+  let approval = []
+  const dataValue = purchase.map(e => {
+    const item = e.approval[e.step]
+    if(item.user_id == userId){
+      item.status = action
+      if(action == 1){
+        e.step++
+        if(e.step == e.approval.length){
+          e.status = 1
+        }
       }
-    })
-    if(notice.length == 0) return res.json({ message: '生产订单不存在或已删除', code: 401 })
-  }
-  
-  const arrData = data.map(e => ({ ...e, company_id, user_id: userId }))
-  await SubMaterialMent.bulkCreate(arrData)
-  
-  res.json({ message: '提交成功', code: 200 });
+      if(action == 2){
+        e.step = 0
+        e.status = 2
+      }
+      approval.push(item)
+    }
+    return e
+  })
+  if(!approval.length) return res.json({ message: '暂无可审核的数据', code: 401 })
+  await SubApprovalUser.bulkCreate(approval, {
+    updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status']
+  })
+  await SubMaterialMent.bulkCreate(dataValue, {
+    updateOnDuplicate: ['status', 'step']
+  })
+  res.json({ data: null, code: 200 })
+})
+/**
+ * @swagger
+ * /api/handlePurchaseBackFlow:
+ *   post:
+ *     summary: 采购单反审核
+ *     tags:
+ *       - 采购单(Purchase)
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ */
+router.post('/handlePurchaseBackFlow', authMiddleware, async (req, res) => {
+  const { id } = req.body;
+  const { id: userId, company_id } = req.user;
+
+  const result = await SubMaterialMent.findByPk(id)
+  if(!result) return res.json({ message: '数据出错，请联系管理员', code: 401 })
+  if(result.status != 1) return res.json({ message: '此数据未审核通过，不能进行反审核' })
+  const dataValue = result.toJSON()
+
+  const approval = await SubApprovalUser.findAll({
+    where: {
+      company_id,
+      source_id: id
+    }
+  })
+  const approvalValue = approval.map(e => {
+    const item = e.toJSON()
+    item.status = 0
+    return item
+  })
+
+  await SubMaterialMent.update({
+    user_id: dataValue.user_id,
+    company_id: dataValue.company_id,
+    status: 0,
+    step: 0
+  },{
+    where: {
+      id: dataValue.id
+    }
+  })
+  await SubApprovalUser.bulkCreate(approvalValue, {
+    updateOnDuplicate: ['company_id', 'status']
+  })
+
+  res.json({ code: 200, message: '操作成功' })
 })
 
 

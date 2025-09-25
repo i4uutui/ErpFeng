@@ -11,7 +11,7 @@
  Target Server Version : 50722 (5.7.22)
  File Encoding         : 65001
 
- Date: 18/09/2025 16:15:35
+ Date: 25/09/2025 10:47:05
 */
 
 SET NAMES utf8mb4;
@@ -110,26 +110,8 @@ CREATE TABLE `ad_user`  (
 INSERT INTO `ad_user` VALUES (1, 1, 'admin1', '$2b$10$qJOWecY5nOd6ICarLgePce3XPyVtXXrp1dkbB9ZQvtydVrKLz8uGG', '我是名字', NULL, 1, 0, 1, 1, '2025-07-07 13:56:55', '2025-07-21 17:26:05');
 INSERT INTO `ad_user` VALUES (2, 2, 'admin99', '$2b$10$Ukc2Byd6TFsl0u2p68J0leC7tVgwp4LDWr7s6YV0EWpc6xR3dZyMm', NULL, NULL, 1, 0, 1, 1, '2025-07-07 14:00:05', '2025-07-08 14:21:48');
 INSERT INTO `ad_user` VALUES (3, 1, '2121', '$2b$10$EpPaXdgc4ugWWT1Qi.DFSeRoz9XyBa3N7mKkNGuXEBvmy.pe8HEWq', NULL, NULL, 1, 0, 1, 1, '2025-07-08 10:35:09', '2025-07-08 14:21:49');
-INSERT INTO `ad_user` VALUES (4, 1, '121', '$2b$10$4ZYMcp6ZeDQauRLCZCb1mOBIUy9ML4gbRTZDizJU3VaOt83D8ZJnu', '2132', '[[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EmployeeInfo\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"SalesOrder\"],[\"订单管理\",\"ProductDelivery\"]]', 2, 1, 1, 1, '2025-07-08 14:10:45', '2025-07-08 14:40:30');
-INSERT INTO `ad_user` VALUES (5, 1, 'admin2', '$2b$10$qJOWecY5nOd6ICarLgePce3XPyVtXXrp1dkbB9ZQvtydVrKLz8uGG', '哈哈', '[[\"系统管理\"],[\"系统管理\",\"OrganizeManagement\"],[\"系统管理\",\"ProcessCycle\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\"],[\"基础资料\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"基础资料\",\"EmployeeInfo\"],[\"订单管理\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"SalesOrder\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductNotice\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"订单管理\",\"ProductDelivery\"],[\"产品信息\"],[\"产品信息\",\"MaterialBOM\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品信息\",\"MaterialBOMArchive\"],[\"产品信息\",\"ProcessBOM\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品信息\",\"ProcessBOMArchive\"],[\"委外管理\"],[\"委外管理\",\"OutsourcingOrder\"],[\"委外管理\",\"OutsourcingQuote\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"]]', 2, 1, 1, 1, '2025-07-08 14:20:13', '2025-09-11 13:50:04');
-
--- ----------------------------
--- Table structure for sub_approval_flow
--- ----------------------------
-DROP TABLE IF EXISTS `sub_approval_flow`;
-CREATE TABLE `sub_approval_flow`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-  `company_id` int(11) NOT NULL COMMENT '所属企业id',
-  `source_type` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '关联业务型：purchase_order/outsourcing_order/material_warehouse/product_warehouse',
-  `status` tinyint(1) NULL DEFAULT 1 COMMENT '状态（1启用/0禁用）',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '审批流程配置表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of sub_approval_flow
--- ----------------------------
+INSERT INTO `ad_user` VALUES (4, 1, '121', '$2b$10$qJOWecY5nOd6ICarLgePce3XPyVtXXrp1dkbB9ZQvtydVrKLz8uGG', '2132', '[[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EmployeeInfo\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"SalesOrder\"],[\"仓库管理\"],[\"仓库管理\",\"ProductHouse\"],[\"仓库管理\",\"MaterialHouse\"],[\"仓库管理\",\"WarehouseRate\"],[\"采购管理\"],[\"委外管理\"],[\"采购管理\",\"PurchaseOrder\"],[\"采购管理\",\"MaterialQuote\"],[\"采购管理\",\"SupplierInfo\"],[\"委外管理\",\"OutsourcingQuote\"],[\"委外管理\",\"OutsourcingOrder\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:print\"]]', 2, 1, 1, 1, '2025-07-08 14:10:45', '2025-09-23 16:45:29');
+INSERT INTO `ad_user` VALUES (5, 1, 'admin2', '$2b$10$qJOWecY5nOd6ICarLgePce3XPyVtXXrp1dkbB9ZQvtydVrKLz8uGG', '哈哈', '[[\"系统管理\"],[\"系统管理\",\"OrganizeManagement\"],[\"系统管理\",\"ProcessCycle\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\"],[\"基础资料\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"基础资料\",\"EmployeeInfo\"],[\"订单管理\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"SalesOrder\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductNotice\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"产品信息\"],[\"产品信息\",\"MaterialBOM\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品信息\",\"MaterialBOMArchive\"],[\"产品信息\",\"ProcessBOM\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品信息\",\"ProcessBOMArchive\"],[\"委外管理\"],[\"委外管理\",\"OutsourcingOrder\"],[\"委外管理\",\"OutsourcingQuote\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"仓库管理\"],[\"仓库管理\",\"ProductHouse\"],[\"仓库管理\",\"MaterialHouse\"],[\"仓库管理\",\"WarehouseRate\"],[\"采购管理\"],[\"采购管理\",\"SupplierInfo\"],[\"采购管理\",\"MaterialQuote\"],[\"采购管理\",\"PurchaseOrder\"]]', 2, 1, 1, 1, '2025-07-08 14:20:13', '2025-09-23 15:38:00');
 
 -- ----------------------------
 -- Table structure for sub_approval_history
@@ -141,42 +123,43 @@ CREATE TABLE `sub_approval_history`  (
   `record_id` int(11) NOT NULL COMMENT '关联审批记录ID',
   `step` int(11) NOT NULL COMMENT '操作步骤',
   `user_id` int(11) NOT NULL COMMENT '操作人ID',
+  `user_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '操作人名称',
   `action` tinyint(1) NOT NULL COMMENT '操作（1通过/2拒绝）',
   `remark` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '备注',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_record_id`(`record_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '审批操作历史表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '审批操作历史表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sub_approval_history
 -- ----------------------------
-
--- ----------------------------
--- Table structure for sub_approval_record
--- ----------------------------
-DROP TABLE IF EXISTS `sub_approval_record`;
-CREATE TABLE `sub_approval_record`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '记录ID',
-  `company_id` int(11) NOT NULL COMMENT '所属企业id',
-  `source_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '业务类型',
-  `source_id` int(11) NOT NULL COMMENT '业务ID',
-  `flow_id` int(11) NOT NULL COMMENT '流程ID',
-  `current_step` int(11) NULL DEFAULT 1 COMMENT '当前步骤',
-  `status` tinyint(1) NULL DEFAULT 0 COMMENT '状态（0审批中/1通过/2拒绝）',
-  `approver_id` int(11) NULL DEFAULT NULL COMMENT '当前审批人ID',
-  `approve_time` datetime NULL DEFAULT NULL COMMENT '审批时间',
-  `remark` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '审批备注',
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_source`(`source_type`, `source_id`) USING BTREE,
-  INDEX `idx_approver`(`approver_id`, `status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '审批记录表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of sub_approval_record
--- ----------------------------
+INSERT INTO `sub_approval_history` VALUES (1, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:47:45', '2025-09-19 09:47:45');
+INSERT INTO `sub_approval_history` VALUES (2, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:48:04', '2025-09-19 09:48:04');
+INSERT INTO `sub_approval_history` VALUES (3, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:48:40', '2025-09-19 09:48:40');
+INSERT INTO `sub_approval_history` VALUES (4, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:49:11', '2025-09-19 09:49:11');
+INSERT INTO `sub_approval_history` VALUES (5, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:49:53', '2025-09-19 09:49:53');
+INSERT INTO `sub_approval_history` VALUES (6, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:50:15', '2025-09-19 09:50:15');
+INSERT INTO `sub_approval_history` VALUES (7, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:50:33', '2025-09-19 09:50:33');
+INSERT INTO `sub_approval_history` VALUES (8, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:50:58', '2025-09-19 09:50:58');
+INSERT INTO `sub_approval_history` VALUES (9, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:51:24', '2025-09-19 09:51:24');
+INSERT INTO `sub_approval_history` VALUES (10, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:51:41', '2025-09-19 09:51:41');
+INSERT INTO `sub_approval_history` VALUES (11, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:52:10', '2025-09-19 09:52:10');
+INSERT INTO `sub_approval_history` VALUES (12, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:52:31', '2025-09-19 09:52:31');
+INSERT INTO `sub_approval_history` VALUES (13, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:53:21', '2025-09-19 09:53:21');
+INSERT INTO `sub_approval_history` VALUES (14, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:54:01', '2025-09-19 09:54:01');
+INSERT INTO `sub_approval_history` VALUES (15, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:54:14', '2025-09-19 09:54:14');
+INSERT INTO `sub_approval_history` VALUES (16, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:54:41', '2025-09-19 09:54:41');
+INSERT INTO `sub_approval_history` VALUES (17, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:55:04', '2025-09-19 09:55:04');
+INSERT INTO `sub_approval_history` VALUES (18, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:55:43', '2025-09-19 09:55:43');
+INSERT INTO `sub_approval_history` VALUES (19, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:56:02', '2025-09-19 09:56:02');
+INSERT INTO `sub_approval_history` VALUES (20, 1, 1, 1, 5, '哈哈', 1, NULL, '2025-09-19 09:58:27', '2025-09-19 09:58:27');
+INSERT INTO `sub_approval_history` VALUES (21, 1, 1, 2, 4, '2132', 1, NULL, '2025-09-19 09:59:51', '2025-09-19 09:59:51');
+INSERT INTO `sub_approval_history` VALUES (22, 1, 2, 1, 5, '哈哈', 2, NULL, '2025-09-19 10:00:28', '2025-09-19 10:00:28');
+INSERT INTO `sub_approval_history` VALUES (23, 1, 2, 1, 5, '哈哈', 2, NULL, '2025-09-19 10:00:39', '2025-09-19 10:00:39');
+INSERT INTO `sub_approval_history` VALUES (24, 1, 2, 1, 5, '哈哈', 2, NULL, '2025-09-19 10:00:58', '2025-09-19 10:00:58');
+INSERT INTO `sub_approval_history` VALUES (25, 1, 2, 1, 5, '哈哈', 2, NULL, '2025-09-19 10:01:54', '2025-09-19 10:01:54');
 
 -- ----------------------------
 -- Table structure for sub_approval_step
@@ -185,19 +168,96 @@ DROP TABLE IF EXISTS `sub_approval_step`;
 CREATE TABLE `sub_approval_step`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
   `company_id` int(11) NOT NULL COMMENT '所属企业id',
-  `flow_id` int(11) NOT NULL COMMENT '关联流程ID',
-  `type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '业务类型',
-  `step` int(11) NOT NULL COMMENT '步骤序号（从1开始）',
+  `type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT ' 业务类型 ',
+  `step` int(11) NULL DEFAULT NULL COMMENT '步骤序号（从1开始）',
   `user_id` int(11) NULL DEFAULT NULL COMMENT '指定审批人ID（为空则角色内任意人可批）',
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_flow_id`(`flow_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '审批步骤配置表' ROW_FORMAT = Dynamic;
+  `user_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT ' 指定审批人名称 ',
+  `is_deleted` tinyint(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '审批步骤配置表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sub_approval_step
 -- ----------------------------
+INSERT INTO `sub_approval_step` VALUES (1, 1, 'purchase_order', 1, 5, '哈哈', 1, '2025-09-23 06:08:06', '2025-09-23 06:08:06');
+INSERT INTO `sub_approval_step` VALUES (2, 1, 'outsourcing_order', 1, 4, '2132', 1, '2025-09-23 06:08:55', '2025-09-23 06:08:55');
+INSERT INTO `sub_approval_step` VALUES (3, 1, 'purchase_order', 2, 4, '2132', 1, '2025-09-23 06:08:55', '2025-09-23 06:08:55');
+INSERT INTO `sub_approval_step` VALUES (4, 1, 'outsourcing_order', 2, 5, '哈哈', 1, '2025-09-23 06:08:55', '2025-09-23 06:08:55');
+INSERT INTO `sub_approval_step` VALUES (5, 1, 'material_warehouse', 1, 5, '哈哈', 1, '2025-09-23 06:08:55', '2025-09-23 06:08:55');
+INSERT INTO `sub_approval_step` VALUES (6, 1, 'material_warehouse', 2, 4, '2132', 1, '2025-09-23 06:08:55', '2025-09-23 06:08:55');
+INSERT INTO `sub_approval_step` VALUES (7, 1, 'product_warehouse', 1, 5, '哈哈', 1, '2025-09-23 06:08:55', '2025-09-23 06:08:55');
+INSERT INTO `sub_approval_step` VALUES (8, 1, 'product_warehouse', 2, 4, '2132', 1, '2025-09-23 06:08:55', '2025-09-23 06:08:55');
+
+-- ----------------------------
+-- Table structure for sub_approval_user
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_approval_user`;
+CREATE TABLE `sub_approval_user`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `company_id` int(11) NOT NULL COMMENT '企业id',
+  `type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '业务类型',
+  `source_id` int(11) NULL DEFAULT NULL COMMENT '项目id',
+  `user_id` int(11) NULL DEFAULT NULL COMMENT '审核人id',
+  `user_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '审核人名称',
+  `user_time` datetime NULL DEFAULT NULL COMMENT '审核时间',
+  `step` int(2) NULL DEFAULT NULL COMMENT '第几步骤',
+  `status` int(1) NULL DEFAULT 0 COMMENT '状态（0审批中/1通过/2拒绝）',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 59 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '流程控制用户表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sub_approval_user
+-- ----------------------------
+INSERT INTO `sub_approval_user` VALUES (13, 1, 'material_warehouse', 17, 5, '哈哈', NULL, 1, 0, '2025-09-19 21:18:25', '2025-09-21 17:03:50');
+INSERT INTO `sub_approval_user` VALUES (14, 1, 'material_warehouse', 17, 4, '2132', NULL, 2, 0, '2025-09-19 21:18:25', '2025-09-21 17:03:51');
+INSERT INTO `sub_approval_user` VALUES (15, 1, 'material_warehouse', 18, 5, '哈哈', NULL, 1, 0, '2025-09-19 21:18:25', '2025-09-21 17:03:52');
+INSERT INTO `sub_approval_user` VALUES (16, 1, 'material_warehouse', 18, 4, '2132', NULL, 2, 0, '2025-09-19 21:18:25', '2025-09-19 21:18:25');
+INSERT INTO `sub_approval_user` VALUES (17, 1, 'material_warehouse', 19, 5, '哈哈', NULL, 1, 0, '2025-09-19 21:18:25', '2025-09-21 17:03:52');
+INSERT INTO `sub_approval_user` VALUES (18, 1, 'material_warehouse', 19, 4, '2132', NULL, 2, 0, '2025-09-19 21:18:25', '2025-09-21 17:03:55');
+INSERT INTO `sub_approval_user` VALUES (19, 1, 'material_warehouse', 20, 5, '哈哈', NULL, 1, 0, '2025-09-19 21:18:25', '2025-09-19 21:18:25');
+INSERT INTO `sub_approval_user` VALUES (20, 1, 'material_warehouse', 20, 4, '2132', NULL, 2, 0, '2025-09-19 21:18:25', '2025-09-19 21:18:25');
+INSERT INTO `sub_approval_user` VALUES (21, 1, 'material_warehouse', 21, 5, '哈哈', NULL, 1, 0, '2025-09-19 21:52:27', '2025-09-21 17:03:56');
+INSERT INTO `sub_approval_user` VALUES (22, 1, 'material_warehouse', 21, 4, '2132', NULL, 2, 0, '2025-09-19 21:52:27', '2025-09-19 21:52:27');
+INSERT INTO `sub_approval_user` VALUES (23, 1, 'material_warehouse', 22, 5, '哈哈', NULL, 1, 0, '2025-09-19 21:52:27', '2025-09-19 21:52:27');
+INSERT INTO `sub_approval_user` VALUES (24, 1, 'material_warehouse', 22, 4, '2132', NULL, 2, 0, '2025-09-19 21:52:27', '2025-09-19 21:52:27');
+INSERT INTO `sub_approval_user` VALUES (25, 1, 'material_warehouse', 23, 5, '哈哈', NULL, 1, 1, '2025-09-20 19:53:35', '2025-09-21 17:18:33');
+INSERT INTO `sub_approval_user` VALUES (26, 1, 'material_warehouse', 23, 4, '2132', NULL, 2, 1, '2025-09-20 19:53:35', '2025-09-21 17:20:30');
+INSERT INTO `sub_approval_user` VALUES (27, 1, 'material_warehouse', 18, 5, '哈哈', NULL, 1, 0, '2025-09-20 19:53:35', '2025-09-20 19:53:35');
+INSERT INTO `sub_approval_user` VALUES (28, 1, 'material_warehouse', 18, 4, '2132', NULL, 2, 0, '2025-09-20 19:53:35', '2025-09-20 19:53:35');
+INSERT INTO `sub_approval_user` VALUES (29, 1, 'material_warehouse', 18, 5, '哈哈', NULL, 1, 0, '2025-09-20 19:54:20', '2025-09-20 19:54:20');
+INSERT INTO `sub_approval_user` VALUES (30, 1, 'material_warehouse', 18, 4, '2132', NULL, 2, 0, '2025-09-20 19:54:20', '2025-09-20 19:54:20');
+INSERT INTO `sub_approval_user` VALUES (31, 1, 'material_warehouse', 18, 5, '哈哈', NULL, 1, 0, '2025-09-20 19:54:42', '2025-09-20 19:54:42');
+INSERT INTO `sub_approval_user` VALUES (32, 1, 'material_warehouse', 18, 4, '2132', NULL, 2, 0, '2025-09-20 19:54:42', '2025-09-20 19:54:42');
+INSERT INTO `sub_approval_user` VALUES (33, 1, 'material_warehouse', 18, 5, '哈哈', NULL, 1, 0, '2025-09-20 19:55:50', '2025-09-20 19:55:50');
+INSERT INTO `sub_approval_user` VALUES (34, 1, 'material_warehouse', 18, 4, '2132', NULL, 2, 0, '2025-09-20 19:55:50', '2025-09-20 19:55:50');
+INSERT INTO `sub_approval_user` VALUES (35, 1, 'material_warehouse', 18, 5, '哈哈', NULL, 1, 0, '2025-09-20 19:57:20', '2025-09-20 19:57:20');
+INSERT INTO `sub_approval_user` VALUES (36, 1, 'material_warehouse', 18, 4, '2132', NULL, 2, 0, '2025-09-20 19:57:20', '2025-09-20 19:57:20');
+INSERT INTO `sub_approval_user` VALUES (37, 1, 'material_warehouse', 18, 5, '哈哈', NULL, 1, 0, '2025-09-20 19:58:58', '2025-09-20 19:58:58');
+INSERT INTO `sub_approval_user` VALUES (38, 1, 'material_warehouse', 18, 4, '2132', NULL, 2, 0, '2025-09-20 19:58:58', '2025-09-20 19:58:58');
+INSERT INTO `sub_approval_user` VALUES (39, 1, 'material_warehouse', 18, 5, '哈哈', NULL, 1, 0, '2025-09-20 19:59:29', '2025-09-20 19:59:29');
+INSERT INTO `sub_approval_user` VALUES (40, 1, 'material_warehouse', 18, 4, '2132', NULL, 2, 0, '2025-09-20 19:59:29', '2025-09-20 19:59:29');
+INSERT INTO `sub_approval_user` VALUES (41, 1, 'material_warehouse', 25, 5, '哈哈', NULL, 1, 1, '2025-09-20 20:00:01', '2025-09-21 17:18:22');
+INSERT INTO `sub_approval_user` VALUES (42, 1, 'material_warehouse', 25, 4, '2132', NULL, 2, 1, '2025-09-20 20:00:01', '2025-09-21 17:20:30');
+INSERT INTO `sub_approval_user` VALUES (43, 1, 'material_warehouse', 26, 5, '哈哈', NULL, 1, 1, '2025-09-20 20:00:01', '2025-09-21 17:18:30');
+INSERT INTO `sub_approval_user` VALUES (44, 1, 'material_warehouse', 26, 4, '2132', NULL, 2, 1, '2025-09-20 20:00:01', '2025-09-21 17:20:30');
+INSERT INTO `sub_approval_user` VALUES (45, 1, 'material_warehouse', 27, 5, '哈哈', NULL, 1, 0, '2025-09-21 16:52:36', '2025-09-21 17:09:14');
+INSERT INTO `sub_approval_user` VALUES (46, 1, 'material_warehouse', 27, 4, '2132', NULL, 2, 0, '2025-09-21 16:52:36', '2025-09-21 16:52:36');
+INSERT INTO `sub_approval_user` VALUES (47, 1, 'material_warehouse', 28, 5, '哈哈', NULL, 1, 1, '2025-09-21 16:56:51', '2025-09-22 14:17:05');
+INSERT INTO `sub_approval_user` VALUES (48, 1, 'material_warehouse', 28, 4, '2132', NULL, 2, 1, '2025-09-21 16:56:51', '2025-09-22 14:17:05');
+INSERT INTO `sub_approval_user` VALUES (49, 1, 'purchase_order', 3, 5, '哈哈', NULL, 1, 0, '2025-09-23 14:54:56', '2025-09-23 15:38:14');
+INSERT INTO `sub_approval_user` VALUES (50, 1, 'purchase_order', 3, 4, '2132', NULL, 2, 0, '2025-09-23 14:54:56', '2025-09-23 15:38:14');
+INSERT INTO `sub_approval_user` VALUES (51, 1, 'outsourcing_order', 8, 4, '2132', NULL, 1, 1, '2025-09-23 16:31:18', '2025-09-23 16:45:42');
+INSERT INTO `sub_approval_user` VALUES (52, 1, 'outsourcing_order', 8, 5, '哈哈', NULL, 2, 2, '2025-09-23 16:31:18', '2025-09-23 16:46:09');
+INSERT INTO `sub_approval_user` VALUES (53, 1, 'outsourcing_order', 9, 4, '2132', NULL, 1, 0, '2025-09-23 16:46:50', '2025-09-23 16:46:50');
+INSERT INTO `sub_approval_user` VALUES (54, 1, 'outsourcing_order', 9, 5, '哈哈', NULL, 2, 0, '2025-09-23 16:46:50', '2025-09-23 16:46:50');
+INSERT INTO `sub_approval_user` VALUES (55, 1, 'outsourcing_order', 10, 4, '2132', NULL, 1, 0, '2025-09-23 16:47:08', '2025-09-23 16:47:08');
+INSERT INTO `sub_approval_user` VALUES (56, 1, 'outsourcing_order', 10, 5, '哈哈', NULL, 2, 0, '2025-09-23 16:47:08', '2025-09-23 16:47:08');
+INSERT INTO `sub_approval_user` VALUES (57, 1, 'outsourcing_order', 8, 4, '2132', NULL, 1, 0, '2025-09-23 16:51:46', '2025-09-23 16:51:46');
+INSERT INTO `sub_approval_user` VALUES (58, 1, 'outsourcing_order', 8, 5, '哈哈', NULL, 2, 0, '2025-09-23 16:51:46', '2025-09-23 16:51:46');
 
 -- ----------------------------
 -- Table structure for sub_const_type
@@ -228,7 +288,7 @@ INSERT INTO `sub_const_type` VALUES (10, 'productIn', '生产入库', '2025-09-1
 INSERT INTO `sub_const_type` VALUES (11, 'productIn', '期初入库', '2025-09-16 20:40:09', '2025-09-16 20:40:09');
 INSERT INTO `sub_const_type` VALUES (12, 'productIn', '盘银入库', '2025-09-16 20:40:17', '2025-09-16 20:40:17');
 INSERT INTO `sub_const_type` VALUES (13, 'productIn', '退货入库', '2025-09-16 20:40:35', '2025-09-16 20:41:16');
-INSERT INTO `sub_const_type` VALUES (14, 'productOut', '成品出库', '2025-09-16 20:40:43', '2025-09-16 20:41:21');
+INSERT INTO `sub_const_type` VALUES (14, 'productOut', '成品出货', '2025-09-16 20:40:43', '2025-09-21 13:53:53');
 INSERT INTO `sub_const_type` VALUES (15, 'productOut', '报废出库', '2025-09-16 20:40:50', '2025-09-16 20:41:26');
 INSERT INTO `sub_const_type` VALUES (16, 'productOut', '盘亏出库', '2025-09-16 20:41:29', '2025-09-16 20:41:36');
 
@@ -438,18 +498,21 @@ CREATE TABLE `sub_material_ment`  (
   `order_number` int(10) NULL DEFAULT NULL COMMENT '预计数量',
   `number` int(10) NULL DEFAULT NULL COMMENT '实际数量',
   `delivery_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交货时间',
-  `status` int(1) NULL DEFAULT 1 COMMENT '状态：1待审核，2已审核',
+  `apply_id` int(11) NULL DEFAULT NULL COMMENT '申请人ID',
+  `apply_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '申请人名称',
+  `apply_time` timestamp NULL DEFAULT NULL COMMENT '申请时间',
+  `step` int(2) NULL DEFAULT 0 COMMENT '审核当前在第几步，默认0，每审核一步加1',
+  `status` int(11) NULL DEFAULT 0 COMMENT '状态（0审批中/1通过/2拒绝）',
   `is_deleted` int(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料报价单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料报价单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_ment
 -- ----------------------------
-INSERT INTO `sub_material_ment` VALUES (1, 1, 1, 7, '11111', 1, '123', '2121', 19, 'A001', '圆珠笔', 2, '123', '121', '2121/21', '2121', '21', '26', 15000, 15000, '2025-10-31', 1, 1, '2025-09-14 16:26:30', '2025-09-14 16:32:51');
-INSERT INTO `sub_material_ment` VALUES (2, 1, 1, 6, '2222', 2, '1234', '151', 10, '1233', '212', 2, '123', '121', '2121/21', '2121', '21', '22', 18000, 13000, '2025-07-07', 1, 1, '2025-09-14 16:33:27', '2025-09-14 16:33:27');
+INSERT INTO `sub_material_ment` VALUES (3, 1, 1, 6, '2222', 2, '1234', '151', 10, '1233', '212', 3, '789', '555', '535/35353', '353', '353', '2.5', 18000, 18000, '2025-07-07', 1, '我是名字', '2025-09-23 14:54:56', 0, 0, 1, '2025-09-23 14:54:56', '2025-09-23 15:38:14');
 
 -- ----------------------------
 -- Table structure for sub_material_quote
@@ -501,19 +564,26 @@ CREATE TABLE `sub_outsourcing_order`  (
   `ment` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '加工要求',
   `delivery_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '要求交期',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
-  `status` int(1) NULL DEFAULT 1 COMMENT '状态：1待审核，2已审核',
+  `status` int(1) NULL DEFAULT 0 COMMENT '状态（0审批中/1通过/2拒绝）',
+  `apply_id` int(11) NULL DEFAULT NULL COMMENT '申请人ID',
+  `apply_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '申请人名称',
+  `apply_time` timestamp NULL DEFAULT NULL COMMENT '申请时间',
+  `step` int(2) NULL DEFAULT 0 COMMENT '审核当前在第几步，默认0，每审核一步加1',
   `is_deleted` int(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '委外报价信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '委外报价信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_outsourcing_order
 -- ----------------------------
-INSERT INTO `sub_outsourcing_order` VALUES (5, 1, 1, 6, 1, 39, 28, '个', 27, 8000, '￥￥', '无', '无', '2025-09-30', '无', 1, 1, '2025-09-09 16:49:05', '2025-09-11 10:41:03');
-INSERT INTO `sub_outsourcing_order` VALUES (6, 1, 1, 7, 2, 38, 29, '个', 22, 13000, '￥', '无34', '无2', '2025-09-24', '无5', 1, 1, '2025-09-11 11:36:37', '2025-09-11 11:45:00');
-INSERT INTO `sub_outsourcing_order` VALUES (7, 1, 1, 5, 2, 38, 29, '顿', 3, 1600, '￥', '无5', '无', '2025-09-25', '无6', 1, 1, '2025-09-11 11:43:43', '2025-09-11 11:43:43');
+INSERT INTO `sub_outsourcing_order` VALUES (5, 1, 1, 6, 1, 39, 28, '个', 27, 8000, '￥￥', '无', '无', '2025-09-30', '无', 1, NULL, NULL, NULL, 0, 1, '2025-09-09 16:49:05', '2025-09-11 10:41:03');
+INSERT INTO `sub_outsourcing_order` VALUES (6, 1, 1, 7, 2, 38, 29, '个', 22, 13000, '￥', '无34', '无2', '2025-09-24', '无5', 1, NULL, NULL, NULL, 0, 1, '2025-09-11 11:36:37', '2025-09-11 11:45:00');
+INSERT INTO `sub_outsourcing_order` VALUES (7, 1, 1, 5, 2, 38, 29, '顿', 3, 1600, '￥', '无5', '无', '2025-09-25', '无6', 1, NULL, NULL, NULL, 0, 1, '2025-09-11 11:43:43', '2025-09-11 11:43:43');
+INSERT INTO `sub_outsourcing_order` VALUES (8, 1, 5, 6, 2, 43, 39, '件', 2, 600, '￥', '无不', '无3', '2025-09-30', '无备', 0, 5, '哈哈', '2025-09-23 16:51:46', 0, 1, '2025-09-23 16:31:18', '2025-09-23 16:51:46');
+INSERT INTO `sub_outsourcing_order` VALUES (9, 1, 5, 6, 2, 43, 39, '件', 2, 600, '￥', '无不', '无3', '2025-09-30', '无备', 0, 5, '哈哈', '2025-09-23 16:46:50', 0, 1, '2025-09-23 16:46:50', '2025-09-23 16:46:50');
+INSERT INTO `sub_outsourcing_order` VALUES (10, 1, 5, 6, 2, 43, 39, '件', 2, 600, '￥', '无不', '无3', '2025-09-30', '无备', 0, 5, '哈哈', '2025-09-23 16:47:08', 0, 1, '2025-09-23 16:47:08', '2025-09-23 16:47:08');
 
 -- ----------------------------
 -- Table structure for sub_outsourcing_quote
@@ -603,23 +673,12 @@ CREATE TABLE `sub_process_bom`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 56 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 57 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_process_bom
 -- ----------------------------
-INSERT INTO `sub_process_bom` VALUES (35, 1, 1, 19, 6, 0, 1, '2025-08-12 15:08:15', '2025-09-06 11:07:56');
-INSERT INTO `sub_process_bom` VALUES (36, 1, 1, 19, 6, 0, 1, '2025-08-12 15:09:18', '2025-09-06 11:07:56');
-INSERT INTO `sub_process_bom` VALUES (37, 1, 1, 19, 5, 0, 1, '2025-08-21 09:35:20', '2025-09-06 11:07:56');
-INSERT INTO `sub_process_bom` VALUES (38, 1, 1, 19, 9, 0, 1, '2025-08-21 16:00:29', '2025-09-06 11:07:56');
-INSERT INTO `sub_process_bom` VALUES (39, 1, 1, 19, 12, 0, 1, '2025-08-29 09:17:41', '2025-09-06 11:07:56');
-INSERT INTO `sub_process_bom` VALUES (40, 1, 1, 19, 18, 0, 1, '2025-08-29 09:28:24', '2025-09-06 11:07:56');
-INSERT INTO `sub_process_bom` VALUES (41, 1, 1, 19, 18, 0, 1, '2025-09-02 15:51:13', '2025-09-06 11:07:56');
-INSERT INTO `sub_process_bom` VALUES (42, 1, 1, 10, 20, 0, 1, '2025-09-03 09:44:44', '2025-09-06 11:07:56');
-INSERT INTO `sub_process_bom` VALUES (43, 1, 1, 10, 16, 0, 1, '2025-09-03 09:45:15', '2025-09-06 11:07:56');
-INSERT INTO `sub_process_bom` VALUES (44, 1, 1, 10, 15, 0, 1, '2025-09-03 09:46:03', '2025-09-06 11:07:56');
-INSERT INTO `sub_process_bom` VALUES (45, 1, 1, 10, 10, 0, 1, '2025-09-03 09:47:04', '2025-09-06 11:07:56');
-INSERT INTO `sub_process_bom` VALUES (55, 1, 1, 13, 10, 1, 0, '2025-09-06 10:57:20', '2025-09-06 11:04:15');
+INSERT INTO `sub_process_bom` VALUES (56, 1, 1, 19, 8, 0, 1, '2025-09-24 15:58:17', '2025-09-24 16:03:21');
 
 -- ----------------------------
 -- Table structure for sub_process_bom_child
@@ -641,39 +700,13 @@ CREATE TABLE `sub_process_bom_child`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 71 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表子表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 73 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表子表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_process_bom_child
 -- ----------------------------
-INSERT INTO `sub_process_bom_child` VALUES (22, 41, 4, 5, 1, 5, 2, 20.8, NULL, NULL, 15000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/26107c50-1d4f-430e-8e42-9a63b899e82e.png', '2025-09-02 16:40:21', '2025-09-08 11:54:32');
-INSERT INTO `sub_process_bom_child` VALUES (23, 41, 4, 5, 2, 10, 3, 41.7, NULL, NULL, 15000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/da92ad56-3e49-4405-8334-c861035305dc.png', '2025-09-02 16:40:21', '2025-09-08 11:54:28');
-INSERT INTO `sub_process_bom_child` VALUES (24, 41, 3, 4, 3, 6, 3, 25.0, NULL, NULL, 15000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/5b18c1bf-e374-43f2-80b9-1b2fd042ee13.png', '2025-09-02 16:40:21', '2025-09-08 11:54:25');
-INSERT INTO `sub_process_bom_child` VALUES (25, 40, 3, 3, 1, 8, 2, 33.3, NULL, NULL, 15000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/e9997b97-898c-4939-bcfd-1655aa391e10.png', '2025-09-02 16:40:56', '2025-09-08 11:54:22');
-INSERT INTO `sub_process_bom_child` VALUES (26, 40, 3, 4, 2, 9, 2, 37.5, NULL, NULL, 15000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/a3848819-8e12-4a77-b122-2208df3956cb.png', '2025-09-02 16:40:56', '2025-09-08 11:54:19');
-INSERT INTO `sub_process_bom_child` VALUES (27, 39, 4, 3, 2, 7, 2, 29.2, NULL, NULL, 15000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/21656771-5da1-490e-a16f-973c4dfed944.png', '2025-09-02 16:41:33', '2025-09-08 11:54:16');
-INSERT INTO `sub_process_bom_child` VALUES (28, 39, 3, 4, 1, 5, 2, 20.8, NULL, NULL, 15000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/238bfa89-cc33-4d39-8534-f8a1f337b5aa.png', '2025-09-02 16:41:33', '2025-09-08 11:54:13');
-INSERT INTO `sub_process_bom_child` VALUES (29, 38, 4, 4, 1, 10, 3, 41.7, NULL, NULL, 15000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/fd849be8-bc10-4d49-8db2-21276a0e3faf.png', '2025-09-02 16:42:22', '2025-09-08 11:54:10');
-INSERT INTO `sub_process_bom_child` VALUES (30, 38, 4, 5, 2, 11, 2, 45.8, NULL, NULL, 15000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/851ba3f5-e8ff-4399-becf-1b708841bf66.png', '2025-09-02 16:42:22', '2025-09-08 11:54:07');
-INSERT INTO `sub_process_bom_child` VALUES (31, 38, 3, 3, 3, 8, 3, 33.3, NULL, NULL, 15000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/2360d1b0-03a5-4bcb-bf6f-136df4792718.png', '2025-09-02 16:42:22', '2025-09-08 11:54:04');
-INSERT INTO `sub_process_bom_child` VALUES (32, 37, 3, 4, 1, 11, 2, 45.8, NULL, NULL, 15000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/553bcccc-3b27-4f49-980f-af417b58fdbf.png', '2025-09-02 16:42:42', '2025-09-08 11:54:01');
-INSERT INTO `sub_process_bom_child` VALUES (33, 36, 4, 4, 2, 9, 2, 37.5, NULL, NULL, 15000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/62d49bff-290d-43ef-9033-856cfd0a3172.png', '2025-09-02 16:43:07', '2025-09-08 11:53:58');
-INSERT INTO `sub_process_bom_child` VALUES (34, 36, 3, 3, 1, 6, 1, 25.0, NULL, NULL, 15000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/22307f91-571e-4206-a66d-53ffa3be30a2.png', '2025-09-02 16:43:07', '2025-09-08 11:53:55');
-INSERT INTO `sub_process_bom_child` VALUES (35, 35, 3, 3, 1, 12, 2, 50.0, NULL, NULL, 15000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/c9fcd6d4-180f-4264-ae28-4e3fe86c23bd.png', '2025-09-02 16:44:24', '2025-09-08 11:53:51');
-INSERT INTO `sub_process_bom_child` VALUES (36, 42, 4, 5, 2, 8, 3, 15.5, NULL, 11000, 7000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/119b9877-5fdf-4c41-bac5-69e8456059ad.png', '2025-09-03 09:44:44', '2025-09-08 11:53:48');
-INSERT INTO `sub_process_bom_child` VALUES (37, 42, 4, 4, 3, 6, 2, 30.0, NULL, NULL, 18000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/54a8ccd2-db48-4ee5-a837-7386bd796a2a.png', '2025-09-03 09:44:44', '2025-09-08 11:53:45');
-INSERT INTO `sub_process_bom_child` VALUES (38, 42, 4, 4, 1, 9, 2, 45.0, NULL, NULL, 18000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/c3268004-a559-458d-a565-6fad50d3b7ba.png', '2025-09-03 09:44:44', '2025-09-08 11:53:42');
-INSERT INTO `sub_process_bom_child` VALUES (39, 43, 3, 3, 2, 7, 2, 35.0, NULL, NULL, 18000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/6e224058-0647-452a-a9aa-f0414874eeda.png', '2025-09-03 09:45:15', '2025-09-08 11:53:39');
-INSERT INTO `sub_process_bom_child` VALUES (40, 43, 3, 4, 1, 8, 6, 40.0, NULL, NULL, 18000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/c671c995-a851-4639-8b0b-f547cbbeed0b.png', '2025-09-03 09:45:15', '2025-09-08 11:53:35');
-INSERT INTO `sub_process_bom_child` VALUES (41, 44, 3, 4, 1, 7, 3, 35.0, NULL, NULL, 18000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/0d73b738-27b3-4b8f-a5af-0db1659d6b4a.png', '2025-09-03 09:46:03', '2025-09-08 11:53:32');
-INSERT INTO `sub_process_bom_child` VALUES (42, 44, 3, 3, 2, 7, 2, 35.0, NULL, NULL, 18000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/aafb2058-871c-4c2e-ab98-c17192047ce7.png', '2025-09-03 09:46:03', '2025-09-08 11:53:28');
-INSERT INTO `sub_process_bom_child` VALUES (43, 44, 4, 5, 3, 14, 2, 70.0, NULL, NULL, 18000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/7ac26950-edc8-4a63-82d9-2704968a9657.png', '2025-09-03 09:46:03', '2025-09-08 11:53:20');
-INSERT INTO `sub_process_bom_child` VALUES (44, 45, 3, 5, 4, 5, 2, 25.0, NULL, NULL, 18000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/d1076c8a-ea61-4eba-b09f-574a52ad2010.png', '2025-09-03 09:47:04', '2025-09-08 11:53:17');
-INSERT INTO `sub_process_bom_child` VALUES (45, 45, 3, 4, 1, 7, 2, 35.0, NULL, NULL, 18000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/f794abbe-10f0-49d5-bb66-cc51f8d86bb4.png', '2025-09-03 09:47:04', '2025-09-08 11:53:13');
-INSERT INTO `sub_process_bom_child` VALUES (46, 45, 3, 3, 2, 8, 3, 40.0, NULL, NULL, 18000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/918f1e23-187e-4fc1-a8b7-2174470d43ef.png', '2025-09-03 09:47:04', '2025-09-08 11:53:09');
-INSERT INTO `sub_process_bom_child` VALUES (47, 45, 3, 4, 3, 9, 3, 45.0, NULL, NULL, 18000, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/2522bbdb-b642-473f-bbec-e05ac9383506.png', '2025-09-03 09:47:04', '2025-09-08 11:53:05');
-INSERT INTO `sub_process_bom_child` VALUES (69, 55, 3, 4, 1, 22, 3, NULL, NULL, NULL, NULL, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/6d23d4e8-6233-4c23-b50f-516cb8d91d15.png', '2025-09-06 10:57:20', '2025-09-08 11:53:01');
-INSERT INTO `sub_process_bom_child` VALUES (70, 55, 4, 5, 2, 33, 3, NULL, NULL, NULL, NULL, 'https://7zcy32.s3.cn-east-1.qiniucs.com/qrcodes/3067ea12-73a7-4eb4-8926-f879a1a0d84c.png', '2025-09-06 10:57:20', '2025-09-08 11:52:55');
+INSERT INTO `sub_process_bom_child` VALUES (71, 56, 5, 4, 1, 8, 2, 33.3, NULL, NULL, 15000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/7e081466-1421-4fcb-ad52-2164378ceb55.png', '2025-09-24 15:58:17', '2025-09-24 16:03:50');
+INSERT INTO `sub_process_bom_child` VALUES (72, 56, 6, 3, 2, 9, 2, 37.5, NULL, NULL, 15000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/363b2db6-40f9-4d98-b7aa-9dc97b33327a.png', '2025-09-24 15:58:17', '2025-09-24 16:03:50');
 
 -- ----------------------------
 -- Table structure for sub_process_code
@@ -686,22 +719,24 @@ CREATE TABLE `sub_process_code`  (
   `equipment_id` int(11) NULL DEFAULT NULL COMMENT '设备编码ID',
   `process_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '工艺编码',
   `process_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '工艺名称',
-  `times` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '单件工时(小时)',
-  `price` int(10) NULL DEFAULT NULL COMMENT '加工单价',
-  `section_points` int(11) NULL DEFAULT NULL COMMENT '段数点数',
-  `total_processing_price` int(10) NULL DEFAULT NULL COMMENT '加工总价',
+  `time` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '单件工时(小时)',
+  `price` decimal(10, 1) NULL DEFAULT NULL COMMENT '加工单价',
+  `section_points` decimal(11, 1) NULL DEFAULT NULL COMMENT '段数点数',
+  `total_processing_price` decimal(10, 1) NULL DEFAULT NULL COMMENT '加工总价',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
   `is_deleted` int(1) NULL DEFAULT 1 COMMENT '1：未删除；0：已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺编码基础信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_process_code
 -- ----------------------------
-INSERT INTO `sub_process_code` VALUES (3, 1, 1, 3, '123', '212', '21', 2121, 21, 21, '212', 1, '2025-07-08 15:56:54', '2025-08-10 11:29:00');
-INSERT INTO `sub_process_code` VALUES (4, 1, 1, 4, '2222', '111', '3131', 21, 213, 3131, '3131', 1, '2025-08-09 16:07:09', '2025-08-22 09:32:16');
+INSERT INTO `sub_process_code` VALUES (3, 1, 1, 3, '123', '212', '21', 2121.0, 21.0, 21.0, '212', 0, '2025-07-08 15:56:54', '2025-09-24 15:45:55');
+INSERT INTO `sub_process_code` VALUES (4, 1, 1, 4, '2222', '111', '3131', 21.0, 213.0, 3131.0, '3131', 0, '2025-08-09 16:07:09', '2025-09-24 15:45:54');
+INSERT INTO `sub_process_code` VALUES (5, 1, 1, 5, 'T001', '钻床', '8', 1.6, 24.0, 2.9, '无', 1, '2025-09-24 15:48:02', '2025-09-24 15:52:18');
+INSERT INTO `sub_process_code` VALUES (6, 1, 1, 4, 'T002', '打点', '9', 1.4, 17.0, 2.5, '', 1, '2025-09-24 15:53:42', '2025-09-24 15:53:42');
 
 -- ----------------------------
 -- Table structure for sub_process_cycle
@@ -740,7 +775,7 @@ CREATE TABLE `sub_process_cycle_child`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 217 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 253 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sub_process_cycle_child
@@ -766,18 +801,54 @@ INSERT INTO `sub_process_cycle_child` VALUES (201, 3, 207, NULL, NULL, NULL, '20
 INSERT INTO `sub_process_cycle_child` VALUES (202, 1, 208, '2025-09-06', NULL, NULL, '2025-09-03 13:30:54', '2025-09-04 14:04:44');
 INSERT INTO `sub_process_cycle_child` VALUES (203, 2, 208, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
 INSERT INTO `sub_process_cycle_child` VALUES (204, 3, 208, NULL, NULL, NULL, '2025-09-03 13:30:54', '2025-09-03 13:30:54');
-INSERT INTO `sub_process_cycle_child` VALUES (205, 1, 209, '2025-09-07', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 14:03:48');
+INSERT INTO `sub_process_cycle_child` VALUES (205, 1, 209, '2025-09-27', NULL, NULL, '2025-09-03 13:30:56', '2025-09-24 15:11:53');
 INSERT INTO `sub_process_cycle_child` VALUES (206, 2, 209, NULL, NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 13:30:56');
 INSERT INTO `sub_process_cycle_child` VALUES (207, 3, 209, '2025-09-11', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 15:46:47');
-INSERT INTO `sub_process_cycle_child` VALUES (208, 1, 210, '2025-09-07', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 14:03:48');
+INSERT INTO `sub_process_cycle_child` VALUES (208, 1, 210, '2025-09-27', NULL, NULL, '2025-09-03 13:30:56', '2025-09-24 15:11:53');
 INSERT INTO `sub_process_cycle_child` VALUES (209, 2, 210, NULL, NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 13:30:56');
 INSERT INTO `sub_process_cycle_child` VALUES (210, 3, 210, '2025-09-11', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 15:46:47');
-INSERT INTO `sub_process_cycle_child` VALUES (211, 1, 211, '2025-09-07', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 14:03:48');
+INSERT INTO `sub_process_cycle_child` VALUES (211, 1, 211, '2025-09-27', NULL, NULL, '2025-09-03 13:30:56', '2025-09-24 15:11:53');
 INSERT INTO `sub_process_cycle_child` VALUES (212, 2, 211, NULL, NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 13:30:56');
 INSERT INTO `sub_process_cycle_child` VALUES (213, 3, 211, '2025-09-11', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 15:46:47');
-INSERT INTO `sub_process_cycle_child` VALUES (214, 1, 212, '2025-09-07', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 14:03:48');
+INSERT INTO `sub_process_cycle_child` VALUES (214, 1, 212, '2025-09-27', NULL, NULL, '2025-09-03 13:30:56', '2025-09-24 15:11:53');
 INSERT INTO `sub_process_cycle_child` VALUES (215, 2, 212, NULL, NULL, NULL, '2025-09-03 13:30:56', '2025-09-03 13:30:56');
 INSERT INTO `sub_process_cycle_child` VALUES (216, 3, 212, '2025-09-11', NULL, NULL, '2025-09-03 13:30:56', '2025-09-04 15:46:47');
+INSERT INTO `sub_process_cycle_child` VALUES (217, 1, 213, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (218, 2, 213, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (219, 3, 213, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (220, 1, 214, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (221, 2, 214, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (222, 3, 214, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (223, 1, 215, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (224, 2, 215, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (225, 3, 215, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (226, 1, 216, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (227, 2, 216, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (228, 3, 216, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (229, 1, 217, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (230, 2, 217, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (231, 3, 217, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (232, 1, 218, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (233, 2, 218, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (234, 3, 218, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (235, 1, 219, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (236, 2, 219, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (237, 3, 219, NULL, NULL, NULL, '2025-09-24 15:42:08', '2025-09-24 15:42:08');
+INSERT INTO `sub_process_cycle_child` VALUES (238, 1, 220, NULL, NULL, NULL, '2025-09-24 15:43:28', '2025-09-24 15:43:28');
+INSERT INTO `sub_process_cycle_child` VALUES (239, 2, 220, NULL, NULL, NULL, '2025-09-24 15:43:28', '2025-09-24 15:43:28');
+INSERT INTO `sub_process_cycle_child` VALUES (240, 3, 220, NULL, NULL, NULL, '2025-09-24 15:43:28', '2025-09-24 15:43:28');
+INSERT INTO `sub_process_cycle_child` VALUES (241, 1, 221, NULL, NULL, NULL, '2025-09-24 15:43:28', '2025-09-24 15:43:28');
+INSERT INTO `sub_process_cycle_child` VALUES (242, 2, 221, NULL, NULL, NULL, '2025-09-24 15:43:28', '2025-09-24 15:43:28');
+INSERT INTO `sub_process_cycle_child` VALUES (243, 3, 221, NULL, NULL, NULL, '2025-09-24 15:43:28', '2025-09-24 15:43:28');
+INSERT INTO `sub_process_cycle_child` VALUES (244, 1, 222, NULL, NULL, NULL, '2025-09-24 15:43:28', '2025-09-24 15:43:28');
+INSERT INTO `sub_process_cycle_child` VALUES (245, 2, 222, NULL, NULL, NULL, '2025-09-24 15:43:28', '2025-09-24 15:43:28');
+INSERT INTO `sub_process_cycle_child` VALUES (246, 3, 222, NULL, NULL, NULL, '2025-09-24 15:43:28', '2025-09-24 15:43:28');
+INSERT INTO `sub_process_cycle_child` VALUES (247, 1, 223, NULL, NULL, NULL, '2025-09-24 15:43:28', '2025-09-24 15:43:28');
+INSERT INTO `sub_process_cycle_child` VALUES (248, 2, 223, NULL, NULL, NULL, '2025-09-24 15:43:28', '2025-09-24 15:43:28');
+INSERT INTO `sub_process_cycle_child` VALUES (249, 3, 223, NULL, NULL, NULL, '2025-09-24 15:43:28', '2025-09-24 15:43:28');
+INSERT INTO `sub_process_cycle_child` VALUES (250, 1, 224, NULL, NULL, NULL, '2025-09-24 16:03:50', '2025-09-24 16:03:50');
+INSERT INTO `sub_process_cycle_child` VALUES (251, 2, 224, NULL, NULL, NULL, '2025-09-24 16:03:50', '2025-09-24 16:03:50');
+INSERT INTO `sub_process_cycle_child` VALUES (252, 3, 224, NULL, NULL, NULL, '2025-09-24 16:03:50', '2025-09-24 16:03:50');
 
 -- ----------------------------
 -- Table structure for sub_product_code
@@ -837,14 +908,12 @@ CREATE TABLE `sub_product_notice`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产通知单信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产通知单信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_product_notice
 -- ----------------------------
-INSERT INTO `sub_product_notice` VALUES (5, 1, 1, '1111', 2, 9, 2, '2025-07-30T16:00:00.000Z', NULL, 1, '2025-07-25 22:56:01', '2025-07-25 22:56:01');
-INSERT INTO `sub_product_notice` VALUES (6, 1, 1, '2222', 3, 10, 1, '2025-07-28 00:00:00', 0, 1, '2025-07-25 22:56:09', '2025-09-03 13:30:56');
-INSERT INTO `sub_product_notice` VALUES (7, 1, 1, '11111', 2, 19, 2, '2025-08-11 00:00:00', 0, 1, '2025-08-03 19:54:20', '2025-09-03 13:30:54');
+INSERT INTO `sub_product_notice` VALUES (8, 1, 1, '1122', 2, 19, 2, '2025-10-15', 0, 1, '2025-09-24 15:56:38', '2025-09-24 16:03:50');
 
 -- ----------------------------
 -- Table structure for sub_product_quotation
@@ -902,22 +971,12 @@ CREATE TABLE `sub_production_progress`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 213 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产进度表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 225 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产进度表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_production_progress
 -- ----------------------------
-INSERT INTO `sub_production_progress` VALUES (202, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 18, NULL, NULL, 41, 15000, 'hui11111111', '2025-07-10', 15000, '2025-09-05', NULL, 1, '2025-09-03 13:30:54', '2025-09-04 14:03:36');
-INSERT INTO `sub_production_progress` VALUES (203, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 18, NULL, NULL, 40, 15000, 'hui11111111', '2025-07-10', 15000, '2025-09-05', NULL, 1, '2025-09-03 13:30:54', '2025-09-04 14:03:36');
-INSERT INTO `sub_production_progress` VALUES (204, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 12, NULL, NULL, 39, 15000, 'hui11111111', '2025-07-10', 15000, '2025-09-05', NULL, 1, '2025-09-03 13:30:54', '2025-09-04 14:03:36');
-INSERT INTO `sub_production_progress` VALUES (205, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 9, NULL, NULL, 38, 15000, 'hui11111111', '2025-07-10', 15000, '2025-09-05', NULL, 1, '2025-09-03 13:30:54', '2025-09-04 14:03:36');
-INSERT INTO `sub_production_progress` VALUES (206, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 5, NULL, NULL, 37, 15000, 'hui11111111', '2025-07-10', 15000, '2025-09-05', NULL, 1, '2025-09-03 13:30:54', '2025-09-04 14:03:36');
-INSERT INTO `sub_production_progress` VALUES (207, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 6, NULL, NULL, 36, 15000, 'hui11111111', '2025-07-10', 15000, '2025-09-05', NULL, 1, '2025-09-03 13:30:54', '2025-09-04 14:03:36');
-INSERT INTO `sub_production_progress` VALUES (208, 1, 1, '11111', '2025-10-11 00:00:00', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 6, NULL, NULL, 35, 15000, 'hui11111111', '2025-07-10', 15000, '2025-09-05', NULL, 1, '2025-09-03 13:30:54', '2025-09-04 14:03:36');
-INSERT INTO `sub_production_progress` VALUES (209, 1, 1, '2222', '2025-10-11 00:00:00', '东莞鞋厂', 10, '1233', '212', '月1', 10, NULL, NULL, 45, 18000, 'G2222222', '2025-07-07', 18000, '2025-09-04', NULL, 1, '2025-09-03 13:30:56', '2025-09-04 14:02:45');
-INSERT INTO `sub_production_progress` VALUES (210, 1, 1, '2222', '2025-10-11 00:00:00', '东莞鞋厂', 10, '1233', '212', '月1', 15, NULL, NULL, 44, 18000, 'G2222222', '2025-07-07', 18000, '2025-09-04', NULL, 1, '2025-09-03 13:30:56', '2025-09-04 14:02:45');
-INSERT INTO `sub_production_progress` VALUES (211, 1, 1, '2222', '2025-10-11 00:00:00', '东莞鞋厂', 10, '1233', '212', '月1', 16, NULL, NULL, 43, 18000, 'G2222222', '2025-07-07', 18000, '2025-09-04', NULL, 1, '2025-09-03 13:30:56', '2025-09-04 14:02:45');
-INSERT INTO `sub_production_progress` VALUES (212, 1, 1, '2222', '2025-10-11 00:00:00', '东莞鞋厂', 10, '1233', '212', '月1', 20, NULL, NULL, 42, 18000, 'G2222222', '2025-07-07', 18000, '2025-09-04', NULL, 1, '2025-09-03 13:30:56', '2025-09-04 14:02:45');
+INSERT INTO `sub_production_progress` VALUES (224, 1, 1, '1122', '2025-10-15', '惠州饮料厂', 19, 'A001', '圆珠笔', 'qqqwe', 8, '1238', '2128', 56, 15000, 'hui11111111', '2025-07-10', 15000, NULL, NULL, 1, '2025-09-24 16:03:50', '2025-09-24 16:03:50');
 
 -- ----------------------------
 -- Table structure for sub_sales_order
@@ -1000,30 +1059,35 @@ CREATE TABLE `sub_warehouse_apply`  (
   `code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '物料编码',
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '物料名称',
   `model_spec` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '规格型号',
+  `other_features` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '其他特性',
   `quantity` int(20) NULL DEFAULT NULL COMMENT '数量',
   `buy_price` decimal(10, 1) NULL DEFAULT NULL COMMENT '单价',
   `total_price` decimal(10, 1) NULL DEFAULT NULL COMMENT '总价',
-  `status` int(1) NULL DEFAULT 0 COMMENT '0:待审核 1:已通过 2:已拒绝',
   `apply_id` int(11) NULL DEFAULT NULL COMMENT '申请人ID',
   `apply_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '申请人名称',
-  `apply_time` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '申请时间',
-  `approve_id` int(11) NULL DEFAULT NULL COMMENT '审核人ID',
-  `approve_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '审核人名称',
-  `approve_time` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '审核时间',
+  `apply_time` timestamp NULL DEFAULT NULL COMMENT '申请时间',
+  `step` int(2) NULL DEFAULT 0 COMMENT '审核当前在第几步，默认0，每审核一步加1',
+  `status` int(1) NULL DEFAULT 0 COMMENT '状态（0审批中/1通过/2拒绝）',
   `is_deleted` int(1) NULL DEFAULT 1 COMMENT '1：未删除；0：已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '出库入库申请表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '出库入库申请表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sub_warehouse_apply
 -- ----------------------------
-INSERT INTO `sub_warehouse_apply` VALUES (1, 1, 1, 1, 6, 1, 5, '材料仓', NULL, '', 2, '123', '121', NULL, 400, 1.8, 720.0, 0, 1, 'admin1', '2025-09-18', NULL, NULL, NULL, 1, '2025-09-18 11:32:54', '2025-09-18 11:48:22');
-INSERT INTO `sub_warehouse_apply` VALUES (2, 1, 1, 1, 6, 1, 4, '材料仓', 1, '2121', 2, '123', '121', NULL, 600, 1.8, 1080.0, 0, 1, 'admin1', '2025-09-18', NULL, NULL, NULL, 1, '2025-09-18 11:32:54', '2025-09-18 11:32:54');
-INSERT INTO `sub_warehouse_apply` VALUES (3, 1, 1, 2, 7, 1, 11, '小小部件', NULL, '', 13, '12322', '21222', 'wdd/dwwdq', 90, 10.0, 900.0, 0, 1, 'admin1', '2025-09-18', NULL, NULL, NULL, 1, '2025-09-18 13:49:35', '2025-09-18 13:49:35');
-INSERT INTO `sub_warehouse_apply` VALUES (4, 1, 1, 2, 7, 1, 10, '小小部件', NULL, '', 16, '12325', '21225', 'wdd/dwwdq', 20, 5.0, 100.0, 0, 1, 'admin1', '2025-09-18', NULL, NULL, NULL, 1, '2025-09-18 13:49:35', '2025-09-18 13:49:35');
-INSERT INTO `sub_warehouse_apply` VALUES (5, 1, 1, 2, 5, 1, 13, '半成品仓', 2, '惠州饮料厂', 15, '12324', '21224', 'wdd/dwwdq', 2, 18.0, 36.0, 0, 1, 'admin1', '2025-09-18', NULL, NULL, NULL, 1, '2025-09-18 13:50:07', '2025-09-18 13:50:07');
+INSERT INTO `sub_warehouse_apply` VALUES (17, 1, 1, 1, 6, 1, 4, '材料仓', 1, '2121', 3, '789', '555', '535/35353', NULL, 574, 2.1, 1205.4, 1, '我是名字', '2025-09-19 13:18:25', 0, 0, 1, '2025-09-19 21:18:25', '2025-09-21 17:03:37');
+INSERT INTO `sub_warehouse_apply` VALUES (18, 1, 1, 1, 6, 1, 4, '材料仓', 2, '151', 2, '123', '121', '2121/21', NULL, 475, 1.8, 855.0, 1, '我是名字', '2025-09-20 11:59:29', 0, 0, 1, '2025-09-19 21:18:25', '2025-09-20 19:59:29');
+INSERT INTO `sub_warehouse_apply` VALUES (19, 1, 1, 1, 6, 1, 4, '材料仓', 2, '151', 3, '789', '555', '535/35353', NULL, 502, 2.5, 1255.0, 1, '我是名字', '2025-09-19 13:18:25', 0, 0, 1, '2025-09-19 21:18:25', '2025-09-21 17:03:38');
+INSERT INTO `sub_warehouse_apply` VALUES (20, 1, 1, 1, 6, 1, 4, '材料仓', 2, '151', 2, '123', '121', '2121/21', NULL, 645, 2.4, 1548.0, 1, '我是名字', '2025-09-19 13:18:25', 0, 0, 1, '2025-09-19 21:18:25', '2025-09-19 21:18:25');
+INSERT INTO `sub_warehouse_apply` VALUES (21, 1, 1, 1, 6, 1, 4, '材料仓', 2, '151', 3, '789', '555', '535/35353', NULL, 236, 1.9, 448.4, 1, '我是名字', '2025-09-19 13:52:27', 0, 0, 1, '2025-09-19 21:52:27', '2025-09-21 17:03:40');
+INSERT INTO `sub_warehouse_apply` VALUES (22, 1, 1, 1, 6, 1, 4, '材料仓', 1, '2121', 3, '789', '555', '535/35353', NULL, 222, 2.5, 555.0, 1, '我是名字', '2025-09-19 13:52:27', 0, 0, 1, '2025-09-19 21:52:27', '2025-09-19 21:52:27');
+INSERT INTO `sub_warehouse_apply` VALUES (23, 1, 1, 1, 6, 1, 4, '材料仓', 2, '151', 2, '123', '121', '2121/21', NULL, 600, 2.1, 1260.0, 1, '我是名字', '2025-09-20 11:53:35', 2, 1, 1, '2025-09-20 19:53:35', '2025-09-21 17:20:30');
+INSERT INTO `sub_warehouse_apply` VALUES (25, 1, 1, 1, 6, 1, 4, '材料仓', 2, '151', 3, '789', '555', '535/35353', NULL, 400, 1.9, 760.0, 1, '我是名字', '2025-09-20 12:00:01', 2, 1, 1, '2025-09-20 20:00:01', '2025-09-21 17:20:30');
+INSERT INTO `sub_warehouse_apply` VALUES (26, 1, 1, 1, 6, 1, 4, '材料仓', 1, '2121', 3, '789', '555', '535/35353', NULL, 632, 2.0, 1264.0, 1, '我是名字', '2025-09-20 12:00:01', 2, 1, 1, '2025-09-20 20:00:01', '2025-09-21 17:20:30');
+INSERT INTO `sub_warehouse_apply` VALUES (27, 1, 1, 1, 6, 1, 4, '材料仓', 2, '151', 3, '789', '555', '535/35353', NULL, 615, 1.9, 1168.5, 1, '我是名字', '2025-09-21 08:52:36', 0, 0, 1, '2025-09-21 16:52:36', '2025-09-21 17:08:56');
+INSERT INTO `sub_warehouse_apply` VALUES (28, 1, 1, 1, 6, 1, 4, '材料仓', 1, '2121', 3, '789', '555', '535/35353', '353', 158, 2.6, 410.8, 1, '我是名字', '2025-09-21 08:56:51', 0, 0, 1, '2025-09-21 16:56:51', '2025-09-22 14:17:05');
 
 -- ----------------------------
 -- Table structure for sub_warehouse_content
@@ -1038,30 +1102,31 @@ CREATE TABLE `sub_warehouse_content`  (
   `item_id` int(11) NULL DEFAULT NULL COMMENT '物料ID',
   `code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '物料编码',
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '物料名称',
-  `mode` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '规格型号',
+  `model_spec` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '规格型号',
   `other_features` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '其他特性',
   `unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '采购单位',
   `inv_unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '库存单位',
-  `initial` int(20) NULL DEFAULT NULL COMMENT '非正常入库数量',
-  `number_in` int(20) NULL DEFAULT NULL COMMENT '正常入库数量',
-  `number_out` int(20) NULL DEFAULT NULL COMMENT '出库数量',
-  `number_new` int(20) NULL DEFAULT NULL COMMENT '最新库存',
-  `price` decimal(10, 1) NULL DEFAULT NULL COMMENT '内部单价',
-  `price_total` decimal(20, 1) NULL DEFAULT NULL COMMENT '存货金额',
-  `price_in` decimal(20, 1) NULL DEFAULT NULL COMMENT '入库金额',
-  `price_out` decimal(10, 1) NULL DEFAULT NULL COMMENT '出库金额',
+  `initial` int(20) NULL DEFAULT 0 COMMENT '非正常入库数量',
+  `number_in` int(20) NULL DEFAULT 0 COMMENT '正常入库数量',
+  `number_out` int(20) NULL DEFAULT 0 COMMENT '出库数量',
+  `number_new` int(20) NULL DEFAULT 0 COMMENT '最新库存',
+  `price` decimal(10, 1) NULL DEFAULT 0.0 COMMENT '内部单价',
+  `price_total` decimal(20, 1) NULL DEFAULT 0.0 COMMENT '存货金额',
+  `price_in` decimal(20, 1) NULL DEFAULT 0.0 COMMENT '入库金额(弃)',
+  `price_out` decimal(10, 1) NULL DEFAULT 0.0 COMMENT '出库金额',
   `last_in_time` timestamp NULL DEFAULT NULL COMMENT '最后入库时间',
   `last_out_time` timestamp NULL DEFAULT NULL COMMENT '最后出库时间',
   `is_deleted` int(1) NULL DEFAULT 1 COMMENT '1：未删除；0：已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '仓库列表数据表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '仓库列表数据表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sub_warehouse_content
 -- ----------------------------
-INSERT INTO `sub_warehouse_content` VALUES (6, 1, 1, 1, 6, 2, '123', '121', '2121 / 21', '2121', NULL, '件', 536, NULL, NULL, NULL, 12.0, NULL, NULL, NULL, NULL, NULL, 1, '2025-09-15 17:39:13', '2025-09-15 17:39:13');
+INSERT INTO `sub_warehouse_content` VALUES (3, 4, 1, 1, 6, 3, '789', '555', '535/35353', '353', '', '', 0, 400, 0, 400, 0.0, 0.0, 0.0, 0.0, '2025-09-21 17:20:30', NULL, 1, '2025-09-21 17:17:24', '2025-09-22 14:17:05');
+INSERT INTO `sub_warehouse_content` VALUES (4, 1, 1, 1, 6, 2, '123', '121', '2121/21', NULL, '', '件', 0, 600, 0, 600, 2.8, 1680.0, 0.0, 0.0, '2025-09-21 17:20:30', NULL, 1, '2025-09-21 17:20:30', '2025-09-22 17:03:58');
 
 -- ----------------------------
 -- Table structure for sub_warehouse_cycle

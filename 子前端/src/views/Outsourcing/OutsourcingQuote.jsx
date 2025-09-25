@@ -71,7 +71,7 @@ export default defineComponent({
           if(!edit.value){
             const res = await request.post('/api/add_outsourcing_quote', form.value);
             if(res && res.code == 200){
-              ElMessage.success('添加成功');
+              ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
             }
@@ -108,7 +108,7 @@ export default defineComponent({
       form.value = { ...row };
       getProcessBomChildren(row.process_bom_id)
     }
-    // 添加
+    // 新增
     const handleAdd = () => {
       edit.value = 0;
       dialogVisible.value = true;
@@ -152,7 +152,7 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } v-permission={ 'OutsourcingQuote:add' }>
-                  添加委外报价
+                  新增委外报价
                 </ElButton>
               </div>
             ),
@@ -192,7 +192,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改委外报价' : '添加委外报价' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改委外报价' : '新增委外报价' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">

@@ -43,7 +43,7 @@ const SubWarehouseContent = sequelize.define('SubWarehouseContent', {
     allowNull: true,
     comment: '物料名称'
   },
-  mode: {
+  model_spec: {
     type: DataTypes.STRING(100),
     allowNull: true,
     comment: '规格型号'
@@ -66,41 +66,49 @@ const SubWarehouseContent = sequelize.define('SubWarehouseContent', {
   initial: {
     type: DataTypes.INTEGER(20),
     allowNull: true,
+    defaultValue: 0,
     comment: '期初数量'
   },
   number_in: {
     type: DataTypes.INTEGER(20),
     allowNull: true,
+    defaultValue: 0,
     comment: '入库数量'
   },
   number_out: {
     type: DataTypes.INTEGER(20),
     allowNull: true,
+    defaultValue: 0,
     comment: '出库数量'
   },
   number_new: {
     type: DataTypes.INTEGER(20),
     allowNull: true,
+    defaultValue: 0,
     comment: '最新库存'
   },
   price: {
     type: DataTypes.DECIMAL(10, 1),
     allowNull: true,
+    defaultValue: 0,
     comment: '内部单价'
   },
   price_total: {
     type: DataTypes.DECIMAL(20, 1),
     allowNull: true,
+    defaultValue: 0,
     comment: '存货金额'
   },
   price_in: {
     type: DataTypes.DECIMAL(20, 1),
     allowNull: true,
+    defaultValue: 0,
     comment: '入库金额'
   },
   price_out: {
     type: DataTypes.DECIMAL(10, 1),
     allowNull: true,
+    defaultValue: 0,
     comment: '出库金额'
   },
   last_in_time: {

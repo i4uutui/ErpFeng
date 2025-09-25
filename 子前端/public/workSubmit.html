@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>报工单</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/axios@1.9.0/dist/axios.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background-color: #f5f5f5;
+      color: #333;
+      min-height: 100vh;
+      padding-bottom: 80px;
+      /* 为底部按钮留出空间 */
+    }
+    .flex{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .non-mobile {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-size: 20px;
+      text-align: center;
+      padding: 20px;
+    }
+    .mobile-container {
+      padding: 20px;
+    }
+    .mobile-container .title{
+      text-align: center;
+      font-style: 20px;
+      font-weight: bold;
+      padding-bottom: 16px;
+    }
+    .data-item {
+      background-color: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .data-item .item{
+      padding: 6px 0;
+    }
+    .data-item .label {
+      font-size: 14px;
+      color: #666;
+    }
+    .data-item .value {
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .data-item .number input {
+      width: 100%;
+      padding: 6px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .data-item .number input:focus {
+      outline: none;
+      box-shadow: none;
+    }
+    .footer{
+      position: fixed;
+      bottom: env(safe-area-inset-bottom);
+      left: 0;
+      right: 0;
+      width: 100%;
+      padding: 0 16px;
+      height: 42px;
+      margin-bottom: 20px;
+    }
+    .submit-btn {
+      width: 100%;
+      height: 42px;
+      background-color: #007aff;
+      color: white;
+      border: none;
+      font-size: 18px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .submit-btn:active {
+      background-color: #0066cc;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <!-- 非移动端显示 -->
+    <div class="non-mobile提示" v-if="!isMobile">
+      请在移动端访问！
+    </div>
+
+    <!-- 移动端内容 -->
+    <div class="mobile-container" v-else>
+      <div class="title">报工单</div>
+      <div class="data-item">
+        <div class="flex item">
+          <div class="label">产品编码</div>
+          <div class="value">{{ getContent(dataObj.product_code) }}</div>
+        </div>
+        <div class="flex item">
+          <div class="label">产品名称</div>
+          <div class="value">{{ getContent(dataObj.product_name) }}</div>
+        </div>
+        <div class="flex item">
+          <div class="label">工程图号</div>
+          <div class="value">{{ getContent(dataObj.product_drawing) }}</div>
+        </div>
+        <div class="flex item">
+          <div class="label">部件编码</div>
+          <div class="value">{{ getContent(dataObj.part_code) }}</div>
+        </div>
+        <div class="flex item">
+          <div class="label">部件名称</div>
+          <div class="value">{{ getContent(dataObj.part_name) }}</div>
+        </div>
+        <div class="flex item">
+          <div class="label">工艺编码</div>
+          <div class="value">{{ getContent(dataObj.process_code) }}</div>
+        </div>
+        <div class="flex item">
+          <div class="label">工艺名称</div>
+          <div class="value">{{ getContent(dataObj.process_name) }}</div>
+        </div>
+        <div class="flex item">
+          <div class="label">生产数量</div>
+          <div class="value">{{ dataObj.out_number }}</div>
+        </div>
+        <div class="flex item">
+          <div class="label">客户交期</div>
+          <div class="value">{{ dataObj.delivery_time ? dataObj.delivery_time.substring(0, 10) : '' }}</div>
+        </div>
+      </div>
+      <div class="data-item">
+        <div class="flex item">
+          <div class="label">数量</div>
+          <div class="number">
+            <input type="number" v-model="quantity" min="0" placeholder="请输入数量">
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <button class="submit-btn" @click="handleSubmit">提交</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          api: 'http://api.yuanfangzixun.com.cn',
+          isMobile: false,
+          id: '',
+          quantity: '',
+          dataObj: {},
+        }
+      },
+      methods: {
+        getFectList() {
+          const that = this
+          axios.get(`${this.api}/api/mobile_process_bom?id=${this.id}`).then(res => {
+            if(res.data.code == 200){
+              const data = res.data.data
+              that.dataObj = data.parent.production
+              that.dataObj.process_code = data.process.process_code
+              that.dataObj.process_name = data.process.process_name
+            }
+          })
+        },
+        checkIsMobile() {
+          // 检测是否为移动设备
+          const userAgent = navigator.userAgent.toLowerCase();
+          const isMobile = /iphone|ipad|ipod|android|mobile|blackberry|iemobile|opera mini/i.test(userAgent);
+          this.isMobile = isMobile;
+        },
+        handleSubmit() {
+          if (!this.quantity) {
+            alert('请输入数量');
+            return;
+          }
+          axios.post(`${this.api}/api/mobile_work_order`, { id: this.id, number: this.quantity }).then(res => {
+            if(res.data.code == 200){
+              alert(`提交成功！已提交数量：${this.quantity}`);
+            }
+          })
+        },
+        getParams(url) {
+          const pattern = /(\w+)=(\w+)/gi;
+          const params = {};
+          url.replace(pattern, function(match, key, value) {
+            params[key] = value;
+          });
+          return params;
+        },
+        getContent(value) {
+          return value ? value : '-'
+        }
+      },
+      async mounted() {
+        await this.checkIsMobile();
+        if(!this.isMobile) return
+        // 监听窗口大小变化，重新检测设备类型
+        window.addEventListener('resize', this.checkIsMobile);
+
+        const data = this.getParams(window.location.href);
+        if(!data.id) return
+        this.id = data.id
+
+        this.getFectList()
+      },
+      beforeUnmount() {
+        window.removeEventListener('resize', this.checkIsMobile);
+      }
+    }).mount('#app');
+  </script>
+</body>
+
+</html>

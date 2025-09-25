@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router';
 import route from './routes'
 import { getItem } from '@/assets/js/storage';
 
@@ -23,14 +23,14 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes
 });
 
 router.beforeEach((to, from, next) => {
   const token = getItem('token');
   // document.title = to.meta.title
-  document.title = 'project'
+  document.title = '元方易捷 - 企业数字化管理平台'
   if (!token && to.name !== 'AdminLogin') {
     // 如果没有 token 且访问的不是登录页面，跳转到登录页面
     next({ name: 'AdminLogin' });

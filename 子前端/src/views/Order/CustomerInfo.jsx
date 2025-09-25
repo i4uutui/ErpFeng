@@ -78,7 +78,7 @@ export default defineComponent({
           if(!edit.value){
             const res = await request.post('/api/customer_info', form.value);
             if(res && res.code == 200){
-              ElMessage.success('添加成功');
+              ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
             }
@@ -121,7 +121,7 @@ export default defineComponent({
       dialogVisible.value = true;
       form.value = { ...row };
     }
-    // 添加
+    // 新增
     const handleAdd = () => {
       edit.value = 0;
       dialogVisible.value = true;
@@ -166,7 +166,7 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" v-permission={ 'CustomerInfo:add' } onClick={ handleAdd } >
-                  添加客户
+                  新增客户
                 </ElButton>
               </div>
             ),
@@ -198,7 +198,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改客户信息' : '添加客户信息' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改客户信息' : '新增客户信息' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">

@@ -1,7 +1,8 @@
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { SwitchButton } from '@element-plus/icons-vue'
-import { getItem } from '@/assets/js/storage';
+import { getItem, setItem } from '@/assets/js/storage';
+import request from '@/utils/request';
 import imageError from '@/assets/images/0fc7d20532fdaf769a25683617711.png'
 import logo from '@/assets/images/logo.png'
 import "./main.css"
@@ -11,6 +12,14 @@ export default defineComponent({
     const router = useRouter();
     const user = reactive(getItem('user'))
 
+    onMounted(() => {
+      getApprovalFlow()
+    })
+
+    const getApprovalFlow = async () => {
+      const res = await request.get('/api/get_approval_flow')
+      setItem('approval', res.data)
+    }
     const errorHandler = () => {
       // 头像没显示出来
     }

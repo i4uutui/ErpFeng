@@ -126,11 +126,35 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
     defaultValue: null,
     comment: '交货时间'
   },
+  apply_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: null,
+    comment: '申请人ID'
+  },
+  apply_name: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+    defaultValue: null,
+    comment: '申请人名称'
+  },
+  apply_time: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    defaultValue: null,
+    comment: '申请时间'
+  },
+  step: {
+    type: DataTypes.INTEGER(2),
+    allowNull: true,
+    defaultValue: 0,
+    comment: '审核当前在第几步，默认0，每审核一步加1'
+  },
   status: {
     type: DataTypes.INTEGER(1),
     allowNull: true,
-    defaultValue: 1,
-    comment: ' 是否已审核：1 - 待审核，2 - 已审核 '
+    defaultValue: 0,
+    comment: ' 状态（0审批中/1通过/2拒绝） '
   },
   is_deleted: {
     type: DataTypes.INTEGER(1),

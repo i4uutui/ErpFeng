@@ -7,6 +7,7 @@ import { getItem } from '@/assets/js/storage';
 export default defineComponent({
   setup(){
     const user = getItem('user')
+    const company = getItem('company')
     const formRef = ref(null);
     const rules = reactive({
       label: [
@@ -27,7 +28,7 @@ export default defineComponent({
     })
 
     onMounted(() => {
-      data.value = { id: 0, label: { label: '总经理', menberName: '222' }, children: [] }
+      data.value = { id: 0, label: { label: '总经理', menberName: company.person }, children: [] }
 
       fetchAdminList()
       fetchUserList()
@@ -53,7 +54,7 @@ export default defineComponent({
           if(!edit.value){
             const res = await request.post('/api/organize', form.value);
             if(res && res.code == 200){
-              ElMessage.success('添加成功');
+              ElMessage.success('新增成功');
             }
           }else{
             const formData = {
@@ -122,7 +123,7 @@ export default defineComponent({
             }}
           </Vue3TreeOrg>
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改节点' : '添加节点' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改节点' : '新增节点' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <>

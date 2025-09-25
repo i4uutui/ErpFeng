@@ -23,7 +23,7 @@ export default defineComponent({
       username: '',
       password: '',
       name: '',
-      power: [] // 添加权限字段
+      power: [] // 新增权限字段
     })
     let tableData = ref([])
     let currentPage = ref(1);
@@ -62,7 +62,7 @@ export default defineComponent({
             }
             const res = await request.post('/api/user', formValue);
             if(res && res.code == 200){
-              ElMessage.success('添加成功');
+              ElMessage.success('新增成功');
             }
             
           }else{
@@ -168,15 +168,17 @@ export default defineComponent({
     
       // 遍历所有菜单分类
       Object.keys(newData).forEach(category => {
-          // 过滤当前分类下的菜单项
-          newData[category] = newData[category].filter(item => 
-              item.label !== '用户管理'
-          );
+        // 过滤当前分类下的菜单项
+        newData[category] = newData[category].filter(item => {
+          if(!(item.value == 'UserManagement' || item.value == 'ApprovalStep')){
+            return item
+          }
+        });
       });
       
       return newData;
     }
-    // 添加管理员
+    // 新增管理员
     const handleAdd = () => {
       edit.value = 0;
       dialogVisible.value = true;
@@ -218,7 +220,7 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-                  添加管理员
+                  新增管理员
                 </ElButton>
               </div>
             ),
@@ -248,7 +250,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改管理员' : '添加管理员' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改管理员' : '新增管理员' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } rules={ rules } label-width="80px">

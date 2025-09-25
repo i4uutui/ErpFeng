@@ -7,7 +7,17 @@ require('dotenv').config();
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocs = require('./config/swagger.js');
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://admin.yuanfangzixun.com.cn",  // 例如 http://8.129.3.181:8080
+    "http://localhost:9998",  // 保留本地开发环境
+    "http://localhost:9999"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],  // 允许前端传递的头信息
+  credentials: true  // 允许跨域携带 Cookie（如果需要）
+}));
+// app.options("*", cors());
 app.use(bodyParser.json());
 
 // 配置 Swagger 文档路由

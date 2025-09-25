@@ -34,7 +34,7 @@ const SubProcessCode = sequelize.define('SubProcessCode', {
     allowNull: false,
     comment: '工艺名称'
   },
-  times: {
+  time: {
     type: DataTypes.STRING(5),
     allowNull: true,
     comment: ' 单件工时 (小时)'

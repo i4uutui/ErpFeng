@@ -5,10 +5,9 @@ const AdAdmin = require('./AdAdmin.js') // 产品报价信息表
 const AdCompanyInfo = require('./AdCompanyInfo.js') // 客户企业信息表
 const AdUser = require('./AdUser.js') // 子后台用户表
 const AdOrganize = require('./AdOrganize.js') // 组织架构信息表
-const SubApprovalFlow = require('./SubApprovalFlow.js') // 审批流程配置表
 const SubApprovalHistory = require('./SubApprovalHistory.js') // 审批操作历史表
-const SubApprovalRecord = require('./SubApprovalRecord.js') // 审批记录表
 const SubApprovalStep = require('./SubApprovalStep.js') // 审批步骤配置表
+const SubApprovalUser = require('./SubApprovalUser.js') // 流程控制用户表
 const SubProcessCycle = require('./SubProcessCycle.js') // 生产制程表
 const SubProcessCycleChild = require('./SubProcessCycleChild.js') // 生产制程子表
 const SubConstType = require('./SubConstType.js') // 仓库类型
@@ -36,8 +35,8 @@ const SubOutsourcingQuote = require('./SubOutsourcingQuote.js') // 委外报价�
 const SubOutsourcingOrder = require('./SubOutsourcingOrder.js') // 委外加工单
 const SubProductionProgress = require('./SubProductionProgress.js') // 生产进度表
 
-// AdUser.hasOne(AdCompanyInfo, { foreignKey: 'id', sourceKey: 'company_id', as: 'company' })
-// AdCompanyInfo.belongsTo(AdUser, { foreignKey: 'id', targetKey: 'company_id' })
+AdUser.belongsTo(AdCompanyInfo, { foreignKey: 'company_id', as: 'company' })
+
 AdUser.hasMany(AdOrganize, { foreignKey: 'menber_id', as: 'organize' });
 AdOrganize.hasMany(AdOrganize, { foreignKey: 'pid', as: 'children' });
 AdOrganize.belongsTo(AdUser, { foreignKey: 'menber_id', as: 'menber' });
@@ -89,15 +88,18 @@ SubOutsourcingOrder.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as:
 SubOutsourcingOrder.belongsTo(SubProcessBomChild, { foreignKey: 'process_bom_children_id', as: 'processChildren' })
 SubOutsourcingOrder.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
 
-// SubProductionProgress.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
-// SubProductionProgress.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubProductionProgress.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 SubProductionProgress.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
 SubProductionProgress.belongsTo(SubProcessBom, { foreignKey: 'bom_id', as: 'bom' })
+SubProcessBom.hasOne(SubProductionProgress, { foreignKey: 'bom_id', as: 'production' })
 SubProductionProgress.hasMany(SubProcessCycleChild, { foreignKey: 'progress_id', as: 'cycleChild' })
 SubProcessCycle.hasMany(SubProcessCycleChild, { foreignKey: 'cycle_id', as: 'cycleChild' })
 SubProcessCycleChild.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
 SubProcessCycleChild.belongsTo(SubProductionProgress, { foreignKey: 'progress_id', as: 'progress' })
+
+SubWarehouseApply.hasMany(SubApprovalUser, { foreignKey: 'source_id', as: 'approval' })
+SubMaterialMent.hasMany(SubApprovalUser, { foreignKey: 'source_id', as: 'approval' })
+SubOutsourcingOrder.hasMany(SubApprovalUser, { foreignKey: 'source_id', as: 'approval' })
 
 module.exports = {
   Op,
@@ -106,10 +108,9 @@ module.exports = {
   AdCompanyInfo,
   AdUser,
   AdOrganize,
-  SubApprovalFlow,
   SubApprovalHistory,
-  SubApprovalRecord,
   SubApprovalStep,
+  SubApprovalUser,
   SubProcessCycle,
   SubProcessCycleChild,
   SubConstType,

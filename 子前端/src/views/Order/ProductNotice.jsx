@@ -50,7 +50,7 @@ export default defineComponent({
           if(!edit.value){
             const res = await request.post('/api/product_notice', form.value);
             if(res && res.code == 200){
-              ElMessage.success('添加成功');
+              ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
             }
@@ -89,7 +89,7 @@ export default defineComponent({
       dialogVisible.value = true;
       form.value = { ...row };
     }
-    // 添加
+    // 新增
     const handleAdd = () => {
       edit.value = 0;
       dialogVisible.value = true;
@@ -126,7 +126,7 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" v-permission={ 'ProductNotice:add' } onClick={ handleAdd } >
-                  添加生产通知单
+                  新增生产通知单
                 </ElButton>
               </div>
             ),
@@ -163,7 +163,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改生产通知单' : '添加生产通知单' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改生产通知单' : '新增生产通知单' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
@@ -174,7 +174,7 @@ export default defineComponent({
                   <ElInput v-model={ form.value.notice } placeholder="请输入生产订单号" />
                 </ElFormItem>
                 <ElFormItem label="交货日期" prop="delivery_time">
-                  <ElDatePicker v-model={ form.value.delivery_time } clearable={ false } value-format="YYYY-MM-DD" type="datetime" placeholder="请选择交货日期" />
+                  <ElDatePicker v-model={ form.value.delivery_time } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="请选择交货日期" />
                 </ElFormItem>
               </ElForm>
             ),

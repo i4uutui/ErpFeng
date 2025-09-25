@@ -91,7 +91,7 @@ export default defineComponent({
                     {{
                       default: ({row}) => {
                         const divDom = <div class="flex">
-                          {row.bom.children.map(e => <div style={{ marginRight: '10px' }}><img src='https://www-static.qbox.me/_next/static/media/bg-1.7610da8412b7a7da494f91ee11a2c771.png' width={ 120 } height={ 120 } /><div style={{ textAlign: 'center' }}>{ e.equipment.cycle.name }:{e.process.process_name}</div></div>)}
+                          {row.bom.children.map(e => <div style={{ marginRight: '10px' }}><img src={ e.qr_code } width={ 120 } height={ 120 } /><div style={{ textAlign: 'center' }}>{ e.equipment.cycle.name }:{e.process.process_name}</div></div>)}
                         </div>
                         return divDom
                       }
@@ -133,7 +133,7 @@ export default defineComponent({
                             <td>{ e.out_number }</td>
                             <td><div class="flex">{ e.bom.children.map(o => {
                               const divDom = <div style={{ marginRight: '10px' }}>
-                                <img src='https://www-static.qbox.me/_next/static/media/bg-1.7610da8412b7a7da494f91ee11a2c771.png' width={ 100 } height={ 100 } />
+                                <img src={ o.qr_code } width={ 100 } height={ 100 } />
                                 <div style={{ textAlign: 'center' }}>{ o.equipment.cycle.name }:{o.process.process_name}</div>
                               </div>
                               return divDom

@@ -46,7 +46,7 @@ export default defineComponent({
             }
             const res = await request.post('/api/warehouse_cycle', formValue);
             if(res && res.code == 200){
-              ElMessage.success('添加成功');
+              ElMessage.success('新增成功');
             }
             
           }else{
@@ -73,7 +73,7 @@ export default defineComponent({
       form.value.ware_id = row.ware_id
       dialogVisible.value = true;
     }
-    // 添加管理员
+    // 新增管理员
     const handleAdd = () => {
       edit.value = 0;
       form.value.name = '';
@@ -117,7 +117,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改仓库' : '添加仓库' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改仓库' : '新增仓库' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } rules={ rules } label-width="80px">

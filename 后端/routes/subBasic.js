@@ -316,7 +316,7 @@ router.get('/process_code', authMiddleware, async (req, res) => {
 
 // 添加工艺编码
 router.post('/process_code', authMiddleware, async (req, res) => {
-  const { process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, equipment_id, remarks } = req.body;
+  const { process_code, process_name, time, price, section_points, total_processing_price, equipment_id, remarks } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -329,7 +329,7 @@ router.post('/process_code', authMiddleware, async (req, res) => {
   if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
   
   await SubProcessCode.create({
-    process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, equipment_id, company_id,
+    process_code, process_name, time, price, section_points, total_processing_price, remarks, equipment_id, company_id,
     user_id: userId
   })
   
@@ -338,7 +338,7 @@ router.post('/process_code', authMiddleware, async (req, res) => {
 
 // 更新工艺编码接口
 router.put('/process_code', authMiddleware, async (req, res) => {
-  const { process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, equipment_id, id } = req.body;
+  const { process_code, process_name, time, price, section_points, total_processing_price, remarks, equipment_id, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证工艺是否存在
@@ -353,7 +353,7 @@ router.put('/process_code', authMiddleware, async (req, res) => {
   }
   
   await SubProcessCode.update({
-    process_code, process_name, piece_working_hours, processing_unit_price, section_points, total_processing_price, remarks, equipment_id, company_id,
+    process_code, process_name, time, price, section_points, total_processing_price, remarks, equipment_id, company_id,
     user_id: userId
   }, { where: { id } })
   

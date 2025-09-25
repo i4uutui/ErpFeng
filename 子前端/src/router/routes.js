@@ -352,6 +352,9 @@ const routes = [
           parent: '采购管理',
           menu: true,
           buttons: [
+            { code: 'PurchaseOrder:add', label: '新增' },
+            { code: 'PurchaseOrder:edit', label: '修改' },
+            { code: 'PurchaseOrder:set', label: '采购单提交' },
             { code: 'PurchaseOrder:print', label: '打印' },
           ]
         }
@@ -380,19 +383,11 @@ const routes = [
           parent: '委外管理',
           menu: true,
           buttons: [
-            { code: 'OutsourcingOrder:add', label: '新增委外加工' },
+            { code: 'OutsourcingOrder:add', label: '新增' },
+            { code: 'OutsourcingOrder:edit', label: '修改' },
+            { code: 'OutsourcingOrder:set', label: '采购单提交' },
             { code: 'OutsourcingOrder:print', label: '打印' },
           ]
-        }
-      },
-      {
-        path: '/outsourcing/outsourcing-material',
-        name: 'OutsourcingMaterial',
-        component: () => import('@/views/Outsourcing/OutsourcingMaterial.jsx'),
-        meta: {
-          title: '委外发料',
-          parent: '委外管理',
-          menu: true
         }
       },
       // 生产管理
@@ -441,9 +436,12 @@ const routes = [
         name: 'WarehouseRate',
         component: () => import('@/views/Warehouse/WarehouseRate.jsx'),
         meta: {
-          title: '仓库管理',
+          title: '仓库进出存',
           parent: '仓库管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'WarehouseRate:edit', label: '修改' },
+          ]
         }
       },
       {
@@ -453,7 +451,14 @@ const routes = [
         meta: {
           title: '材料出入库',
           parent: '仓库管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'MaterialHouse:addIn', label: '新增入库单' },
+            { code: 'MaterialHouse:addOut', label: '新增出库单' },
+            { code: 'MaterialHouse:edit', label: '修改' },
+            { code: 'MaterialHouse:set', label: '出入库提交' },
+            { code: 'MaterialHouse:print', label: '打印' },
+          ]
         }
       },
       {
@@ -463,59 +468,46 @@ const routes = [
         meta: {
           title: '成品出入库',
           parent: '仓库管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'ProductHouse:addIn', label: '新增入库单' },
+            { code: 'ProductHouse:addOut', label: '新增出库单' },
+            { code: 'ProductHouse:edit', label: '修改' },
+            { code: 'ProductHouse:set', label: '出入库提交' },
+            { code: 'ProductHouse:print', label: '打印' },
+          ]
         }
       },
-      {
-        path: '/finance/employee-piece-rate',
-        name: 'EmployeePieceRate',
-        component: () => import('@/views/finance/EmployeePieceRate.jsx'),
-        meta: {
-          title: '员工计件工资',
-          parent: '财务管理',
-          menu: true
-        }
-      },
-      {
-        path: '/finance/accounts-receivable',
-        name: 'AccountsReceivable',
-        component: () => import('@/views/finance/AccountsReceivable.jsx'),
-        meta: {
-          title: '应收货款',
-          parent: '财务管理',
-          menu: true
-        }
-      },
-      {
-        path: '/finance/accounts-payable',
-        name: 'AccountsPayable',
-        component: () => import('@/views/finance/AccountsPayable.jsx'),
-        meta: {
-          title: '应付货款',
-          parent: '财务管理',
-          menu: true
-        }
-      },
-      {
-        path: '/finance/advance-payment',
-        name: 'AdvancePayment',
-        component: () => import('@/views/finance/AdvancePayment.jsx'),
-        meta: {
-          title: '预收货款',
-          parent: '财务管理',
-          menu: true
-        }
-      },
-      {
-        path: '/finance/advance-receipt',
-        name: 'AdvanceReceipt',
-        component: () => import('@/views/finance/AdvanceReceipt.jsx'),
-        meta: {
-          title: '预付货款',
-          parent: '财务管理',
-          menu: true
-        }
-      },
+      // {
+      //   path: '/finance/employee-piece-rate',
+      //   name: 'EmployeePieceRate',
+      //   component: () => import('@/views/finance/EmployeePieceRate.jsx'),
+      //   meta: {
+      //     title: '员工计件工资',
+      //     parent: '财务管理',
+      //     menu: true
+      //   }
+      // },
+      // {
+      //   path: '/finance/accounts-receivable',
+      //   name: 'AccountsReceivable',
+      //   component: () => import('@/views/finance/AccountsReceivable.jsx'),
+      //   meta: {
+      //     title: '应收货款',
+      //     parent: '财务管理',
+      //     menu: true
+      //   }
+      // },
+      // {
+      //   path: '/finance/accounts-payable',
+      //   name: 'AccountsPayable',
+      //   component: () => import('@/views/finance/AccountsPayable.jsx'),
+      //   meta: {
+      //     title: '应付货款',
+      //     parent: '财务管理',
+      //     menu: true
+      //   }
+      // }
     ]
   }
 ];
