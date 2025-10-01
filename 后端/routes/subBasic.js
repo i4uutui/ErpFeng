@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
-const { SubProductCode, SubPartCode, SubMaterialCode, SubProcessCode, SubEquipmentCode, SubEmployeeInfo, Op, SubProcessCycle } = require('../models')
+const { SubProductCode, SubPartCode, SubMaterialCode, SubProcessCode, SubEquipmentCode, SubEmployeeInfo, Op, SubProcessCycle, SubOperationHistory } = require('../models')
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -491,13 +493,14 @@ router.get('/employee_info', authMiddleware, async (req, res) => {
       is_deleted: 1,
       company_id
     },
+    attributes: ['id', 'company_id', 'employee_id', 'name', 'cycle_id', 'cycle_name', 'production_position', 'salary_attribute', 'remarks', 'created_at', 'account'],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
     offset
   })
   
   const totalPages = Math.ceil(count / pageSize);
-  row = rows.map(e => e.toJSON())
+  const row = rows.map(e => e.toJSON())
   
   // 返回所需信息
   res.json({ 
@@ -512,7 +515,7 @@ router.get('/employee_info', authMiddleware, async (req, res) => {
 
 // 添加员工信息
 router.post('/employee_info', authMiddleware, async (req, res) => {
-  const { employee_id, name, department, production_position, salary_attribute, remarks } = req.body;
+  const { employee_id, name, account, password, cycle_id, cycle_name, production_position, salary_attribute, remarks } = req.body;
   const { id: userId, company_id } = req.user;
   
   const rows = await SubEmployeeInfo.findAll({
@@ -521,10 +524,21 @@ router.post('/employee_info', authMiddleware, async (req, res) => {
       company_id
     }
   })
-  if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
+  if(rows.length != 0) return res.json({ message: '工号不能重复', code: 401 })
+
+  const accResult = await SubEmployeeInfo.findOne({
+    where: {
+      company_id,
+      account
+    }
+  })
+  if(accResult) return res.json({ message: '已有重复的员工账号，员工账号不能重复', code: 401 })
+
+  // 对密码进行加密
+  const hashedPassword = await bcrypt.hash(password, 10);
   
   await SubEmployeeInfo.create({
-    employee_id, name, department, production_position, salary_attribute, remarks, company_id,
+    employee_id, name, account, password: hashedPassword, cycle_id, cycle_name, production_position, salary_attribute, remarks, company_id,
     user_id: userId
   })
   
@@ -533,22 +547,34 @@ router.post('/employee_info', authMiddleware, async (req, res) => {
 
 // 更新员工信息接口
 router.put('/employee_info', authMiddleware, async (req, res) => {
-  const { employee_id, name, department, production_position, salary_attribute, remarks, id } = req.body;
+  const { employee_id, name, account, password, cycle_id, cycle_name, production_position, salary_attribute, remarks, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证员工信息是否存在
   const employee = await SubEmployeeInfo.findByPk(id);
   if (!employee) return res.json({ message: '员工信息不存在', code: 401 });
+  const result = employee.toJSON()
   
   const rows = await SubEmployeeInfo.findAll({
     where: { employee_id, company_id, id: { [Op.ne]: id } }
   })
   if(rows.length != 0){
-    return res.json({ message: '员工编码不能重复', code: 401 })
+    return res.json({ message: '员工工号不能重复', code: 401 })
   }
+  const accResult = await SubEmployeeInfo.findOne({
+    where: {
+      company_id,
+      account,
+      id: { [Op.ne]: id }
+    }
+  })
+  if(accResult) return res.json({ message: '已有重复的员工账号，员工账号不能重复', code: 401 })
+
+  // 对密码进行加密
+  const hashedPassword = password ? await bcrypt.hash(password, 10) : result.password;
   
   await SubEmployeeInfo.update({
-    employee_id, name, department, production_position, salary_attribute, remarks, company_id,
+    employee_id, name, account, password: hashedPassword, cycle_id, cycle_name, production_position, salary_attribute, remarks, company_id,
     user_id: userId
   }, { where: { id } })
   
@@ -570,5 +596,46 @@ router.delete('/employee_info/:id', authMiddleware, async (req, res) => {
   
   res.json({ message: '删除成功', code: 200 });
 });
+
+// 员工登录
+router.post('/employee_info_login', async (req, res) => {
+  const { account, password, company_id } = req.body;
+  const result = await SubEmployeeInfo.findOne({
+    where: {
+      account,
+      company_id,
+      is_deleted: 1
+    },
+    attributes: ['id', 'company_id', 'name', 'cycle_name', 'account', 'password']
+  })
+  if(!result) return res.json({ message: '账号密码错误', code: 401 })
+  
+  const data = result.toJSON()
+  
+  const isPasswordValid = await bcrypt.compare(password, data.password);
+  
+  if (!isPasswordValid) {
+    return res.json({ message: '账号或密码错误', code: 401 });
+  }
+
+  await SubOperationHistory.create({
+    user_id: data.id,
+    user_name: data.name,
+    company_id: company_id,
+    operation_type: 'login',
+    module: "移动端",
+    desc: `员工{ ${ data.name } }成功登录`,
+    data: { newData: { account: account, password: '***' } },
+  });
+
+  const token = jwt.sign({ ...data }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+  const { password: _, ...newData } = data;
+  res.json({ 
+    token, 
+    data: newData,
+    code: 200 
+  });
+})
 
 module.exports = router;

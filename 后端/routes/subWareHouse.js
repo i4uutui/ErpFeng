@@ -87,7 +87,7 @@ router.post('/queryWarehouse', authMiddleware, async (req, res) => {
  *           type: array
  */
 router.post('/warehouse_apply', authMiddleware, async (req, res) => {
-  const { house_id, operate, type, plan_id, item_id, status, apply_time } = req.body
+  const { ware_id, house_id, operate, type, plan_id, item_id, status, apply_time } = req.body
   const { id: userId, company_id } = req.user;
 
   let whereObj = {}
@@ -97,17 +97,20 @@ router.post('/warehouse_apply', authMiddleware, async (req, res) => {
   if(plan_id) whereObj.plan_id = plan_id
   if(item_id) whereObj.item_id = item_id
   whereObj.status = status ? status : [0, 2]
-
+  
   const hasWhereData = Object.keys(whereObj).length > 0;
   if(!hasWhereData) return res.json({ message: '请至少选择一个筛选条件', code: 401 })
+
+  const where = {
+    company_id,
+    ware_id,
+    ...whereObj,
+    apply_time: {
+      [Op.between]: [new Date(apply_time[0]), new Date(apply_time[1])] // 使用 between 筛选范围
+    }
+  }
   const result = await SubWarehouseApply.findAll({
-    where: {
-      company_id,
-      ...whereObj,
-      apply_time: {
-        [Op.between]: [new Date(apply_time[0]), new Date(apply_time[1])] // 使用 between 筛选范围
-      }
-    },
+    where: where,
     include: [
       { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], separate: true, }
     ],

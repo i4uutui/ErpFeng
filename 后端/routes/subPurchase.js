@@ -230,15 +230,15 @@ router.get('/material_quote', authMiddleware, async (req, res) => {
     offset
   })
   const totalPages = Math.ceil(count / pageSize)
-  const fromData = rows.map(item => item.dataValues)
-  const rs = fromData.map(item => {
-    item.notice = formatObjectTime(item.notice.dataValues)
+  const fromData = rows.map(e => {
+    const item = e.toJSON()
+    item.notice = formatObjectTime(item.notice)
     return item
   })
   
   // 返回所需信息
   res.json({ 
-    data: formatArrayTime(rs), 
+    data: formatArrayTime(fromData), 
     total: count, 
     totalPages, 
     currentPage: parseInt(page), 
@@ -598,6 +598,34 @@ router.post('/handlePurchaseBackFlow', authMiddleware, async (req, res) => {
   })
 
   res.json({ code: 200, message: '操作成功' })
+})
+/**
+ * @swagger
+ * /api/material_ment:
+ *   put:
+ *     summary: 修改采购单
+ *     tags:
+ *       - 采购单(Purchase)
+ */
+router.put('/material_ment', authMiddleware, async (req, res) => {
+  const { notice_id, notice, supplier_id, supplier_code, supplier_abbreviation, product_id, product_code, product_name, material_id, material_code, material_name, model_spec, other_features, unit, price, order_number, number, delivery_time, id } = req.body;
+  const { id: userId, company_id } = req.user;
+
+  const result = await SubMaterialMent.findByPk(id)
+  if(!result) res.json({ message: '未找到该采购单信息', code: 401 })
+  
+  const obj = {
+    notice_id, notice, supplier_id, supplier_code, supplier_abbreviation, product_id, product_code, product_name, material_id, material_code, material_name, model_spec, other_features, unit, price, order_number, number, delivery_time, company_id,
+    user_id: userId
+  }
+  const updateResult = await SubMaterialMent.update(obj, {
+    where: {
+      id
+    }
+  })
+  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
+  
+  res.json({ message: '修改成功', code: 200 });
 })
 
 

@@ -29,10 +29,25 @@ const SubEmployeeInfo = sequelize.define('SubEmployeeInfo', {
     allowNull: false,
     comment: ' 姓名 '
   },
-  department: {
+  account: {
     type: DataTypes.STRING(50),
+    allowNull: false,
+    comment: ' 员工账号 '
+  },
+  password: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
+    comment: ' 员工密码 '
+  },
+  cycle_id: {
+    type: DataTypes.INTEGER(11),
     allowNull: true,
-    comment: ' 所属部门 '
+    comment: ' 所属制程ID '
+  },
+  cycle_name: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+    comment: ' 所属制程名称 '
   },
   production_position: {
     type: DataTypes.STRING(50),

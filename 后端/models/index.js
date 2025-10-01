@@ -5,7 +5,7 @@ const AdAdmin = require('./AdAdmin.js') // 产品报价信息表
 const AdCompanyInfo = require('./AdCompanyInfo.js') // 客户企业信息表
 const AdUser = require('./AdUser.js') // 子后台用户表
 const AdOrganize = require('./AdOrganize.js') // 组织架构信息表
-const SubApprovalHistory = require('./SubApprovalHistory.js') // 审批操作历史表
+const SubOperationHistory = require('./SubOperationHistory.js') // 审批操作历史表
 const SubApprovalStep = require('./SubApprovalStep.js') // 审批步骤配置表
 const SubApprovalUser = require('./SubApprovalUser.js') // 流程控制用户表
 const SubProcessCycle = require('./SubProcessCycle.js') // 生产制程表
@@ -108,7 +108,7 @@ module.exports = {
   AdCompanyInfo,
   AdUser,
   AdOrganize,
-  SubApprovalHistory,
+  SubOperationHistory,
   SubApprovalStep,
   SubApprovalUser,
   SubProcessCycle,

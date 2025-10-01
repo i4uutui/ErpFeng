@@ -201,7 +201,7 @@ router.post('/process_bom', authMiddleware, async (req, res) => {
   const updateData = [];
   for (const e of bomChild) {
     const data = e.toJSON();
-    const qr_code = await MainDataService.generateAndUploadQrcode( `${BaseConfig.bomQrCode_url}?id=${data.id}` );
+    const qr_code = await MainDataService.generateAndUploadQrcode( `${BaseConfig.bomQrCode_url}?id=${data.id}&company_id=${company_id}` );
     updateData.push({
       id: data.id,
       qr_code

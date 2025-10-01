@@ -9,15 +9,15 @@ const swaggerDocs = require('./config/swagger.js');
 
 app.use(cors({
   origin: [
-    "http://admin.yuanfangzixun.com.cn",  // 例如 http://8.129.3.181:8080
-    "http://localhost:9998",  // 保留本地开发环境
-    "http://localhost:9999"
+    "http://admin.yuanfangzixun.com.cn",
+    "http://localhost:9998",
+    "http://localhost:9999",
+    "http://localhost:52330"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],  // 允许前端传递的头信息
   credentials: true  // 允许跨域携带 Cookie（如果需要）
 }));
-// app.options("*", cors());
 app.use(bodyParser.json());
 
 // 配置 Swagger 文档路由
@@ -25,6 +25,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // 路由
 app.use('/admin', require('./routes/admin'));
+app.use('/api', require('./routes/operationLog')); // 操作日志
 app.use('/api', require('./routes/subAdmin'));
 app.use('/api', require('./routes/subUser')); // 用户管理
 app.use('/api', require('./routes/subBasic')); // 基础资料

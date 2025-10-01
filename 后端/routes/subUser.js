@@ -889,7 +889,6 @@ router.post('/handleApproval', authMiddleware, async (req, res) => {
       updateOnDuplicate: [ 'user_id', 'company_id', 'ware_id', 'house_id', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'unit', 'inv_unit', 'initial', 'number_in', 'number_out', 'price_total', 'price', 'number_new', 'price_in', 'price_out', 'last_in_time', 'last_out_time' ]
     })
   }
-  
   if(!approval.length) return res.json({ message: '暂无可审核的数据', code: 401 })
   await SubApprovalUser.bulkCreate(approval, {
     updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status']

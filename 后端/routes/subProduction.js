@@ -1,8 +1,9 @@
 const express = require('express');
 const dayjs = require('dayjs')
 const router = express.Router();
-const { SubProductionProgress, SubProductNotice, SubProductCode, SubCustomerInfo, SubSaleOrder, SubPartCode, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessBom, SubProcessCycleChild, Op } = require('../models');
+const { SubProductionProgress, SubProductNotice, SubProductCode, SubCustomerInfo, SubSaleOrder, SubPartCode, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessBom, SubProcessCycleChild, SubOperationHistory, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
+const EmployeeAuth = require('../middleware/EmployeeAuth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { PreciseMath } = require('../middleware/tool');
 
@@ -189,8 +190,10 @@ router.get('/workOrder', authMiddleware, async (req, res) => {
 })
 
 // 移动端移动端报工单获取数据
-router.get('/mobile_process_bom', async (req, res) => {
-  const { id } = req.query;
+router.get('/mobile_process_bom', EmployeeAuth, async (req, res) => {
+  const { id, company_id } = req.query;
+  const { company_id: companyId } = req.user
+  if(company_id != companyId) return res.json({ message: '数据出错，请检查正确的地址或二维码', code: 401 })
 
   const result = await SubProcessBomChild.findByPk(id, {
     include: [
@@ -198,14 +201,17 @@ router.get('/mobile_process_bom', async (req, res) => {
       { model: SubProcessCode, as: 'process' }
     ]
   })
-  if(!result) return res.json({ message: '数据出错，请检查正确的地址或二维码' })
+  if(!result) return res.json({ message: '数据出错，请检查正确的地址或二维码', code: 401 })
   const dataValue = result.toJSON()
 
   res.json({ data: formatObjectTime(dataValue), code: 200 });
 })
 // 移动端报工单
-router.post('/mobile_work_order', async (req, res) => {
-  const { number, id } = req.body
+router.post('/mobile_work_order', EmployeeAuth, async (req, res) => {
+  const { number, id, company_id } = req.body
+  const { company_id: companyId, id: userId, name } = req.user
+  if(company_id != companyId) return res.json({ message: '数据出错，请检查正确的地址或二维码', code: 401 })
+
   const quantity = Number(number)
 
   if(!quantity || quantity <= 0) return res.json({ message: '数量输入错误，请重新输入', code: 401 })
@@ -222,7 +228,16 @@ router.post('/mobile_work_order', async (req, res) => {
     order_number: dataValue.order_number,
     all_time: dataValue.all_time
   }, { where: { id } })
-  console.log(resData);
+  
+  await SubOperationHistory.create({
+    user_id: userId,
+    user_name: name,
+    company_id: company_id,
+    operation_type: 'add',
+    module: "移动端",
+    desc: `员工{ ${ data.name } }报工数量：${ quantity }`,
+    data: { newData: { number: quantity, id, company_id } },
+  });
 
   res.json({ message: '操作成功', code: 200 })
 })

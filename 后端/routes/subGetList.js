@@ -187,10 +187,10 @@ router.get('/getProcessCode', authMiddleware, async (req, res) => {
   const { process_code } = req.query;
   const { company_id } = req.user;
   
+  let processWhere = {}
+  if(process_code) processWhere.process_code = { [Op.like]: `%${process_code}%` }
   const config = {
-    where: { is_deleted: 1, company_id, process_code: {
-      [Op.like]: `%${process_code}%`
-    } },
+    where: { is_deleted: 1, company_id, ...processWhere },
     order: [['created_at', 'DESC']],
   }
   const rows = await SubProcessCode.findAll(config);
