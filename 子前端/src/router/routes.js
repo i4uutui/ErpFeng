@@ -33,6 +33,16 @@ const routes = [
         }
       },
       {
+        path: '/system/trajectory',
+        name: 'Trajectory',
+        component: () => import('@/views/System/Trajectory.jsx'),
+        meta: {
+          title: '用户轨迹',
+          parent: '系统管理',
+          menu: true,
+        }
+      },
+      {
         path: '/system/approval-step',
         name: 'ApprovalStep',
         component: () => import('@/views/System/ApprovalStep.jsx'),
@@ -71,7 +81,7 @@ const routes = [
         name: 'WarehouseType',
         component: () => import('@/views/System/WarehouseType.jsx'),
         meta: {
-          title: '仓库类型',
+          title: '仓库建立',
           parent: '系统管理',
           menu: true,
           buttons: [
@@ -408,7 +418,10 @@ const routes = [
         meta: {
           title: '派工单',
           parent: '生产管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'WorkOrder:print', label: '打印' },
+          ]
         }
       },
       // {

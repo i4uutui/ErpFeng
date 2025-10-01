@@ -5,6 +5,7 @@ import request from '@/utils/request';
 import dayjs from "dayjs"
 import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -27,7 +28,7 @@ export default defineComponent({
     const formRef = ref(null)
     const rules = ref({})
     let form = ref({
-      ware_id: 2,
+      ware_id: 3,
       house_id: '',
       house_name: '',
       operate: '',  // 入库 or 出库
@@ -88,8 +89,8 @@ export default defineComponent({
       nowDate.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
       // 获取最近一年的日期
       const today = dayjs()
-      const lastYearStart = today.subtract(1, 'year').startOf('day').format('YYYY-MM-DD')
-      const lastYearEnd = today.endOf('day').format('YYYY-MM-DD')
+      const lastYearStart = today.subtract(1, 'year').startOf('day').format('YYYY-MM-DD HH:mm:ss')
+      const lastYearEnd = today.endOf('day').format('YYYY-MM-DD HH:mm:ss')
       dateTime.value = [lastYearStart, lastYearEnd]
 
       nextTick(() => {
@@ -106,6 +107,7 @@ export default defineComponent({
 
     const filterQuery = async () => {
       const res = await request.post('/api/warehouse_apply', {
+        ware_id: 3,
         house_id: houseId.value,
         operate: operateId.value,
         type: typeId.value ? typeId.value : constType.value.filter(e => e.type == 'productIn' || e.type == 'productOut').map(o => o.id),
@@ -149,35 +151,62 @@ export default defineComponent({
     }
     // 获取仓库名称
     const getHouseList = async () => {
-      const res = await request.get('/api/warehouse_cycle', { params: { ware_id: 2 } })
+      const res = await request.get('/api/warehouse_cycle', { params: { ware_id: 3 } })
       houseList.value = res.data
       form.value.house_id = res.data[0].id
       form.value.house_name = res.data[0].name
     }
     // 反审批
-    const handleBackApproval = async ({ id }) => {
-      const res = await request.post('/api/approval_backFlow', { id })
+    const handleBackApproval = async (row) => {
+      const res = await request.post('/api/approval_backFlow', { id: row.id })
       if(res.code == 200){
         ElMessage.success('反审批成功')
         filterQuery()
+
+        const str = `{ 仓库：${row.house_name}，${operateValue[row.operate]}方式：${constObj.value[row.type]}，物料编码：${row.code} }`
+        reportOperationLog({
+          operationType: 'backApproval',
+          module: '成品出入库',
+          desc: `反审批了出/入库单：${str}`,
+          data: { newData: row.id }
+        })
       }
     }
     // 处理审批
     const approvalApi = async (action, data) => {
+      const ids = data.map(e => e.id)
       const res = await request.post('/api/handleApproval', {
-        data,
+        data: ids,
         action,
         ware_id: form.value.ware_id
       })
       if(res.code == 200){
         ElMessage.success('审批成功')
         filterQuery()
+
+        let str = ''
+        data.forEach((e, index) => {
+          if(e.status == 0){
+            const obj = `{ 仓库：${e.house_name}，${operateValue[e.operate]}方式：${constObj.value[e.type]}，物料编码：${e.code} }`
+            str += obj
+            if(index < data.length - 1){
+              str += '，'
+            }
+          }
+        })
+        if(!str) return
+        const appValue = action == 1 ? '通过' : '拒绝'
+        reportOperationLog({
+          operationType: 'approval',
+          module: '成品出入库',
+          desc: `审批${appValue}了出/入库单，它们有：${str}`,
+          data: { newData: { data: ids, action, ware_id: form.value.ware_id } }
+        })
       }
     }
     const handleApproval = async (row) => {
       if(row.status == 1) return ElMessage.error('该数据已通过审批，无需再重复审批')
-      const data = [row.id]
-      handleApprovalDialog(data)
+      handleApprovalDialog([row])
     }
     // 批量处理审批
     const setApprovalAllData = () => {
@@ -185,13 +214,12 @@ export default defineComponent({
       if(json.length == 0){
         ElMessage.error('暂无可提交的数据')
       }
-      const data = json.map(e => e.id)
-      handleApprovalDialog(data)
+      handleApprovalDialog(json)
     }
     const handleApprovalDialog = (data) => {
       ElMessageBox.confirm('是否确认审批？', '提示', {
-        confirmButtonText: '提交',
-        cancelButtonText: '取消',
+        confirmButtonText: '同意',
+        cancelButtonText: '拒绝',
         type: 'warning',
         distinguishCancelAndClose: true,
       }).then(() => {
@@ -207,6 +235,24 @@ export default defineComponent({
       if(res && res.code == 200){
         ElMessage.success('提交成功');
         filterQuery();
+
+        let str = ''
+        data.forEach((e, index) => {
+          if(e.status == undefined || e.status == 2){
+            const obj = `{ 仓库：${e.house_name}，${operateValue[e.operate]}方式：${constObj.value[e.type]}，物料编码：${e.code} }`
+            str += obj
+            if(index < data.length - 1){
+              str += '，'
+            }
+          }
+        })
+        if(!str) return
+        reportOperationLog({
+          operationType: 'keyApproval',
+          module: '材料出入库',
+          desc: `出/入库单提交审核：${str}`,
+          data: { newData: { data, type: 'material_warehouse' } }
+        })
       }
     }
     const handleStatusData = async (row) => {
@@ -235,7 +281,7 @@ export default defineComponent({
     }
     const getFormData = (e) => {
       let obj = {
-        ware_id: 2,
+        ware_id: 3,
         house_id: e.house_id,
         house_name: e.house_name,
         operate: e.operate,  // 入库 or 出库
@@ -354,7 +400,7 @@ export default defineComponent({
     const reset = () => {
       setTimeout(() => {
         form.value = {
-          ware_id: 2,
+          ware_id: 3,
           house_id: houseList.value[0].id,
           house_name: houseList.value[0].name,
           operate: '',
@@ -376,7 +422,9 @@ export default defineComponent({
       allSelect.value = JSON.parse(JSON.stringify(select))
     }
     const dateChange = (value) => {
-      console.log(value);
+      const startTime = `${value[0]} 00:00:00`
+      const endTime = `${value[1]} 23:59:59`
+      dateTime.value = [startTime, endTime]
     }
     // 计算页面中表单的高度
     const getFormHeight = async () => {
@@ -384,7 +432,6 @@ export default defineComponent({
       if (formCard.value) {
         const offsetH = formCard.value.$el.offsetHeight;
         formHeight.value = offsetH; // 选择需要的高度类型
-        console.log(offsetH);
       }
     };
     const getConstList = () => {
@@ -406,6 +453,11 @@ export default defineComponent({
       return (allSelect.value.length ? allSelect.value : tableData.value).reduce((sum, item) => {
         return PreciseMath.add(sum, (Number(item[value]) || 0))
       }, 0)
+    }
+    const handleRowStyle = ({ row }) => {
+      if(row.status == 0){
+        return { color: 'red' }
+      }
     }
 
     return() => (
@@ -478,10 +530,10 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 220}px)` } style={{ width: "100%" }} onSelectionChange={ (select) => handleSelectionChange(select) }>
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 220}px)` } style={{ width: "100%" }} rowStyle={ handleRowStyle } onSelectionChange={ (select) => handleSelectionChange(select) }>
                   <ElTableColumn type="selection" width="55" fixed="left" />
                   <ElTableColumn label="审批状态" width="100">
-                    {({row}) => <span>{row.status >= 0 ? statusType[row.approval.status] : ''}</span>}
+                    {({row}) => <span>{row.status >= 0 ? statusType[row.status] : ''}</span>}
                   </ElTableColumn>
                   <ElTableColumn prop="house_name" label="仓库名称" width="100" />
                   <ElTableColumn label="出入库" width="80">

@@ -70,7 +70,7 @@ export default defineComponent({
                   {/* <ElButton style="margin-top: -5px" type="primary" onClick={ () => fetchProductList() }>
                     查询
                   </ElButton> */}
-                  <ElButton style="margin-top: -5px" type="primary" v-permission={ 'ProductDelivery:print' } v-print={ printObj.value }>
+                  <ElButton style="margin-top: -5px" type="primary" v-permission={ 'WorkOrder:print' } v-print={ printObj.value }>
                     打印
                   </ElButton>
                 </div>

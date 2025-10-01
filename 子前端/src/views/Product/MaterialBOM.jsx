@@ -3,6 +3,7 @@ import { CirclePlusFilled, RemoveFilled } from '@element-plus/icons-vue'
 import { getRandomString, isEmptyValue } from '@/utils/tool';
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -29,6 +30,9 @@ export default defineComponent({
         { material_id: '', number: '' }
       ]
     })
+    let productsList = ref([])
+    let partList = ref([])
+    let materialList = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(10);
@@ -60,6 +64,9 @@ export default defineComponent({
     
     onMounted(() => {
       fetchProductList()
+      getProductsCode()
+      getPartCode()
+      getMaterialCode()
     })
     
     // 获取列表
@@ -74,6 +81,24 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    const getProductsCode = async () => {
+      const res = await request.get('/api/getProductsCode')
+      if(res.code == 200){
+        productsList.value = res.data
+      }
+    }
+    const getPartCode = async () => {
+      const res = await request.get('/api/getPartCode')
+      if(res.code == 200){
+        partList.value = res.data
+      }
+    }
+    const getMaterialCode = async () => {
+      const res = await request.get('/api/getMaterialCode')
+      if(res.code == 200){
+        materialList.value = res.data
+      }
+    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
@@ -85,6 +110,19 @@ export default defineComponent({
               ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
+
+              const product = productsList.value.find(o => o.id == low.product_id)
+              const part = partList.value.find(o => o.id == low.part_id)
+              const material = low.children.map(e => {
+                const obj = materialList.value.find(o => o.id == e.material_id)
+                return obj.material_code
+              })
+              reportOperationLog({
+                operationType: 'add',
+                module: '材料BOM',
+                desc: `新增材料BOM，产品编码：${product.product_code}，部件编码：${part.part_code}，材料编码：${material.toString()}`,
+                data: { newData: low }
+              })
             }
             
           }else{
@@ -98,6 +136,19 @@ export default defineComponent({
               ElMessage.success('修改成功');
               dialogVisible.value = false;
               fetchProductList();
+
+              const product = productsList.value.find(o => o.id == myForm.product_id)
+              const part = partList.value.find(o => o.id == myForm.part_id)
+              const material = myForm.children.map(e => {
+                const obj = materialList.value.find(o => o.id == e.material_id)
+                return obj.material_code
+              })
+              reportOperationLog({
+                operationType: 'update',
+                module: '材料BOM',
+                desc: `修改材料BOM，产品编码：${product.product_code}，部件编码：${part.part_code}，材料编码：${material.toString()}`,
+                data: { newData: myForm }
+              })
             }
           }
         }
@@ -116,23 +167,44 @@ export default defineComponent({
             ElMessage.success('修改成功');
             dialogVisible.value = false;
             fetchProductList();
+
+            let str = ''
+            tableData.value.forEach((e, index) => {
+              const obj = `{ 产品编码：${e.product.product_code}，部件编码：${e.part.part_code}，材料编码：${e.children.map(e => e.material.material_code).toString()} }`
+              str += obj
+              if(index < tableData.value.length - 1){
+                str += '，'
+              }
+            })
+            reportOperationLog({
+              operationType: 'keyup',
+              module: '材料BOM',
+              desc: `存档材料BOM，${str}`,
+              data: { newData: { ids, archive: 0 } }
+            })
           }
         }).catch(() => {})
       }else{
         ElMessage.error('暂无数据可存档！');
       }
     }
-    const handleDelete = ({ id }) => {
+    const handleDelete = (row) => {
       ElMessageBox.confirm('是否确认存档', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning',
       }).then(async () => {
-        const res = await request.delete('/api/material_bom', { params: { id } });
+        const res = await request.delete('/api/material_bom', { params: { id: row.id } });
         if(res && res.code == 200){
           ElMessage.success('修改成功');
           dialogVisible.value = false;
           fetchProductList();
+          reportOperationLog({
+            operationType: 'delete',
+            module: '材料BOM',
+            desc: `删除材料BOM，产品编码：${row.product.product_code}，部件编码：${row.part.part_code}，材料编码：${row.children.map(e => e.material.material_code).toString()}`,
+            data: { newData: row.id }
+          })
         }
       }).catch(() => {})
     }
@@ -184,7 +256,7 @@ export default defineComponent({
       }
     }
     const goArchive = () => {
-      window.open('/product/material-bom-archive', '_blank')
+      window.open('/#/product/material-bom-archive', '_blank')
     }
     // 分页相关
     function pageSizeChange(val) {

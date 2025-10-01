@@ -5,6 +5,7 @@ import request from '@/utils/request';
 import dayjs from "dayjs"
 import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup() {
@@ -103,11 +104,13 @@ export default defineComponent({
       getNoticeList() //获取订单号用来筛选
 
       // 打印的时候用的
-      const data = res.data[0]
-      supplierName.value = data.supplier.supplier_abbreviation
-      productName.value = data.processBom.product.product_name
-      productCode.value = data.processBom.product.product_code
-      noticeNumber.value = data.notice.notice
+      if(res.data.length){
+        const data = res.data[0]
+        supplierName.value = data.supplier.supplier_abbreviation
+        productName.value = data.processBom.product.product_name
+        productCode.value = data.processBom.product.product_code
+        noticeNumber.value = data.notice.notice
+      }
     }
     const getNoticeList = async () => {
       const res = await request.get('/api/getOutsourcingQuote')
@@ -151,7 +154,6 @@ export default defineComponent({
             obj.processChildren = procedure.value.find(o => o.id == obj.process_bom_children_id)
             obj.supplier = supplierInfo.value.find(o => o.id == obj.supplier_id)
             obj.id = getRandomString() // 临时ID
-            console.log(obj);
             tableData.value = [obj, ...tableData.value]
             // 重置
             procedure.value = []
@@ -161,13 +163,35 @@ export default defineComponent({
               // 修改
               const myForm = {
                 id: edit.value,
-                ...form.value
+                notice_id: form.value.notice_id,
+                supplier_id: form.value.supplier_id,
+                process_bom_id: form.value.process_bom_id,
+                process_bom_children_id: form.value.process_bom_children_id,
+                price: form.value.price,
+                number: form.value.number,
+                ment: form.value.ment,
+                unit: form.value.unit,
+                transaction_currency: form.value.transaction_currency,
+                other_transaction_terms: form.value.other_transaction_terms,
+                remarks: form.value.remarks,
+                delivery_time: form.value.delivery_time
               }
               const res = await request.put('/api/outsourcing_order', myForm);
               if(res && res.code == 200){
                 ElMessage.success('修改成功');
                 dialogVisible.value = false;
                 fetchProductList();
+
+                const supplier = supplierList.value.find(o => o.id == myForm.supplier_id)
+                const notice = noticeList.value.find(o => o.id == myForm.notice_id)
+                const processBom = bomList.value.find(o => o.id == myForm.process_bom_id)
+                const proce = procedure.value.find(o => o.id == myForm.process_bom_children_id)
+                reportOperationLog({
+                  operationType: 'update',
+                  module: '委外加工单',
+                  desc: `修改委外加工单，供应商编码：${supplier.supplier_code}，生产订单号：${notice.notice}，工艺BOM：${processBom.name}，工艺工序：${proce ? proce.name : ''}`,
+                  data: { newData: myForm }
+                })
               }
             }else{
               const obj = JSON.parse(JSON.stringify(form.value))
@@ -194,13 +218,32 @@ export default defineComponent({
       if(res && res.code == 200){
         ElMessage.success('提交成功');
         fetchProductList();
+
+        let str = ''
+        data.forEach((e, index) => {
+          const supplier = supplierList.value.find(o => o.id == e.supplier_id)
+          const notice = noticeList.value.find(o => o.id == e.notice_id)
+          const processBom = bomList.value.find(o => o.id == e.process_bom_id)
+          const proce = procedure.value.find(o => o.id == e.process_bom_children_id)
+          const obj = `{ 供应商编码：${supplier.supplier_code}，生产订单号：${notice.notice}，工艺BOM：${processBom.name}，工艺工序：${proce ? proce.name : ''} }`
+          str += obj
+          if(index < data.length - 1){
+            str += '，'
+          }
+        })
+        reportOperationLog({
+          operationType: 'keyApproval',
+          module: '委外加工单',
+          desc: `委外加工单提交审核：${str}`,
+          data: { newData: { data, type: 'outsourcing_order' } }
+        })
       }
     }
     const handleStatusData = async (row) => {
       const data = getFormData(row)
       setApiData([data])
     }
-    // 批量提交本地数据进行审核
+    // 批量提交本地数据进行审批
     const setStatusAllData = () => {
       const json = allSelect.value.length ? allSelect.value.filter(o => !o.approval || o.status == 2) : tableData.value.filter(o => !o.approval || o.status == 2)
       if(json.length == 0){
@@ -232,28 +275,64 @@ export default defineComponent({
       return obj
     }
     // 反审批
-    const handleBackApproval = async ({ id }) => {
-      const res = await request.post('/api/handleOutsourcingBackFlow', { id })
+    const handleBackApproval = async (row) => {
+      const res = await request.post('/api/handleOutsourcingBackFlow', { id: row.id })
       if(res.code == 200){
         ElMessage.success('反审批成功')
         fetchProductList()
+
+        const supplier = supplierList.value.find(o => o.id == row.supplier_id)
+        const notice = noticeList.value.find(o => o.id == row.notice_id)
+        const processBom = bomList.value.find(o => o.id == row.process_bom_id)
+        const childPro = row.processChildren.process
+        const childEqu = row.processChildren.equipment
+        const proce = `${childPro.process_code}:${childPro.process_name} - ${childEqu.equipment_code}:${childEqu.equipment_name}`
+        const str = `供应商编码：${supplier.supplier_code}，生产订单号：${notice.notice}，工艺BOM：${processBom.name}，工艺工序：${proce}`
+        reportOperationLog({
+          operationType: 'backApproval',
+          module: '委外加工单',
+          desc: `反审批了委外加工单，${str}`,
+          data: { newData: row.id }
+        })
       }
     }
     // 处理审批
     const approvalApi = async (action, data) => {
+      const ids = data.map(e => e.id)
       const res = await request.post('/api/handleOutsourcingApproval', {
-        data,
+        data: ids,
         action
       })
       if(res.code == 200){
         ElMessage.success('审批成功')
         fetchProductList()
+
+        let str = ''
+        data.forEach((e, index) => {
+          const supplier = supplierList.value.find(o => o.id == e.supplier_id)
+          const notice = noticeList.value.find(o => o.id == e.notice_id)
+          const processBom = bomList.value.find(o => o.id == e.process_bom_id)
+          const childPro = e.processChildren.process
+          const childEqu = e.processChildren.equipment
+          const proce = `${childPro.process_code}:${childPro.process_name} - ${childEqu.equipment_code}:${childEqu.equipment_name}`
+          const obj = `{ 供应商编码：${supplier.supplier_code}，生产订单号：${notice.notice}，工艺BOM：${processBom.name}，工艺工序：${proce} }`
+          str += obj
+          if(index < data.length - 1){
+            str += '，'
+          }
+        })
+        const appValue = action == 1 ? '通过' : '拒绝'
+        reportOperationLog({
+          operationType: 'approval',
+          module: '委外加工单',
+          desc: `审批${appValue}了委外加工单，它们有：${str}`,
+          data: { newData: { data, action } }
+        })
       }
     }
     const handleApproval = async (row) => {
       if(row.status == 1) return ElMessage.error('该数据已通过审批，无需再重复审批')
-      const data = [row.id]
-      handleApprovalDialog(data)
+      handleApprovalDialog([row])
     }
     // 批量处理审批
     const setApprovalAllData = () => {
@@ -261,13 +340,12 @@ export default defineComponent({
       if(json.length == 0){
         ElMessage.error('暂无可提交的数据')
       }
-      const data = json.map(e => e.id)
-      handleApprovalDialog(data)
+      handleApprovalDialog(json)
     }
     const handleApprovalDialog = (data) => {
       ElMessageBox.confirm('是否确认审批？', '提示', {
-        confirmButtonText: '提交',
-        cancelButtonText: '取消',
+        confirmButtonText: '通过',
+        cancelButtonText: '拒绝',
         type: 'warning',
         distinguishCancelAndClose: true,
       }).then(() => {
@@ -321,6 +399,12 @@ export default defineComponent({
         delivery_time: ''
       }
     }
+    const handleRowStyle = ({ row }) => {
+      if(row.status == 0){
+        return { color: 'red' }
+      }
+    }
+
     return() => (
       <>
         <ElCard>
@@ -370,7 +454,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe onSelectionChange={ (select) => handleSelectionChange(select) }>
+                <ElTable data={ tableData.value } border stripe rowStyle={ handleRowStyle } onSelectionChange={ (select) => handleSelectionChange(select) }>
                   <ElTableColumn type="selection" width="55" />
                   <ElTableColumn label="状态" width='80'>
                     {({row}) => {

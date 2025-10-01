@@ -1,6 +1,7 @@
 import { defineComponent, onMounted, ref, reactive } from 'vue'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -58,6 +59,12 @@ export default defineComponent({
               ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
+              reportOperationLog({
+                operationType: 'add',
+                module: '产品报价',
+                desc: `新增产品报价，报价单号：${form.value.notice}`,
+                data: { newData: form.value }
+              })
             }
             
           }else{
@@ -71,6 +78,12 @@ export default defineComponent({
               ElMessage.success('修改成功');
               dialogVisible.value = false;
               fetchProductList();
+              reportOperationLog({
+                operationType: 'update',
+                module: '产品报价',
+                desc: `修改产品报价，报价单号：${myForm.notice}`,
+                data: { newData: myForm }
+              })
             }
           }
         }

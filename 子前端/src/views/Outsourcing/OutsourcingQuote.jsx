@@ -38,12 +38,16 @@ export default defineComponent({
     let pageSize = ref(10);
     let total = ref(0);
     let edit = ref(0)
+    let supplierList = ref([])
+    let noticeList = ref([])
     let bomList = ref([]) // 工艺Bom列表
     let procedure = ref([]) // 工序列表
     let allSelect = ref([]) // 用户选择的列表
     
     onMounted(() => {
       fetchProductList()
+      getSupplierInfo()
+      getProductNotice()
       getProcessBomList()
     })
     
@@ -56,6 +60,18 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    const getSupplierInfo = async () => {
+      const res = await request.get('/api/getSupplierInfo')
+      if(res.code == 200){
+        supplierList.value = res.data
+      }
+    }
+    const getProductNotice = async () => {
+      const res = await request.get('/api/getProductNotice')
+      if(res.code == 200){
+        noticeList.value = res.data
+      }
+    }
     const getProcessBomList = async () => {
       const res = await request.get('/api/getProcessBom')
       bomList.value = res.data
@@ -74,19 +90,48 @@ export default defineComponent({
               ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
+
+              const supplier = supplierList.value.find(o => o.id == form.value.supplier_id)
+              const notice = noticeList.value.find(o => o.id == form.value.notice_id)
+              const processBom = bomList.value.find(o => o.id == form.value.process_bom_id)
+              const proce = procedure.value.find(o => o.id == form.value.process_bom_children_id)
+              reportOperationLog({
+                operationType: 'add',
+                module: '委外报价',
+                desc: `新增委外报价，供应商编码：${supplier.supplier_code}，生产订单号：${notice.notice}，工艺BOM：${processBom.name}，工艺工序：${proce ? proce.name : ''}`,
+                data: { newData: form.value }
+              })
             }
             
           }else{
             // 修改
             const myForm = {
               id: edit.value,
-              ...form.value
+              notice_id: form.value.notice_id,
+              supplier_id: form.value.supplier_id,
+              process_bom_id: form.value.process_bom_id,
+              process_index: form.value.process_index,
+              price: form.value.price,
+              transaction_currency: form.value.transaction_currency,
+              other_transaction_terms: form.value.other_transaction_terms,
+              remarks: form.value.remarks
             }
             const res = await request.put('/api/outsourcing_quote', myForm);
             if(res && res.code == 200){
               ElMessage.success('修改成功');
               dialogVisible.value = false;
               fetchProductList();
+
+              const supplier = supplierList.value.find(o => o.id == myForm.supplier_id)
+              const notice = noticeList.value.find(o => o.id == myForm.notice_id)
+              const processBom = bomList.value.find(o => o.id == myForm.process_bom_id)
+              const proce = procedure.value.find(o => o.id == myForm.process_bom_children_id)
+              reportOperationLog({
+                operationType: 'update',
+                module: '委外报价',
+                desc: `修改委外报价，供应商编码：${supplier.supplier_code}，生产订单号：${notice.notice}，工艺BOM：${processBom.name}，工艺工序：${proce ? proce.name : ''}`,
+                data: { newData: myForm }
+              })
             }
           }
         }

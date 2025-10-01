@@ -5,8 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>报工单</title>
+  <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script src="https://unpkg.com/axios@1.9.0/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/element-plus"></script>
   <style>
     * {
       margin: 0;
@@ -150,9 +152,9 @@
       </div>
       <div class="data-item">
         <div class="flex item">
-          <div class="label">数量</div>
+          <div class="label">报工数量</div>
           <div class="number">
-            <input type="number" v-model="quantity" min="0" placeholder="请输入数量">
+            <input type="number" v-model="quantity" min="0" placeholder="请输入报工数量">
           </div>
         </div>
       </div>
@@ -164,11 +166,19 @@
 
   <script>
     const { createApp } = Vue;
+    const { ElMessage } = ElementPlus;
 
     createApp({
       data() {
         return {
           api: 'http://api.yuanfangzixun.com.cn',
+          // api: 'http://localhost:3000',
+          headers: {
+            "Content-Type": 'application/json',
+            "Authorization": ''
+          },
+          urlData: {},
+          user: {},
           isMobile: false,
           id: '',
           quantity: '',
@@ -178,31 +188,53 @@
       methods: {
         getFectList() {
           const that = this
-          axios.get(`${this.api}/api/mobile_process_bom?id=${this.id}`).then(res => {
+          axios.get(`${this.api}/api/mobile_process_bom?id=${this.id}&company_id=${this.urlData.company_id}`, {
+            headers: that.headers
+          }).then(res => {
             if(res.data.code == 200){
               const data = res.data.data
               that.dataObj = data.parent.production
               that.dataObj.process_code = data.process.process_code
               that.dataObj.process_name = data.process.process_name
+            }else{
+              that.setError(res.data)
             }
           })
-        },
-        checkIsMobile() {
-          // 检测是否为移动设备
-          const userAgent = navigator.userAgent.toLowerCase();
-          const isMobile = /iphone|ipad|ipod|android|mobile|blackberry|iemobile|opera mini/i.test(userAgent);
-          this.isMobile = isMobile;
         },
         handleSubmit() {
           if (!this.quantity) {
             alert('请输入数量');
             return;
           }
-          axios.post(`${this.api}/api/mobile_work_order`, { id: this.id, number: this.quantity }).then(res => {
+          axios.post(`${this.api}/api/mobile_work_order`, {
+            id: this.id,
+            number: this.quantity,
+            company_id: this.urlData.company_id
+          }, {
+            headers: this.headers
+          }).then(res => {
             if(res.data.code == 200){
               alert(`提交成功！已提交数量：${this.quantity}`);
+            }else{
+              this.setError(res.data)
             }
           })
+        },
+        setError(data) {
+          if(data.code == 401){
+            ElMessage.error(res.data.message)
+          }
+          if(data.code == 402){
+            localStorage.clear()
+            const loginUrl = `${window.location.origin}/html-login.html?id=${data.id}&company_id=${data.company_id}`
+            window.location.replace(loginUrl)
+          }
+        },
+        checkIsMobile() {
+          // 检测是否为移动设备
+          const userAgent = navigator.userAgent.toLowerCase();
+          const isMobile = /iphone|ipad|ipod|android|mobile|blackberry|iemobile|opera mini/i.test(userAgent);
+          this.isMobile = isMobile;
         },
         getParams(url) {
           const pattern = /(\w+)=(\w+)/gi;
@@ -223,6 +255,16 @@
         window.addEventListener('resize', this.checkIsMobile);
 
         const data = this.getParams(window.location.href);
+
+        const token = localStorage.getItem('token')
+        if(!token){
+          const loginUrl = `${window.location.origin}/html-login.html?id=${data.id}&company_id=${data.company_id}`
+          window.location.replace(loginUrl)
+          return
+        }
+        this.headers.Authorization = token
+        this.user = JSON.parse(localStorage.getItem('workUser'))
+        this.urlData = data
         if(!data.id) return
         this.id = data.id
 

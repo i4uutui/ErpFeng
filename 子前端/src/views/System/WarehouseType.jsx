@@ -1,6 +1,7 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
 import request from '@/utils/request';
 import { getItem } from '@/assets/js/storage';
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -47,6 +48,13 @@ export default defineComponent({
             const res = await request.post('/api/warehouse_cycle', formValue);
             if(res && res.code == 200){
               ElMessage.success('新增成功');
+
+              reportOperationLog({
+                operationType: 'add',
+                module: '仓库建立',
+                desc: `新增仓库：名称：${formValue.name}`,
+                data: { newData: formValue }
+              })
             }
             
           }else{
@@ -59,6 +67,13 @@ export default defineComponent({
             const res = await request.put('/api/warehouse_cycle', myForm);
             if(res && res.code == 200){
               ElMessage.success('修改成功');
+
+              reportOperationLog({
+                operationType: 'update',
+                module: '仓库建立',
+                desc: `修改仓库：名称：${myForm.name}`,
+                data: { newData: myForm }
+              })
             }
           }
           

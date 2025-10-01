@@ -1,6 +1,7 @@
 import { defineComponent, ref, onMounted, reactive, computed } from 'vue'
 import { getRandomString, isEmptyValue } from '@/utils/tool';
 import request from '@/utils/request';
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -52,16 +53,22 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
-    const handleCope = ({ id }) => {
+    const handleCope = (row) => {
       ElMessageBox.confirm('是否确认复制新增', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning',
       }).then(async () => {
-        const params = { id, type: 'material' }
+        const params = { id: row.id, type: 'material' }
         const res = await request.post('/api/cope_bom', params)
         if(res && res.code == 200){
           ElMessage.success('操作成功');
+          reportOperationLog({
+            operationType: 'copeAdd',
+            module: '材料BOM',
+            desc: `复制新增材料BOM，产品编码：${row.product.product_code}，部件编码：${row.part.part_code}，材料编码：${row.children.map(e => e.material.material_code).toString()}`,
+            data: { newData: row.id }
+          })
         }
       }).catch(() => {})
     }

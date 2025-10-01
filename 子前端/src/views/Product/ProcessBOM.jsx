@@ -3,6 +3,7 @@ import { CirclePlusFilled, RemoveFilled } from '@element-plus/icons-vue'
 import { isEmptyValue } from '@/utils/tool'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -35,6 +36,9 @@ export default defineComponent({
         { process_id: '', equipment_id: '', time: '', price: '' }
       ]
     })
+    let productsList = ref([])
+    let partList = ref([])
+    let processList = ref([])
     let tableData = ref([])
     let edit = ref(0)
     let loading = ref(false)
@@ -69,6 +73,9 @@ export default defineComponent({
     
     onMounted(() => {
       fetchProductList()
+      getProductsCode()
+      getPartCode()
+      getProcessCode()
     })
     
     // 获取列表
@@ -82,6 +89,24 @@ export default defineComponent({
       });
       tableData.value = res.data;
     };
+    const getProductsCode = async () => {
+      const res = await request.get('/api/getProductsCode')
+      if(res.code == 200){
+        productsList.value = res.data
+      }
+    }
+    const getPartCode = async () => {
+      const res = await request.get('/api/getPartCode')
+      if(res.code == 200){
+        partList.value = res.data
+      }
+    }
+    const getProcessCode = async () => {
+      const res = await request.get('/api/getProcessCode')
+      if(res.code == 200){
+        processList.value = res.data
+      }
+    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
@@ -95,6 +120,19 @@ export default defineComponent({
               ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
+
+              const product = productsList.value.find(o => o.id == low.product_id)
+              const part = partList.value.find(o => o.id == low.part_id)
+              const process = low.children.map(e => {
+                const obj = processList.value.find(o => o.id == e.process_id)
+                return obj.process_code
+              })
+              reportOperationLog({
+                operationType: 'add',
+                module: '工艺BOM',
+                desc: `新增工艺BOM，产品编码：${product.product_code}，部件编码：${part.part_code}，工艺编码：${process.toString()}`,
+                data: { newData: low }
+              })
             }
             
           }else{
@@ -109,6 +147,19 @@ export default defineComponent({
               ElMessage.success('修改成功');
               dialogVisible.value = false;
               fetchProductList();
+
+              const product = productsList.value.find(o => o.id == myForm.product_id)
+              const part = partList.value.find(o => o.id == myForm.part_id)
+              const process = low.children.map(e => {
+                const obj = processList.value.find(o => o.id == e.process_id)
+                return obj.process_code
+              })
+              reportOperationLog({
+                operationType: 'update',
+                module: '工艺BOM',
+                desc: `修改工艺BOM，产品编码：${product.product_code}，部件编码：${part.part_code}，工艺编码：${process.toString()}`,
+                data: { newData: myForm }
+              })
             }
           }
           loading.value = false
@@ -128,6 +179,21 @@ export default defineComponent({
             ElMessage.success('修改成功');
             dialogVisible.value = false;
             fetchProductList();
+
+            let str = ''
+            tableData.value.forEach((e, index) => {
+              const obj = `产品编码：${e.product.product_code}，部件编码：${e.part.part_code}，材料编码：${e.children.map(e => e.process.process_code).toString()}；`
+              str += obj
+              if(index < tableData.value.length - 1){
+                str += '\r\n'
+              }
+            })
+            reportOperationLog({
+              operationType: 'keyup',
+              module: '工艺BOM',
+              desc: `存档工艺BOM，${str}`,
+              data: { newData: { ids, archive: 0 } }
+            })
           }
         }).catch(() => {})
       }else{
@@ -145,6 +211,12 @@ export default defineComponent({
             ElMessage.success('删除成功');
             dialogVisible.value = false;
             fetchProductList();
+            reportOperationLog({
+            operationType: 'delete',
+            module: '工艺BOM',
+            desc: `删除工艺BOM，产品编码：${row.product.product_code}，部件编码：${row.part.part_code}，工艺编码：${row.children.map(e => e.process.process_code).toString()}`,
+            data: { newData: row.id }
+          })
           }
         }).catch(() => {})
     }
@@ -196,7 +268,7 @@ export default defineComponent({
       }
     }
     const goArchive = () => {
-      window.open('/product/process-bom-archive', '_blank')
+      window.open('/#/product/process-bom-archive', '_blank')
     }
     return() => (
       <>

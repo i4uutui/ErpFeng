@@ -1,5 +1,6 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
 import request from '@/utils/request';
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -81,6 +82,12 @@ export default defineComponent({
               ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
+              reportOperationLog({
+                operationType: 'add',
+                module: '客户信息',
+                desc: `新增客户编码：${form.value.customer_code}`,
+                data: { newData: form.value }
+              })
             }
             
           }else{
@@ -94,6 +101,12 @@ export default defineComponent({
               ElMessage.success('修改成功');
               dialogVisible.value = false;
               fetchProductList();
+              reportOperationLog({
+                operationType: 'update',
+                module: '客户信息',
+                desc: `修改客户编码：${myForm.customer_code}`,
+                data: { newData: myForm }
+              })
             }
           }
         }
@@ -113,6 +126,12 @@ export default defineComponent({
         if(res && res.code == 200){
           ElMessage.success('删除成功');
           fetchProductList();
+          reportOperationLog({
+            operationType: 'delete',
+            module: '客户信息',
+            desc: `修改客户编码：${row.customer_code}`,
+            data: { newData: row.id }
+          })
         }
       }).catch(() => {})
     }

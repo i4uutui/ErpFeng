@@ -1,5 +1,5 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
-import MySelect from '@/components/tables/mySelect.vue';
+import { reportOperationLog } from '@/utils/log';
 import request from '@/utils/request';
 
 export default defineComponent({
@@ -85,6 +85,12 @@ export default defineComponent({
               ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
+              reportOperationLog({
+                operationType: 'add',
+                module: '产品编码',
+                desc: `新增产品编码：${form.value.product_code}`,
+                data: { newData: form.value }
+              })
             }
             
           }else{
@@ -98,6 +104,12 @@ export default defineComponent({
               ElMessage.success('修改成功');
               dialogVisible.value = false;
               fetchProductList();
+              reportOperationLog({
+                operationType: 'update',
+                module: '产品编码',
+                desc: `修改产品编码：${myForm.product_code}`,
+                data: { newData: myForm }
+              })
             }
           }
         }
@@ -117,6 +129,12 @@ export default defineComponent({
         if(res && res.code == 200){
           ElMessage.success('删除成功');
           fetchProductList();
+          reportOperationLog({
+            operationType: 'delete',
+            module: '产品编码',
+            desc: `删除产品编码：${row.product_code}`,
+            data: { newData: row.id }
+          })
         }
       }).catch(() => {})
     }

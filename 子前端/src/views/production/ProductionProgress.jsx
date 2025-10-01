@@ -1,7 +1,6 @@
 import { defineComponent, onMounted, ref, reactive, computed } from 'vue'
 import dayjs from 'dayjs';
 import request from '@/utils/request';
-import MySelect from '@/components/tables/mySelect.vue';
 import "@/assets/css/production.scss"
 
 export default defineComponent({

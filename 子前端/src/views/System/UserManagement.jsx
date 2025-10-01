@@ -170,7 +170,7 @@ export default defineComponent({
       Object.keys(newData).forEach(category => {
         // 过滤当前分类下的菜单项
         newData[category] = newData[category].filter(item => {
-          if(!(item.value == 'UserManagement' || item.value == 'ApprovalStep')){
+          if(!(item.value == 'UserManagement' || item.value == 'ApprovalStep' || item.value == 'Trajectory')){
             return item
           }
         });

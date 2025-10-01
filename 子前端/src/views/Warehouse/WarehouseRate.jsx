@@ -1,6 +1,7 @@
 import { defineComponent, onMounted, ref, reactive } from 'vue'
 import request from '@/utils/request';
 import '@/assets/css/WarehouseRate.scss'
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup() {
@@ -73,8 +74,15 @@ export default defineComponent({
         if (valid){
           const res = await request.put('/api/set_wareHouser', form.value);
           if(res && res.code == 200){
-            ElMessage.success('新增成功');
+            ElMessage.success('操作成功');
             dialogVisible.value = false;
+
+            reportOperationLog({
+              operationType: 'update',
+              module: '仓库进出存',
+              desc: `修改物料信息：物料编码：${form.value.code}，物料名称：${form.value.name}`,
+              data: { newData: form.value }
+            })
           }
         }
       })
@@ -126,11 +134,11 @@ export default defineComponent({
     function pageSizeChange(val) {
       currentPage.value = 1;
       pageSize.value = val;
-      fetchProductList()
+      fetchWareList()
     }
     function currentPageChange(val) {
       currentPage.value = val;
-      fetchProductList();
+      fetchWareList();
     }
     
     return() => (

@@ -2,6 +2,7 @@ import { defineComponent, ref, onMounted, reactive, computed } from 'vue'
 import { isEmptyValue } from '@/utils/tool'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -60,16 +61,22 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
-    const handleCope = ({ id }) => {
+    const handleCope = (row) => {
       ElMessageBox.confirm('是否确认复制新增', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning',
       }).then(async () => {
-        const params = { id, type: 'process' }
+        const params = { id: row.id, type: 'process' }
         const res = await request.post('/api/cope_bom', params)
         if(res && res.code == 200){
           ElMessage.success('操作成功');
+          reportOperationLog({
+            operationType: 'copeAdd',
+            module: '工艺BOM',
+            desc: `复制新增工艺BOM，产品编码：${row.product.product_code}，部件编码：${row.part.part_code}，工艺编码：${row.children.map(e => e.process.process_code).toString()}`,
+            data: { newData: row.id }
+          })
         }
       }).catch(() => {})
     }

@@ -5,6 +5,7 @@ import request from '@/utils/request';
 import dayjs from "dayjs"
 import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup() {
@@ -45,7 +46,6 @@ export default defineComponent({
       delivery_time: '',
     })
     let tableData = ref([])
-    let isPrint = ref(false)
     let allSelect = ref([])
     let edit = ref(0)
     let notice_number = ref('')
@@ -74,16 +74,25 @@ export default defineComponent({
       previewOpenCallback() { console.log('已经加载完预览窗口，预览打开了！') }, // 预览窗口打开时的callback
       beforeOpenCallback(vue) {
         console.log('开始打印之前！')
-        isPrint.value = true
       }, // 开始打印之前的callback
       openCallback(vue) {
         console.log('监听到了打印窗户弹起了！')
       }, // 调用打印时的callback
       closeCallback() {
+        ElMessageBox.confirm(
+        '是否打印成功?',
+        '提示',
+        {
+          confirmButtonText: '是',
+          cancelButtonText: '否',
+          type: 'warning',
+        }
+      ).then(() => { }).catch(() => { })
         console.log('关闭了打印工具！')
-        isPrint.value = false
       }, // 关闭打印的callback(点击弹窗的取消和打印按钮都会触发)
-      clickMounted() { console.log('点击v-print绑定的按钮了！') },
+      clickMounted(e) {
+        console.log('点击v-print绑定的按钮了！')
+      },
     })
     
     onMounted(() => {
@@ -161,11 +170,17 @@ export default defineComponent({
                 id: edit.value,
                 ...form.value
               }
-              const res = await request.put('/api/outsourcing_order', myForm);
+              const res = await request.put('/api/material_ment', myForm);
               if(res && res.code == 200){
                 ElMessage.success('修改成功');
                 dialogVisible.value = false;
                 fetchProductList();
+                reportOperationLog({
+                  operationType: 'update',
+                  module: '采购单',
+                  desc: `修改采购单，供应商编码：${myForm.supplier_code}，生产订单号：${myForm.notice}，产品编码：${myForm.product_code}，材料编码：${myForm.material_code}`,
+                  data: { newData: myForm }
+                })
               }
             }else{
               const obj = JSON.parse(JSON.stringify(form.value))
@@ -187,6 +202,21 @@ export default defineComponent({
       if(res && res.code == 200){
         ElMessage.success('提交成功');
         fetchProductList();
+
+        let str = ''
+        data.forEach((e, index) => {
+          const obj = `{ 供应商编码：${e.supplier_code}，生产订单号：${e.notice}，产品编码：${e.product_code}，材料编码：${e.material_code} }`
+          str += obj
+          if(index < data.length - 1){
+            str += '，'
+          }
+        })
+        reportOperationLog({
+          operationType: 'keyApproval',
+          module: '采购单',
+          desc: `采购单提交审核：${str}`,
+          data: { newData: { data, type: 'purchase_order' } }
+        })
       }
     }
     const handleStatusData = async (row) => {
@@ -231,28 +261,52 @@ export default defineComponent({
       return obj
     }
     // 反审批
-    const handleBackApproval = async ({ id }) => {
-      const res = await request.post('/api/handlePurchaseBackFlow', { id })
+    const handleBackApproval = async (row) => {
+      const res = await request.post('/api/handlePurchaseBackFlow', { id: row.id })
       if(res.code == 200){
         ElMessage.success('反审批成功')
         fetchProductList()
+
+        const str = `供应商编码：${row.supplier_code}，生产订单号：${row.notice}，产品编码：${row.product_code}，材料编码：${row.material_code}`
+        reportOperationLog({
+          operationType: 'backApproval',
+          module: '采购单',
+          desc: `反审批了采购单，${str}`,
+          data: { newData: row.id }
+        })
       }
     }
     // 处理审批
     const approvalApi = async (action, data) => {
+      const dataIds = data.map(e => e.id)
       const res = await request.post('/api/handlePurchaseApproval', {
-        data,
+        data: dataIds,
         action
       })
       if(res.code == 200){
         ElMessage.success('审批成功')
         fetchProductList()
+
+        let str = ''
+        data.forEach((e, index) => {
+          const obj = `{ 供应商编码：${e.supplier_code}，生产订单号：${e.notice}，产品编码：${e.product_code}，材料编码：${e.material_code} }`
+          str += obj
+          if(index < data.length - 1){
+            str += '，'
+          }
+        })
+        const appValue = action == 1 ? '通过' : '拒绝'
+        reportOperationLog({
+          operationType: 'approval',
+          module: '采购单',
+          desc: `审批${appValue}了采购单，它们有：${str}`,
+          data: { newData: { data, type: 'purchase_order' } }
+        })
       }
     }
     const handleApproval = async (row) => {
       if(row.status == 1) return ElMessage.error('该数据已通过审批，无需再重复审批')
-      const data = [row.id]
-      handleApprovalDialog(data)
+      handleApprovalDialog([row])
     }
     // 批量处理审批
     const setApprovalAllData = () => {
@@ -260,13 +314,12 @@ export default defineComponent({
       if(json.length == 0){
         ElMessage.error('暂无可提交的数据')
       }
-      const data = json.map(e => e.id)
-      handleApprovalDialog(data)
+      handleApprovalDialog(json)
     }
     const handleApprovalDialog = (data) => {
       ElMessageBox.confirm('是否确认审批？', '提示', {
-        confirmButtonText: '提交',
-        cancelButtonText: '取消',
+        confirmButtonText: '通过',
+        cancelButtonText: '拒绝',
         type: 'warning',
         distinguishCancelAndClose: true,
       }).then(() => {
@@ -348,6 +401,11 @@ export default defineComponent({
       form.value.other_features = material.other_features
       form.value.unit = material.usage_unit
     }
+    const handleRowStyle = ({ row }) => {
+      if(row.status == 0){
+        return { color: 'red' }
+      }
+    }
     
     return() => (
       <>
@@ -398,7 +456,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe onSelectionChange={ (select) => handleSelectionChange(select) }>
+                <ElTable data={ tableData.value } border stripe rowStyle={ handleRowStyle } onSelectionChange={ (select) => handleSelectionChange(select) }>
                   <ElTableColumn type="selection" width="55" />
                   <ElTableColumn label="状态" width='80'>
                     {({row}) => {

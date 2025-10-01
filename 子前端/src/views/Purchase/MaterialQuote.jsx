@@ -1,6 +1,7 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -40,6 +41,9 @@ export default defineComponent({
       other_transaction_terms: '', 
       remarks: ''
     })
+    let supplierList = ref([])
+    let noticeList = ref([])
+    let materialList = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(10);
@@ -48,6 +52,9 @@ export default defineComponent({
 
     onMounted(() => {
       fetchProductList()
+      getSupplierInfo()
+      getProductNotice()
+      getMaterialCode()
     })
 
     // 获取列表
@@ -61,6 +68,24 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    const getSupplierInfo = async () => {
+      const res = await request.get('/api/getSupplierInfo')
+      if(res.code == 200){
+        supplierList.value = res.data
+      }
+    }
+    const getProductNotice = async () => {
+      const res = await request.get('/api/getProductNotice')
+      if(res.code == 200){
+        noticeList.value = res.data
+      }
+    }
+    const getMaterialCode = async () => {
+      const res = await request.get('/api/getMaterialCode')
+      if(res.code == 200){
+        materialList.value = res.data
+      }
+    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
@@ -71,19 +96,46 @@ export default defineComponent({
               ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
+              
+              const supplier = supplierList.value.find(o => o.id == form.value.supplier_id)
+              const notice = noticeList.value.find(o => o.id == form.value.notice_id)
+              const material = materialList.value.find(o => o.id == form.value.material_id)
+              reportOperationLog({
+                operationType: 'add',
+                module: '原材料报价',
+                desc: `新增原材料报价，供应商编码：${supplier.supplier_code}，生产订单号：${notice.notice}，材料编码：${material.material_code}`,
+                data: { newData: form.value }
+              })
             }
             
           }else{
             // 修改
             const myForm = {
               id: edit.value,
-              ...form.value
+              supplier_id: form.value.supplier_id,
+              notice_id: form.value.notice_id,
+              material_id: form.value.material_id,
+              price: form.value.price,
+              delivery: form.value.delivery,
+              packaging: form.value.packaging, 
+              transaction_currency: form.value.transaction_currency, 
+              other_transaction_terms: form.value.other_transaction_terms, 
+              remarks: form.value.remarks
             }
             const res = await request.put('/api/material_quote', myForm);
             if(res && res.code == 200){
               ElMessage.success('修改成功');
               dialogVisible.value = false;
               fetchProductList();
+              const supplier = supplierList.value.find(o => o.id == myForm.supplier_id)
+              const notice = noticeList.value.find(o => o.id == myForm.notice_id)
+              const material = materialList.value.find(o => o.id == myForm.material_id)
+              reportOperationLog({
+                operationType: 'update',
+                module: '原材料报价',
+                desc: `修改原材料报价，供应商编码：${supplier.supplier_code}，生产订单号：${notice.notice}，材料编码：${material.material_code}`,
+                data: { newData: myForm }
+              })
             }
           }
         }

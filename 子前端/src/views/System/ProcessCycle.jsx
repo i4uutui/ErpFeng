@@ -2,6 +2,7 @@ import { defineComponent, ref, onMounted, reactive } from 'vue'
 import request from '@/utils/request';
 import router from '@/router';
 import { getItem } from '@/assets/js/storage';
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -47,6 +48,13 @@ export default defineComponent({
             const res = await request.post('/api/process_cycle', formValue);
             if(res && res.code == 200){
               ElMessage.success('新增成功');
+
+              reportOperationLog({
+                operationType: 'add',
+                module: '生产制程',
+                desc: `新增生产制程：名称：${formValue.name}`,
+                data: { newData: formValue }
+              })
             }
             
           }else{
@@ -58,6 +66,13 @@ export default defineComponent({
             const res = await request.put('/api/process_cycle', myForm);
             if(res && res.code == 200){
               ElMessage.success('修改成功');
+
+              reportOperationLog({
+                operationType: 'update',
+                module: '生产制程',
+                desc: `修改生产制程：名称：${myForm.name}`,
+                data: { newData: myForm }
+              })
             }
           }
           

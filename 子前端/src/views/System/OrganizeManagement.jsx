@@ -3,6 +3,7 @@ import request from '@/utils/request';
 import { Vue3TreeOrg } from 'vue3-tree-org';
 import "vue3-tree-org/lib/vue3-tree-org.css";
 import { getItem } from '@/assets/js/storage';
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -55,6 +56,13 @@ export default defineComponent({
             const res = await request.post('/api/organize', form.value);
             if(res && res.code == 200){
               ElMessage.success('新增成功');
+              const userName = userList.value.find(o => o.id == form.value.menber_id)
+              reportOperationLog({
+                operationType: 'add',
+                module: '组织架构',
+                desc: `新增组织架构：岗位：${form.value.label}，姓名：${userName.name}`,
+                data: { newData: form.value }
+              })
             }
           }else{
             const formData = {
@@ -64,6 +72,14 @@ export default defineComponent({
             const res = await request.put('/api/organize', formData);
             if(res && res.code == 200){
               ElMessage.success('修改成功');
+              
+              const userName = userList.value.find(o => o.id == formData.value.menber_id)
+              reportOperationLog({
+                operationType: 'update',
+                module: '组织架构',
+                desc: `修改组织架构：岗位：${formData.label}，姓名：${userName.name}`,
+                data: { newData: formData }
+              })
             }
           }
           dialogVisible.value = false;
@@ -71,11 +87,18 @@ export default defineComponent({
         }
       })
     }
-    const handleDelete = async (id) => {
-      const res = await request.delete('/api/organize', { params: { id } });
+    const handleDelete = async (row) => {
+      const res = await request.delete('/api/organize', { params: { id: row.id } });
       if(res && res.code == 200){
         ElMessage.success('删除成功');
         fetchAdminList();
+
+        reportOperationLog({
+          operationType: 'delete',
+          module: '组织架构',
+          desc: `修改组织架构：岗位：${row.label.label}，姓名：${row.label.menberName}`,
+          data: { newData: row.id }
+        })
       }
     }
     // 取消弹窗
@@ -106,7 +129,7 @@ export default defineComponent({
     }
     const nodeDelete = (node) => {
       if(user.type != 1) return
-      handleDelete(node.id)
+      handleDelete(node)
     }
 
     return() => (

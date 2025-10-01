@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { setItem } from '@/assets/js/storage';
 import request from '@/utils/request';
 import "@/assets/css/login.css"
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -32,6 +33,13 @@ export default defineComponent({
           setItem('company', res.company)
           ElMessage.success('登录成功');
           router.push('/');
+
+          reportOperationLog({
+            operationType: 'login',
+            module: '登录',
+            desc: `用户{ ${res.user.name} }成功登录`,
+            data: { newData: { username: loginForm.username, password: '***' } }
+          })
         })
       });
     };

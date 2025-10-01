@@ -1,5 +1,6 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
 import request from '@/utils/request';
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -11,8 +12,11 @@ export default defineComponent({
       name: [
         { required: true, message: '请输入姓名', trigger: 'blur' },
       ],
-      department: [
-        { required: true, message: '请输入所属部门', trigger: 'blur' },
+      account: [
+        { required: true, message: '请输入员工账号', trigger: 'blur' },
+      ],
+      cycle_id: [
+        { required: true, message: '请输入所属制程', trigger: 'blur' },
       ],
       production_position: [
         { required: true, message: '请输入生产岗位', trigger: 'blur' },
@@ -25,10 +29,14 @@ export default defineComponent({
     let form = ref({
       employee_id: '',
       name: '',
-      department: '',
+      account: '',
+      password: '',
+      cycle_id: '',
+      cycle_name: '',
       production_position: '',
       salary_attribute: '',
     })
+    let processCycle = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(10);
@@ -36,6 +44,7 @@ export default defineComponent({
     let edit = ref(0)
 
     onMounted(() => {
+      getProcessCycle()
       fetchProductList()
     })
 
@@ -50,6 +59,13 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    // 获取制程
+    const getProcessCycle = async () => {
+      const res = await request.get('/api/getProcessCycle')
+      if(res.code == 200){
+        processCycle.value = res.data
+      }
+    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
@@ -60,6 +76,12 @@ export default defineComponent({
               ElMessage.success('新增成功');
               dialogVisible.value = false;
               fetchProductList();
+              reportOperationLog({
+                operationType: 'add',
+                module: '员工信息',
+                desc: `新增员工信息：工号：${form.value.employee_id}，姓名：${form.value.name}`,
+                data: { newData: form.value }
+              })
             }
             
           }else{
@@ -68,11 +90,19 @@ export default defineComponent({
               id: edit.value,
               ...form.value
             }
+            if(myForm.account <= 6) return ElMessage.error('员工账号需大于等于6位')
+            if(myForm.password <= 6) return ElMessage.error('员工密码需大于等于6位')
             const res = await request.put('/api/employee_info', myForm);
             if(res && res.code == 200){
               ElMessage.success('修改成功');
               dialogVisible.value = false;
               fetchProductList();
+              reportOperationLog({
+                operationType: 'update',
+                module: '员工信息',
+                desc: `修改员工信息：工号：${myForm.employee_id}，姓名：${myForm.name}`,
+                data: { newData: myForm }
+              })
             }
           }
         }
@@ -92,6 +122,12 @@ export default defineComponent({
         if(res && res.code == 200){
           ElMessage.success('删除成功');
           fetchProductList();
+          reportOperationLog({
+            operationType: 'delete',
+            module: '员工信息',
+            desc: `删除员工信息：工号：${row.employee_id}，姓名：${row.name}`,
+            data: { newData: row.id }
+          })
         }
       }).catch(() => {})
     }
@@ -102,6 +138,9 @@ export default defineComponent({
     }
     // 新增
     const handleAdd = () => {
+      rules.password = [
+        { required: true, message: '请输入员工密码', trigger: 'blur' },
+      ]
       edit.value = 0;
       dialogVisible.value = true;
       resetForm()
@@ -110,16 +149,26 @@ export default defineComponent({
     const handleClose = () => {
       edit.value = 0;
       dialogVisible.value = false;
+      if(rules.password && rules.password.length){
+        delete rules.password
+      }
       resetForm()
     }
     const resetForm = () => {
       form.value = {
         employee_id: '',
         name: '',
-        department: '',
+        account: '',
+        password: '',
+        cycle_id: '',
+        cycle_name: '',
         production_position: '',
         salary_attribute: '',
       }
+    }
+    const cycleSelectChange = (value) => {
+      const item = processCycle.value.find(o => o.id == value)
+      form.value.cycle_name = item.name
     }
     // 分页相关
     function pageSizeChange(val) {
@@ -139,7 +188,7 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" v-permission={ 'EmployeeInfo:add' } onClick={ handleAdd } >
-                  新增员工编码
+                  新增员工信息
                 </ElButton>
               </div>
             ),
@@ -148,7 +197,8 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="employee_id" label="员工工号" />
                   <ElTableColumn prop="name" label="姓名" />
-                  <ElTableColumn prop="department" label="所属部门" />
+                  <ElTableColumn prop="account" label="账号" />
+                  <ElTableColumn prop="cycle_name" label="所属部门" />
                   <ElTableColumn prop="production_position" label="生产岗位" />
                   <ElTableColumn prop="salary_attribute" label="工资属性" />
                   <ElTableColumn prop="remarks" label="备注" />
@@ -176,8 +226,16 @@ export default defineComponent({
                 <ElFormItem label="姓名" prop="name">
                   <ElInput v-model={ form.value.name } placeholder="请输入姓名" />
                 </ElFormItem>
-                <ElFormItem label="所属部门" prop="department">
-                  <ElInput v-model={ form.value.department } placeholder="请输入所属部门" />
+                <ElFormItem label="账号" prop="account">
+                  <ElInput v-model={ form.value.account } placeholder="请输入员工工号" />
+                </ElFormItem>
+                <ElFormItem label="密码" prop="password">
+                  <ElInput v-model={ form.value.password } placeholder="请输入姓名" />
+                </ElFormItem>
+                <ElFormItem label="所属制程" prop="cycle_id">
+                  <ElSelect v-model={ form.value.cycle_id } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择所属制程" onChange={ (value) => cycleSelectChange(value) }>
+                    {processCycle.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="生产岗位" prop="production_position">
                   <ElInput v-model={ form.value.production_position } placeholder="请输入生产岗位" />
