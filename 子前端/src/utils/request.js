@@ -4,7 +4,7 @@ import $router from "@/router";
 import { getItem } from "@/assets/js/storage";
 
 const service = axios.create({
-	baseURL: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'http://api.yuanfangzixun.com.cn',
+	baseURL: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://api.yuanfangzixun.com.cn',
 	// baseURL: 'http://api.yuanfangzixun.com.cn',
 	timeout: 5000,
 });

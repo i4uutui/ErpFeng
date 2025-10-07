@@ -1,4 +1,24 @@
 import { getItem } from '@/assets/js/storage';
+
+/**
+ * 过滤指定菜单项
+ * @param {string} permission 权限标识（如"user:add"）
+ * @returns {boolean} 是否有权限
+ */
+export const filterMenu = (data, excludeItems) => {
+  const newData = { ...data }; // 浅拷贝对象
+
+  // 遍历所有菜单分类
+  Object.keys(newData).forEach(category => {
+    // 过滤当前分类下的菜单项，排除excludeItems数组中指定的值
+    newData[category] = newData[category].filter(item => {
+      // 如果当前菜单项的值不在排除列表中，则保留
+      return !excludeItems.includes(item.value);
+    });
+  });
+  
+  return newData;
+}
 /**
  * 检查用户是否拥有指定权限
  * @param {string} permission 权限标识（如"user:add"）

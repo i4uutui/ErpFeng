@@ -142,8 +142,12 @@
           <div class="value">{{ getContent(dataObj.process_name) }}</div>
         </div>
         <div class="flex item">
-          <div class="label">生产数量</div>
+          <div class="label">订单数量</div>
           <div class="value">{{ dataObj.out_number }}</div>
+        </div>
+        <div class="flex item">
+          <div class="label">订单尾数</div>
+          <div class="value">{{ order_number }}</div>
         </div>
         <div class="flex item">
           <div class="label">客户交期</div>
@@ -171,8 +175,8 @@
     createApp({
       data() {
         return {
-          api: 'http://api.yuanfangzixun.com.cn',
-          // api: 'http://localhost:3000',
+          // api: 'http://api.yuanfangzixun.com.cn',
+          api: 'http://localhost:3000',
           headers: {
             "Content-Type": 'application/json',
             "Authorization": ''
@@ -183,6 +187,8 @@
           id: '',
           quantity: '',
           dataObj: {},
+          order_number: 0,
+          data: {}
         }
       },
       methods: {
@@ -193,6 +199,8 @@
           }).then(res => {
             if(res.data.code == 200){
               const data = res.data.data
+              that.data = data
+              that.order_number = data.order_number
               that.dataObj = data.parent.production
               that.dataObj.process_code = data.process.process_code
               that.dataObj.process_name = data.process.process_name
@@ -209,12 +217,16 @@
           axios.post(`${this.api}/api/mobile_work_order`, {
             id: this.id,
             number: this.quantity,
-            company_id: this.urlData.company_id
+            company_id: this.urlData.company_id,
+            product_id: this.dataObj.product_id,
+            part_id: this.dataObj.part_id,
+            process_id: this.data.process_id
           }, {
             headers: this.headers
           }).then(res => {
             if(res.data.code == 200){
               alert(`提交成功！已提交数量：${this.quantity}`);
+              this.getFectList()
             }else{
               this.setError(res.data)
             }

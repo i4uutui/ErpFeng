@@ -2,6 +2,7 @@ import { defineComponent, ref, onMounted, reactive } from 'vue'
 import request from '@/utils/request';
 import router from '@/router';
 import { getItem } from '@/assets/js/storage';
+import { filterMenu } from '@/utils/tool';
 
 export default defineComponent({
   setup(){
@@ -155,28 +156,13 @@ export default defineComponent({
         groupedRoutes[parent].push(menuItem);
       });
       let filtered = Object.fromEntries(
-        Object.entries(filterMenu(groupedRoutes)).filter(([_, routes]) => routes.length > 0)
+        Object.entries(filterMenu(groupedRoutes, ['UserManagement', 'ApprovalStep', 'Trajectory'])).filter(([_, routes]) => routes.length > 0)
       );
       options.value = Object.entries(filtered).map(([key, value]) => ({
         value: key,
         label: key,
         children: value
       }));
-    }
-    function filterMenu(data) {
-      const newData = { ...data }; // 浅拷贝对象
-    
-      // 遍历所有菜单分类
-      Object.keys(newData).forEach(category => {
-        // 过滤当前分类下的菜单项
-        newData[category] = newData[category].filter(item => {
-          if(!(item.value == 'UserManagement' || item.value == 'ApprovalStep' || item.value == 'Trajectory')){
-            return item
-          }
-        });
-      });
-      
-      return newData;
     }
     // 新增管理员
     const handleAdd = () => {

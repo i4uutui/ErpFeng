@@ -304,7 +304,7 @@ router.get('/process_code', authMiddleware, async (req, res) => {
     offset
   })
   const totalPages = Math.ceil(count / pageSize);
-  row = rows.map(e => e.toJSON())
+  const row = rows.map(e => e.toJSON())
   // 返回所需信息
   res.json({ 
     data: formatArrayTime(row), 

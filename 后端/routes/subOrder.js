@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessCycleChild, Op } = require('../models')
+const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessCycleChild, Op, SubProductionNotice } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -401,7 +401,14 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
   });
   if (!notice) return res.json({ message: '数据不存在，或已被删除', code: 401 });
   const noticeRow = notice.toJSON()
-  if(noticeRow.is_notice == 0) return res.json({ message: '此订单已有排产记录，不能重复排产', code: 401 })
+
+  const noticeP = await SubProductionNotice.findOne({
+    where: {
+      company_id,
+      notice_id: noticeRow.id
+    }
+  })
+  if(noticeP) return res.json({ message: '此订单已有排产记录，不能重复排产', code: 401 })
 
   const allCycles = await SubProcessCycle.findAll({
     where: { company_id },
@@ -435,12 +442,23 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
       const obj = {
         ...o,
         order_number: orders,
+        notice_id: noticeRow.id,
+        notice: noticeRow.notice,
+        company_id,
         all_time: (orders * o.time / 60 / 60).toFixed(1)
       }
       o.order_number = orders
       wait.push(obj)
     })
     return data
+  })
+  await SubProductionNotice.create({ 
+    company_id,
+    notice_id: noticeRow.id,
+    notice: noticeRow.notice,
+    customer_id: noticeRow.customer_id,
+    product_id: noticeRow.product_id,
+    rece_time: noticeRow.sale.rece_time
   })
   if(wait.length != 0){
     SubProcessBomChild.bulkCreate(wait, {updateOnDuplicate:["order_number", 'all_time']})
@@ -492,12 +510,12 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
   // 批量插入
   await SubProcessCycleChild.bulkCreate(allCycleChildData)
   
-  if(objData.length){
-    // 设置此数据为已排产
-    await SubProductNotice.update({
-      is_notice: 0
-    }, { where: { id } })
-  }
+  // if(objData.length){
+  //   // 设置此数据为已排产
+  //   await SubProductNotice.update({
+  //     is_notice: 0
+  //   }, { where: { id } })
+  // }
   
   res.json({ message: '操作成功', code: 200 });
 })

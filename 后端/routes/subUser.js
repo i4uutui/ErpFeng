@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const dayjs = require('dayjs')
 const pool = require('../config/database');
-const { AdUser, AdOrganize, SubProcessCycle, SubWarehouseApply, SubWarehouseCycle, SubApprovalUser, SubApprovalHistory, SubApprovalStep, SubWarehouseContent, Op, SubConstType } = require('../models')
+const { AdUser, AdOrganize, SubProcessCycle, SubWarehouseApply, SubWarehouseCycle, SubApprovalUser, SubOperationHistory, SubApprovalStep, SubWarehouseContent, Op, SubConstType } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
@@ -986,6 +986,51 @@ router.post('/approval_backFlow', authMiddleware, async (req, res) => {
   })
 
   res.json({ code: 200, message: '操作成功' })
+})
+/**
+ * @swagger
+ * /api/operation_history:
+ *   get:
+ *     summary: 获取用户操作记录
+ *     tags:
+ *       - 系统管理(User)
+ *     parameters:
+ *       - name: page
+ *         schema:
+ *           type: int
+ *       - name: pageSize
+ *         schema:
+ *           type: int
+ */
+router.get('/operation_history', authMiddleware, async (req, res) => {
+  const { page = 1, pageSize = 10, user_id, operation_type, module } = req.query;
+  const offset = (page - 1) * pageSize;
+  const { company_id } = req.user;
+
+  const whereHistory = {}
+  if(user_id) whereHistory.user_id = user_id
+  if(operation_type) whereHistory.operation_type = operation_type
+  if(module) whereHistory.module = module
+  const { count, rows } = await SubOperationHistory.findAndCountAll({
+    where: {
+      company_id,
+      ...whereHistory
+    },
+    order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
+  })
+  const totalPages = Math.ceil(count / pageSize);
+  const row = rows.map(e => e.toJSON())
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(row), 
+    total: count, 
+    totalPages, 
+    currentPage: parseInt(page), 
+    pageSize: parseInt(pageSize),
+    code: 200 
+  });
 })
 
 module.exports = router;   

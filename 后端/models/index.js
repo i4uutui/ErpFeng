@@ -5,7 +5,7 @@ const AdAdmin = require('./AdAdmin.js') // 产品报价信息表
 const AdCompanyInfo = require('./AdCompanyInfo.js') // 客户企业信息表
 const AdUser = require('./AdUser.js') // 子后台用户表
 const AdOrganize = require('./AdOrganize.js') // 组织架构信息表
-const SubOperationHistory = require('./SubOperationHistory.js') // 审批操作历史表
+const SubOperationHistory = require('./SubOperationHistory.js') // 用户操作日志表
 const SubApprovalStep = require('./SubApprovalStep.js') // 审批步骤配置表
 const SubApprovalUser = require('./SubApprovalUser.js') // 流程控制用户表
 const SubProcessCycle = require('./SubProcessCycle.js') // 生产制程表
@@ -33,7 +33,9 @@ const SubMaterialQuote = require('./SubMaterialQuote.js') // 材料报价表
 const SubMaterialMent = require('./SubMaterialMent.js') // 材料报价单表
 const SubOutsourcingQuote = require('./SubOutsourcingQuote.js') // 委外报价信息表
 const SubOutsourcingOrder = require('./SubOutsourcingOrder.js') // 委外加工单
+const SubProductionNotice = require('./SubProductionNotice.js') // 进度列表
 const SubProductionProgress = require('./SubProductionProgress.js') // 生产进度表
+const SubRateWage = require('./SubRateWage.js') // 工资表
 
 AdUser.belongsTo(AdCompanyInfo, { foreignKey: 'company_id', as: 'company' })
 
@@ -101,6 +103,15 @@ SubWarehouseApply.hasMany(SubApprovalUser, { foreignKey: 'source_id', as: 'appro
 SubMaterialMent.hasMany(SubApprovalUser, { foreignKey: 'source_id', as: 'approval' })
 SubOutsourcingOrder.hasMany(SubApprovalUser, { foreignKey: 'source_id', as: 'approval' })
 
+SubRateWage.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
+SubRateWage.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
+SubRateWage.belongsTo(SubProcessCode, { foreignKey: 'process_id', as: 'process' })
+SubRateWage.belongsTo(SubProcessBomChild, { foreignKey: 'bom_child_id', as: 'bomChildren' })
+SubRateWage.belongsTo(SubEmployeeInfo, { foreignKey: 'user_id', as: 'menber' })
+
+SubProductionNotice.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
+SubProductionNotice.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
+
 module.exports = {
   Op,
   sequelize,
@@ -136,7 +147,9 @@ module.exports = {
   SubMaterialMent,
   SubOutsourcingQuote,
   SubOutsourcingOrder,
-  SubProductionProgress
+  SubProductionNotice,
+  SubProductionProgress,
+  SubRateWage
 }
 
 

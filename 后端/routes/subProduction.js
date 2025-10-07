@@ -1,20 +1,53 @@
 const express = require('express');
 const dayjs = require('dayjs')
 const router = express.Router();
-const { SubProductionProgress, SubProductNotice, SubProductCode, SubCustomerInfo, SubSaleOrder, SubPartCode, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessBom, SubProcessCycleChild, SubOperationHistory, Op } = require('../models');
+const { SubProductionProgress, SubProductNotice, SubProductCode, SubCustomerInfo, SubSaleOrder, SubPartCode, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessBom, SubProcessCycleChild, SubOperationHistory, SubRateWage, Op, SubProductionNotice } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const EmployeeAuth = require('../middleware/EmployeeAuth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { PreciseMath } = require('../middleware/tool');
 
+// 获取生产进度列表
+router.get('/production_list', authMiddleware, async (req, res) => {
+  const { page = 1, pageSize = 10 } = req.query;
+  const offset = (page - 1) * pageSize;
+  const { company_id } = req.user;
+  
+  const { count, rows } = await SubProductionNotice.findAndCountAll({
+    where: {
+      company_id
+    },
+    include: [
+      { model: SubCustomerInfo, as: 'customer', attributes: ['id', 'customer_code', 'customer_abbreviation'] },
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing'] }
+    ],
+    order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
+  })
+  const totalPages = Math.ceil(count / pageSize);
+  const row = rows.map(e => e.toJSON())
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(row), 
+    total: count, 
+    totalPages, 
+    currentPage: parseInt(page), 
+    pageSize: parseInt(pageSize),
+    code: 200 
+  });
+})
+
 // 获取生产进度表列表
 router.get('/production_progress', authMiddleware, async (req, res) => {
+  const { notice } = req.query
   const { company_id } = req.user;
   
   const rows = await SubProductionProgress.findAll({
     where: {
       is_deleted: 1,
       company_id,
+      notice_number: notice
     },
     attributes: ['id', 'notice_number', 'delivery_time', 'customer_abbreviation', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'part_code', 'part_name', 'bom_id', 'order_number', 'customer_order', 'rece_time', 'out_number', 'start_date', 'remarks', 'created_at'],
     include: [
@@ -208,7 +241,7 @@ router.get('/mobile_process_bom', EmployeeAuth, async (req, res) => {
 })
 // 移动端报工单
 router.post('/mobile_work_order', EmployeeAuth, async (req, res) => {
-  const { number, id, company_id } = req.body
+  const { number, id, company_id, product_id, part_id, process_id } = req.body
   const { company_id: companyId, id: userId, name } = req.user
   if(company_id != companyId) return res.json({ message: '数据出错，请检查正确的地址或二维码', code: 401 })
 
@@ -223,20 +256,30 @@ router.post('/mobile_work_order', EmployeeAuth, async (req, res) => {
   dataValue.order_number = PreciseMath.sub(dataValue.order_number, quantity)
   dataValue.all_time = (dataValue.order_number * dataValue.time / 60 / 60).toFixed(1)
 
+  await SubRateWage.create({ 
+    company_id: companyId,
+    user_id: userId, 
+    number, 
+    bom_child_id: id, 
+    product_id, 
+    part_id, 
+    process_id 
+  })
+
   const resData = await SubProcessBomChild.update({
     add_finish: dataValue.add_finish,
     order_number: dataValue.order_number,
     all_time: dataValue.all_time
   }, { where: { id } })
-  
+
   await SubOperationHistory.create({
     user_id: userId,
     user_name: name,
     company_id: company_id,
     operation_type: 'add',
     module: "移动端",
-    desc: `员工{ ${ data.name } }报工数量：${ quantity }`,
-    data: { newData: { number: quantity, id, company_id } },
+    desc: `员工{ ${ name } }报工数量：${ quantity }`,
+    data: JSON.stringify({ newData: { number: quantity, id, company_id } }),
   });
 
   res.json({ message: '操作成功', code: 200 })

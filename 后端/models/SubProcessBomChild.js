@@ -9,6 +9,21 @@ const SubProcessBomChild = sequelize.define('SubProcessBomChild', {
     autoIncrement: true,
     comment: ' 自增主键 ID'
   },
+  company_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: '公司id'
+  },
+  notice_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: '生产订单id'
+  },
+  notice: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+    comment: '生产订单号'
+  },
   process_bom_id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,

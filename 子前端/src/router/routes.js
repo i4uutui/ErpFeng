@@ -491,36 +491,46 @@ const routes = [
           ]
         }
       },
-      // {
-      //   path: '/finance/employee-piece-rate',
-      //   name: 'EmployeePieceRate',
-      //   component: () => import('@/views/finance/EmployeePieceRate.jsx'),
-      //   meta: {
-      //     title: '员工计件工资',
-      //     parent: '财务管理',
-      //     menu: true
-      //   }
-      // },
-      // {
-      //   path: '/finance/accounts-receivable',
-      //   name: 'AccountsReceivable',
-      //   component: () => import('@/views/finance/AccountsReceivable.jsx'),
-      //   meta: {
-      //     title: '应收货款',
-      //     parent: '财务管理',
-      //     menu: true
-      //   }
-      // },
-      // {
-      //   path: '/finance/accounts-payable',
-      //   name: 'AccountsPayable',
-      //   component: () => import('@/views/finance/AccountsPayable.jsx'),
-      //   meta: {
-      //     title: '应付货款',
-      //     parent: '财务管理',
-      //     menu: true
-      //   }
-      // }
+      {
+        path: '/finance/employee-piece-rate',
+        name: 'EmployeePieceRate',
+        component: () => import('@/views/finance/EmployeePieceRate.jsx'),
+        meta: {
+          title: '员工计件工资',
+          parent: '财务管理',
+          menu: true
+        }
+      },
+      {
+        path: '/finance/accounts-receivable',
+        name: 'AccountsReceivable',
+        component: () => import('@/views/finance/AccountsReceivable.jsx'),
+        meta: {
+          title: '应收货款',
+          parent: '财务管理',
+          menu: true
+        }
+      },
+      {
+        path: '/finance/accounts-payable',
+        name: 'AccountsPayable',
+        component: () => import('@/views/finance/AccountsPayable.jsx'),
+        meta: {
+          title: '应付货款(材料)',
+          parent: '财务管理',
+          menu: true
+        }
+      },
+      {
+        path: '/finance/accounts-outsourcing',
+        name: 'AccountsOutsourcing',
+        component: () => import('@/views/finance/AccountsOutsourcing.jsx'),
+        meta: {
+          title: '应付货款(委外)',
+          parent: '财务管理',
+          menu: true
+        }
+      }
     ]
   }
 ];
