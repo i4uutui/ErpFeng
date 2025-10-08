@@ -5,6 +5,13 @@ const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, Su
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
+
+const multer = require('multer');
+const path = require('path');
+const printer = require('node-printer');
+const fs = require('fs');
+const { exec } = require('child_process');
+
 /**
  * @swagger
  * /api/supplier_info:
@@ -626,6 +633,86 @@ router.put('/material_ment', authMiddleware, async (req, res) => {
   if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
   
   res.json({ message: '修改成功', code: 200 });
+})
+
+router.get('/printers', authMiddleware, async (req, res) => {
+  exec('wmic printer get name, status', (err, stdout, stderr) => {
+    if (err) {
+      reject(new Error(`执行命令失败: ${err.message}`));
+      return;
+    }
+    if (stderr) {
+      reject(new Error(`命令错误输出: ${stderr}`));
+      return;
+    }
+
+    // 清理输出（去除空行、标题行和状态列）
+    const lines = stdout .split('\n') .map(line => line.trim()) .filter(line => line.length > 0) .slice(1);
+
+    // 提取打印机名称（处理名称中包含空格的情况）
+    const printerNames = lines.map(line => {
+      // 打印机状态通常是"空闲"、"离线"等短词，从末尾截取状态部分
+      // 状态与名称之间至少有两个空格分隔
+      const statusMatch = line.match(/\s{2,}(.+)$/);
+      if (statusMatch) {
+        // 去除状态部分，剩余的即为打印机名称
+        return line.replace(statusMatch[0], '').trim();
+      }
+      // 没有状态信息时，整行都是名称
+      return line;
+    });
+    res.json({ code: 200, data: printerNames })
+  })
+})
+
+// 配置 multer
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // 指定图片存储的文件夹
+    cb(null, path.join(__dirname, '../public/uploads'));
+  },
+  filename: function (req, file, cb) {
+    // 生成唯一的文件名
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage: storage });
+
+router.post('/printers', authMiddleware, upload.single('pdfFile'), async (req, res) => {
+  const printerName = req.body.printerName; // 从表单字段获取
+  const pdfTempPath = req.file.path;
+
+  if (!printerName) {
+    return res.json({ code: 400, message: '缺少打印机名称' });
+  }
+  if (!pdfTempPath || !fs.existsSync(pdfTempPath)) {
+    return res.json({ code: 400, message: '未接收到 PDF 文件' });
+  }
+  const imagePath = `public/uploads/${req.file.filename}`;
+  console.log(imagePath);
+
+  const pdfData = fs.readFileSync(pdfTempPath);
+  // 构造打印参数
+  const printOptions = {
+    printer: printerName,       // 打印机名称
+    filename: pdfData,           // 打印数据（Buffer）
+    success: jobId => console.log(jobId),
+    error: err => console.log(err)
+  };
+  console.log(printer);
+  // 执行打印
+  const jobId = printer.print(printOptions);
+  console.log(jobId);
+
+  // 打印成功后删除临时文件
+  fs.unlinkSync(pdfTempPath);
+
+  res.json({
+    code: 200,
+    message: '打印任务提交成功',
+    jobId: jobId.toString() // jobId返回的是数字类型
+  });
 })
 
 

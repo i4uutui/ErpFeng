@@ -6,6 +6,7 @@ import dayjs from "dayjs"
 import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
 import { reportOperationLog } from '@/utils/log';
+import html2pdf from 'html2pdf.js';
 
 export default defineComponent({
   setup() {
@@ -102,8 +103,14 @@ export default defineComponent({
       getMaterialCode() // 材料编码列表
       getSupplierInfo() // 供应商编码列表
       getProductNotice() // 获取生产订单通知单列表
+
+      getPrinters()
     })
     
+    const getPrinters = async () => {
+      const res = await request.get('/api/printers')
+      console.log(res.data);
+    }
     // 获取列表
     const fetchProductList = async () => {
       const res = await request.post('/api/material_ment', {
@@ -406,6 +413,28 @@ export default defineComponent({
         return { color: 'red' }
       }
     }
+    const onPrint = async () => {
+      const printerName = 'Samsung SCX-3200 Series'
+      const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
+      const opt = {
+        margin: 10,
+        filename: 'table-print.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 }, // 保证清晰度
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      // 生成 PDF 并转为 Blob
+      html2pdf().from(printTable).set(opt).output('blob').then(async pdfBlob => {
+        const formData = new FormData();
+        formData.append('printerName', printerName); // 打印机名称
+        formData.append('pdfFile', pdfBlob, 'table-print.pdf'); // 文件
+        const res = await request.post('/api/printers', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data' // 让 axios 不自动设置为 json
+          }
+        });
+      }); 
+    }
     
     return() => (
       <>
@@ -428,6 +457,9 @@ export default defineComponent({
                 }
                 <ElFormItem v-permission={ 'PurchaseOrder:print' }>
                   <ElButton style="margin-top: -5px" type="primary" v-print={ printObj.value }> 采购单打印 </ElButton>
+                </ElFormItem>
+                <ElFormItem v-permission={ 'PurchaseOrder:print' }>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => onPrint() }> 后端打印 </ElButton>
                 </ElFormItem>
                 <ElFormItem label="生产订单号:">
                   <ElSelect v-model={ notice_number.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择生产订单号">

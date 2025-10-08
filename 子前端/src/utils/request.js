@@ -7,11 +7,13 @@ const service = axios.create({
 	baseURL: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://api.yuanfangzixun.com.cn',
 	// baseURL: 'http://api.yuanfangzixun.com.cn',
 	timeout: 5000,
+	headers: {
+		"Content-Type": 'application/json'
+	}
 });
 
 // 请求拦截器
 service.interceptors.request.use(config => {
-    config.headers['Content-Type'] = 'application/json'
 		const token = getItem("token");
 		if (token) {
 			config.headers["Authorization"] = `${token}`;

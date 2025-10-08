@@ -12,6 +12,7 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.1",
     "mysql2": "^3.14.1",
+    "node-printer": "^1.0.4",
     "qiniu": "^7.14.0",
     "qrcode": "^1.5.4",
     "sequelize": "^6.37.7",
