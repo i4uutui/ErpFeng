@@ -6,6 +6,8 @@ import dayjs from "dayjs"
 import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
 import { reportOperationLog } from '@/utils/log';
+import html2pdf from 'html2pdf.js';
+import WinPrint from '@/components/print/winPrint';
 
 export default defineComponent({
   setup(){
@@ -63,6 +65,10 @@ export default defineComponent({
     let productId = ref('')
     let statusId = ref('')
     let dateTime = ref([])
+    // 用来打印用的
+    let printers = ref([]) //打印机列表
+    let printVisible = ref(false)
+    let setPdfBlobUrl = ref('')
 
     const printObj = ref({
       id: "printTable", // 这里是要打印元素的ID
@@ -103,8 +109,14 @@ export default defineComponent({
       await getProductsCode() // 获取产品编码
       await getHouseList() // 获取仓库名称
       await filterQuery()
+
+      getPrinters()
     })
 
+    const getPrinters = async () => {
+      const res = await request.get('/api/printers')
+      printers.value = res.data
+    }
     const filterQuery = async () => {
       const res = await request.post('/api/warehouse_apply', {
         ware_id: 3,
@@ -459,6 +471,30 @@ export default defineComponent({
         return { color: 'red' }
       }
     }
+    const onPrint = async () => {
+      const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
+      const opt = {
+        margin: 10,
+        filename: 'table-print.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 }, // 保证清晰度
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      };
+      // 生成 PDF 并转为 Blob
+      html2pdf().from(printTable).set(opt).output('blob').then(async pdfBlob => {
+        let urlTwo = URL.createObjectURL(pdfBlob);
+        setPdfBlobUrl.value = urlTwo
+        printVisible.value = true
+        // const formData = new FormData();
+        // formData.append('printerName', printName.value); // 打印机名称
+        // formData.append('file', pdfBlob, 'table-print.pdf'); // 文件
+        // const res = await request.post('/api/printers', formData, {
+        //   headers: {
+        //     'Content-Type': 'multipart/form-data' // 让 axios 不自动设置为 json
+        //   }
+        // });
+      }); 
+    }
 
     return() => (
       <>
@@ -483,7 +519,7 @@ export default defineComponent({
                   <></>
                 }
                 <ElFormItem v-permission={ 'ProductHouse:print' }>
-                  <ElButton style="margin-top: -5px" type="primary" v-print={ printObj.value }> 出入库打印 </ElButton>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => onPrint() }> 出入库打印 </ElButton>
                 </ElFormItem>
                 <ElFormItem label="仓库名称:">
                   <ElSelect v-model={ houseId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择仓库名称">
@@ -505,11 +541,6 @@ export default defineComponent({
                     {customerList.value.map((e, index) => <ElOption value={ e.id } label={ e.customer_abbreviation } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
-                {/* <ElFormItem label="制程:">
-                  <ElSelect v-model={ cycleId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择制程" onChange={ (row) => formCycleSelect(row) }>
-                    {cycleList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
-                  </ElSelect>
-                </ElFormItem> */}
                 <ElFormItem label="产品名称:">
                   <ElSelect v-model={ productId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择产品名称">
                     {productList.value.map((e, index) => <ElOption value={ e.id } label={ e.product_name } key={ index } />)}
@@ -584,6 +615,13 @@ export default defineComponent({
                     }}
                   </ElTableColumn>
                 </ElTable>
+                <ElDialog v-model={ printVisible.value } title="打印预览" width="900px">
+                  {{
+                    default: () => (
+                      <WinPrint url={ setPdfBlobUrl.value } printList={ printers.value } onClose={ () => printVisible.value = false } />
+                    ),
+                  }}
+                </ElDialog>
                 <div class="printTable" id='totalTable2'>
                   <div id="printTable">
                     <table class="print-table">

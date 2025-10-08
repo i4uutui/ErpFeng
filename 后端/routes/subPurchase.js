@@ -4,13 +4,25 @@ const dayjs = require('dayjs')
 const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialMent, SubApprovalUser, SubApprovalStep, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
-
-
+const { print, getPrinters, getDefaultPrinter } = require("pdf-to-printer");
 const multer = require('multer');
 const path = require('path');
-const printer = require('node-printer');
-const fs = require('fs');
-const { exec } = require('child_process');
+const fs = require('fs')
+
+// 配置 multer
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // 指定图片存储的文件夹
+    cb(null, path.join(__dirname, '../public/temp'));
+  },
+  filename: function (req, file, cb) {
+    // 生成唯一的文件名
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
 
 /**
  * @swagger
@@ -636,84 +648,40 @@ router.put('/material_ment', authMiddleware, async (req, res) => {
 })
 
 router.get('/printers', authMiddleware, async (req, res) => {
-  exec('wmic printer get name, status', (err, stdout, stderr) => {
-    if (err) {
-      reject(new Error(`执行命令失败: ${err.message}`));
-      return;
-    }
-    if (stderr) {
-      reject(new Error(`命令错误输出: ${stderr}`));
-      return;
-    }
-
-    // 清理输出（去除空行、标题行和状态列）
-    const lines = stdout .split('\n') .map(line => line.trim()) .filter(line => line.length > 0) .slice(1);
-
-    // 提取打印机名称（处理名称中包含空格的情况）
-    const printerNames = lines.map(line => {
-      // 打印机状态通常是"空闲"、"离线"等短词，从末尾截取状态部分
-      // 状态与名称之间至少有两个空格分隔
-      const statusMatch = line.match(/\s{2,}(.+)$/);
-      if (statusMatch) {
-        // 去除状态部分，剩余的即为打印机名称
-        return line.replace(statusMatch[0], '').trim();
-      }
-      // 没有状态信息时，整行都是名称
-      return line;
-    });
-    res.json({ code: 200, data: printerNames })
-  })
+  const printers = await getPrinters();
+  if(printers){
+    res.json({ data: printers, code: 200 });
+    return
+  }
+  const defaultPrinter = await getDefaultPrinter();
+  if(defaultPrinter){
+    res.json({ data: [defaultPrinter], code: 200 });
+    return
+  }
+  res.json({ message: '获取打印机失败，请检查', code: 401 })
 })
+router.post('/printers', upload.single('file'), authMiddleware, async (req, res) => {
+  const { printerName } = req.body;
+  const tempFilePath = req.file.path;
+  if (!req.file) {
+    return res.status(400).json({ message: '未上传文件', code: 400 });
+  }
+  const options = {
+    orientation: 'portrait',
+  };
+  if (printerName) {
+    options.printer = printerName;
+  }
 
-// 配置 multer
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    // 指定图片存储的文件夹
-    cb(null, path.join(__dirname, '../public/uploads'));
-  },
-  filename: function (req, file, cb) {
-    // 生成唯一的文件名
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  // 执行打印
+  try {
+    await print(tempFilePath, options)
+    fs.unlinkSync(tempFilePath); // 清理文件
+    res.json({ message: '已通知打印机进行打印', code: 200 })
+  } catch (error) {
+    fs.unlinkSync(tempFilePath); // 出错也要清理文件
+    res.json({ message: '打印失败或操作超时', code: 401 })
   }
 });
-const upload = multer({ storage: storage });
-
-router.post('/printers', authMiddleware, upload.single('pdfFile'), async (req, res) => {
-  const printerName = req.body.printerName; // 从表单字段获取
-  const pdfTempPath = req.file.path;
-
-  if (!printerName) {
-    return res.json({ code: 400, message: '缺少打印机名称' });
-  }
-  if (!pdfTempPath || !fs.existsSync(pdfTempPath)) {
-    return res.json({ code: 400, message: '未接收到 PDF 文件' });
-  }
-  const imagePath = `public/uploads/${req.file.filename}`;
-  console.log(imagePath);
-
-  const pdfData = fs.readFileSync(pdfTempPath);
-  // 构造打印参数
-  const printOptions = {
-    printer: printerName,       // 打印机名称
-    filename: pdfData,           // 打印数据（Buffer）
-    success: jobId => console.log(jobId),
-    error: err => console.log(err)
-  };
-  console.log(printer);
-  // 执行打印
-  const jobId = printer.print(printOptions);
-  console.log(jobId);
-
-  // 打印成功后删除临时文件
-  fs.unlinkSync(pdfTempPath);
-
-  res.json({
-    code: 200,
-    message: '打印任务提交成功',
-    jobId: jobId.toString() // jobId返回的是数字类型
-  });
-})
-
 
 module.exports = router;

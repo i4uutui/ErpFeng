@@ -6,6 +6,8 @@ import dayjs from "dayjs"
 import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
 import { reportOperationLog } from '@/utils/log';
+import html2pdf from 'html2pdf.js';
+import WinPrint from '@/components/print/winPrint';
 
 export default defineComponent({
   setup() {
@@ -57,6 +59,9 @@ export default defineComponent({
     let procedure = ref([]) // 工序列表
     let productNotice = ref([]) // 获取生产订单通知单列表
     // 用来打印用的
+    let printers = ref([]) //打印机列表
+    let printVisible = ref(false)
+    let setPdfBlobUrl = ref('')
     let supplierName = ref('')
     let productName = ref('')
     let productCode = ref('')
@@ -90,8 +95,14 @@ export default defineComponent({
       getProcessBomList() // 工艺Bom列表
       getSupplierInfo() // 供应商编码列表
       getProductNotice() // 获取生产订单通知单列表
+
+      getPrinters()
     })
     
+    const getPrinters = async () => {
+      const res = await request.get('/api/printers')
+      printers.value = res.data
+    }
     // 获取列表
     const fetchProductList = async () => {
       const res = await request.post('/api/outsourcing_order', {
@@ -404,6 +415,30 @@ export default defineComponent({
         return { color: 'red' }
       }
     }
+    const onPrint = async () => {
+      const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
+      const opt = {
+        margin: 10,
+        filename: 'table-print.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 }, // 保证清晰度
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      };
+      // 生成 PDF 并转为 Blob
+      html2pdf().from(printTable).set(opt).output('blob').then(async pdfBlob => {
+        let urlTwo = URL.createObjectURL(pdfBlob);
+        setPdfBlobUrl.value = urlTwo
+        printVisible.value = true
+        // const formData = new FormData();
+        // formData.append('printerName', printName.value); // 打印机名称
+        // formData.append('file', pdfBlob, 'table-print.pdf'); // 文件
+        // const res = await request.post('/api/printers', formData, {
+        //   headers: {
+        //     'Content-Type': 'multipart/form-data' // 让 axios 不自动设置为 json
+        //   }
+        // });
+      }); 
+    }
 
     return() => (
       <>
@@ -425,7 +460,7 @@ export default defineComponent({
                   <></>
                 }
                 <ElFormItem v-permission={ 'OutsourcingOrder:print' }>
-                  <ElButton style="margin-top: -5px" type="primary" v-print={ printObj.value }> 委外加工单打印 </ElButton>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => onPrint() }> 委外加工单打印 </ElButton>
                 </ElFormItem>
                 <ElFormItem label="生产订单号:">
                   <ElSelect v-model={ notice_number.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择生产订单号">
@@ -502,6 +537,13 @@ export default defineComponent({
                     }}
                   </ElTableColumn>
                 </ElTable>
+                <ElDialog v-model={ printVisible.value } title="打印预览" width="900px">
+                  {{
+                    default: () => (
+                      <WinPrint url={ setPdfBlobUrl.value } printList={ printers.value } onClose={ () => printVisible.value = false } />
+                    ),
+                  }}
+                </ElDialog>
                 <div class="printTable" id='totalTable2'>
                   <div id="printTable">
                     <table class="print-table">
