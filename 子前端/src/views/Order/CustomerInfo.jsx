@@ -10,7 +10,7 @@ export default defineComponent({
         { required: true, message: '请输入客户编码', trigger: 'blur' },
       ],
       customer_abbreviation: [
-        { required: true, message: '请输入客户简称', trigger: 'blur' },
+        { required: true, message: '请输入客户名称', trigger: 'blur' },
       ],
       contact_person: [
         { required: true, message: '请输入联系人', trigger: 'blur' },
@@ -193,7 +193,7 @@ export default defineComponent({
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="customer_code" label="客户编码" />
-                  <ElTableColumn prop="customer_abbreviation" label="客户简称" />
+                  <ElTableColumn prop="customer_abbreviation" label="客户名称" />
                   <ElTableColumn prop="contact_person" label="联系人" />
                   <ElTableColumn prop="contact_information" label="联系方式" />
                   <ElTableColumn prop="company_full_name" label="公司全名" />
@@ -225,7 +225,7 @@ export default defineComponent({
                   <ElInput v-model={ form.value.customer_code } placeholder="请输入客户编码" />
                 </ElFormItem>
                 <ElFormItem label="客户简称" prop="customer_abbreviation">
-                  <ElInput v-model={ form.value.customer_abbreviation } placeholder="请输入客户简称" />
+                  <ElInput v-model={ form.value.customer_abbreviation } placeholder="请输入客户名称" />
                 </ElFormItem>
                 <ElFormItem label="联系人" prop="contact_person">
                   <ElInput v-model={ form.value.contact_person } placeholder="请输入联系人" />
