@@ -10,13 +10,28 @@ const SubWarehouseApply = sequelize.define('SubWarehouseApply', {
   },
   user_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
     comment: '发布的用户id'
   },
   company_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
     comment: '所属企业id'
+  },
+  print_id: {
+    type: DataTypes.INTEGER(30),
+    allowNull: true,
+    comment: '打印的id'
+  },
+  buyPrint_id: {
+    type: DataTypes.INTEGER(30),
+    allowNull: true,
+    comment: '采购单号ID'
+  },
+  sale_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    comment: '销售订单ID'
   },
   ware_id: {
     type: DataTypes.INTEGER,

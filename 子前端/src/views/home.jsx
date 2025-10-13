@@ -5,7 +5,7 @@ export default defineComponent({
 
     return() => (
       <>
-        <div>首页</div>
+        <ElCard style={{ height: '100%' }}></ElCard>
       </>
     )
   }

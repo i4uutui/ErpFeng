@@ -37,6 +37,7 @@ export default defineComponent({
       type: '', // 常量类型
       plan_id: '', // 供应商id or 制程id
       plan: '', // 供应商 or 制程
+      buyPrint_id: '', // 采购单号的ID
       item_id: '',
       code: '',
       name: '',
@@ -52,6 +53,8 @@ export default defineComponent({
     let supplierList = ref([]) // 供应商列表
     let cycleList = ref([]) // 制程列表
     let materialList = ref([]) // 材料编码
+    let materialBuy = ref([]) // 采购单列表
+    let outBuy = ref([]) // 委外单列表
     let tableData = ref([])
     let allSelect = ref([])
     let edit = ref('')
@@ -67,6 +70,7 @@ export default defineComponent({
     let dateTime = ref([])
     // 用来打印用的
     let printers = ref([]) //打印机列表
+    let printDataIds = ref([]) // 需要打印的数据的id
     let printVisible = ref(false)
     let setPdfBlobUrl = ref('')
 
@@ -108,6 +112,7 @@ export default defineComponent({
       await getMaterialCode() // 获取材料编码
       await getHouseList() // 获取仓库名称
       await filterQuery()
+      await getNoEncoding() // 获取采购单号
 
       getPrinters()
     })
@@ -125,10 +130,16 @@ export default defineComponent({
         plan_id: supplierId.value ? supplierId.value : cycleId.value,
         item_id: materialId.value,
         status: statusId.value,
-        source_type: 'material_warehouse',
+        // source_type: 'material_warehouse',
         apply_time: dateTime.value
       })
       tableData.value = res.data
+    }
+    // 获取单号列表
+    const getNoEncoding = async () => {
+      const res = await request.get('/api/getNoEncoding', { params: { printType: ["ES", 'TV'] } })
+      materialBuy.value = res.data.filter(o => o.print_type == 'ES')
+      outBuy.value = res.data.filter(o => o.print_type == 'TV')
     }
     // 获取常量
     const getConstType = async () => {
@@ -299,6 +310,7 @@ export default defineComponent({
         type: e.type, // 常量类型
         plan_id: e.plan_id, // 供应商id or 制程id
         plan: e.plan, // 供应商 or 制程
+        buyPrint_id: e.buyPrint_id, //采购单号的ID
         item_id: e.item_id,
         code: e.code,
         name: e.name,
@@ -380,6 +392,25 @@ export default defineComponent({
       if(value != 4){
         form.value.buy_price = ''
       }
+      form.value.buyPrint_id = ''
+    }
+    const outChange = async (value) => {
+      const res = await request.get('/api/getOutsourcingOrder', { params: { print_id: value } })
+      const data = res.data
+      planChange(data[0].supplier.id, 'supplier_abbreviation')
+      form.value.plan_id = data[0].supplier.id
+      form.value.buy_price = data[0].price
+    }
+    // 获取采购单列表
+    const buyChange = async (row) => {
+      const res = await request.get('/api/getMaterialMent', { params: { print_id: row.no } })
+      const data = res.data
+      planChange(data[0].supplier_id, 'supplier_abbreviation')
+      materialChange(data[0].material_id)
+      form.value.plan_id = data[0].supplier_id
+      form.value.item_id = data[0].material_id
+      form.value.quantity = data[0].order_number
+      form.value.buy_price = data[0].price
     }
     const planChange = (value, label) => {
       const list = label == 'name' ? cycleList.value : supplierList.value
@@ -419,6 +450,7 @@ export default defineComponent({
           type: '',
           plan_id: '',
           plan: '',
+          buyPrint_id: '',
           item_id: '',
           code: '',
           name: '',
@@ -472,6 +504,14 @@ export default defineComponent({
       }
     }
     const onPrint = async () => {
+      const list = allSelect.value.length ? allSelect.value : tableData.value
+      if(!list.length) return ElMessage.error('请选择需要打印的数据')
+      const canPrintData = list.filter(o => o.status != undefined && o.status == 1)
+      if(!canPrintData.length) return ElMessage.error('暂无可打印的数据或未审核通过')
+
+      const ids = canPrintData.map(e => e.id)
+      printDataIds.value = ids
+      
       const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
       const opt = {
         margin: 10,
@@ -488,15 +528,13 @@ export default defineComponent({
         let urlTwo = URL.createObjectURL(pdfBlob);
         setPdfBlobUrl.value = urlTwo
         printVisible.value = true
-        // const formData = new FormData();
-        // formData.append('printerName', printName.value); // 打印机名称
-        // formData.append('file', pdfBlob, 'table-print.pdf'); // 文件
-        // const res = await request.post('/api/printers', formData, {
-        //   headers: {
-        //     'Content-Type': 'multipart/form-data' // 让 axios 不自动设置为 json
-        //   }
-        // });
       }); 
+    }
+    const getPrintType = () => {
+      if(tableData.value.length){
+        return tableData.value[0].operate == 1 ? 'SI' : 'SO'
+      }
+      return ''
     }
 
     return() => (
@@ -622,10 +660,10 @@ export default defineComponent({
                     }}
                   </ElTableColumn>
                 </ElTable>
-                <ElDialog v-model={ printVisible.value } title="打印预览" width="900px">
+                <ElDialog v-model={ printVisible.value } title="打印预览" width="900px" destroyOnClose>
                   {{
                     default: () => (
-                      <WinPrint url={ setPdfBlobUrl.value } printList={ printers.value } onClose={ () => printVisible.value = false } />
+                      <WinPrint printType={ getPrintType() } url={ setPdfBlobUrl.value } printList={ printers.value } onClose={ () => printVisible.value = false } dataIds={ printDataIds.value } />
                     ),
                   }}
                 </ElDialog>
@@ -717,6 +755,22 @@ export default defineComponent({
                     ))}
                   </ElSelect>
                 </ElFormItem>
+                {
+                  form.value.type == 4 ? 
+                  <ElFormItem label="采购单" prop="buyPrint_id">
+                    <ElSelect v-model={ form.value.buyPrint_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择采购单号" onChange={ (row) => buyChange(row) }>
+                      {materialBuy.value.map((o, index) => <ElOption value={ o.id } label={ o.no } key={ index } />)}
+                    </ElSelect>
+                  </ElFormItem> : ''
+                }
+                {
+                  form.value.type == 8 ? 
+                  <ElFormItem label="委外加工单" prop="buyPrint_id">
+                    <ElSelect v-model={ form.value.buyPrint_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择委外加工单" onChange={ (row) => outChange(row) }>
+                      {outBuy.value.map((o, index) => <ElOption value={ o.id } label={ o.no } key={ index } />)}
+                    </ElSelect>
+                  </ElFormItem> : ''
+                }
                 {
                   form.value.type == 4 || form.value.type == 8 ? 
                   <ElFormItem label="供应商" prop="plan_id">

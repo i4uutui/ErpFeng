@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, SubOutsourcingOrder, SubMaterialMent, Op } = require('../models');
+const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, SubOutsourcingOrder, SubMaterialMent, Op, SubNoEncoding } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -17,13 +17,14 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
  *           type: string
  */
 router.get('/getSaleOrder', authMiddleware, async (req, res) => {
-  const { customer_order } = req.query;
+  const { customer_order, id } = req.query;
   const { company_id } = req.user;
-  
+
+  const whereObj = {}
+  if(customer_order) whereObj.customer_order = { [Op.like]: `%${customer_order}%` }
+  if(id) whereObj.id = id
   const config = {
-    where: { is_deleted: 1, company_id, customer_order: {
-      [Op.like]: `%${customer_order}%`
-    } },
+    where: { is_deleted: 1, company_id, ...whereObj },
     include: [
       { model: SubProductCode, as: 'product' },
       { model: SubCustomerInfo, as: 'customer'}
@@ -454,13 +455,77 @@ router.get('/getOutsourcingQuote', authMiddleware, async (req, res) => {
  *       - 常用列表(GetList)
  */
 router.get('/getMaterialMent', authMiddleware, async (req, res) => {
-  const { company_id } = req.user;
+  const { company_id, print_id } = req.user;
   
+  const whereObj = {}
+  if(print_id) whereObj.print_id = print_id
   const rows = await SubMaterialMent.findAll({
     where: {
       is_deleted: 1,
       company_id,
+      ...whereObj
     },
+    order: [['created_at', 'DESC']],
+  })
+  const fromData = rows.map(item => item.dataValues)
+  
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(fromData), 
+    code: 200 
+  });
+});
+/**
+ * @swagger
+ * /api/getOutsourcingOrder:
+ *   get:
+ *     summary: 委外加工单列表
+ *     tags:
+ *       - 常用列表(GetList)
+ */
+router.get('/getOutsourcingOrder', authMiddleware, async (req, res) => {
+  const { company_id, print_id } = req.user;
+  
+  const whereObj = {}
+  if(print_id) whereObj.print_id = print_id
+  const rows = await SubOutsourcingOrder.findAll({
+    where: {
+      is_deleted: 1,
+      company_id,
+      ...whereObj
+    },
+    include: [
+      { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_abbreviation', 'supplier_code'] }
+    ],
+    order: [['created_at', 'DESC']],
+  })
+  const fromData = rows.map(item => item.dataValues)
+  
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(fromData), 
+    code: 200 
+  });
+});
+/**
+ * @swagger
+ * /api/getNoEncoding:
+ *   get:
+ *     summary: 获取打印单号
+ *     tags:
+ *       - 常用列表(GetList)
+ */
+router.get('/getNoEncoding', authMiddleware, async (req, res) => {
+  const { no } = req.query
+  const { company_id } = req.user;
+  const printType = req.query['printType[]']
+
+  const rows = await SubNoEncoding.findAll({
+    where: {
+      company_id,
+      print_type: printType
+    },
+    attributes: ['id', 'no', 'print_type'],
     order: [['created_at', 'DESC']],
   })
   const fromData = rows.map(item => item.dataValues)

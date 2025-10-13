@@ -10,13 +10,18 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
   },
   company_id: {
     type: DataTypes.INTEGER(11),
-    allowNull: false,
+    allowNull: true,
     comment: '企业id'
   },
   user_id: {
     type: DataTypes.INTEGER(11),
-    allowNull: false,
+    allowNull: true,
     comment: '发布的用户id'
+  },
+  print_id: {
+    type: DataTypes.INTEGER(30),
+    allowNull: true,
+    comment: '打印的id'
   },
   notice_id: {
     type: DataTypes.INTEGER(11),

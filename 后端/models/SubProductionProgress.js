@@ -19,6 +19,11 @@ const SubProductionProgress = sequelize.define('SubProductionProgress', {
     allowNull: false,
     comment: '发布的用户id'
   },
+  notice_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: '生产通知单id'
+  },
   notice_number: {
     type: DataTypes.STRING(50),
     allowNull: false,
@@ -103,6 +108,12 @@ const SubProductionProgress = sequelize.define('SubProductionProgress', {
     type: DataTypes.TEXT,
     allowNull: true,
     comment: ' 生产特别要求 '
+  },
+  is_finish: {
+    type: DataTypes.INTEGER(1),
+    allowNull: true,
+    defaultValue: 1,
+    comment: ' 生产订单是否已完结：1 - 未完结，0 - 已完结 '
   },
   is_deleted: {
     type: DataTypes.INTEGER(1),

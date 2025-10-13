@@ -52,6 +52,12 @@ const SubProductNotice = sequelize.define('SubProductNotice', {
     defaultValue: 1,
     comment: ' 是否已排产：1 - 未排产，0 - 已排产 '
   },
+  is_finish: {
+    type: DataTypes.INTEGER(1),
+    allowNull: true,
+    defaultValue: 1,
+    comment: ' 是否已完结：1 - 未完结，0 - 已完结 '
+  },
   is_deleted: {
     type: DataTypes.INTEGER(1),
     allowNull: true,

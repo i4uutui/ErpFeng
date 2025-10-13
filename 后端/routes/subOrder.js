@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessCycleChild, Op, SubProductionNotice } = require('../models')
+const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessCycleChild, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -289,7 +289,7 @@ router.put('/product_quotation', authMiddleware, async (req, res) => {
 
 // 生产通知单
 router.get('/product_notice', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10, customer_abbreviation, customer_order, goods_address } = req.query;
+  const { page = 1, pageSize = 10, customer_abbreviation, customer_order, goods_address, is_finish } = req.query;
   const offset = (page - 1) * pageSize;
   
   const { company_id } = req.user;
@@ -303,6 +303,7 @@ router.get('/product_notice', authMiddleware, async (req, res) => {
     where: {
       is_deleted: 1,
       company_id,
+      is_finish
     },
     include: [
       { model: SubSaleOrder, as: 'sale', where: saleOrderWhere },
@@ -329,6 +330,19 @@ router.get('/product_notice', authMiddleware, async (req, res) => {
     code: 200 
   });
 })
+// 生产订单操作完结
+router.post('/finish_production_notice', authMiddleware, async (req, res) => {
+  const { id } = req.body
+
+  const notice = await SubProductNotice.findByPk(id)
+  if(!notice) return res.json({ message: '数据不存在，或已被删除', code: 401 });
+
+  await notice.update({ is_finish: 0 },{ where: { id } })
+  await SubProductionProgress.update({ is_finish: 0 }, { where: { notice_id: id } })
+
+  res.json({ message: '操作成功', code: 200 });
+})
+// 新增生产通知单
 router.post('/product_notice', authMiddleware, async (req, res) => {
   const { sale_id, notice, delivery_time } = req.body;
   
@@ -354,6 +368,7 @@ router.post('/product_notice', authMiddleware, async (req, res) => {
   
   res.json({ message: '添加成功', code: 200 });
 });
+// 修改生产通知单
 router.put('/product_notice', authMiddleware, async (req, res) => {
   const { notice, sale_id, delivery_time, id } = req.body;
   
@@ -384,6 +399,7 @@ router.put('/product_notice', authMiddleware, async (req, res) => {
   
   res.json({ message: '修改成功', code: 200 });
 });
+
 // 通知单排产
 router.post('/set_production_progress', authMiddleware, async (req, res) => {
   const { id } = req.body;
@@ -401,14 +417,8 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
   });
   if (!notice) return res.json({ message: '数据不存在，或已被删除', code: 401 });
   const noticeRow = notice.toJSON()
+  if (!notice.is_notice) return res.json({ message: '订单不能重复排产', code: 401 });
 
-  const noticeP = await SubProductionNotice.findOne({
-    where: {
-      company_id,
-      notice_id: noticeRow.id
-    }
-  })
-  if(noticeP) return res.json({ message: '此订单已有排产记录，不能重复排产', code: 401 })
 
   const allCycles = await SubProcessCycle.findAll({
     where: { company_id },
@@ -452,14 +462,6 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
     })
     return data
   })
-  await SubProductionNotice.create({ 
-    company_id,
-    notice_id: noticeRow.id,
-    notice: noticeRow.notice,
-    customer_id: noticeRow.customer_id,
-    product_id: noticeRow.product_id,
-    rece_time: noticeRow.sale.rece_time
-  })
   if(wait.length != 0){
     SubProcessBomChild.bulkCreate(wait, {updateOnDuplicate:["order_number", 'all_time']})
   }
@@ -470,6 +472,7 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
     const obj = {
       company_id,
       user_id: userId,
+      notice_id: noticeRow.id,
       notice_number: noticeRow.notice,
       delivery_time: noticeRow.delivery_time,
       customer_abbreviation: noticeRow.customer.customer_abbreviation,
@@ -490,7 +493,7 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
     }
     objData.push(obj)
   })
-  const strArr = ['company_id', 'user_id', 'notice_number', 'delivery_time', 'customer_abbreviation', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'part_name', 'part_code', 'bom_id', 'order_number', 'customer_order', 'rece_time', 'out_number', 'start_date', 'remarks'] 
+  const strArr = ['company_id', 'user_id', 'notice_id', 'notice_number', 'delivery_time', 'customer_abbreviation', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'part_name', 'part_code', 'bom_id', 'order_number', 'customer_order', 'rece_time', 'out_number', 'start_date', 'remarks'] 
 
   const result = await SubProductionProgress.bulkCreate(objData, {updateOnDuplicate:strArr})
   const dataValue = result.map(e => e.toJSON())
@@ -510,12 +513,12 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
   // 批量插入
   await SubProcessCycleChild.bulkCreate(allCycleChildData)
   
-  // if(objData.length){
-  //   // 设置此数据为已排产
-  //   await SubProductNotice.update({
-  //     is_notice: 0
-  //   }, { where: { id } })
-  // }
+  if(objData.length){
+    // 设置此数据为已排产
+    await SubProductNotice.update({
+      is_notice: 0
+    }, { where: { id } })
+  }
   
   res.json({ message: '操作成功', code: 200 });
 })

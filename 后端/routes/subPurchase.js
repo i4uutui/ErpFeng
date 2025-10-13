@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const dayjs = require('dayjs')
-const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialMent, SubApprovalUser, SubApprovalStep, Op } = require('../models')
+const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialMent, SubApprovalUser, SubApprovalStep, SubNoEncoding, Op, SubOutsourcingOrder, SubWarehouseApply } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { print, getPrinters, getDefaultPrinter } = require("pdf-to-printer");
@@ -647,6 +647,23 @@ router.put('/material_ment', authMiddleware, async (req, res) => {
   res.json({ message: '修改成功', code: 200 });
 })
 
+// 获取no编码
+router.get('/sub_no_encoding', authMiddleware, async (req, res) => {
+  const { printType } = req.query;
+  const { company_id } = req.user;
+
+  const lastRecord = await SubNoEncoding.findOne({
+    where: {
+      print_type: printType,
+      company_id
+    },
+    attributes: ['id', 'no', 'print_type'],
+    order: [['id', 'DESC']],
+    limit: 1
+  })
+  res.json({ code: 200, data: lastRecord })
+}) 
+
 router.get('/printers', authMiddleware, async (req, res) => {
   const printers = await getPrinters();
   if(printers){
@@ -661,8 +678,10 @@ router.get('/printers', authMiddleware, async (req, res) => {
   res.json({ message: '获取打印机失败，请检查', code: 401 })
 })
 router.post('/printers', upload.single('file'), authMiddleware, async (req, res) => {
-  const { printerName } = req.body;
+  const { printerName, printerType, no, ids } = req.body;
   const tempFilePath = req.file.path;
+  const { id: userId, company_id } = req.user;
+
   if (!req.file) {
     return res.status(400).json({ message: '未上传文件', code: 400 });
   }
@@ -676,9 +695,27 @@ router.post('/printers', upload.single('file'), authMiddleware, async (req, res)
   // 执行打印
   try {
     await print(tempFilePath, options)
+    const result = await SubNoEncoding.create({ company_id, no, print_type: printerType })
+    const printId = result.toJSON()
+    const dataValue = JSON.parse(ids).map(o => ({ id: o, print_id: printId.id }))
+    
+    if(printerType == 'ES'){
+      await SubMaterialMent.bulkCreate(dataValue, {
+        updateOnDuplicate: ['print_id']
+      })
+    }else if(printerType == 'TV'){
+      await SubOutsourcingOrder.bulkCreate(dataValue, {
+        updateOnDuplicate: ['print_id']
+      })
+    }else{
+      await SubWarehouseApply.bulkCreate(dataValue, {
+        updateOnDuplicate: ['print_id']
+      })
+    }
     fs.unlinkSync(tempFilePath); // 清理文件
     res.json({ message: '已通知打印机进行打印', code: 200 })
   } catch (error) {
+    console.log(error);
     fs.unlinkSync(tempFilePath); // 出错也要清理文件
     res.json({ message: '打印失败或操作超时', code: 401 })
   }

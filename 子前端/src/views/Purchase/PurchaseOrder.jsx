@@ -62,6 +62,7 @@ export default defineComponent({
     let productNotice = ref([]) // 获取生产订单通知单列表
     // 用来打印用的
     let printers = ref([]) //打印机列表
+    let printDataIds = ref([]) // 需要打印的数据的id
     let printVisible = ref(false)
     let setPdfBlobUrl = ref('')
     let supplierName = ref('')
@@ -418,6 +419,13 @@ export default defineComponent({
       }
     }
     const onPrint = async () => {
+      const list = allSelect.value.length ? allSelect.value : tableData.value
+      if(!list.length) return ElMessage.error('请选择需要打印的数据')
+      const canPrintData = list.filter(o => o.status != undefined && o.status == 1)
+      if(!canPrintData.length) return ElMessage.error('暂无可打印的数据或未审核通过')
+      const ids = canPrintData.map(e => e.id)
+      printDataIds.value = ids
+
       const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
       const opt = {
         margin: 10,
@@ -431,14 +439,6 @@ export default defineComponent({
         let urlTwo = URL.createObjectURL(pdfBlob);
         setPdfBlobUrl.value = urlTwo
         printVisible.value = true
-        // const formData = new FormData();
-        // formData.append('printerName', printName.value); // 打印机名称
-        // formData.append('file', pdfBlob, 'table-print.pdf'); // 文件
-        // const res = await request.post('/api/printers', formData, {
-        //   headers: {
-        //     'Content-Type': 'multipart/form-data' // 让 axios 不自动设置为 json
-        //   }
-        // });
       }); 
     }
     
@@ -540,10 +540,10 @@ export default defineComponent({
                     }}
                   </ElTableColumn>
                 </ElTable>
-                <ElDialog v-model={ printVisible.value } title="打印预览" width="900px">
+                <ElDialog v-model={ printVisible.value } title="打印预览" width="900px" destroyOnClose>
                   {{
                     default: () => (
-                      <WinPrint url={ setPdfBlobUrl.value } printList={ printers.value } onClose={ () => printVisible.value = false } />
+                      <WinPrint printType="ES" url={ setPdfBlobUrl.value } printList={ printers.value } onClose={ () => printVisible.value = false } dataIds={ printDataIds.value } />
                     ),
                   }}
                 </ElDialog>
@@ -613,7 +613,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改委外加工' : '新增委外加工' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改采购单' : '新增采购单' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">

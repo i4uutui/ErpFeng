@@ -237,7 +237,18 @@ const routes = [
             { code: 'ProductNotice:add', label: '新增' },
             { code: 'ProductNotice:edit', label: '修改' },
             { code: 'ProductNotice:date', label: '排期' },
+            { code: 'ProductNotice:finish', label: '订单完结' },
           ]
+        }
+      },
+      {
+        path: '/order/finish-notice',
+        name: 'FinishNotice',
+        component: () => import('@/views/Order/FinishNotice.jsx'),
+        meta: {
+          title: '生产通知单(完结)',
+          parent: '订单管理',
+          menu: true,
         }
       },
       // {

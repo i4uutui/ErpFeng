@@ -643,13 +643,6 @@ router.put('/warehouse_cycle', authMiddleware, async (req, res) => {
  *     summary: 获取审批流程
  *     tags:
  *       - 系统管理(User)
- *     parameters:
- *       - name: source_type
- *         schema:
- *           type: string
- *       - name: steps
- *         schema:
- *           type: array
  */
 router.get('/get_approval_flow', authMiddleware, async (req, res) => {
   const { id: userId, company_id } = req.user;
@@ -673,9 +666,6 @@ router.get('/get_approval_flow', authMiddleware, async (req, res) => {
  *     tags:
  *       - 系统管理(User)
  *     parameters:
- *       - name: source_type
- *         schema:
- *           type: string
  *       - name: steps
  *         schema:
  *           type: array
@@ -932,7 +922,11 @@ router.post('/approval_backFlow', authMiddleware, async (req, res) => {
     return item
   })
 
-  const ware = await SubWarehouseContent.findByPk(dataValue.item_id)
+  const ware = await SubWarehouseContent.findOne({
+    where: {
+      item_id: dataValue.item_id
+    }
+  })
   const wareData = ware.toJSON()
   // 期初入库（非正常入库）
   if(dataValue.type == 5 || dataValue.type == 11){

@@ -7,47 +7,15 @@ const EmployeeAuth = require('../middleware/EmployeeAuth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { PreciseMath } = require('../middleware/tool');
 
-// 获取生产进度列表
-router.get('/production_list', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
-  const offset = (page - 1) * pageSize;
-  const { company_id } = req.user;
-  
-  const { count, rows } = await SubProductionNotice.findAndCountAll({
-    where: {
-      company_id
-    },
-    include: [
-      { model: SubCustomerInfo, as: 'customer', attributes: ['id', 'customer_code', 'customer_abbreviation'] },
-      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing'] }
-    ],
-    order: [['created_at', 'DESC']],
-    limit: parseInt(pageSize),
-    offset
-  })
-  const totalPages = Math.ceil(count / pageSize);
-  const row = rows.map(e => e.toJSON())
-  // 返回所需信息
-  res.json({ 
-    data: formatArrayTime(row), 
-    total: count, 
-    totalPages, 
-    currentPage: parseInt(page), 
-    pageSize: parseInt(pageSize),
-    code: 200 
-  });
-})
-
 // 获取生产进度表列表
 router.get('/production_progress', authMiddleware, async (req, res) => {
-  const { notice } = req.query
   const { company_id } = req.user;
   
   const rows = await SubProductionProgress.findAll({
     where: {
       is_deleted: 1,
       company_id,
-      notice_number: notice
+      is_finish: 1
     },
     attributes: ['id', 'notice_number', 'delivery_time', 'customer_abbreviation', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'part_code', 'part_name', 'bom_id', 'order_number', 'customer_order', 'rece_time', 'out_number', 'start_date', 'remarks', 'created_at'],
     include: [

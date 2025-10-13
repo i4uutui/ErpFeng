@@ -33,9 +33,9 @@ const SubMaterialQuote = require('./SubMaterialQuote.js') // 材料报价表
 const SubMaterialMent = require('./SubMaterialMent.js') // 材料报价单表
 const SubOutsourcingQuote = require('./SubOutsourcingQuote.js') // 委外报价信息表
 const SubOutsourcingOrder = require('./SubOutsourcingOrder.js') // 委外加工单
-const SubProductionNotice = require('./SubProductionNotice.js') // 进度列表
 const SubProductionProgress = require('./SubProductionProgress.js') // 生产进度表
 const SubRateWage = require('./SubRateWage.js') // 工资表
+const SubNoEncoding = require('./SubNoEncoding.js') // 打印的编码表
 
 AdUser.belongsTo(AdCompanyInfo, { foreignKey: 'company_id', as: 'company' })
 
@@ -109,8 +109,12 @@ SubRateWage.belongsTo(SubProcessCode, { foreignKey: 'process_id', as: 'process' 
 SubRateWage.belongsTo(SubProcessBomChild, { foreignKey: 'bom_child_id', as: 'bomChildren' })
 SubRateWage.belongsTo(SubEmployeeInfo, { foreignKey: 'user_id', as: 'menber' })
 
-SubProductionNotice.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
-SubProductionNotice.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
+SubWarehouseApply.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
+SubWarehouseApply.belongsTo(SubNoEncoding, { foreignKey: 'print_id', as: 'print' })
+SubWarehouseApply.belongsTo(SubNoEncoding, { foreignKey: 'buyPrint_id', as: 'buyPrint' })
+SubWarehouseApply.belongsTo(SubMaterialMent, { foreignKey: 'buyPrint_id', as: 'buy' })
+SubMaterialMent.belongsTo(SubNoEncoding, { foreignKey: 'print_id', as: 'print' })
+SubWarehouseApply.belongsTo(SubOutsourcingOrder, { foreignKey: 'buyPrint_id', targetKey: 'print_id', as: 'sourcing' })
 
 module.exports = {
   Op,
@@ -147,9 +151,9 @@ module.exports = {
   SubMaterialMent,
   SubOutsourcingQuote,
   SubOutsourcingOrder,
-  SubProductionNotice,
   SubProductionProgress,
-  SubRateWage
+  SubRateWage,
+  SubNoEncoding
 }
 
 

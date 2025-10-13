@@ -1,6 +1,6 @@
 import { defineComponent, onMounted, ref } from 'vue'
-import request from '@/utils/request';
 import { PreciseMath } from '@/utils/tool'
+import request from '@/utils/request';
 import dayjs from "dayjs"
 
 export default defineComponent({
@@ -20,10 +20,12 @@ export default defineComponent({
     })
 
     const getList = async () => {
-      const res = await request.post('/api/rate_wage', {
-        page: 1,
-        pageSize: 10,
-        created_at: dateTime.value
+      const res = await request.get('/api/rate_wage', {
+        params: {
+          page: 1,
+          pageSize: 10,
+          created_at: dateTime.value
+        }
       })
       tableData.value = res.data;
       total.value = res.total;

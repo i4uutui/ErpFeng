@@ -38,7 +38,8 @@ export default defineComponent({
       const res = await request.get('/api/product_notice', {
         params: {
           page: currentPage.value,
-          pageSize: pageSize.value
+          pageSize: pageSize.value,
+          is_finish: 1
         },
       });
       tableData.value = res.data;
@@ -99,6 +100,20 @@ export default defineComponent({
               desc: `执行通知单排产，订单号：${row.notice}`,
               data: { newData: row.id }
             })
+          }
+        })
+      }).catch({})
+    }
+    const handleFinish = (row) => {
+      ElMessageBox.confirm('是否确认完结此生产订单？此操作不可恢复', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(res => {
+        request.post('/api/finish_production_notice', { id: row.id }).then(res => {
+          if(res && res.code == 200){
+            ElMessage.success('操作成功');
+            fetchProductList()
           }
         })
       }).catch({})
@@ -168,11 +183,12 @@ export default defineComponent({
                   <ElTableColumn prop="sale.unit" label="单位" width="120" />
                   <ElTableColumn prop="delivery_time" label="交货日期" width="170" />
                   <ElTableColumn prop="created_at" label="创建时间" width="170" />
-                  <ElTableColumn label="操作" width="140" fixed="right">
+                  <ElTableColumn label="操作" width="200" fixed="right">
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" v-permission={ 'ProductNotice:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                         <ElButton size="small" type="primary" v-permission={ 'ProductNotice:date' } onClick={ () => handleScheduling(scope.row) }>排产</ElButton>
+                        <ElButton size="small" type="danger" v-permission={ 'ProductNotice:finish' } onClick={ () => handleFinish(scope.row) }>完结</ElButton>
                       </>
                     )}
                   </ElTableColumn>

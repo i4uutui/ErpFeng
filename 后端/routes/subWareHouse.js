@@ -96,7 +96,11 @@ router.post('/warehouse_apply', authMiddleware, async (req, res) => {
   if(type) whereObj.type = type
   if(plan_id) whereObj.plan_id = plan_id
   if(item_id) whereObj.item_id = item_id
-  whereObj.status = status ? status : [0, 2]
+  if(status === '' || status === undefined) whereObj.status = [0, 2]
+  if(house_id || operate || plan_id || item_id){
+    delete whereObj.status
+  }
+  if(status !== '' && status !== undefined) whereObj.status = status
   
   const hasWhereData = Object.keys(whereObj).length > 0;
   if(!hasWhereData) return res.json({ message: '请至少选择一个筛选条件', code: 401 })
@@ -163,9 +167,11 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
     e.plan_id = e.plan_id ? e.plan_id : null
     e.buy_price = e.buy_price ? e.buy_price : 0
     e.quantity = e.quantity ? e.quantity : 0
-    e.apply_id = userId,
-    e.apply_name = name,
-    e.apply_time = dayjs().toDate(),
+    e.buyPrint_id = e.buyPrint_id
+    e.sale_id = e.sale_id
+    e.apply_id = userId
+    e.apply_name = name
+    e.apply_time = dayjs().toDate()
     e.status = 0
     return e
   })
@@ -245,7 +251,7 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.put('/wareHouse_order', authMiddleware, async (req, res) => {
-  const { id, ware_id, house_id, house_name, operate, type, plan_id, plan, item_id, code, name, model_spec, other_features, quantity, buy_price } = req.body;
+  const { id, ware_id, house_id, house_name, operate, type, plan_id, plan, item_id, code, name, model_spec, other_features, quantity, buy_price, buyPrint_id, sale_id } = req.body;
   const { id: userId, company_id } = req.user;
 
   const result = await SubWarehouseApply.findByPk(id)
@@ -254,7 +260,7 @@ router.put('/wareHouse_order', authMiddleware, async (req, res) => {
   
   const total_price = PreciseMath.mul(quantity, buy_price)
   const obj = {
-    ware_id, house_id, house_name, operate, type, plan_id, plan, item_id, code, name, model_spec, other_features, quantity, buy_price, total_price, company_id,
+    ware_id, house_id, house_name, operate, type, plan_id, plan, item_id, code, name, model_spec, other_features, quantity, buy_price, total_price, buyPrint_id, sale_id, company_id,
     user_id: userId
   }
   const updateResult = await SubWarehouseApply.update(obj, {

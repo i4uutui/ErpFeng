@@ -37,6 +37,7 @@ export default defineComponent({
       type: '', // 常量类型
       plan_id: '', // 客户id or 制程id
       plan: '', // 客户 or 制程
+      sale_id: '',
       item_id: '',
       code: '',
       name: '',
@@ -52,6 +53,7 @@ export default defineComponent({
     let customerList = ref([]) // 供应商列表
     let cycleList = ref([]) // 制程列表
     let productList = ref([]) // 材料编码
+    let saleList = ref([])
     let tableData = ref([])
     let allSelect = ref([])
     let edit = ref('')
@@ -67,6 +69,7 @@ export default defineComponent({
     let dateTime = ref([])
     // 用来打印用的
     let printers = ref([]) //打印机列表
+    let printDataIds = ref([]) // 需要打印的数据的id
     let printVisible = ref(false)
     let setPdfBlobUrl = ref('')
 
@@ -109,6 +112,7 @@ export default defineComponent({
       await getProductsCode() // 获取产品编码
       await getHouseList() // 获取仓库名称
       await filterQuery()
+      await getSaleOrder()
 
       getPrinters()
     })
@@ -126,7 +130,7 @@ export default defineComponent({
         plan_id: customerId.value ? customerId.value : cycleId.value,
         item_id: productId.value,
         status: statusId.value,
-        source_type: 'product_warehouse',
+        // source_type: 'product_warehouse',
         apply_time: dateTime.value
       })
       tableData.value = res.data
@@ -167,6 +171,11 @@ export default defineComponent({
       houseList.value = res.data
       form.value.house_id = res.data[0].id
       form.value.house_name = res.data[0].name
+    }
+    // 获取销售订单列表
+    const getSaleOrder = async () => {
+      const res = await request.get('/api/getSaleOrder')
+      saleList.value = res.data
     }
     // 反审批
     const handleBackApproval = async (row) => {
@@ -301,6 +310,7 @@ export default defineComponent({
         plan_id: e.plan_id, // 供应商id or 制程id
         plan: e.plan, // 供应商 or 制程
         item_id: e.item_id,
+        sale_id: e.sale_id,
         code: e.code,
         name: e.name,
         model_spec: e.model_spec,
@@ -326,7 +336,6 @@ export default defineComponent({
             const res = await request.post('/api/queryWarehouse', obj)
             if(res.code != 200) return
             obj.id = getRandomString() // 临时ID
-            console.log(obj);
             tableData.value = [obj, ...tableData.value]
             dialogVisible.value = false;
             
@@ -380,6 +389,15 @@ export default defineComponent({
       if(value != 4){
         form.value.buy_price = ''
       }
+      form.value.sale_id = ''
+    }
+    const saleChange = (value) => {
+      const item = saleList.value.find(o => o.id == value)
+      form.value.plan_id = item.customer_id
+      form.value.item_id = item.product_id
+      form.value.quantity = item.order_number
+      planChange(item.customer_id, 'customer_abbreviation')
+      productChange(item.product_id)
     }
     const planChange = (value, label) => {
       const list = label == 'name' ? cycleList.value : customerList.value
@@ -419,6 +437,7 @@ export default defineComponent({
           type: '',
           plan_id: '',
           plan: '',
+          sale_id: '',
           item_id: '',
           code: '',
           name: '',
@@ -472,6 +491,14 @@ export default defineComponent({
       }
     }
     const onPrint = async () => {
+      const list = allSelect.value.length ? allSelect.value : tableData.value
+      if(!list.length) return ElMessage.error('请选择需要打印的数据')
+      const canPrintData = list.filter(o => o.status != undefined && o.status == 1)
+      if(!canPrintData.length) return ElMessage.error('暂无可打印的数据或未审核通过')
+      
+      const ids = canPrintData.map(e => e.id)
+      printDataIds.value = ids
+      
       const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
       const opt = {
         margin: 10,
@@ -485,15 +512,13 @@ export default defineComponent({
         let urlTwo = URL.createObjectURL(pdfBlob);
         setPdfBlobUrl.value = urlTwo
         printVisible.value = true
-        // const formData = new FormData();
-        // formData.append('printerName', printName.value); // 打印机名称
-        // formData.append('file', pdfBlob, 'table-print.pdf'); // 文件
-        // const res = await request.post('/api/printers', formData, {
-        //   headers: {
-        //     'Content-Type': 'multipart/form-data' // 让 axios 不自动设置为 json
-        //   }
-        // });
       }); 
+    }
+    const getPrintType = () => {
+      if(tableData.value.length){
+        return tableData.value[0].operate == 1 ? 'PI' : 'PO'
+      }
+      return ''
     }
 
     return() => (
@@ -615,10 +640,10 @@ export default defineComponent({
                     }}
                   </ElTableColumn>
                 </ElTable>
-                <ElDialog v-model={ printVisible.value } title="打印预览" width="900px">
+                <ElDialog v-model={ printVisible.value } title="打印预览" width="900px" destroyOnClose>
                   {{
                     default: () => (
-                      <WinPrint url={ setPdfBlobUrl.value } printList={ printers.value } onClose={ () => printVisible.value = false } />
+                      <WinPrint printType={ getPrintType() } url={ setPdfBlobUrl.value } printList={ printers.value } onClose={ () => printVisible.value = false } dataIds={ printDataIds.value } />
                     ),
                   }}
                 </ElDialog>
@@ -710,6 +735,16 @@ export default defineComponent({
                     ))}
                   </ElSelect>
                 </ElFormItem>
+                {
+                  form.value.type == 14 ? <ElFormItem label="销售订单" prop="sale_id">
+                    <ElSelect v-model={ form.value.sale_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择销售订单" onChange={ (row) => saleChange(row) }>
+                      {saleList.value.map((e, index) => e && (
+                        <ElOption value={ e.id } label={ e.customer_order } key={ index } />
+                      ))}
+                    </ElSelect>
+                  </ElFormItem> :
+                  <></>
+                }
                 {
                   form.value.type == 13 || form.value.type == 14 ? 
                   <ElFormItem label="客户" prop="plan_id">
