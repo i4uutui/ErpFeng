@@ -1,4 +1,7 @@
+import { useStore } from '@/stores';
 import { getItem } from '@/assets/js/storage';
+import request from '@/utils/request'
+import dayjs from 'dayjs';
 
 /**
  * 过滤指定菜单项
@@ -173,10 +176,55 @@ const PreciseMath = {
     return (Math.round(a * factorA) / Math.round(b * factorB)) * Math.pow(10, bDecimals - aDecimals);
   }
 };
+/**
+ * 接口返回的编码进行重新计算，获取下一个编码
+ * @returns {string} 返回最后的计算结果
+ */
+function generateNextCode(lastCode) {
+  const prefix = lastCode.substring(0, 2);
+  const companyId = lastCode.substring(2, 5);
+  const codeYearMonth = lastCode.substring(5, 11);
+  const numberStr = lastCode.substring(11);
+  
+  const lastNumber = parseInt(numberStr, 10);
+  const currentYearMonth = dayjs().format('YYYYMM');
+  
+  let nextNumber;
+  if (currentYearMonth === codeYearMonth) {
+      // 同一月份，编号累加
+      nextNumber = lastNumber + 1;
+  } else {
+      // 不同月份，编号从1开始
+      nextNumber = 1;
+  }
+  const formattedNumber = String(nextNumber).padStart(4, '0');
+  
+  // 组合成新的完整编号
+  return `${prefix}${companyId}${currentYearMonth}${formattedNumber}`;
+}
+/**
+ * 接口返回的编码
+ * @returns {string} 返回的结果
+ */
+const getNoLast = async (printType) => {
+  const res = await request.get('/api/sub_no_encoding', { params: { printType } })
+  if(res.data){
+    const data = res.data
+    useStore().setPrintNo(generateNextCode(data.no))
+  }else{
+    const idStr = String(getItem('company').id)
+    const paddedId = idStr.padStart(3, '0')
+    const yearMonth = dayjs().format('YYYYMM');
+    const no = props.printType + paddedId + yearMonth + '0001'
+    useStore().setPrintNo(no)
+  }
+}
 
 export {
   numberToChinese,
   getRandomString,
   isEmptyValue,
-  PreciseMath
+  PreciseMath,
+  generateNextCode,
+  getNoLast
 }

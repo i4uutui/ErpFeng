@@ -1,16 +1,18 @@
-import { defineComponent, onMounted, reactive, ref, nextTick } from 'vue'
-import { getRandomString, PreciseMath, numberToChinese } from '@/utils/tool'
+import { defineComponent, onMounted, reactive, ref, nextTick, computed } from 'vue'
+import { useStore } from '@/stores';
+import { getRandomString, PreciseMath, numberToChinese, getNoLast } from '@/utils/tool'
+import { reportOperationLog } from '@/utils/log';
 import { getItem } from '@/assets/js/storage';
 import request from '@/utils/request';
 import dayjs from "dayjs"
 import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
-import { reportOperationLog } from '@/utils/log';
 import html2pdf from 'html2pdf.js';
 import WinPrint from '@/components/print/winPrint';
 
 export default defineComponent({
   setup(){
+    const store = useStore()
     const statusType = reactive({
       0: '待审批',
       1: '已通过',
@@ -74,25 +76,7 @@ export default defineComponent({
     let printVisible = ref(false)
     let setPdfBlobUrl = ref('')
 
-    const printObj = ref({
-      id: "printTable", // 这里是要打印元素的ID
-      popTitle: "委外加工单", // 打印的标题
-      // preview: true, // 是否启动预览模式，默认是false
-      zIndex: 20003, // 预览窗口的z-index，默认是20002，最好比默认值更高
-      previewBeforeOpenCallback() { console.log('正在加载预览窗口！'); }, // 预览窗口打开之前的callback
-      previewOpenCallback() { console.log('已经加载完预览窗口，预览打开了！') }, // 预览窗口打开时的callback
-      beforeOpenCallback(vue) {
-        console.log('开始打印之前！')
-      }, // 开始打印之前的callback
-      openCallback(vue) {
-        console.log('监听到了打印窗户弹起了！')
-      }, // 调用打印时的callback
-      closeCallback() {
-        console.log('关闭了打印工具！')
-        isPrint.value = false
-      }, // 关闭打印的callback(点击弹窗的取消和打印按钮都会触发)
-      clickMounted() { console.log('点击v-print绑定的按钮了！') },
-    })
+    const printNo = computed(() => store.printNo)
 
     onMounted(async () => {
       nowDate.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
@@ -509,6 +493,8 @@ export default defineComponent({
       const canPrintData = list.filter(o => o.status != undefined && o.status == 1)
       if(!canPrintData.length) return ElMessage.error('暂无可打印的数据或未审核通过')
 
+      const printType = getPrintType()
+      await getNoLast(printType)
       const ids = canPrintData.map(e => e.id)
       printDataIds.value = ids
       
@@ -598,7 +584,7 @@ export default defineComponent({
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="周期:">
-                  <el-date-picker v-model={ dateTime.value } type="daterange" clearable={ false } range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="YYYY-MM-DD" onChange={ (row) => dateChange(row) } />
+                  <ElDatePicker v-model={ dateTime.value } type="daterange" clearable={ false } range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="YYYY-MM-DD" onChange={ (row) => dateChange(row) } />
                 </ElFormItem>
                 <ElFormItem>
                   <ElButton style="margin-top: -5px" type="primary" onClick={ () => filterQuery() }>筛选</ElButton>
@@ -669,6 +655,7 @@ export default defineComponent({
                 </ElDialog>
                 <div class="printTable" id='totalTable2'>
                   <div id="printTable">
+                    <div class="No">编码：{ printNo.value }</div>
                     <table class="print-table">
                       <thead>
                         <tr>

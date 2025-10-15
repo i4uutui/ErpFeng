@@ -1,16 +1,18 @@
-import { defineComponent, ref, onMounted, reactive } from 'vue';
-import { getItem } from "@/assets/js/storage";
-import { getRandomString } from '@/utils/tool'
+import { defineComponent, onMounted, reactive, ref, computed } from 'vue'
+import { useStore } from '@/stores';
+import { getRandomString, getNoLast } from '@/utils/tool'
+import { reportOperationLog } from '@/utils/log';
+import { getItem } from '@/assets/js/storage';
 import request from '@/utils/request';
 import dayjs from "dayjs"
 import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
-import { reportOperationLog } from '@/utils/log';
 import html2pdf from 'html2pdf.js';
 import WinPrint from '@/components/print/winPrint';
 
 export default defineComponent({
   setup() {
+    const store = useStore()
     const statusType = reactive({
       0: '待审批',
       1: '已通过',
@@ -68,6 +70,8 @@ export default defineComponent({
     let productCode = ref('')
     let noticeNumber = ref('')
     let statusId = ref('')
+
+    const printNo = computed(() => store.printNo)
     
     const printObj = ref({
       id: "printTable", // 这里是要打印元素的ID
@@ -422,6 +426,7 @@ export default defineComponent({
       const canPrintData = list.filter(o => o.status != undefined && o.status == 1)
       if(!canPrintData.length) return ElMessage.error('暂无可打印的数据或未审核通过')
       
+      await getNoLast('TV')
       const ids = canPrintData.map(e => e.id)
       printDataIds.value = ids
       
@@ -547,6 +552,7 @@ export default defineComponent({
                 </ElDialog>
                 <div class="printTable" id='totalTable2'>
                   <div id="printTable">
+                    <div class="No">编码：{ printNo.value }</div>
                     <table class="print-table">
                       <thead>
                         <tr>

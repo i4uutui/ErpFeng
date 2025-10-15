@@ -36,6 +36,7 @@ const SubOutsourcingOrder = require('./SubOutsourcingOrder.js') // 委外加工�
 const SubProductionProgress = require('./SubProductionProgress.js') // 生产进度表
 const SubRateWage = require('./SubRateWage.js') // 工资表
 const SubNoEncoding = require('./SubNoEncoding.js') // 打印的编码表
+const SubDateInfo = require('./SubDateInfo.js') // 日历记录的表
 
 AdUser.belongsTo(AdCompanyInfo, { foreignKey: 'company_id', as: 'company' })
 
@@ -153,7 +154,8 @@ module.exports = {
   SubOutsourcingOrder,
   SubProductionProgress,
   SubRateWage,
-  SubNoEncoding
+  SubNoEncoding,
+  SubDateInfo
 }
 
 

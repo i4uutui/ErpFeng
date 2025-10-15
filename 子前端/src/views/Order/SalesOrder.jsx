@@ -168,10 +168,10 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
-                  <ElTableColumn prop="rece_time" label="接单日期" width="170" fixed="left" />
-                  <ElTableColumn prop="customer.customer_code" label="客户编码" width="100" fixed="left" />
-                  <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" width="120" fixed="left" />
-                  <ElTableColumn prop="customer_order" label="客户订单号" width="120" fixed="left" />
+                  <ElTableColumn prop="rece_time" label="接单日期" width="170" />
+                  <ElTableColumn prop="customer.customer_code" label="客户编码" width="100" />
+                  <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" width="120" />
+                  <ElTableColumn prop="customer_order" label="客户订单号" width="120" />
                   <ElTableColumn prop="product.product_code" label="产品编码" width="100" />
                   <ElTableColumn prop="product.product_name" label="产品名称" width="100" />
                   <ElTableColumn prop="product.drawing" label="工程图号" width="100" />

@@ -26,6 +26,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // 路由
 app.use('/admin', require('./routes/admin'));
+app.use('/api', require('./routes/home')); // 首页
 app.use('/api', require('./routes/finance')); // 财务管理
 app.use('/api', require('./routes/operationLog')); // 操作日志
 app.use('/api', require('./routes/subAdmin'));

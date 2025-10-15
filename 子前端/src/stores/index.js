@@ -3,12 +3,12 @@ import { defineStore } from 'pinia'
 export const useStore = defineStore('useStore', {
   state: () => {
     return{
-      pdfUrl: '',
+      printNo: '',
     }
   },
   actions: {
-    setPdfUrl(data) {
-      this.pdfUrl = data;
+    setPrintNo(data) {
+      this.printNo = data;
     },
   }
 })

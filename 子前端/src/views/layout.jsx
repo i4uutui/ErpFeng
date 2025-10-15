@@ -10,7 +10,7 @@ export default defineComponent({
     const company = getItem('company')
 
     return() => (
-      <ElContainer style={{ height: "100vh" }}>
+      <ElContainer style={{ height: "100vh", minWidth: '1600px' }}>
         <ElHeader height='64px' style={{ borderBottom: "1px solid #eee", backgroundColor: '#FFF' }}>
           <Mhead />
         </ElHeader>

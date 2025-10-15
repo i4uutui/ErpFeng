@@ -49,6 +49,7 @@ body{
 #printTable {
   page-break-before: auto !important;
   page-break-after: auto !important;
+  position: relative;
 }
 .printTable {
   position: fixed !important;
@@ -59,6 +60,11 @@ body{
 .table-row td {
   border: 1px solid #ccc;
   vertical-align: top; /* 确保内容顶部对齐 */
+}
+.No{
+  position: absolute;
+  right: 0px;
+  top: 0px;
 }
 
 @media print {

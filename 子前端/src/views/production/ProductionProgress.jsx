@@ -15,6 +15,7 @@ export default defineComponent({
     let tableData = ref([])
     let endDate = ref('')
     let uniqueEquipments = ref([])
+    let specialDates = ref(new Set());
     
     const maxBomLength = computed(() => {
       if (tableData.value.length === 0) return 0;
@@ -63,11 +64,18 @@ export default defineComponent({
       const dateList = [];
       
       if (today.isAfter(end)) {
-        dateList.push(end.format('YYYY-MM-DD'));
+        // 跳过特殊日期
+        // if (!isSpecialDate(end)) {
+          dateList.push(end.format('YYYY-MM-DD'));
+        // }
       } else {
         let current = today;
         while (current.isSameOrBefore(end)) {
-          dateList.push(current.format('YYYY-MM-DD'));
+          const dateStr = current.format('YYYY-MM-DD');
+          // 跳过特殊日期
+          // if (!isSpecialDate(current)) {
+            dateList.push(dateStr);
+          // }
           current = current.add(1, 'day');
         }
       }
@@ -96,7 +104,7 @@ export default defineComponent({
             const currentDate = dayjs(targetDate).startOf('day');
             
             // 仅当目标日期在start_date和end_date之间（包含首尾）时才累加负荷
-            if (currentDate.isSameOrAfter(startDate) && currentDate.isSameOrBefore(endDate)) {
+            if (currentDate.isSameOrAfter(startDate) && currentDate.isSameOrBefore(endDate) && !isSpecialDate(currentDate)) {
               cycleData.dateData[targetDate] += Number(cycleChild.load);
             }
           });
@@ -114,7 +122,8 @@ export default defineComponent({
     });
     
     onMounted(async () => {
-      await fetchProductList()
+      await fetchSpecialDates();
+      await fetchProductList();
     })
     
     // 获取列表
@@ -131,8 +140,38 @@ export default defineComponent({
         .values()
       ];
     };
+    // 获取特殊日期
+    const fetchSpecialDates = async () => {
+      const res = await request.get('/api/special-dates');
+      if (res.data && Array.isArray(res.data)) {
+        // 将特殊日期存储在Set中，便于快速查找
+        specialDates.value = new Set(res.data.map(item => item.date));
+      }
+    }
+    // 检查日期是否为特殊日期
+    const isSpecialDate = (date) => {
+      if (!date) return false;
+      return specialDates.value.has(dayjs(date).format('YYYY-MM-DD'));
+    };
+    // 获取跳过特殊日期后的日期
+    const getDateSkipSpecial = (startDate, daysToAdd = 1) => {
+      let currentDate = dayjs(startDate).startOf('day');
+      let addedDays = 0;
+      
+      while (addedDays < daysToAdd) {
+        currentDate = currentDate.add(1, 'day');
+        // 如果不是特殊日期，才计入天数
+        if (!isSpecialDate(currentDate)) {
+          addedDays++;
+        }
+      }
+      return currentDate;
+    };
     // 更新制程组的最短交货时间
     const sortDateBlur = async ({ id, sort_date }) => {
+      if(isSpecialDate(sort_date)){
+        ElMessage.warning('请注意，你所选择的日期为节假日')
+      }
       const params = {
         id,
         sort_date
@@ -142,6 +181,11 @@ export default defineComponent({
     }
     // 批量更新起始生产时间
     const set_production_date = async (params, type) => {
+      const hasSpecialDate = params.some(item => isSpecialDate(item[type]));
+      if (hasSpecialDate) {
+        ElMessage.warning('请注意，你所选择的日期为节假日');
+      }
+
       const res = await request.put('/api/set_production_date', { params, type });
       if(res && res.code == 200){
         ElMessage.success('修改成功');
@@ -150,6 +194,10 @@ export default defineComponent({
     }
     // 选择生产起始时间
     const dateChange = async (value, row) => {
+      if (isSpecialDate(row.start_date)) {
+        ElMessage.warning('请注意，你所选择的日期为节假日');
+      }
+
       const time = row.start_date
       ElMessageBox.confirm('是否同步更新相同订单的生产起始日期？', '提示', {
         confirmButtonText: '同步更新',
@@ -181,6 +229,11 @@ export default defineComponent({
         return
       }
       const time = row.end_date
+      // 检查是否是特殊日期
+      if (isSpecialDate(time)) {
+        ElMessage.warning('请注意，你所选择的日期为节假日');
+      }
+      
       if(dayjs(time).isBefore(dayjs(param.start_date))){
         ElMessage.error('请选择大于或等于起始生产的日期')
         row.end_date = ''

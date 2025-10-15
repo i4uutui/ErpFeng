@@ -1,10 +1,10 @@
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import { VuePDF, usePDF } from '@tato30/vue-pdf';
 import '@tato30/vue-pdf/style.css';
 import request from '@/utils/request';
 import { ElMessage, ElSelect, ElOption, ElButton } from 'element-plus'; // 显式导入组件
-import { getItem } from '@/assets/js/storage';
-import dayjs from 'dayjs';
+import { generateNextCode } from '@/utils/tool';
+import { useStore } from '@/stores';
 
 export default defineComponent({
   props: {
@@ -29,27 +29,12 @@ export default defineComponent({
   },
   emits: ['close'],
   setup(props, { emit }) {
+    const store = useStore()
     const { pdf, pages } = usePDF(props.url);
     const pdfFile = ref(pdf);
     const printName = ref('');
-    let no = ref('')
 
-    onMounted(() => {
-      getNoLast()
-    })
-
-    const getNoLast = async () => {
-      const res = await request.get('/api/sub_no_encoding', { params: { printType: props.printType } })
-      if(res.data){
-        const data = res.data
-        no.value = generateNextCode(data.no)
-      }else{
-        const idStr = String(getItem('company').id)
-        const paddedId = idStr.padStart(3, '0')
-        const yearMonth = dayjs().format('YYYYMM');
-        no.value = props.printType + paddedId + yearMonth + '0001'
-      }
-    }
+    const no = computed(() => store.printNo)
 
     // 处理打印提交（多页PDF无需特殊处理，文件本身包含所有页）
     const handleSubmit = async () => {
@@ -76,7 +61,7 @@ export default defineComponent({
       });
       if (res.code === 200) {
         ElMessage.success('打印请求已发送');
-        no.value = generateNextCode(no.value) // 编码加1
+        store.setPrintNo(generateNextCode(no.value)) // 编码加1
       }
       loadingInstance.close()
     };
@@ -84,28 +69,6 @@ export default defineComponent({
     const handleClose = () => {
       emit('close');
     };
-    function generateNextCode(lastCode) {
-      const prefix = lastCode.substring(0, 2);
-      const companyId = lastCode.substring(2, 5);
-      const codeYearMonth = lastCode.substring(5, 11);
-      const numberStr = lastCode.substring(11);
-      
-      const lastNumber = parseInt(numberStr, 10);
-      const currentYearMonth = dayjs().format('YYYYMM');
-      
-      let nextNumber;
-      if (currentYearMonth === codeYearMonth) {
-          // 同一月份，编号累加
-          nextNumber = lastNumber + 1;
-      } else {
-          // 不同月份，编号从1开始
-          nextNumber = 1;
-      }
-      const formattedNumber = String(nextNumber).padStart(4, '0');
-      
-      // 组合成新的完整编号
-      return `${prefix}${companyId}${currentYearMonth}${formattedNumber}`;
-    }
 
     return () => (
       <>

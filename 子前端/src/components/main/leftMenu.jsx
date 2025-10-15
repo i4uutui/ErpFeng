@@ -1,8 +1,7 @@
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, onMounted, watch } from 'vue';
 import { getItem } from '@/assets/js/storage';
 import { useRoute } from 'vue-router';
 import router from '@/router';
-import { Location, Edit } from '@element-plus/icons-vue'
 import "./main.css"
 
 export default defineComponent({
@@ -12,6 +11,37 @@ export default defineComponent({
     const menuRoutes = ref([]);
     const permissions = ref(user.power ? user.power : []); // 假设从后端获取的权限列表
     let menuDefaultActive = ref(route.path)
+    const openedMenus = ref([]);
+
+    // 处理菜单展开状态
+    const handleMenuOpen = (key) => {
+      openedMenus.value.push(key);
+    };
+    // 处理菜单关闭状态
+    const handleMenuClose = (key) => {
+      openedMenus.value = openedMenus.value.filter(k => k !== key);
+    };
+    // 监听路由变化，更新激活状态和展开状态
+    watch(
+      () => route.path,
+      (newPath) => {
+        menuDefaultActive.value = newPath;
+        
+        // 找到当前路由对应的父菜单并展开
+        menuRoutes.value.forEach(group => {
+          const hasActiveChild = group.children.some(route => 
+            newPath.startsWith(route.path)
+          );
+          
+          if (hasActiveChild && !openedMenus.value.includes(group.title)) {
+            openedMenus.value.push(group.title);
+          } else if (!hasActiveChild && openedMenus.value.includes(group.title)) {
+            openedMenus.value = openedMenus.value.filter(k => k !== group.title);
+          }
+        });
+      },
+      { immediate: true } // 初始化时立即执行
+    );
 
     onMounted(() => {
       const { children } = router.options.routes.find(route => route.name === 'Layout');
@@ -45,7 +75,7 @@ export default defineComponent({
     return() => (
       <>
         <ElAside style={{ width: "150px", backgroundColor: '#eee' }}>
-          <ElMenu default-active="2" class="el-menu-vertical-demo" defaultActive={ menuDefaultActive.value } router unique-opened>
+          <ElMenu default-active="2" class="el-menu-vertical-demo" defaultActive={ menuDefaultActive.value } router unique-opened openeds={openedMenus.value} onOpen={handleMenuOpen} onClose={handleMenuClose}>
             {menuRoutes.value.map(({ title, children }) => {
               if(children.length != 1){
                 return (
