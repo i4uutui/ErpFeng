@@ -493,7 +493,8 @@ router.post('/process_cycle', authMiddleware, async (req, res) => {
   
   const processCycle = await SubProcessCycle.create({
     name,
-    user_id: userId
+    user_id: userId,
+    company_id
   })
   
   res.json({ msg: '添加成功', code: 200 });

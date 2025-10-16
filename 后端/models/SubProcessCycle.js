@@ -21,12 +21,12 @@ const SubProcessCycle = sequelize.define('SubProcessCycle', {
   },
   name: {
     type: DataTypes.STRING(100),
-    allowNull: false,
+    allowNull: true,
     comment: '制程名称'
   },
   sort_date: {
     type: DataTypes.INTEGER(5),
-    allowNull: false,
+    allowNull: true,
     comment: '最短交货时间'
   },
   is_deleted: {
