@@ -1,7 +1,11 @@
 const express = require('express');
 const dayjs = require('dayjs')
+const isSameOrAfter = require('dayjs/plugin/isSameOrAfter')
+const isSameOrBefore = require('dayjs/plugin/isSameOrBefore');
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 const router = express.Router();
-const { SubProductionProgress, SubProductNotice, SubProductCode, SubCustomerInfo, SubSaleOrder, SubPartCode, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessBom, SubProcessCycleChild, SubOperationHistory, SubRateWage, Op, SubProductionNotice } = require('../models');
+const { SubProductionProgress, SubProductNotice, SubProductCode, SubCustomerInfo, SubSaleOrder, SubPartCode, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessBom, SubProcessCycleChild, SubOperationHistory, SubRateWage, Op, SubProductionNotice, SubDateInfo } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const EmployeeAuth = require('../middleware/EmployeeAuth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
@@ -34,7 +38,7 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
               {
                 model: SubEquipmentCode,
                 as: 'equipment',
-                attributes: ['id', 'equipment_name', 'equipment_code', 'working_hours', 'equipment_efficiency', 'equipment_quantity'],
+                attributes: ['id', 'equipment_name', 'equipment_code', 'working_hours', 'efficiency', 'quantity'],
                 include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }]
               },
             ]
@@ -44,25 +48,50 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
     ],
     order: [['created_at', 'DESC']],
   })
+  // 用户设置的假期
+  const dates = await SubDateInfo.findAll({
+    where: {
+      company_id
+    },
+    attributes: ['date']
+  })
+  const specialDates = dates.map(e => {
+    const item = e.toJSON()
+    return dayjs(item.date).startOf('day')
+  })
+  const uniqueSpecialDates = [...new Set(specialDates.map(d => d.format('YYYY-MM-DD')))].map(d => dayjs(d));
+
   const today = dayjs();
   const fromData = rows.map((item, idx) => {
     const data = item.toJSON()
-    const startDate = item.start_date ? dayjs(item.start_date) : null;
+    const startDate = item.start_date ? dayjs(item.start_date).startOf('day') : null;
     if (!startDate) return data;
 
     if (item.start_date){
-      // 起始时间
-      const loadStartDate = startDate.isBefore(today) ? today : startDate;
+      // 如果起始日期早于今天，则用今天作为实际起始日期
+      const loadStartDate = startDate.isBefore(today) ? today.startOf('day') : startDate;
       data.cycleChild.forEach((cycleChild, index) => {
+        // 如果当前周期子项没有结束日期，跳过（无法计算周期长度）
         if (!cycleChild.end_date) return;
-        // 最短周期
-        const sort_date = index > 0 ? data.cycleChild[index - 1].cycle.sort_date : ''
+        // 上一个周期的最短周期（天数），第一个周期没有上一个，所以为空
+        const sort_date = index > 0 ? Number(data.cycleChild[index - 1].cycle.sort_date) : ''
         // 预计生产起始时间 + 最短周期 ：使用原始的起始时间
-        const load_startDate = index > 0 ? loadStartDate.add(sort_date, 'day') : loadStartDate
+        const load_startDate = index > 0 ? loadStartDate.clone().add(sort_date, 'day').startOf('day') : loadStartDate
         // 预交排期
-        const endDate = dayjs(cycleChild.end_date);
-        // 计算日期差（天数）
+        const endDate = dayjs(cycleChild.end_date).startOf('day');
+
+        // 计算起始日期到结束日期的天数差（endDate - load_startDate）
         const dayDiff = endDate.diff(load_startDate, 'day');
+        const totalDays = dayDiff + 1; // 包含起始日和结束日
+
+        // 计算区间内的特殊日期数量（需要跳过的天数）
+        const specialDaysInRange = uniqueSpecialDates.filter(specialDate => {
+          // 特殊日期是否在 [currentLoadStartDate, endDate] 区间内
+          return specialDate.isSameOrAfter(load_startDate) && specialDate.isSameOrBefore(endDate);
+        }).length;
+        // 有效天数 = 总日历天数 - 特殊日期数量（至少为1）
+        const validDays = Math.max(totalDays - specialDaysInRange, 1);
+        // 匹配对应的BOM子项
         const matchedBomChildren = data.bom?.children?.filter(
           bomChild => bomChild.equipment?.cycle?.id === cycleChild.cycle?.id
         );
@@ -70,9 +99,10 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
           // 计算bom.children.all_load和cycleChild.load
           matchedBomChildren.forEach(bomChild => {
             if (bomChild.all_time) {
-              const d = dayDiff + 1 > 0 ? dayDiff + 1 : 1
-              bomChild.all_load = parseFloat((bomChild.all_time / d).toFixed(1));
-              cycleChild.load = cycleChild.load + bomChild.all_load
+              // 日均负载 = 总耗时 / 周期总天数（d），保留1位小数
+              bomChild.all_load = parseFloat((bomChild.all_time / validDays).toFixed(1));
+              // 同时将该设备的日均负载累加到当前周期的总负载中
+              cycleChild.load = (parseFloat(cycleChild.load || '0') + bomChild.all_load).toFixed(1);
             }
           });
           cycleChild.load = parseFloat(cycleChild.load).toFixed(1)

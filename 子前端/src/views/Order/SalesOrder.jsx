@@ -143,6 +143,12 @@ export default defineComponent({
         goods_address: '',
       }
     }
+    const customerChange = (row) => {
+      form.value.goods_address = row.delivery_address
+    }
+    const productChange = (row) => {
+      form.value.product_req = row.production_requirements
+    }
     // 分页相关
     function pageSizeChange(val) {
       currentPage.value = 1;
@@ -207,13 +213,13 @@ export default defineComponent({
                   <ElDatePicker v-model={ form.value.rece_time } clearable={ false } value-format="YYYY-MM-DD" type="datetime" placeholder="请选择接单日期" />
                 </ElFormItem>
                 <ElFormItem label="客户名称" prop="customer_id">
-                  <MySelect v-model={ form.value.customer_id } apiUrl="/api/getCustomerInfo" query="customer_abbreviation" itemValue="customer_abbreviation" placeholder="请选择客户名称" />
+                  <MySelect v-model={ form.value.customer_id } apiUrl="/api/getCustomerInfo" query="customer_abbreviation" itemValue="customer_abbreviation" placeholder="请选择客户名称" onChange={ (value) => customerChange(value) } />
                 </ElFormItem>
                 <ElFormItem label="客户订单号" prop="customer_order">
                   <ElInput v-model={ form.value.customer_order } placeholder="请输入客户订单号" />
                 </ElFormItem>
                 <ElFormItem label="产品编码" prop="product_id">
-                  <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_code" itemValue="product_code" placeholder="请选择产品编码" />
+                  <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_code" itemValue="product_code" placeholder="请选择产品编码" onChange={ (value) => productChange(value) } />
                 </ElFormItem>
                 <ElFormItem label="产品要求" prop="product_req">
                   <ElInput v-model={ form.value.product_req } placeholder="请输入产品要求" />

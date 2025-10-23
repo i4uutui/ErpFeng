@@ -12,26 +12,8 @@ export default defineComponent({
       part_name: [
         { required: true, message: '请输入部件名称', trigger: 'blur' },
       ],
-      model: [
-        { required: true, message: '请输入型号', trigger: 'blur' },
-      ],
-      specification: [
-        { required: true, message: '请输入规格', trigger: 'blur' },
-      ],
-      other_features: [
-        { required: true, message: '请输入其它特性', trigger: 'blur' },
-      ],
       unit: [
         { required: true, message: '请输入单位', trigger: 'blur' },
-      ],
-      unit_price: [
-        { required: true, message: '请输入单价', trigger: 'blur' },
-      ],
-      currency: [
-        { required: true, message: '请输入币别', trigger: 'blur' },
-      ],
-      production_requirements: [
-        { required: true, message: '请输入生产要求', trigger: 'blur' },
       ],
     })
     let dialogVisible = ref(false)
@@ -42,8 +24,6 @@ export default defineComponent({
       specification: '',
       other_features: '',
       unit: '',
-      unit_price: '',
-      currency: '',
       production_requirements: '',
       remarks: '',
     })
@@ -52,6 +32,10 @@ export default defineComponent({
     let pageSize = ref(10);
     let total = ref(0);
     let edit = ref(0)
+    let search = ref({
+      code: '',
+      name: ''
+    })
 
     onMounted(() => {
       fetchProductList()
@@ -62,7 +46,8 @@ export default defineComponent({
       const res = await request.get('/api/part_code', {
         params: {
           page: currentPage.value,
-          pageSize: pageSize.value
+          pageSize: pageSize.value,
+          ...search.value
         },
       });
       tableData.value = res.data;
@@ -157,8 +142,6 @@ export default defineComponent({
         specification: '',
         other_features: '',
         unit: '',
-        unit_price: '',
-        currency: '',
         production_requirements: '',
         remarks: '',
       }
@@ -179,10 +162,25 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="clearfix">
-                <ElButton style="margin-top: -5px" type="primary" v-permission={ 'PartCode:add' } onClick={ handleAdd } >
-                  新增部件编码
-                </ElButton>
+              <div class="flex">
+                <ElForm inline={ true } class="cardHeaderFrom">
+                  <ElFormItem v-permission={ 'PartCode:add' }>
+                    <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                      新增部件编码
+                    </ElButton>
+                  </ElFormItem>
+                </ElForm>
+                <ElForm inline={ true } class="cardHeaderFrom">
+                  <ElFormItem label="部件编码">
+                    <ElInput v-model={ search.value.code } placeholder="请输入部件编码" />
+                  </ElFormItem>
+                  <ElFormItem label="部件名称">
+                    <ElInput v-model={ search.value.name } placeholder="请输入部件名称" />
+                  </ElFormItem>
+                  <ElFormItem>
+                    <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList }>查询</ElButton>
+                  </ElFormItem>
+                </ElForm>
               </div>
             ),
             default: () => (
@@ -194,8 +192,6 @@ export default defineComponent({
                   <ElTableColumn prop="specification" label="规格" />
                   <ElTableColumn prop="other_features" label="其它特性" />
                   <ElTableColumn prop="unit" label="单位" width="100" />
-                  <ElTableColumn prop="unit_price" label="单价" width="100" />
-                  <ElTableColumn prop="currency" label="币别" width="100" />
                   <ElTableColumn prop="production_requirements" label="生产要求" />
                   <ElTableColumn prop="remarks" label="备注" />
                   <ElTableColumn label="操作" width="140" fixed="right">
@@ -233,12 +229,6 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="单位" prop="unit">
                   <ElInput v-model={ form.value.unit } placeholder="请输入单位" />
-                </ElFormItem>
-                <ElFormItem label="单价" prop="unit_price">
-                  <ElInput v-model={ form.value.unit_price } type="number" placeholder="请输入单价" />
-                </ElFormItem>
-                <ElFormItem label="币别" prop="currency">
-                  <ElInput v-model={ form.value.currency } placeholder="请输入币别" />
                 </ElFormItem>
                 <ElFormItem label="生产要求" prop="production_requirements">
                   <ElInput v-model={ form.value.production_requirements } placeholder="请输入生产要求" />

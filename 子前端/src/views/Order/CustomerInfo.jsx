@@ -56,9 +56,11 @@ export default defineComponent({
     let pageSize = ref(10);
     let total = ref(0);
     let edit = ref(0)
+    let method = ref([])
 
     onMounted(() => {
       fetchProductList()
+      getConstType()
     })
 
     // 获取列表
@@ -72,6 +74,13 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    // 获取常量
+    const getConstType = async () => {
+      const res = await request.post('/api/getConstType', { type: 'payInfo' })
+      if(res.code == 200){
+        method.value = res.data
+      }
+    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
@@ -200,7 +209,9 @@ export default defineComponent({
                   <ElTableColumn prop="company_address" label="公司地址" />
                   <ElTableColumn prop="delivery_address" label="交货地址" />
                   <ElTableColumn prop="tax_registration_number" label="税务登记号" />
-                  <ElTableColumn prop="transaction_method" label="交易方式" />
+                  <ElTableColumn prop="transaction_method" label="交易方式">
+                    {({row}) => <span>{ method.value.find(e => e.id == row.transaction_method)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="transaction_currency" label="交易币别" />
                   <ElTableColumn prop="other_transaction_terms" label="其它交易条件" />
                   <ElTableColumn label="操作" width="140" fixed="right">
@@ -246,7 +257,9 @@ export default defineComponent({
                   <ElInput v-model={ form.value.tax_registration_number } placeholder="请输入税务登记号" />
                 </ElFormItem>
                 <ElFormItem label="交易方式" prop="transaction_method">
-                  <ElInput v-model={ form.value.transaction_method } placeholder="请输入交易方式" />
+                  <ElSelect v-model={ form.value.transaction_method } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择交易方式">
+                    {method.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="交易币别" prop="transaction_currency">
                   <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />

@@ -35,12 +35,12 @@ const SubOutsourcingQuote = sequelize.define('SubOutsourcingQuote', {
     comment: ' 工艺BOM ID '
   },
   process_bom_children_id: {
-    type: DataTypes.INTEGER(5),
+    type: DataTypes.STRING(11),
     allowNull: false,
     comment: ' 工艺BOM副表的id '
   },
   price: {
-    type: DataTypes.INTEGER(11),
+    type: DataTypes.STRING(11),
     allowNull: true,
     defaultValue: null,
     comment: ' 加工单价 '

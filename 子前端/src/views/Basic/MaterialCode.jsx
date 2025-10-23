@@ -18,17 +18,11 @@ export default defineComponent({
       specification: [
         { required: true, message: '请输入规格', trigger: 'blur' },
       ],
-      other_features: [
-        { required: true, message: '请输入其它特性', trigger: 'blur' },
-      ],
       usage_unit: [
         { required: true, message: '请输入使用单位', trigger: 'blur' },
       ],
       purchase_unit: [
         { required: true, message: '请输入采购单位', trigger: 'blur' },
-      ],
-      currency: [
-        { required: true, message: '请输入币别', trigger: 'blur' },
       ],
     })
     let dialogVisible = ref(false)
@@ -40,7 +34,6 @@ export default defineComponent({
       other_features: '',
       usage_unit: '',
       purchase_unit: '',
-      currency: '',
       remarks: '',
     })
     let tableData = ref([])
@@ -48,6 +41,10 @@ export default defineComponent({
     let pageSize = ref(10);
     let total = ref(0);
     let edit = ref(0)
+    let search = ref({
+      code: '',
+      name: ''
+    })
 
     onMounted(() => {
       fetchProductList()
@@ -58,7 +55,8 @@ export default defineComponent({
       const res = await request.get('/api/material_code', {
         params: {
           page: currentPage.value,
-          pageSize: pageSize.value
+          pageSize: pageSize.value,
+          ...search.value
         },
       });
       tableData.value = res.data;
@@ -153,7 +151,6 @@ export default defineComponent({
         other_features: '',
         usage_unit: '',
         purchase_unit: '',
-        currency: '',
         remarks: '',
       }
     }
@@ -173,10 +170,25 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="clearfix">
-                <ElButton style="margin-top: -5px" type="primary" v-permission={ 'MaterialCode:add' } onClick={ handleAdd } >
-                  新增原材料编码
-                </ElButton>
+              <div class="flex">
+                <ElForm inline={ true } class="cardHeaderFrom">
+                  <ElFormItem v-permission={ 'MaterialCode:add' }>
+                    <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                      新增材料编码
+                    </ElButton>
+                  </ElFormItem>
+                </ElForm>
+                <ElForm inline={ true } class="cardHeaderFrom">
+                  <ElFormItem label="材料编码">
+                    <ElInput v-model={ search.value.code } placeholder="请输入材料编码" />
+                  </ElFormItem>
+                  <ElFormItem label="材料名称">
+                    <ElInput v-model={ search.value.name } placeholder="请输入材料名称" />
+                  </ElFormItem>
+                  <ElFormItem>
+                    <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList }>查询</ElButton>
+                  </ElFormItem>
+                </ElForm>
               </div>
             ),
             default: () => (
@@ -189,7 +201,6 @@ export default defineComponent({
                   <ElTableColumn prop="other_features" label="其它特性" />
                   <ElTableColumn prop="usage_unit" label="使用单位" />
                   <ElTableColumn prop="purchase_unit" label="采购单位" />
-                  <ElTableColumn prop="currency" label="币别" width="100" />
                   <ElTableColumn prop="remarks" label="备注" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
@@ -229,9 +240,6 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="采购单位" prop="purchase_unit">
                   <ElInput v-model={ form.value.purchase_unit } placeholder="请输入采购单位" />
-                </ElFormItem>
-                <ElFormItem label="币别" prop="currency">
-                  <ElInput v-model={ form.value.currency } placeholder="请输入币别" />
                 </ElFormItem>
                 <ElFormItem label="备注" prop="remarks">
                   <ElInput v-model={ form.value.remarks } placeholder="请输入备注" />

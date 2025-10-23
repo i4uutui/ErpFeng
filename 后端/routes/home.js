@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Op, SubDateInfo, SubApprovalUser, SubSaleOrder, SubProductQuotation, SubProductNotice } = require('../models')
+const { Op, SubDateInfo, SubApprovalUser, SubProductNotice } = require('../models')
 const authMiddleware = require('../middleware/auth');
 
 /**
@@ -33,7 +33,7 @@ router.get('/special-dates', authMiddleware, async (req, res) => {
  * @swagger
  * /admin/special-dates:
  *   post:
- *     summary: 保存日期
+ *     summary: 日历保存日期
  *     tags:
  *       - 首页接口(Home)
  *     parameters:
@@ -90,23 +90,40 @@ router.get('/statistics', authMiddleware, async (req, res) => {
   res.json({ data: { materialMent, outsourcingOrder, materialOrder, productOrder }, code: 200 })
 })
 
+/**
+ * @swagger
+ * /admin/order_total:
+ *   get:
+ *     summary: 订单统计
+ *     tags:
+ *       - 首页接口(Home)
+ */
 router.get('/order_total', authMiddleware, async (req, res) => {
   const { company_id } = req.user;
   const created_at = req.query['created_at[]']
 
-  const [saleOrder, productQuotation, productNotice] = await Promise.all([
-    SubSaleOrder.count({ 
-      where: { company_id, created_at: { [Op.between]: [new Date(created_at[0]), new Date(created_at[1])] } }
-    }),
-    SubProductQuotation.count({ 
-      where: { company_id, created_at: { [Op.between]: [new Date(created_at[0]), new Date(created_at[1])] } }
-    }),
-    SubProductNotice.findAll({ 
-      where: { company_id, created_at: { [Op.between]: [new Date(created_at[0]), new Date(created_at[1])] } }
+  try {
+    const result = await SubProductNotice.findAll({
+      where: {
+        company_id,
+        is_notice: 0, // 已排产
+        is_deleted: 1, // 未删除
+      }
     })
-  ])
-  const result = productNotice.map(e => e.toJSON())
-  const noticeFinish = result.filter(e => e.isFinish == 0)
-  res.json({ code: 200, data: { saleOrder, productQuotation, notice: result.length, noticeFinish: noticeFinish.length } })
+    let onlineOrder = 0;
+    let finishOrder = 0;
+    result.forEach(e => {
+      const item = e.toJSON()
+      if (item.is_finish === 1) {
+        onlineOrder++
+      } else {
+        finishOrder++;
+      }
+    })
+
+    res.json({ code: 200, data: { onlineOrder, finishOrder } })
+  } catch (error) {
+    console.log(error);
+  }
 })
 module.exports = router;

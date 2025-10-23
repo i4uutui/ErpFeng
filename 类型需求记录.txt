@@ -1,0 +1,30 @@
+用户轨迹类型：
+
+add 新增
+update 修改
+delete 删除
+paichang  通知单排产
+keyup存档材料BOM/工艺bom
+approval  审批
+keyApproval 新增并提交审批
+backApproval 反审批
+login  登录
+
+
+
+
+首页：
+
+订单统计：
+在线订单(批)
+完成订单(批)
+延期警报(批)
+延期订单(批)
+订单存量(PCS)
+
+出勤统计：
+理论在岗
+请假人数
+实际到岗
+迟到早退
+缺勤人数

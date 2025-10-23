@@ -29,14 +29,9 @@ const SubEmployeeInfo = sequelize.define('SubEmployeeInfo', {
     allowNull: false,
     comment: ' 姓名 '
   },
-  account: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-    comment: ' 员工账号 '
-  },
   password: {
     type: DataTypes.STRING(255),
-    allowNull: false,
+    allowNull: true,
     comment: ' 员工密码 '
   },
   cycle_id: {
@@ -44,18 +39,13 @@ const SubEmployeeInfo = sequelize.define('SubEmployeeInfo', {
     allowNull: true,
     comment: ' 所属制程ID '
   },
-  cycle_name: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-    comment: ' 所属制程名称 '
-  },
-  production_position: {
+  position: {
     type: DataTypes.STRING(50),
     allowNull: true,
     comment: ' 生产岗位 '
   },
   salary_attribute: {
-    type: DataTypes.STRING(50),
+    type: DataTypes.INTEGER(5),
     allowNull: true,
     comment: ' 工资属性 '
   },

@@ -56,6 +56,11 @@ const SubProcessBomChild = sequelize.define('SubProcessBomChild', {
     defaultValue: null,
     comment: ' 加工单价 '
   },
+  points: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+    comment: '段数点数'
+  },
   all_time: {
     type: DataTypes.INTEGER(11),
     allowNull: true,

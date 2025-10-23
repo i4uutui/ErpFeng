@@ -126,7 +126,7 @@ const routes = [
         name: 'MaterialCode',
         component: () => import('@/views/Basic/MaterialCode.jsx'),
         meta: {
-          title: '原材料编码',
+          title: '材料编码',
           parent: '基础资料',
           menu: true,
           buttons: [
@@ -246,7 +246,7 @@ const routes = [
         name: 'FinishNotice',
         component: () => import('@/views/Order/FinishNotice.jsx'),
         meta: {
-          title: '生产通知单(完结)',
+          title: '结案订单',
           parent: '订单管理',
           menu: true,
         }
@@ -281,7 +281,7 @@ const routes = [
         component: () => import('@/views/Product/MaterialBOM.jsx'),
         meta: {
           title: '材料BOM',
-          parent: '产品信息',
+          parent: '产品工程',
           menu: true,
           buttons: [
             { code: 'MaterialBOM:add', label: '新增' },
@@ -298,7 +298,7 @@ const routes = [
         component: () => import('@/views/Product/MaterialBOMArchive.jsx'),
         meta: {
           title: '材料BOM存档库',
-          parent: '产品信息',
+          parent: '产品工程',
           menu: false,
           buttons: [
             { code: 'MaterialBOM:cope', label: '复制新增' },
@@ -311,7 +311,7 @@ const routes = [
         component: () => import('@/views/Product/ProcessBOM.jsx'),
         meta: {
           title: '工艺BOM',
-          parent: '产品信息',
+          parent: '产品工程',
           menu: true,
           buttons: [
             { code: 'ProcessBOM:add', label: '新增' },
@@ -328,7 +328,7 @@ const routes = [
         component: () => import('@/views/Product/ProcessBOMArchive.jsx'),
         meta: {
           title: '工艺BOM存档库',
-          parent: '产品信息',
+          parent: '产品工程',
           menu: false,
           buttons: [
             { code: 'ProcessBOM:cope', label: '复制新增' },
@@ -360,8 +360,19 @@ const routes = [
           menu: true,
           buttons: [
             { code: 'MaterialQuote:add', label: '新增' },
-            { code: 'MaterialQuote:edit', label: '修改' },
+            { code: 'MaterialQuote:archive', label: '存档' },
+            { code: 'MaterialQuote:newPage', label: '材料报价库' },
           ]
+        }
+      },
+      {
+        path: '/purchase/material-quote-archive',
+        name: 'MaterialQuoteArchive',
+        component: () => import('@/views/Purchase/MaterialQuoteArchive.jsx'),
+        meta: {
+          title: '原材料报价存档库',
+          parent: '采购管理',
+          menu: false,
         }
       },
       {

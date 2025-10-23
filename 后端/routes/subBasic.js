@@ -9,15 +9,18 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
 
 // 获取产品编码列表（分页）
 router.get('/products_code', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, name, code } = req.query;
   const offset = (page - 1) * pageSize;
-  
   const { company_id } = req.user;
   
+  const whereObj = {}
+  if(code) whereObj.product_code = { [Op.like]: `%${code}%` }
+  if(name) whereObj.product_name = { [Op.like]: `%${name}%` }
   const { count, rows } = await SubProductCode.findAndCountAll({
     where: {
       is_deleted: 1,
-      company_id
+      company_id,
+      ...whereObj
     },
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
@@ -39,7 +42,7 @@ router.get('/products_code', authMiddleware, async (req, res) => {
 
 // 添加产品编码
 router.post('/products_code', authMiddleware, async (req, res) => {
-  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements } = req.body;
+  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, production_requirements } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -49,7 +52,7 @@ router.post('/products_code', authMiddleware, async (req, res) => {
   }
   
   const newProduct = await SubProductCode.create({
-    product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, company_id,
+    product_code, product_name, drawing, model, specification, other_features, component_structure, unit, production_requirements, company_id,
     user_id: userId
   })
   
@@ -58,7 +61,7 @@ router.post('/products_code', authMiddleware, async (req, res) => {
 
 // 更新产品编码接口
 router.put('/products_code', authMiddleware, async (req, res) => {
-  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, id } = req.body;
+  const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, production_requirements, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -76,7 +79,7 @@ router.put('/products_code', authMiddleware, async (req, res) => {
   }
   
   await product.update({
-    product_code, product_name, drawing, model, specification, other_features, component_structure, unit, unit_price, currency, production_requirements, company_id,
+    product_code, product_name, drawing, model, specification, other_features, component_structure, unit, production_requirements, company_id,
     user_id: userId
   }, { where: { id } })
   
@@ -107,14 +110,18 @@ router.delete('/products_code/:id', authMiddleware, async (req, res) => {
 
 // 获取部件编码列表（分页）
 router.get('/part_code', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, code, name } = req.query;
   const offset = (page - 1) * pageSize;
-  
   const { company_id } = req.user;
+
+  const whereObj = {}
+  if(code) whereObj.part_code = { [Op.like]: `%${code}%` }
+  if(name) whereObj.part_name = { [Op.like]: `%${name}%` }
   const { count, rows } = await SubPartCode.findAndCountAll({
     where: {
       is_deleted: 1,
-      company_id
+      company_id,
+      ...whereObj
     },
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
@@ -137,14 +144,14 @@ router.get('/part_code', authMiddleware, async (req, res) => {
 
 // 添加部件编码
 router.post('/part_code', authMiddleware, async (req, res) => {
-  const { part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks } = req.body;
+  const { part_code, part_name, model, specification, other_features, unit, production_requirements, remarks } = req.body;
   const { id: userId, company_id } = req.user;
   
   const rows = await SubPartCode.findAll({ where: { part_code, company_id } })
   if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
   
   const newProduct = await SubPartCode.create({
-    part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, company_id,
+    part_code, part_name, model, specification, other_features, unit, production_requirements, remarks, company_id,
     user_id: userId
   })
   
@@ -153,7 +160,7 @@ router.post('/part_code', authMiddleware, async (req, res) => {
 
 // 更新部件编码接口
 router.put('/part_code', authMiddleware, async (req, res) => {
-  const { part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, id } = req.body;
+  const { part_code, part_name, model, specification, other_features, unit, production_requirements, remarks, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证部件是否存在
@@ -166,7 +173,7 @@ router.put('/part_code', authMiddleware, async (req, res) => {
   if(row) return res.json({ message: '编码不能重复', code: 401 })
   
   await part.update({
-    part_code, part_name, model, specification, other_features, unit, unit_price, currency, production_requirements, remarks, company_id,
+    part_code, part_name, model, specification, other_features, unit, production_requirements, remarks, company_id,
     user_id: userId
   }, { where: { id } })
   
@@ -195,15 +202,18 @@ router.delete('/part_code/:id', authMiddleware, async (req, res) => {
 
 // 获取材料编码列表（分页）
 router.get('/material_code', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, code, name } = req.query;
   const offset = (page - 1) * pageSize;
-  
   const { company_id } = req.user;
   
+  const whereObj = {}
+  if(code) whereObj.material_code = { [Op.like]: `%${code}%` }
+  if(name) whereObj.material_name = { [Op.like]: `%${name}%` }
   const { count, rows } = await SubMaterialCode.findAndCountAll({
     where: {
       is_deleted: 1,
-      company_id
+      company_id,
+      ...whereObj
     },
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
@@ -226,7 +236,7 @@ router.get('/material_code', authMiddleware, async (req, res) => {
 
 // 添加材料编码
 router.post('/material_code', authMiddleware, async (req, res) => {
-  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, currency, remarks } = req.body;
+  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, remarks } = req.body;
   const { id: userId, company_id } = req.user;
   
   const rows = await SubMaterialCode.findAll({
@@ -238,7 +248,7 @@ router.post('/material_code', authMiddleware, async (req, res) => {
   if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
   
   SubMaterialCode.create({
-    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, currency, remarks, company_id,
+    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, remarks, company_id,
     user_id: userId
   })
   
@@ -247,7 +257,7 @@ router.post('/material_code', authMiddleware, async (req, res) => {
 
 // 更新材料编码接口
 router.put('/material_code', authMiddleware, async (req, res) => {
-  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, currency, remarks, id } = req.body;
+  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, remarks, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证材料是否存在
@@ -260,7 +270,7 @@ router.put('/material_code', authMiddleware, async (req, res) => {
   if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
   
   await SubMaterialCode.update({
-    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, currency, remarks, company_id,
+    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, remarks, company_id,
     user_id: userId
   }, { where: { id } })
   
@@ -289,16 +299,20 @@ router.delete('/material_code/:id', authMiddleware, async (req, res) => {
 
 // 获取工艺编码列表（分页）
 router.get('/process_code', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, name, code } = req.query;
   const offset = (page - 1) * pageSize;
-  
   const { company_id } = req.user;
   
+  const whereObj = {}
+  if(code) whereObj.process_code = { [Op.like]: `%${code}%` }
+  if(name) whereObj.process_name = { [Op.like]: `%${name}%` }
   const { count, rows } = await SubProcessCode.findAndCountAll({
     where: {
       is_deleted: 1,
-      company_id
+      company_id,
+      ...whereObj
     },
+    include: [{ model: SubEquipmentCode, as: 'equipment' }],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
     offset
@@ -318,7 +332,7 @@ router.get('/process_code', authMiddleware, async (req, res) => {
 
 // 添加工艺编码
 router.post('/process_code', authMiddleware, async (req, res) => {
-  const { process_code, process_name, time, price, section_points, total_processing_price, equipment_id, remarks } = req.body;
+  const { process_code, process_name, equipment_id, remarks } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -331,7 +345,7 @@ router.post('/process_code', authMiddleware, async (req, res) => {
   if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
   
   await SubProcessCode.create({
-    process_code, process_name, time, price, section_points, total_processing_price, remarks, equipment_id, company_id,
+    process_code, process_name, remarks, equipment_id, company_id,
     user_id: userId
   })
   
@@ -340,7 +354,7 @@ router.post('/process_code', authMiddleware, async (req, res) => {
 
 // 更新工艺编码接口
 router.put('/process_code', authMiddleware, async (req, res) => {
-  const { process_code, process_name, time, price, section_points, total_processing_price, remarks, equipment_id, id } = req.body;
+  const { process_code, process_name, remarks, equipment_id, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证工艺是否存在
@@ -355,7 +369,7 @@ router.put('/process_code', authMiddleware, async (req, res) => {
   }
   
   await SubProcessCode.update({
-    process_code, process_name, time, price, section_points, total_processing_price, remarks, equipment_id, company_id,
+    process_code, process_name, remarks, equipment_id, company_id,
     user_id: userId
   }, { where: { id } })
   
@@ -384,15 +398,18 @@ router.delete('/process_code/:id', authMiddleware, async (req, res) => {
 
 // 获取设备信息列表（分页）
 router.get('/equipment_code', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, code, name } = req.query;
   const offset = (page - 1) * pageSize;
-  
   const { company_id } = req.user;
   
+  const whereObj = {}
+  if(code) whereObj.equipment_code = { [Op.like]: `%${code}%` }
+  if(name) whereObj.equipment_name = { [Op.like]: `%${name}%` }
   const { count, rows } = await SubEquipmentCode.findAndCountAll({
     where: {
       is_deleted: 1,
-      company_id
+      company_id,
+      ...whereObj
     },
     include: [
       { model: SubProcessCycle, as: 'cycle' }
@@ -418,7 +435,7 @@ router.get('/equipment_code', authMiddleware, async (req, res) => {
 
 // 添加设备信息
 router.post('/equipment_code', authMiddleware, async (req, res) => {
-  const { equipment_code, equipment_name, equipment_quantity, cycle_id, working_hours, equipment_efficiency, equipment_status, remarks } = req.body;
+  const { equipment_code, equipment_name, quantity, cycle_id, working_hours, efficiency, available, remarks } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -431,7 +448,7 @@ router.post('/equipment_code', authMiddleware, async (req, res) => {
   if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
   
   SubEquipmentCode.create({
-    equipment_code, equipment_name, equipment_quantity, cycle_id, working_hours, equipment_efficiency, equipment_status, remarks, company_id,
+    equipment_code, equipment_name, quantity, cycle_id, working_hours, efficiency, available, remarks, company_id,
     user_id: userId
   })
   
@@ -440,7 +457,7 @@ router.post('/equipment_code', authMiddleware, async (req, res) => {
 
 // 更新设备信息接口
 router.put('/equipment_code', authMiddleware, async (req, res) => {
-  const { equipment_code, equipment_name, equipment_quantity, cycle_id, working_hours, equipment_efficiency, equipment_status, remarks, id } = req.body;
+  const { equipment_code, equipment_name, quantity, cycle_id, working_hours, efficiency, available, remarks, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证设备是否存在
@@ -453,7 +470,7 @@ router.put('/equipment_code', authMiddleware, async (req, res) => {
   if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
   
   await SubEquipmentCode.update({
-    equipment_code, equipment_name, equipment_quantity, cycle_id, working_hours, equipment_efficiency, equipment_status, remarks, company_id,
+    equipment_code, equipment_name, quantity, cycle_id, working_hours, efficiency, available, remarks, company_id,
     user_id: userId
   }, { where: { id } })
   
@@ -483,17 +500,21 @@ router.delete('/equipment_code/:id', authMiddleware, async (req, res) => {
 
 // 获取员工信息列表（分页）
 router.get('/employee_info', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, code, name } = req.query;
   const offset = (page - 1) * pageSize;
-  
   const { company_id } = req.user;
   
+  const whereObj = {}
+  if(code) whereObj.employee_id = { [Op.like]: `%${code}%` }
+  if(name) whereObj.name = { [Op.like]: `%${name}%` }
   const { count, rows } = await SubEmployeeInfo.findAndCountAll({
     where: {
       is_deleted: 1,
-      company_id
+      company_id,
+      ...whereObj
     },
-    attributes: ['id', 'company_id', 'employee_id', 'name', 'cycle_id', 'cycle_name', 'production_position', 'salary_attribute', 'remarks', 'created_at', 'account'],
+    attributes: ['id', 'company_id', 'employee_id', 'name', 'cycle_id', 'position', 'salary_attribute', 'remarks', 'created_at'],
+    include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
     offset
@@ -515,7 +536,7 @@ router.get('/employee_info', authMiddleware, async (req, res) => {
 
 // 添加员工信息
 router.post('/employee_info', authMiddleware, async (req, res) => {
-  const { employee_id, name, account, password, cycle_id, cycle_name, production_position, salary_attribute, remarks } = req.body;
+  const { employee_id, name, password, cycle_id, position, salary_attribute, remarks } = req.body;
   const { id: userId, company_id } = req.user;
   
   const rows = await SubEmployeeInfo.findAll({
@@ -526,19 +547,11 @@ router.post('/employee_info', authMiddleware, async (req, res) => {
   })
   if(rows.length != 0) return res.json({ message: '工号不能重复', code: 401 })
 
-  const accResult = await SubEmployeeInfo.findOne({
-    where: {
-      company_id,
-      account
-    }
-  })
-  if(accResult) return res.json({ message: '已有重复的员工账号，员工账号不能重复', code: 401 })
-
   // 对密码进行加密
   const hashedPassword = await bcrypt.hash(password, 10);
   
   await SubEmployeeInfo.create({
-    employee_id, name, account, password: hashedPassword, cycle_id, cycle_name, production_position, salary_attribute, remarks, company_id,
+    employee_id, name, password: hashedPassword, cycle_id, position, salary_attribute, remarks, company_id,
     user_id: userId
   })
   
@@ -547,7 +560,7 @@ router.post('/employee_info', authMiddleware, async (req, res) => {
 
 // 更新员工信息接口
 router.put('/employee_info', authMiddleware, async (req, res) => {
-  const { employee_id, name, account, password, cycle_id, cycle_name, production_position, salary_attribute, remarks, id } = req.body;
+  const { employee_id, name, password, cycle_id, position, salary_attribute, remarks, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证员工信息是否存在
@@ -561,20 +574,12 @@ router.put('/employee_info', authMiddleware, async (req, res) => {
   if(rows.length != 0){
     return res.json({ message: '员工工号不能重复', code: 401 })
   }
-  const accResult = await SubEmployeeInfo.findOne({
-    where: {
-      company_id,
-      account,
-      id: { [Op.ne]: id }
-    }
-  })
-  if(accResult) return res.json({ message: '已有重复的员工账号，员工账号不能重复', code: 401 })
 
   // 对密码进行加密
   const hashedPassword = password ? await bcrypt.hash(password, 10) : result.password;
   
   await SubEmployeeInfo.update({
-    employee_id, name, account, password: hashedPassword, cycle_id, cycle_name, production_position, salary_attribute, remarks, company_id,
+    employee_id, name, password: hashedPassword, cycle_id, position, salary_attribute, remarks, company_id,
     user_id: userId
   }, { where: { id } })
   
@@ -599,14 +604,14 @@ router.delete('/employee_info/:id', authMiddleware, async (req, res) => {
 
 // 员工登录
 router.post('/employee_info_login', async (req, res) => {
-  const { account, password, company_id } = req.body;
+  const { employee_id, password, company_id } = req.body;
   const result = await SubEmployeeInfo.findOne({
     where: {
-      account,
       company_id,
+      employee_id,
       is_deleted: 1
     },
-    attributes: ['id', 'company_id', 'name', 'cycle_name', 'account', 'password']
+    attributes: ['id', 'company_id', 'name', 'cycle_name', 'employee_id', 'password']
   })
   if(!result) return res.json({ message: '账号密码错误', code: 401 })
   
@@ -625,7 +630,7 @@ router.post('/employee_info_login', async (req, res) => {
     operation_type: 'login',
     module: "移动端",
     desc: `员工{ ${ data.name } }成功登录`,
-    data: { newData: { account: account, password: '***' } },
+    data: { newData: { employee_id, password: '***' } },
   });
 
   const token = jwt.sign({ ...data }, process.env.JWT_SECRET, { expiresIn: '7d' });

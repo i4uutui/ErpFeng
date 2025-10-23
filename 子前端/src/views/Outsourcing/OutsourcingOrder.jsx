@@ -445,6 +445,10 @@ export default defineComponent({
         printVisible.value = true
       }); 
     }
+    const noticeChange = (value) => {
+      const row = productNotice.value.find(e => e.id == value)
+      form.value.number = row.sale.order_number
+    }
 
     return() => (
       <>
@@ -629,7 +633,7 @@ export default defineComponent({
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="生产订单" prop="notice_id">
-                  <ElSelect v-model={ form.value.notice_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单">
+                  <ElSelect v-model={ form.value.notice_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单" onChange={ (value) => noticeChange(value) }>
                     {productNotice.value.map((e, index) => <ElOption value={ e.id } label={ e.notice } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>

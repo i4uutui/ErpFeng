@@ -45,6 +45,8 @@ AdOrganize.hasMany(AdOrganize, { foreignKey: 'pid', as: 'children' });
 AdOrganize.belongsTo(AdUser, { foreignKey: 'menber_id', as: 'menber' });
 
 SubEquipmentCode.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
+SubProcessCode.belongsTo(SubEquipmentCode, { foreignKey: 'equipment_id', as: 'equipment' })
+SubEmployeeInfo.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
 
 SubWarehouseCycle.belongsTo(SubConstType, { foreignKey: 'ware_id', as: 'ware' })
 

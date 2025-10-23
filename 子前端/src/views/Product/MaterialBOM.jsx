@@ -189,7 +189,7 @@ export default defineComponent({
       }
     }
     const handleDelete = (row) => {
-      ElMessageBox.confirm('是否确认存档', '提示', {
+      ElMessageBox.confirm('是否确认删除', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning',
@@ -329,7 +329,7 @@ export default defineComponent({
                 <ElFormItem label="产品编码" prop="product_id">
                   <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_code" itemValue="product_code" placeholder="请选择产品编码" />
                 </ElFormItem>
-                <ElFormItem label="部件编码" prop="part_id">
+                <ElFormItem label="部件编码" prop="part_id" data-index={ form.value.children.length }>
                   <MySelect v-model={ form.value.part_id } apiUrl="/api/getPartCode" query="part_code" itemValue="part_code" placeholder="请选择部件编码" />
                 </ElFormItem>
                 {
@@ -342,12 +342,18 @@ export default defineComponent({
                         <div class="flex">
                           <ElInput v-model={ e.number } placeholder="请输入数量" />
                           <div class="flex">
-                            {
-                              index == form.value.children.length - 1 && index < 20 ? <ElIcon style={{ fontSize: '26px', color: '#409eff', cursor: "pointer" }} onClick={ handleAddJson }><CirclePlusFilled /></ElIcon> : <></>
-                            }
-                            {
-                              index > 0 ? <ElIcon style={{ fontSize: '26px', color: 'red', cursor: "pointer" }} onClick={ () => handledeletedJson(index) }><RemoveFilled /></ElIcon> : <></>
-                            }
+                            {{
+                              default: () => {
+                                let dom = []
+                                if(index == form.value.children.length - 1 && index < 20){
+                                  dom.push(<ElIcon style={{ fontSize: '26px', color: '#409eff', cursor: "pointer" }} onClick={ handleAddJson }><CirclePlusFilled /></ElIcon>)
+                                }
+                                if(form.value.children.length > 1){
+                                  dom.push(<ElIcon style={{ fontSize: '26px', color: 'red', cursor: "pointer" }} onClick={ () => handledeletedJson(index) }><RemoveFilled /></ElIcon>)
+                                }
+                                return dom
+                              }
+                            }}
                           </div>
                         </div>
                       </ElFormItem>

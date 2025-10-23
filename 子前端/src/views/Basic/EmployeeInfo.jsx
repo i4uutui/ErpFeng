@@ -12,13 +12,10 @@ export default defineComponent({
       name: [
         { required: true, message: '请输入姓名', trigger: 'blur' },
       ],
-      account: [
-        { required: true, message: '请输入员工账号', trigger: 'blur' },
-      ],
       cycle_id: [
         { required: true, message: '请输入所属制程', trigger: 'blur' },
       ],
-      production_position: [
+      position: [
         { required: true, message: '请输入生产岗位', trigger: 'blur' },
       ],
       salary_attribute: [
@@ -29,11 +26,10 @@ export default defineComponent({
     let form = ref({
       employee_id: '',
       name: '',
-      account: '',
       password: '',
       cycle_id: '',
       cycle_name: '',
-      production_position: '',
+      position: '',
       salary_attribute: '',
     })
     let processCycle = ref([])
@@ -42,10 +38,12 @@ export default defineComponent({
     let pageSize = ref(10);
     let total = ref(0);
     let edit = ref(0)
+    let constType = ref([])
 
     onMounted(() => {
       getProcessCycle()
       fetchProductList()
+      getConstType()
     })
 
     // 获取列表
@@ -64,6 +62,13 @@ export default defineComponent({
       const res = await request.get('/api/getProcessCycle')
       if(res.code == 200){
         processCycle.value = res.data
+      }
+    }
+    // 获取常量
+    const getConstType = async () => {
+      const res = await request.post('/api/getConstType', { type: 'employeeInfo' })
+      if(res.code == 200){
+        constType.value = res.data
       }
     }
     const handleSubmit = async (formEl) => {
@@ -90,7 +95,6 @@ export default defineComponent({
               id: edit.value,
               ...form.value
             }
-            if(myForm.account <= 6) return ElMessage.error('员工账号需大于等于6位')
             if(myForm.password <= 6) return ElMessage.error('员工密码需大于等于6位')
             const res = await request.put('/api/employee_info', myForm);
             if(res && res.code == 200){
@@ -158,17 +162,12 @@ export default defineComponent({
       form.value = {
         employee_id: '',
         name: '',
-        account: '',
         password: '',
         cycle_id: '',
         cycle_name: '',
-        production_position: '',
+        position: '',
         salary_attribute: '',
       }
-    }
-    const cycleSelectChange = (value) => {
-      const item = processCycle.value.find(o => o.id == value)
-      form.value.cycle_name = item.name
     }
     // 分页相关
     function pageSizeChange(val) {
@@ -197,10 +196,11 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="employee_id" label="员工工号" />
                   <ElTableColumn prop="name" label="姓名" />
-                  <ElTableColumn prop="account" label="账号" />
-                  <ElTableColumn prop="cycle_name" label="所属部门" />
-                  <ElTableColumn prop="production_position" label="生产岗位" />
-                  <ElTableColumn prop="salary_attribute" label="工资属性" />
+                  <ElTableColumn prop="cycle.name" label="所属部门" />
+                  <ElTableColumn prop="position" label="生产岗位" />
+                  <ElTableColumn label="工资属性">
+                    {({row}) => <span>{ constType.value.find(e => e.id == row.salary_attribute)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="remarks" label="备注" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
@@ -226,22 +226,21 @@ export default defineComponent({
                 <ElFormItem label="姓名" prop="name">
                   <ElInput v-model={ form.value.name } placeholder="请输入姓名" />
                 </ElFormItem>
-                <ElFormItem label="账号" prop="account">
-                  <ElInput v-model={ form.value.account } placeholder="请输入员工工号" />
-                </ElFormItem>
                 <ElFormItem label="密码" prop="password">
                   <ElInput v-model={ form.value.password } placeholder="请输入姓名" />
                 </ElFormItem>
                 <ElFormItem label="所属制程" prop="cycle_id">
-                  <ElSelect v-model={ form.value.cycle_id } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择所属制程" onChange={ (value) => cycleSelectChange(value) }>
+                  <ElSelect v-model={ form.value.cycle_id } multiple={false} filterable remote remote-show-suffix clearable placeholder="请选择所属制程">
                     {processCycle.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="生产岗位" prop="production_position">
-                  <ElInput v-model={ form.value.production_position } placeholder="请输入生产岗位" />
+                <ElFormItem label="生产岗位" prop="position">
+                  <ElInput v-model={ form.value.position } placeholder="请输入生产岗位" />
                 </ElFormItem>
                 <ElFormItem label="工资属性" prop="salary_attribute">
-                  <ElInput v-model={ form.value.salary_attribute } placeholder="请输入工资属性" />
+                  <ElSelect v-model={ form.value.salary_attribute } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择工资属性">
+                    {constType.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="备注" prop="remarks">
                   <ElInput v-model={ form.value.remarks } placeholder="请输入备注" />

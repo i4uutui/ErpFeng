@@ -51,7 +51,7 @@ export default defineComponent({
               equipmentMap.set(key, true);
               const cycleData = cycleMap.get(equipment.cycle.id);
               if (cycleData) {
-                cycleData.maxLoad += Number(equipment.equipment_efficiency || 0);
+                cycleData.maxLoad += Number(equipment.efficiency || 0);
               }
             }
           }
@@ -83,6 +83,10 @@ export default defineComponent({
       // 初始化日期数据
       cycleMap.forEach(data => {
         dateList.forEach(date => {
+          if(isSpecialDate(date)){
+            data.dateData[date] = '休';
+            return
+          }
           data.dateData[date] = 0;
         });
       });
@@ -105,18 +109,20 @@ export default defineComponent({
             
             // 仅当目标日期在start_date和end_date之间（包含首尾）时才累加负荷
             if (currentDate.isSameOrAfter(startDate) && currentDate.isSameOrBefore(endDate) && !isSpecialDate(currentDate)) {
-              cycleData.dateData[targetDate] += Number(cycleChild.load);
+              cycleData.dateData[targetDate] = Number(cycleChild.load);
             }
           });
         });
       });
-
       // 格式化结果
-      return {
-        stats: Array.from(cycleMap.values()).map(stat => ({
+      const stats = Array.from(cycleMap.values()).map(stat => {
+        return {
           ...stat,
           maxLoad: stat.maxLoad.toFixed(1) // 保留一位小数
-        })),
+        }
+      })
+      return {
+        stats,
         dates: dateList
       };
     });
@@ -277,8 +283,9 @@ export default defineComponent({
     const columnLength = 15 // 表示前面不需要颜色的列数
     const headerCellStyle = ({ rowIndex, columnIndex, column, row }) => {
       if(!tableData.value.length) return
-      let cycleLength = tableData.value[0].cycleChild.length * 3
-      if(rowIndex == 1 && columnIndex >= 0 && columnIndex < cycleLength || rowIndex == 0 && columnIndex >= columnLength && columnIndex < columnLength + cycleLength){
+      const cycleLength = tableData.value[0].cycleChild.length * 3
+      const start = columnLength + cycleLength;
+      if(rowIndex == 1 && columnIndex >= 0 && columnIndex < cycleLength || rowIndex == 0 && columnIndex >= columnLength && columnIndex < start){
         if(rowIndex == 0){
           return { backgroundColor: getColumnStyle(columnIndex, columnLength, 3) }
         }else{
@@ -288,21 +295,28 @@ export default defineComponent({
       if(rowIndex == 0 && columnIndex == columnLength - 1){
         return { backgroundColor: '#A8EAE4' }
       }
-      if(rowIndex == 0 && columnIndex >= columnLength + cycleLength && columnIndex <= row.length - 1 && columnIndex % 2 == 1 || rowIndex == 1 && Math.floor((columnIndex - 1) / 8) % 2 == 0){
+      if(rowIndex == 0 && columnIndex >= start && Math.floor(columnIndex - start) % 2 == 0){
+        return { backgroundColor: '#fbe1e5' }
+      }
+      if(rowIndex == 1 && Math.floor((columnIndex - cycleLength) / 8) % 2 == 0){
         return { backgroundColor: '#fbe1e5' }
       }
     }
     const cellStyle = ({ columnIndex, rowIndex, column, row }) => {
       if(!tableData.value.length) return
-      let cycleLength = tableData.value[0].cycleChild.length * 3
-      if(columnIndex >= columnLength && columnIndex < columnLength + cycleLength){
+      const cycleLength = tableData.value[0].cycleChild.length * 3
+      const start = columnLength + cycleLength;
+      if(columnIndex >= columnLength && columnIndex < start){
         return { backgroundColor: getColumnStyle(columnIndex, columnLength, 3) }
       }
       if(columnIndex == columnLength - 1){
         return { backgroundColor: '#A8EAE4' }
       }
-      if(columnIndex >= columnLength + cycleLength && Math.floor((columnIndex) / 8) % 2 == 0){
-        return { backgroundColor: '#fbe1e5' }
+      if (columnIndex >= start) {
+        const offset = columnIndex - start; 
+        if (Math.floor(offset / 8) % 2 === 0) {
+          return { backgroundColor: '#fbe1e5' };
+        }
       }
     }
     const loadCellStyle = ({ row, column }) => {
@@ -366,7 +380,9 @@ export default defineComponent({
                       {{
                         default: ({ row }) => {
                           const value = row.dateData[date];
-                          return value === 0 ? '-' : value.toFixed(1);
+                          if(value == '休') return <span style={{ color: 'red' }}>{ value }</span>
+                          if(value == 0) return '-'
+                          return value.toFixed(1)
                         }
                       }}
                     </ElTableColumn>

@@ -85,9 +85,8 @@ const remoteMethod = (query) => {
   // }, 500)
 }
 const changeSelect = (value) => {
-  // const val = option.value.filter(o => o.id == value)[0]
-  // list.value = []
-  // emit('change', val)
+  const row = option.value.find(e => e.id == value)
+  emit('change', row)
 }
 function getNestedProperty(obj, path) {
   const keys = path.split('.');

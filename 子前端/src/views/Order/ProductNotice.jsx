@@ -142,6 +142,9 @@ export default defineComponent({
         delivery_time: '',
       }
     }
+    const noticeChange = (row) => {
+      form.value.delivery_time = row.goods_time
+    }
     // 分页相关
     function pageSizeChange(val) {
       currentPage.value = 1;
@@ -188,7 +191,7 @@ export default defineComponent({
                       <>
                         <ElButton size="small" type="default" v-permission={ 'ProductNotice:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                         <ElButton size="small" type="primary" v-permission={ 'ProductNotice:date' } onClick={ () => handleScheduling(scope.row) }>排产</ElButton>
-                        <ElButton size="small" type="danger" v-permission={ 'ProductNotice:finish' } onClick={ () => handleFinish(scope.row) }>完结</ElButton>
+                        <ElButton size="small" type="danger" v-permission={ 'ProductNotice:finish' } onClick={ () => handleFinish(scope.row) }>结案</ElButton>
                       </>
                     )}
                   </ElTableColumn>
@@ -203,7 +206,7 @@ export default defineComponent({
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
                 <ElFormItem label="客户订单号" prop="sale_id">
-                  <MySelect v-model={ form.value.sale_id } apiUrl="/api/getSaleOrder" query="customer_order" itemValue="customer_order" placeholder="请选择客户订单号" />
+                  <MySelect v-model={ form.value.sale_id } apiUrl="/api/getSaleOrder" query="customer_order" itemValue="customer_order" placeholder="请选择客户订单号" onChange={ (value) => noticeChange(value) } />
                 </ElFormItem>
                 <ElFormItem label="生产订单号" prop="notice">
                   <ElInput v-model={ form.value.notice } placeholder="请输入生产订单号" />

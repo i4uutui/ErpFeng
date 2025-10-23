@@ -29,11 +29,11 @@ const SubEquipmentCode = sequelize.define('SubEquipmentCode', {
     allowNull: false,
     comment: ' 设备名称 '
   },
-  equipment_quantity: {
+  quantity: {
     type: DataTypes.INTEGER(11),
     allowNull: true,
     defaultValue: 2,
-    comment: ' 设备数量 '
+    comment: ' 设备总数量 '
   },
   cycle_id: {
     type: DataTypes.INTEGER(11),
@@ -45,15 +45,15 @@ const SubEquipmentCode = sequelize.define('SubEquipmentCode', {
     allowNull: true,
     comment: ' 工作时长 (小时)'
   },
-  equipment_efficiency: {
+  efficiency: {
     type: DataTypes.STRING(10),
     allowNull: true,
     comment: ' 设备效能 '
   },
-  equipment_status: {
+  available: {
     type: DataTypes.STRING(20),
     allowNull: true,
-    comment: ' 设备状态 '
+    comment: ' 可用设备数量 '
   },
   remarks: {
     type: DataTypes.TEXT,

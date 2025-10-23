@@ -115,6 +115,9 @@ export default defineComponent({
         other_transaction_terms: '',
       }
     }
+    const saleChange = (row) => {
+      form.value.other_transaction_terms = row.customer.other_transaction_terms
+    }
     // 分页相关
     function pageSizeChange(val) {
       currentPage.value = 1;
@@ -172,7 +175,7 @@ export default defineComponent({
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
                 <ElFormItem label="销售订单" prop="sale_id">
-                  <MySelect v-model={ form.value.sale_id } arrValue={ ['customer_order', 'product.drawing'] } apiUrl="/api/getSaleOrder" query="customer_order" itemValue="customer_order" placeholder="请选择销售订单" />
+                  <MySelect v-model={ form.value.sale_id } arrValue={ ['customer_order', 'product.drawing'] } apiUrl="/api/getSaleOrder" query="customer_order" itemValue="customer_order" placeholder="请选择销售订单" onChange={ (value) => saleChange(value) } />
                 </ElFormItem>
                 <ElFormItem label="报价单号" prop="notice">
                   <ElInput v-model={ form.value.notice } placeholder="请输入报价单号" />

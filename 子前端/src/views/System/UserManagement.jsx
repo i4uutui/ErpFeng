@@ -1,4 +1,4 @@
-import { defineComponent, ref, onMounted, reactive } from 'vue'
+import { defineComponent, ref, onMounted, reactive, watch } from 'vue'
 import request from '@/utils/request';
 import router from '@/router';
 import { getItem } from '@/assets/js/storage';
@@ -6,8 +6,12 @@ import { filterMenu } from '@/utils/tool';
 
 export default defineComponent({
   setup(){
+    const cascaderRef = ref(null)
     const formRef = ref(null);
-    const props = reactive({ multiple: true, checkStrictly: true })
+    const props = reactive({
+      multiple: true,
+      // checkStrictly: false,
+    })
     const user = getItem('user')
     const rules = reactive({
       username: [
@@ -109,7 +113,7 @@ export default defineComponent({
     }
     const closeUser = async (row) => {
       form.value = row;
-      const power = JSON.parse(row.power)
+      const power = row.power
       form.value.power = power
       edit.value = row.id;
       const { password, ...newData } = form.value
@@ -145,23 +149,29 @@ export default defineComponent({
         const menuItem = {
           value: route.name, // 菜单权限标识
           label: route.meta.title,
+          // disabled: true,
+          // checked: false,
           children: [] // 存放按钮权限
         };
         if (route.meta.buttons && route.meta.buttons.length) {
           menuItem.children = route.meta.buttons.map(btn => ({
             value: btn.code, // 按钮权限标识
-            label: btn.label // 按钮显示名称
+            label: btn.label, // 按钮显示名称
+            // disabled: true,
+            // checked: false,
           }));
         }
         groupedRoutes[parent].push(menuItem);
       });
       let filtered = Object.fromEntries(
-        Object.entries(filterMenu(groupedRoutes, ['UserManagement', 'ApprovalStep', 'Trajectory'])).filter(([_, routes]) => routes.length > 0)
+        Object.entries(filterMenu(groupedRoutes, ['UserManagement', 'ApprovalStep', 'Trajectory', 'Home'])).filter(([_, routes]) => routes.length > 0)
       );
       options.value = Object.entries(filtered).map(([key, value]) => ({
         value: key,
         label: key,
-        children: value
+        children: value,
+        // disabled: false,
+        // checked: false,
       }));
     }
     // 新增管理员
@@ -188,6 +198,55 @@ export default defineComponent({
       form.value.name = '';
       form.value.power = []; // 清空权限选择
     }
+    const handleChange = (values) => {
+      // console.log(values);
+      // // 初始化勾选状态
+      // findCheckNode(options.value)
+      // const nodeRef = cascaderRef.value.getCheckedNodes()
+      // nodeRef.forEach(e => {
+      //   const value = findNodeByName(options.value, e.value)
+      //   if(value.children && value.children.length){
+      //     value.children.forEach(o => {
+      //       o.disabled = false
+      //     })
+      //   }
+      // })
+      // syncChildrenCheckStatus(options.value)
+      // console.log(nodeRef);
+    }
+    function syncChildrenCheckStatus(nodes) {
+      nodes.forEach(node => {
+        if (node.children && node.children.length > 0) {
+          node.children.forEach(child => {
+            child.checked = node.checked;
+          });
+          syncChildrenCheckStatus(node.children);
+        }
+      });
+    }
+    function findNodeByName(arr, targetName) {
+      for (const node of arr) {
+        if (node.value === targetName) {
+          return node;
+        }
+        if (node.children && node.children.length > 0) {
+          const result = findNodeByName(node.children, targetName);
+          if (result) {
+            return result;
+          }
+        }
+      }
+      return null;
+    }
+    // 初始化勾选状态
+    // const findCheckNode = (arr, disabled = false) => {
+    //   arr.forEach(e => {
+    //     e.disabled = disabled
+    //     if(e.children && e.children.length){
+    //       findCheckNode(e.children, true)
+    //     }
+    //   })
+    // }
     // 分页相关
     function pageSizeChange(val) {
       currentPage.value = 1;
@@ -198,7 +257,6 @@ export default defineComponent({
       currentPage.value = val;
       fetchAdminList();
     }
-
     return() => (
       <>
         <ElCard>
@@ -206,7 +264,7 @@ export default defineComponent({
             header: () => (
               <div class="clearfix">
                 <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-                  新增管理员
+                  新增用户
                 </ElButton>
               </div>
             ),
@@ -236,7 +294,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改管理员' : '新增管理员' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改用户' : '新增用户' } onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } rules={ rules } label-width="80px">
@@ -249,8 +307,46 @@ export default defineComponent({
                 <ElFormItem label="姓名" prop="name">
                   <ElInput v-model={ form.value.name } placeholder="请输入姓名" />
                 </ElFormItem>
-                <ElFormItem label="菜单权限" prop="power">
-                  <ElCascader v-model={ form.value.power } options={ options.value } props={ props } show-all-levels={ false } collapse-tags={ true } max-collapse-tags={ 1 } placeholder="请选择用户权限" />
+                <ElFormItem label="菜单权限" prop="power" class="userCascader">
+                  <ElCascader ref={ cascaderRef } v-model={ form.value.power } options={ options.value } props={ props } showAllLevels={ false } collapseTags={ true } placeholder="请选择用户权限" onChange={ handleChange }>
+                    {{
+                      tag: ({ data }) => {
+                        const processedParents = new Set();
+                        const levelCount = { level1: 0, level2: 0, level3: 0 };
+
+                        function processParent(node) {
+                          if (!node) return;
+                          const uniqueKey = `${node.label}-${node.level}`;
+                          if (!processedParents.has(uniqueKey)) {
+                            processedParents.add(uniqueKey);
+                            if (node.level === 1) levelCount.level1++;
+                            if (node.level === 2) levelCount.level2++;
+                          }
+                          processParent(node.parent);
+                        }
+
+                        // 遍历所有节点
+                        data.forEach(item => {
+                          const currentNode = item.node;
+                          processParent(currentNode.parent);
+                          if (currentNode.level === 3) {
+                            levelCount.level3++;
+                          } else if (currentNode.level === 2) {
+                            const uniqueKey = `${currentNode.label}-${currentNode.level}`;
+                            if (!processedParents.has(uniqueKey)) {
+                              processedParents.add(uniqueKey);
+                              levelCount.level2++;
+                            }
+                          }
+                        });
+                        return <div class="flex">
+                          { levelCount.level1 > 0 ? <ElTag class="mr10">一级菜单 / { levelCount.level1 }</ElTag> : '' }
+                          { levelCount.level2 > 0 ? <ElTag class="mr10">二级菜单 / { levelCount.level2 }</ElTag> : '' }
+                          { levelCount.level3 > 0 ? <ElTag class="mr10">三级菜单 / { levelCount.level3 }</ElTag> : '' }
+                        </div>
+                      }
+                    }}
+                  </ElCascader>
                 </ElFormItem>
                 <ElFormItem label="是否开启" prop="status">
                   <ElSwitch v-model={ form.value.status } active-value={ 1 } inactive-value={ 0 } />

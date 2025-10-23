@@ -83,18 +83,35 @@ router.put('/material_bom', authMiddleware, async (req, res) => {
   const material = await SubMaterialBom.findByPk(id);
   if (!material) return res.json({ message: '材料BOM不存在', code: 401 });
   
-  const updateResult = await SubMaterialBom.update({
+  await SubMaterialBom.update({
     product_id, part_id, archive, company_id,
     user_id: userId
   }, {
     where: { id }
   })
+
+  // 查询当前所有旧子项
+  const oldChildren = await SubMaterialBomChild.findAll({
+    where: { material_bom_id: material.id },
+  });
+  const oldChildIds = oldChildren.map(child => child.id);
   
-  const childrens = children.map(e => ({ material_bom_id: material.id, ...e }))
-  SubMaterialBomChild.bulkCreate(childrens, {
-    updateOnDuplicate: ['material_bom_id', 'material_id', 'number']
-  })
-  
+  if(children && children.length){
+    const newChildIds = children.filter(child => child.id).map(child => child.id);
+    // 计算需要删除的子项ID：旧有但不在新子项中的ID
+    const idsToDelete = oldChildIds.filter(id => !newChildIds.includes(id));
+    // 删除被前端移除的子项
+    if (idsToDelete.length > 0) {
+      await SubMaterialBomChild.destroy({
+        where: { id: idsToDelete },
+      });
+    }
+    // 批量新增/更新保留的子项
+    const childrens = children.map(e => ({ material_bom_id: material.id, ...e }));
+    await SubMaterialBomChild.bulkCreate(childrens, {
+      updateOnDuplicate: ['material_bom_id', 'material_id', 'number'], // 按需调整更新字段
+    });
+  }
   res.json({ message: '修改成功', code: 200 });
 });
 // 添加材料BOM存档
@@ -153,9 +170,9 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
       {
         model: SubProcessBomChild,
         as: 'children',
-        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price'],
+        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'points'],
         include: [
-          { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name', 'section_points'] },
+          { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
           {
             model: SubEquipmentCode,
             as: 'equipment',
@@ -173,9 +190,10 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
     limit: parseInt(pageSize),
     offset
   })
+
   const totalPages = Math.ceil(count / pageSize)
-  
   const fromData = rows.map(item => item.dataValues)
+
   // 返回所需信息
   res.json({ 
     data: formatArrayTime(fromData), 
@@ -225,15 +243,36 @@ router.put('/process_bom', authMiddleware, async (req, res) => {
   const process = await SubProcessBom.findByPk(id);
   if (!process) return res.json({ message: '工艺BOM不存在', code: 401 });
   
-  const updateResult = await SubProcessBom.update({
+  await SubProcessBom.update({
     product_id, part_id, archive, company_id,
     user_id: userId
   }, {
     where: { id }
   })
-  await SubProcessBomChild.bulkCreate(children, {
-    updateOnDuplicate: ['process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price']
-  })
+
+
+  // 查询当前所有旧子项
+  const oldChildren = await SubProcessBomChild.findAll({
+    where: { process_bom_id: process.id },
+  });
+  const oldChildIds = oldChildren.map(child => child.id);
+  
+  if(children && children.length){
+    const newChildIds = children.filter(child => child.id).map(child => child.id);
+    // 计算需要删除的子项ID：旧有但不在新子项中的ID
+    const idsToDelete = oldChildIds.filter(id => !newChildIds.includes(id));
+    // 删除被前端移除的子项
+    if (idsToDelete.length > 0) {
+      await SubProcessBomChild.destroy({
+        where: { id: idsToDelete },
+      });
+    }
+    // 批量新增/更新保留的子项
+    const childrens = children.map(e => ({ process_bom_id: process.id, ...e }));
+    await SubProcessBomChild.bulkCreate(childrens, {
+      updateOnDuplicate: ['process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'points'], // 按需调整更新字段
+    });
+  }
 
   res.json({ message: '修改成功', code: 200 });
 });
@@ -291,7 +330,7 @@ router.post('/cope_bom', authMiddleware, async (req, res) => {
       childModel: SubProcessBomChild,
       mainFields: ['product_id', 'part_id', 'archive'],
       childForeignKey: 'process_bom_id',
-      childFields: ['process_id', 'equipment_id', 'time', 'price']
+      childFields: ['process_id', 'equipment_id', 'time', 'price', 'points']
     }
   };
   const { mainModel, childModel, mainFields, childForeignKey, childFields } = configMap[type];

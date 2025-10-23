@@ -12,6 +12,9 @@ export default defineComponent({
       process_bom_id: [
         { required: true, message: '请选择工艺BOM表', trigger: 'blur' }
       ],
+      process_bom_children_id: [
+        { required: true, message: '请选择工艺工序', trigger: 'blur' }
+      ],
       process_index: [
         { required: true, message: '请选择工序', trigger: 'blur' }
       ],

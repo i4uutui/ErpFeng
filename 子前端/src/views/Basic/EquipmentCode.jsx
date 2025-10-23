@@ -1,7 +1,8 @@
-import { defineComponent, ref, onMounted, reactive } from 'vue'
+import { defineComponent, ref, onMounted, reactive, watch } from 'vue'
+import { reportOperationLog } from '@/utils/log';
+import { PreciseMath } from '@/utils/tool'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
-import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -13,8 +14,8 @@ export default defineComponent({
       equipment_name: [
         { required: true, message: '请输入设备名称', trigger: 'blur' },
       ],
-      equipment_quantity: [
-        { required: true, message: '请输入设备数量', trigger: 'blur' },
+      quantity: [
+        { required: true, message: '请输入设备总数量', trigger: 'blur' },
       ],
       cycle_id: [
         { required: true, message: '请选择制程组', trigger: 'blur' },
@@ -22,22 +23,22 @@ export default defineComponent({
       working_hours: [
         { required: true, message: '请输入工作时长(时)', trigger: 'blur' },
       ],
-      equipment_efficiency: [
+      efficiency: [
         { required: true, message: '请输入设备效能', trigger: 'blur' },
       ],
-      equipment_status: [
-        { required: true, message: '请输入设备状态', trigger: 'blur' },
+      available: [
+        { required: true, message: '请输入可用设备数量', trigger: 'blur' },
       ],
     })
     let dialogVisible = ref(false)
     let form = ref({
       equipment_code: '',
       equipment_name: '',
-      equipment_quantity: '',
+      quantity: '',
       cycle_id: '',
       working_hours: '',
-      equipment_efficiency: '',
-      equipment_status: '',
+      efficiency: '',
+      available: '',
       remarks: '',
     })
     let tableData = ref([])
@@ -49,6 +50,19 @@ export default defineComponent({
     onMounted(() => {
       fetchProductList()
     })
+    watch(() => [form.value.available, form.value.working_hours], ([newAvailable, newWorkingHours]) => {
+      // 转换为数字（处理空字符串或非数字情况）
+      const availableNum = Number(newAvailable) || 0;
+      const hoursNum = Number(newWorkingHours) || 0;
+
+      // 若任一为空或非有效数字，清空效能
+      if (!newAvailable || !newWorkingHours || isNaN(availableNum) || isNaN(hoursNum)) {
+        form.value.efficiency = '';
+      } else {
+        // 两者都有值时，计算乘积并赋值给效能
+        form.value.efficiency = PreciseMath.mul(availableNum, hoursNum);
+      }
+    }, { immediate: true });
 
     // 获取列表
     const fetchProductList = async () => {
@@ -145,11 +159,11 @@ export default defineComponent({
       form.value = {
         equipment_code: '',
         equipment_name: '',
-        equipment_quantity: '',
+        quantity: '',
         cycle_id: '',
         working_hours: '',
-        equipment_efficiency: '',
-        equipment_status: '',
+        efficiency: '',
+        available: '',
         remarks: '',
       }
     }
@@ -181,11 +195,11 @@ export default defineComponent({
                   <ElTableColumn prop="equipment_code" label="设备编码" />
                   <ElTableColumn prop="equipment_name" label="设备名称" />
                   <ElTableColumn prop="cycle.name" label="所属部门" />
-                  <ElTableColumn prop="equipment_quantity" label="设备数量" />
+                  <ElTableColumn prop="quantity" label="设备总数量" />
                   <ElTableColumn prop="working_hours" label="工作时长(时)" />
-                  <ElTableColumn prop="equipment_efficiency" label="设备效能" />
-                  <ElTableColumn prop="equipment_status" label="设备状态" />
-                  <ElTableColumn prop="remarks" label="备注" />
+                  <ElTableColumn prop="available" label="可用设备数量" />
+                  <ElTableColumn prop="efficiency" label="设备效能" />
+                  <ElTableColumn prop="remarks" label="异常设备说明" />
                   <ElTableColumn label="操作" width='140' fixed="right">
                     {(scope) => (
                       <>
@@ -213,20 +227,20 @@ export default defineComponent({
                 <ElFormItem label="制程组" prop="cycle_id">
                   <MySelect v-model={ form.value.cycle_id } apiUrl="/api/getProcessCycle" query="name" itemValue="name" placeholder="请选择制程组" />
                 </ElFormItem>
-                <ElFormItem label="设备数量" prop="equipment_quantity">
-                  <ElInput v-model={ form.value.equipment_quantity } type="number" placeholder="请输入设备数量" />
+                <ElFormItem label="设备总数量" prop="quantity">
+                  <ElInput v-model={ form.value.quantity } type="number" placeholder="请输入设备数量" />
                 </ElFormItem>
                 <ElFormItem label="工作时长(H)" prop="working_hours">
                   <ElInput v-model={ form.value.working_hours } type="number" placeholder="请输入工作时长(H)" />
                 </ElFormItem>
-                <ElFormItem label="设备效能" prop="equipment_efficiency">
-                  <ElInput v-model={ form.value.equipment_efficiency } placeholder="请输入设备效能" />
+                <ElFormItem label="可用设备数量" prop="available">
+                  <ElInput v-model={ form.value.available } placeholder="请输入可用设备数量" />
                 </ElFormItem>
-                <ElFormItem label="设备状态" prop="equipment_status">
-                  <ElInput v-model={ form.value.equipment_status } placeholder="请输入设备状态" />
+                <ElFormItem label="设备效能" prop="efficiency">
+                  <ElInput v-model={ form.value.efficiency } placeholder="请输入设备效能" />
                 </ElFormItem>
-                <ElFormItem label="备注" prop="remarks">
-                  <ElInput v-model={ form.value.remarks } placeholder="请输入备注" />
+                <ElFormItem label="异常设备说明" prop="remarks">
+                  <ElInput v-model={ form.value.remarks } placeholder="请输入异常设备说明" />
                 </ElFormItem>
               </ElForm>
             ),

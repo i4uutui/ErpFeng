@@ -14,4 +14,9 @@
   .el-row{
     margin-bottom: 20px;
   }
+  .homeCardOrder{
+    &>.el-card{
+      width: 100%;
+    }
+  }
 }

@@ -31,47 +31,43 @@ router.get('/user', authMiddleware, async (req, res) => {
   const offset = (page - 1) * pageSize;
   const { company_id, id: userId } = req.user;
   // 查询当前页的数据，排除当前登录用户，只显示其创建的用户
-  try {
-    const { count, rows } = await AdUser.findAndCountAll({
-      where: {
-        is_deleted: 1,
-        parent_id: userId,
-        company_id,
-      },
-      attributes: ['id', 'name', 'parent_id', 'username', 'parent_id', 'status', 'power', 'created_at'],
-      include: [{
-        model: AdOrganize,
-        as: 'organize',
-        where: { is_deleted: 1 },
-        required: false
-      }],
-      order: [['created_at', 'DESC']],
-      limit: parseInt(pageSize),
-      offset
-    })
-    const totalPages = Math.ceil(count / pageSize)
+  const { count, rows } = await AdUser.findAndCountAll({
+    where: {
+      is_deleted: 1,
+      parent_id: userId,
+      company_id,
+    },
+    attributes: ['id', 'name', 'parent_id', 'username', 'parent_id', 'status', 'power', 'created_at'],
+    include: [{
+      model: AdOrganize,
+      as: 'organize',
+      where: { is_deleted: 1 },
+      required: false
+    }],
+    order: [['created_at', 'DESC']],
+    limit: parseInt(pageSize),
+    offset
+  })
+  const totalPages = Math.ceil(count / pageSize)
 
-    const result = rows.map(user => {
-      const data = user.toJSON()
-      const organizeNames = data.organize?.map(pos => pos.label);
-      return {
-        ...data,
-        organizeNames,
-      };
-    })
+  const result = rows.map(user => {
+    const data = user.toJSON()
+    const organizeNames = data.organize?.map(pos => pos.label);
+    return {
+      ...data,
+      organizeNames,
+    };
+  })
 
-    // 返回所需信息
-    res.json({ 
-      data: formatArrayTime(result), 
-      total: count, 
-      totalPages, 
-      currentPage: parseInt(page), 
-      pageSize: parseInt(pageSize),
-      code: 200
-    });
-  } catch (error) {
-    console.log(error);
-  }
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(result), 
+    total: count, 
+    totalPages, 
+    currentPage: parseInt(page), 
+    pageSize: parseInt(pageSize),
+    code: 200
+  });
 });
 
 // 添加用户
@@ -110,7 +106,8 @@ router.post('/user', authMiddleware, async (req, res) => {
   const rows = await AdUser.findAll({
     where: {
       username,
-      company_id
+      company_id,
+      is_deleted: 1
     }
   })
   if(rows.length != 0){
@@ -166,6 +163,7 @@ router.put('/user', authMiddleware, async (req, res) => {
     where: {
       username, 
       company_id,
+      is_deleted: 1,
       id: {
         [Op.ne]: id
       }

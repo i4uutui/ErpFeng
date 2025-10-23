@@ -1,7 +1,8 @@
 import { defineComponent } from 'vue'
 import ToDo from '@/components/home/ToDo'
 import HolidayCalendar from '@/components/home/HolidayCalendar'
-import orderEchart from '@/components/home/orderEchart'
+import OrderTotal from '@/components/home/orderTotal'
+import TurnTotal from '@/components/home/turnTotal'
 import '@/assets/css/home.scss'
 
 export default defineComponent({
@@ -19,11 +20,14 @@ export default defineComponent({
                     </ElCol>
                   </ElRow>
                   <ElRow gutter={ 16 }>
+                    <ElCol md={ 7 } xl={ 8 }>
+                      <OrderTotal />
+                    </ElCol>
                     <ElCol md={ 10 } xl={ 10 }>
                       <HolidayCalendar />
                     </ElCol>
-                    <ElCol md={ 8 } xl={ 8 }>
-                      <orderEchart />
+                    <ElCol md={ 7 } xl={ 8 }>
+                      <TurnTotal />
                     </ElCol>
                   </ElRow>
                 </>

@@ -45,9 +45,9 @@ router.post('/outsourcing_quote', authMiddleware, async (req, res) => {
       {
         model: SubProcessBomChild,
         as: 'processChildren',
-        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'time', 'price'],
+        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'time', 'price', 'points'],
         include: [
-          { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name', 'section_points'] },
+          { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
           { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'equipment_code', 'equipment_name'] }
         ]
       }
@@ -125,13 +125,17 @@ router.post('/add_outsourcing_quote', authMiddleware, async (req, res) => {
   const noticeJson = notice.toJSON()
   const number = noticeJson.sale.order_number
   
-  await SubOutsourcingQuote.create({
-    notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, number, transaction_currency, other_transaction_terms, ment, remarks, company_id,
-    user_id: userId,
-    now_price: price,
-  })
-  
-  res.json({ message: '添加成功', code: 200 });
+  try {
+    await SubOutsourcingQuote.create({
+      notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, number, transaction_currency, other_transaction_terms, ment, remarks, company_id,
+      user_id: userId,
+      now_price: price,
+    })
+    
+    res.json({ message: '添加成功', code: 200 });
+  } catch (error) {
+    console.log(error);
+  }
 })
 /**
  * @swagger
@@ -244,9 +248,9 @@ router.post('/outsourcing_order', authMiddleware, async (req, res) => {
       {
         model: SubProcessBomChild,
         as: 'processChildren',
-        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'time', 'price'],
+        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'time', 'price', 'points'],
         include: [
-          { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name', 'section_points'] },
+          { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
           { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'equipment_code', 'equipment_name'] }
         ]
       }

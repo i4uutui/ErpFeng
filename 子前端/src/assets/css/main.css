@@ -14,10 +14,16 @@
 .cardHeaderFrom.el-form--inline .el-form-item__content{
   width: auto !important;
 }
+.userCascader .el-form-item__content .el-cascader .el-cascader__tags > .el-tag{
+  display: none;
+}
 .cardHeaderFrom.el-form--inline .el-form-item{
   margin-right: 10px;
   margin-bottom: 10px;
 }
 .el-menu--vertical .el-sub-menu .el-menu > .el-menu-item{
   padding-left: 30px !important;
+}
+:root{
+  --el-fill-color-light: #e7e7e7;
 }

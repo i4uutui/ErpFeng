@@ -49,7 +49,7 @@ export default defineComponent({
               equipmentMap.set(key, true);
               const cycleData = cycleMap.get(equipment.cycle.id);
               if (cycleData) {
-                cycleData.maxLoad += Number(equipment.equipment_efficiency || 0);
+                cycleData.maxLoad += Number(equipment.efficiency || 0);
               }
             }
           }

@@ -49,8 +49,8 @@
     <div class="container">
       <div class="login"><img src="./html-login.png" alt=""></div>
       <el-form :model="form" label-width="auto">
-        <el-form-item label="账号：">
-          <el-input v-model="form.account" />
+        <el-form-item label="工号：">
+          <el-input v-model="form.employee_id" />
         </el-form-item>
         <el-form-item label="密码：">
           <el-input v-model="form.password" />
@@ -71,7 +71,7 @@
           api: 'http://api.yuanfangzixun.com.cn',
           // api: 'http://localhost:3000',
           form: {
-            account: "",
+            employee_id: "",
             password: "",
             company_id: ""
           },
@@ -90,7 +90,7 @@
       },
       methods: {
         onSubmit(){
-          if(this.form.account == '' || this.form.password == ''){
+          if(this.form.employee_id == '' || this.form.password == ''){
             return ElMessage.error('账号密码不能为空')
           }
           const that = this

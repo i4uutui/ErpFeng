@@ -302,23 +302,14 @@ router.get('/material_quote', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.post('/material_quote', authMiddleware, async (req, res) => {
-  const { supplier_id, notice_id, material_id, price, delivery, packaging, transaction_currency, other_transaction_terms, remarks } = req.body;
-  
+  const { data } = req.body;
   const { id: userId, company_id } = req.user;
   
-  let product_id = ''
-  const quote = await SubProductNotice.findOne({
-    where: { id: notice_id },
-    raw: true
-  })
-  if(quote){
-    product_id = quote.product_id
-  }else{
-    return res.json({ code: 401, message: '数据出错，请联系管理员' })
-  }
-  const result = await SubMaterialQuote.create({
-    supplier_id, notice_id, material_id, product_id, price, delivery, packaging, transaction_currency, other_transaction_terms, remarks, company_id,
-    user_id: userId
+  if(!data.length) return res.json({ code: 401, message: '暂无数据可存档！' })
+  
+  const updateData = data.map(e => ({ ...e, company_id, user_id: userId }))
+  await SubMaterialQuote.bulkCreate(updateData, {
+    updateOnDuplicate: ['supplier_id', 'notice_id', 'material_id', 'product_id', 'price', 'delivery', 'packaging', 'transaction_currency', 'other_transaction_terms', 'remarks']
   })
 
   res.json({ message: "添加成功", code: 200 });

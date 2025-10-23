@@ -10,30 +10,25 @@ export default defineComponent({
       supplier_id: [
         { required: true, message: '请选择供应商编码', trigger: 'blur' },
       ],
-      // notice_id: [
-      //   { required: true, message: '请选择生产订单号', trigger: 'blur' },
-      // ],
       material_id: [
         { required: true, message: '请选择材料编码', trigger: 'blur' },
       ],
       delivery: [
         { required: true, message: '请输入送货方式', trigger: 'blur' },
       ],
-      packaging: [
-        { required: true, message: '请输入包装要求', trigger: 'blur' },
+      price: [
+        { required: true, message: '请输入采购单价', trigger: 'blur' },
       ],
       transaction_currency: [
         { required: true, message: '请输入交易币别', trigger: 'blur' },
       ],
-      other_transaction_terms: [
-        { required: true, message: '请输入交易条件', trigger: 'blur' },
-      ]
     })
     let dialogVisible = ref(false)
     let form = ref({
       supplier_id: '',
       notice_id: '',
       material_id: '',
+      product_id: '',
       price: '',
       delivery: '',
       packaging: '', 
@@ -45,29 +40,14 @@ export default defineComponent({
     let noticeList = ref([])
     let materialList = ref([])
     let tableData = ref([])
-    let currentPage = ref(1);
-    let pageSize = ref(10);
-    let total = ref(0);
     let edit = ref(0)
 
     onMounted(() => {
-      fetchProductList()
       getSupplierInfo()
       getProductNotice()
       getMaterialCode()
     })
 
-    // 获取列表
-    const fetchProductList = async () => {
-      const res = await request.get('/api/material_quote', {
-        params: {
-          page: currentPage.value,
-          pageSize: pageSize.value
-        },
-      });
-      tableData.value = res.data;
-      total.value = res.total;
-    };
     const getSupplierInfo = async () => {
       const res = await request.get('/api/getSupplierInfo')
       if(res.code == 200){
@@ -86,75 +66,107 @@ export default defineComponent({
         materialList.value = res.data
       }
     }
+    const handleArchive = async () => {
+      if(!tableData.value.length) return ElMessage.error('暂无数据可存档！');
+      ElMessageBox.confirm('是否确认存档', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(async () => {
+        const data = tableData.value.map(e => ({
+          supplier_id: e.supplier_id,
+          notice_id: e.notice_id,
+          material_id: e.material_id,
+          product_id: e.product_id,
+          price: e.price,
+          delivery: e.delivery,
+          packaging: e.packaging, 
+          transaction_currency: e.transaction_currency, 
+          other_transaction_terms: e.other_transaction_terms, 
+          remarks: e.remarks
+        }))
+        const res = await request.post('/api/material_quote', { data });
+        if(res && res.code == 200){
+          ElMessage.success('存档成功');
+          tableData.value = []
+
+          reportOperationLog({
+            operationType: 'keyup',
+            module: '原材料报价',
+            desc: `存档原材料报价`,
+            data: { newData: { data: data } }
+          })
+        }
+      }).catch(() => {})
+    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
         if (valid){
-          if(!edit.value){
-            const res = await request.post('/api/material_quote', form.value);
-            if(res && res.code == 200){
-              ElMessage.success('新增成功');
-              dialogVisible.value = false;
-              fetchProductList();
-              
-              const supplier = supplierList.value.find(o => o.id == form.value.supplier_id)
-              const notice = noticeList.value.find(o => o.id == form.value.notice_id)
-              const material = materialList.value.find(o => o.id == form.value.material_id)
-              reportOperationLog({
-                operationType: 'add',
-                module: '原材料报价',
-                desc: `新增原材料报价，供应商编码：${supplier.supplier_code}，生产订单号：${notice.notice}，材料编码：${material.material_code}`,
-                data: { newData: form.value }
-              })
-            }
-            
+          const data = form.value
+          const supplier = supplierList.value.find(o => o.id == form.value.supplier_id)
+          const notice = noticeList.value.find(o => o.id == form.value.notice_id)
+          const material = materialList.value.find(o => o.id == form.value.material_id)
+          const formData = {
+            supplier: {
+              supplier_code: supplier.supplier_code,
+              supplier_abbreviation: supplier.supplier_abbreviation,
+            },
+            notice: {
+              notice: notice.notice,
+            },
+            material: {
+              material_code: material.material_code,
+              material_name: material.material_name,
+              model: material.model,
+              specification: material.specification,
+              other_features: material.other_features,
+              purchase_unit: material.purchase_unit,
+            },
+            product_id: notice.product_id,
+            supplier_id: data.supplier_id,
+            notice_id: data.notice_id,
+            material_id: data.material_id,
+            price: data.price,
+            delivery: data.delivery,
+            packaging: data.packaging,
+            transaction_currency: data.transaction_currency,
+            other_transaction_terms: data.other_transaction_terms,
+            remarks: data.remarks,
+          }
+          dialogVisible.value = false;
+          if(edit.value >= 0){
+            tableData.value[edit.value] = formData
           }else{
-            // 修改
-            const myForm = {
-              id: edit.value,
-              supplier_id: form.value.supplier_id,
-              notice_id: form.value.notice_id,
-              material_id: form.value.material_id,
-              price: form.value.price,
-              delivery: form.value.delivery,
-              packaging: form.value.packaging, 
-              transaction_currency: form.value.transaction_currency, 
-              other_transaction_terms: form.value.other_transaction_terms, 
-              remarks: form.value.remarks
-            }
-            const res = await request.put('/api/material_quote', myForm);
-            if(res && res.code == 200){
-              ElMessage.success('修改成功');
-              dialogVisible.value = false;
-              fetchProductList();
-              const supplier = supplierList.value.find(o => o.id == myForm.supplier_id)
-              const notice = noticeList.value.find(o => o.id == myForm.notice_id)
-              const material = materialList.value.find(o => o.id == myForm.material_id)
-              reportOperationLog({
-                operationType: 'update',
-                module: '原材料报价',
-                desc: `修改原材料报价，供应商编码：${supplier.supplier_code}，生产订单号：${notice.notice}，材料编码：${material.material_code}`,
-                data: { newData: myForm }
-              })
-            }
+            tableData.value.push(formData)
           }
         }
       })
     }
-    const handleUplate = (row) => {
-      edit.value = row.id;
+    const handleDelete = ({ $index }) => {
+      ElMessageBox.confirm('是否确认删除', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(async () => {
+        tableData.value.splice($index, 1)
+        ElMessage.success('删除成功')
+      }).catch(() => {})
+    }
+    const handleUplate = ({ row, $index }) => {
+      edit.value = $index
       dialogVisible.value = true;
       form.value = { ...row };
     }
     // 新增
     const handleAdd = () => {
-      edit.value = 0;
+      edit.value = -1;
       dialogVisible.value = true;
       resetForm()
     };
     // 取消弹窗
     const handleClose = () => {
-      edit.value = 0;
+      edit.value = -1;
       dialogVisible.value = false;
       resetForm()
     }
@@ -163,6 +175,7 @@ export default defineComponent({
         supplier_id: '',
         notice_id: '',
         material_id: '',
+        product_id: '',
         price: '',
         delivery: '',
         packaging: '', 
@@ -171,15 +184,12 @@ export default defineComponent({
         remarks: ''
       }
     }
-    // 分页相关
-    function pageSizeChange(val) {
-      currentPage.value = 1;
-      pageSize.value = val;
-      fetchProductList()
+    const supplierChange = (row) => {
+      form.value.delivery = row.supply_method
+      form.value.transaction_currency = row.transaction_currency
     }
-    function currentPageChange(val) {
-      currentPage.value = val;
-      fetchProductList();
+    const goArchive = () => {
+      window.open('/#/purchase/material-quote-archive', '_blank')
     }
 
     return() => (
@@ -187,10 +197,21 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="clearfix">
-                <ElButton style="margin-top: -5px" type="primary" v-permission={ 'MaterialQuote:add' } onClick={ handleAdd } >
-                  新增材料报价
-                </ElButton>
+
+              <div class="flex row-between">
+                <div>
+                  <ElButton style="margin-top: -5px" type="primary" v-permission={ 'MaterialQuote:add' } onClick={ handleAdd } >
+                    新增材料报价
+                  </ElButton>
+                  <ElButton style="margin-top: -5px" type="primary" v-permission={ 'MaterialQuote:archive' } onClick={ handleArchive } >
+                    存档
+                  </ElButton>
+                </div>
+                <div>
+                  <ElButton style="margin-top: -5px" type="warning" v-permission={ 'MaterialQuote:newPage' } onClick={ goArchive } >
+                    材料报价库
+                  </ElButton>
+                </div>
               </div>
             ),
             default: () => (
@@ -215,12 +236,12 @@ export default defineComponent({
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" v-permission={ 'MaterialQuote:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope) }>修改</ElButton>
+                        <ElButton size="small" type="danger" onClick={ () => handleDelete(scope) }>删除</ElButton>
                       </>
                     )}
                   </ElTableColumn>
                 </ElTable>
-                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>
             )
           }}
@@ -230,7 +251,7 @@ export default defineComponent({
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
                 <ElFormItem label="供应商编码" prop="supplier_id">
-                  <MySelect v-model={ form.value.supplier_id } apiUrl="/api/getSupplierInfo" query="supplier_code" itemValue="supplier_code" placeholder="请选择供应商编码" />
+                  <MySelect v-model={ form.value.supplier_id } apiUrl="/api/getSupplierInfo" query="supplier_code" itemValue="supplier_code" placeholder="请选择供应商编码" onChange={ (value) => supplierChange(value) } />
                 </ElFormItem>
                 <ElFormItem label="生产订单号" prop="notice_id">
                   <MySelect v-model={ form.value.notice_id } apiUrl="/api/getProductNotice" query="notice" itemValue="notice" placeholder="请选择生产订单号" />

@@ -13,32 +13,12 @@ export default defineComponent({
       process_name: [
         { required: true, message: '请输入工艺名称', trigger: 'blur' },
       ],
-      equipment_used: [
-        { required: true, message: '请输入使用设备', trigger: 'blur' },
-      ],
-      time: [
-        { required: true, message: '请输入单件工时', trigger: 'blur' },
-      ],
-      price: [
-        { required: true, message: '请输入加工单价', trigger: 'blur' },
-      ],
-      section_points: [
-        { required: true, message: '请输入段数点数', trigger: 'blur' },
-      ],
-      total_processing_price: [
-        { required: true, message: '请输入加工总价', trigger: 'blur' },
-      ],
     })
     let dialogVisible = ref(false)
     let form = ref({
       equipment_id: '',
       process_code: '',
       process_name: '',
-      equipment_used: '',
-      time: '',
-      price: '',
-      section_points: '',
-      total_processing_price: '',
       remarks: '',
     })
     let tableData = ref([])
@@ -46,6 +26,10 @@ export default defineComponent({
     let pageSize = ref(10);
     let total = ref(0);
     let edit = ref(0)
+    let search = ref({
+      code: '',
+      name: ''
+    })
 
     onMounted(() => {
       fetchProductList()
@@ -56,7 +40,8 @@ export default defineComponent({
       const res = await request.get('/api/process_code', {
         params: {
           page: currentPage.value,
-          pageSize: pageSize.value
+          pageSize: pageSize.value,
+          ...search.value
         },
       });
       tableData.value = res.data;
@@ -147,11 +132,6 @@ export default defineComponent({
         equipment_id: '',
         process_code: '',
         process_name: '',
-        equipment_used: '',
-        time: '',
-        price: '',
-        section_points: '',
-        total_processing_price: '',
         remarks: '',
       }
     }
@@ -171,10 +151,25 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="clearfix">
-                <ElButton style="margin-top: -5px" type="primary" v-permission={ 'ProcessCode:add' } onClick={ handleAdd } >
-                  新增工艺编码
-                </ElButton>
+              <div class="flex">
+                <ElForm inline={ true } class="cardHeaderFrom">
+                  <ElFormItem v-permission={ 'ProcessCode:add' }>
+                    <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                      新增工艺编码
+                    </ElButton>
+                  </ElFormItem>
+                </ElForm>
+                <ElForm inline={ true } class="cardHeaderFrom">
+                  <ElFormItem label="工艺编码">
+                    <ElInput v-model={ search.value.code } placeholder="请输入工艺编码" />
+                  </ElFormItem>
+                  <ElFormItem label="工艺名称">
+                    <ElInput v-model={ search.value.name } placeholder="请输入工艺名称" />
+                  </ElFormItem>
+                  <ElFormItem>
+                    <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList }>查询</ElButton>
+                  </ElFormItem>
+                </ElForm>
               </div>
             ),
             default: () => (
@@ -182,10 +177,8 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="process_code" label="工艺编码" />
                   <ElTableColumn prop="process_name" label="工艺名称" />
-                  <ElTableColumn prop="time" label="单件工时(秒)" />
-                  <ElTableColumn prop="price" label="加工单价" />
-                  <ElTableColumn prop="section_points" label="段数点数" />
-                  <ElTableColumn prop="total_processing_price" label="加工总价" />
+                  <ElTableColumn prop="equipment.equipment_code" label="设备编码" />
+                  <ElTableColumn prop="equipment.equipment_name" label="设备名称" />
                   <ElTableColumn prop="remarks" label="备注" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
@@ -213,18 +206,6 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="使用设备" prop="equipment_id">
                   <MySelect v-model={ form.value.equipment_id } apiUrl="/api/getEquipmentCode" query="equipment_code" itemValue="equipment_code" placeholder="请选择设备" />
-                </ElFormItem>
-                <ElFormItem label="单件工时(秒)" prop="time">
-                  <ElInput v-model={ form.value.time } type="number" placeholder="请输入单件工时(秒)" />
-                </ElFormItem>
-                <ElFormItem label="加工单价" prop="price">
-                  <ElInput v-model={ form.value.price } type="number" placeholder="请输入加工单价" />
-                </ElFormItem>
-                <ElFormItem label="段数点数" prop="section_points">
-                  <ElInput v-model={ form.value.section_points } type="number" placeholder="请输入段数点数" />
-                </ElFormItem>
-                <ElFormItem label="加工总价" prop="total_processing_price">
-                  <ElInput v-model={ form.value.total_processing_price } type="number" placeholder="请输入加工总价" />
                 </ElFormItem>
                 <ElFormItem label="备注" prop="remarks">
                   <ElInput v-model={ form.value.remarks } placeholder="请输入备注" />

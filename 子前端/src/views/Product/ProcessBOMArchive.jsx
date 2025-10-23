@@ -141,7 +141,7 @@ export default defineComponent({
                         <ElTableColumn prop={`children[${index}].equipment.equipment_name`} label="设备名称" />
                         <ElTableColumn prop={`children[${index}].time`} label="单件工时" />
                         <ElTableColumn prop={`children[${index}].price`} label="加工单价" />
-                        <ElTableColumn prop={`children[${index}].process.section_points`} label="段数点数" />
+                        <ElTableColumn prop={`children[${index}].points`} label="段数点数" />
                         <ElTableColumn prop={`children[${index}].equipment.cycle.name`} label="生产制程" />
                       </ElTableColumn>
                     ))

@@ -66,7 +66,7 @@ const SubCustomerInfo = sequelize.define('SubCustomerInfo', {
     comment: '税务登记号'
   },
   transaction_method: {
-    type: DataTypes.STRING(50),
+    type: DataTypes.INTEGER(5),
     allowNull: true,
     defaultValue: null,
     comment: '交易方式'

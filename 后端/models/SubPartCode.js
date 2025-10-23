@@ -49,16 +49,6 @@ const SubPartCode = sequelize.define('SubPartCode', {
     allowNull: true,
     comment: '单位'
   },
-  unit_price: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: true,
-    comment: '单价'
-  },
-  currency: {
-    type: DataTypes.STRING(10),
-    allowNull: true,
-    comment: '币别'
-  },
   production_requirements: {
     type: DataTypes.TEXT,
     allowNull: true,
