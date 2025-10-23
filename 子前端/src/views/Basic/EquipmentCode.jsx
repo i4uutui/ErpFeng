@@ -28,6 +28,14 @@ export default defineComponent({
       ],
       available: [
         { required: true, message: '请输入可用设备数量', trigger: 'blur' },
+        { type: 'number', message: '请输入数字', trigger: 'blur' }, // 验证是否为数字
+        { trigger: 'blur', validator: (rule, value, callback) => {
+          if(value < 0){
+            return callback(new Error('数字不能小于0'))
+          }else{
+            callback()
+          }
+        } }, // 验证是否 ≥ 0
       ],
     })
     let dialogVisible = ref(false)
@@ -234,7 +242,9 @@ export default defineComponent({
                   <ElInput v-model={ form.value.working_hours } type="number" placeholder="请输入工作时长(H)" />
                 </ElFormItem>
                 <ElFormItem label="可用设备数量" prop="available">
-                  <ElInput v-model={ form.value.available } placeholder="请输入可用设备数量" />
+                  <ElInput v-model={ form.value.available } type="number" placeholder="请输入可用设备数量" onUpdate:modelValue={ (val) => {
+                    form.value.available = val === '' ? null : Number(val)
+                  } } />
                 </ElFormItem>
                 <ElFormItem label="设备效能" prop="efficiency">
                   <ElInput v-model={ form.value.efficiency } placeholder="请输入设备效能" />

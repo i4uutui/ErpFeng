@@ -144,10 +144,10 @@ export default defineComponent({
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="notice" label="报价单号" width="100" />
-                  <ElTableColumn prop="product.product_code" label="产品编码" width="100" />
+                  <ElTableColumn prop="product.product_code" label="产品编码" width="120" />
                   <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" width="120" />
                   <ElTableColumn prop="product.product_name" label="产品名称" width="100" />
-                  <ElTableColumn prop="product.model" label="型号" width="100" />
+                  <ElTableColumn prop="product.model" label="型号" width="120" />
                   <ElTableColumn prop="product.specification" label="规格" width="100" />
                   <ElTableColumn prop="product.other_features" label="其他特性" width="100" />
                   <ElTableColumn prop="sale.customer_order" label="客户订单号" width="120" />
@@ -156,7 +156,7 @@ export default defineComponent({
                   <ElTableColumn prop="product_price" label="产品单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
                   <ElTableColumn prop="other_transaction_terms" label="交易条件" width="120" />
-                  <ElTableColumn prop="created_at" label="创建时间" width="170" />
+                  <ElTableColumn prop="created_at" label="创建时间" width="120" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>

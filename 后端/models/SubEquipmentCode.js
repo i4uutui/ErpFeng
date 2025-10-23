@@ -46,12 +46,12 @@ const SubEquipmentCode = sequelize.define('SubEquipmentCode', {
     comment: ' 工作时长 (小时)'
   },
   efficiency: {
-    type: DataTypes.STRING(10),
+    type: DataTypes.INTEGER(10),
     allowNull: true,
     comment: ' 设备效能 '
   },
   available: {
-    type: DataTypes.STRING(20),
+    type: DataTypes.INTEGER(20),
     allowNull: true,
     comment: ' 可用设备数量 '
   },

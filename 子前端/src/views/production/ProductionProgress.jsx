@@ -393,7 +393,7 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%", height: '400px' }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle } class="production">
-                  <ElTableColumn label="生产订单号" width="100">
+                  <ElTableColumn label="生产订单号" width="120">
                     { ({row}) => <div class="myCell">{row.notice_number}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="客户名称" width="120">
@@ -405,7 +405,7 @@ export default defineComponent({
                   <ElTableColumn label="接单日期" width="110">
                     { ({row}) => <div class="myCell">{row.rece_time}</div> }
                   </ElTableColumn>
-                  <ElTableColumn label="产品编码" width="100">
+                  <ElTableColumn label="产品编码" width="120">
                     { ({row}) => <div class="myCell">{row.product_code}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="产品名称" width="100">

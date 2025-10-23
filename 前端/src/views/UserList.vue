@@ -16,6 +16,7 @@
       <el-table :data="adminList" stripe style="width: 100%">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="username" label="用户名" />
+        <el-table-column prop="name" label="姓名" />
         <el-table-column prop="company.name" label="公司名" />
         <el-table-column label="是否开启">
           <template #default="scope">
@@ -56,6 +57,9 @@
         <el-form-item label="密码" prop="password">
           <el-input v-model="form.password" type="password" />
         </el-form-item>
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="form.name" />
+        </el-form-item>
         <el-form-item label="是否开启" prop="status">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0" />
         </el-form-item>
@@ -81,6 +85,7 @@ const formRef = ref(null);
 const form = reactive({
   username: '',
   password: '',
+  name: '',
   company_id: '',
   status: 0
 });
@@ -121,6 +126,7 @@ const handleUplate = async (admin) => {
   edit.value = admin.id;
   dialogVisible.value = true;
   form.username = admin.username;
+  form.name = admin.name
   form.password = '';
   form.company_id = admin.company_id;
   form.status = admin.status;
@@ -130,6 +136,7 @@ const handleAdd = () => {
   edit.value = 0;
   dialogVisible.value = true;
   form.username = '';
+  form.name = '';
   form.password = '';
   form.company_id = '';
   form.status = 0;
@@ -154,6 +161,7 @@ const handleSubmit = async () => {
         id: edit.value,
         username: form.username,
         password: form.password,
+        name: form.name,
         company_id: form.company_id,
         status: form.status
       }
