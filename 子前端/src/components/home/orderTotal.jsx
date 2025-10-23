@@ -82,7 +82,7 @@ export default defineComponent({
               <div class="flex" style={{ width: '100%', justifyContent: 'space-between' }}>
                 <div>订单存量：</div>
                 <div>
-                  <span class="f26" style={{ color: '#409eff' }}>0</span>
+                  <span class="f26" style={{ color: '#409eff' }}>{ data.value.orderNumber }</span>
                   <span>PCS</span>
                 </div>
               </div>

@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { Op, SubDateInfo, SubApprovalUser, SubProductNotice } = require('../models')
+const { Op, SubDateInfo, SubApprovalUser, SubProductNotice, SubProductionProgress, SubSaleOrder, SubWarehouseApply } = require('../models')
 const authMiddleware = require('../middleware/auth');
+const { PreciseMath } = require('../middleware/tool');
 
 /**
  * @swagger
@@ -108,10 +109,12 @@ router.get('/order_total', authMiddleware, async (req, res) => {
         company_id,
         is_notice: 0, // 已排产
         is_deleted: 1, // 未删除
-      }
+      },
+      attributes: ['id', 'is_finish']
     })
-    let onlineOrder = 0;
-    let finishOrder = 0;
+    let onlineOrder = 0
+    let finishOrder = 0
+    let orderNumber = 0
     result.forEach(e => {
       const item = e.toJSON()
       if (item.is_finish === 1) {
@@ -120,8 +123,40 @@ router.get('/order_total', authMiddleware, async (req, res) => {
         finishOrder++;
       }
     })
+    const progress = await SubProductionProgress.findAll({
+      where: {
+        is_finish: 1,
+        company_id
+      },
+      attributes: ['id', 'order_number', 'is_finish', 'order_number'],
+      include: [
+        {
+          model: SubProductNotice,
+          as: 'notice',
+          attributes: ['id', 'sale_id'],
+          include: [
+            { model: SubSaleOrder, as: 'sale', attributes: ['id'] }
+          ]
+        }
+      ]
+    })
+    const sumOrder = progress.reduce((sum, item) => PreciseMath.add(sum, Number(item.order_number)), 0);
+    const resultProgress = progress.map(e => {
+      const item = e.toJSON()
+      return item.notice.sale.id
+    })
+    const apply = await SubWarehouseApply.findAll({
+      where: {
+        sale_id: resultProgress,
+        company_id,
+        type: 14
+      },
+      attributes: ['id', 'quantity']
+    })
+    const outOrder = apply.reduce((sum, item) => PreciseMath.add(sum, Number(item.quantity)), 0)
+    orderNumber = PreciseMath.sub(sumOrder, outOrder)
 
-    res.json({ code: 200, data: { onlineOrder, finishOrder } })
+    res.json({ code: 200, data: { onlineOrder, finishOrder, orderNumber } })
   } catch (error) {
     console.log(error);
   }

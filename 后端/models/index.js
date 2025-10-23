@@ -60,6 +60,7 @@ SubProductQuotation.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 
 SubProductQuotation.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 
 SubProductNotice.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
+SubSaleOrder.hasOne(SubProductNotice, { foreignKey: 'sale_id', as: 'notice' })
 SubProductNotice.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubProductNotice.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 
@@ -101,6 +102,7 @@ SubProductionProgress.hasMany(SubProcessCycleChild, { foreignKey: 'progress_id',
 SubProcessCycle.hasMany(SubProcessCycleChild, { foreignKey: 'cycle_id', as: 'cycleChild' })
 SubProcessCycleChild.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
 SubProcessCycleChild.belongsTo(SubProductionProgress, { foreignKey: 'progress_id', as: 'progress' })
+SubProductionProgress.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
 
 SubWarehouseApply.hasMany(SubApprovalUser, { foreignKey: 'source_id', as: 'approval' })
 SubMaterialMent.hasMany(SubApprovalUser, { foreignKey: 'source_id', as: 'approval' })

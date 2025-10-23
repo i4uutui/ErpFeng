@@ -152,8 +152,10 @@ export default defineComponent({
     const getHouseList = async () => {
       const res = await request.get('/api/warehouse_cycle', { params: { ware_id: 3 } })
       houseList.value = res.data
-      form.value.house_id = res.data[0].id
-      form.value.house_name = res.data[0].name
+      if(res.data.length){
+        form.value.house_id = res.data[0].id
+        form.value.house_name = res.data[0].name
+      }
     }
     // 获取销售订单列表
     const getSaleOrder = async () => {
