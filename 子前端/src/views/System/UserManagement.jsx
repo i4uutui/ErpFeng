@@ -68,6 +68,7 @@ export default defineComponent({
             const res = await request.post('/api/user', formValue);
             if(res && res.code == 200){
               ElMessage.success('新增成功');
+              dialogVisible.value = false;
             }
             
           }else{
@@ -86,10 +87,9 @@ export default defineComponent({
             const res = await request.put('/api/user', myForm);
             if(res && res.code == 200){
               ElMessage.success('修改成功');
+              dialogVisible.value = false;
             }
           }
-          
-          dialogVisible.value = false;
           fetchAdminList();
         }
       })
@@ -142,6 +142,8 @@ export default defineComponent({
       const { children } = router.options.routes.find(route => route.name === 'Layout');
       const groupedRoutes = {};
       children.forEach(route => {
+        if (route.name === 'Home') return;
+        
         const { parent } = route.meta;
         if (!groupedRoutes[parent]) {
           groupedRoutes[parent] = [];
@@ -164,7 +166,7 @@ export default defineComponent({
         groupedRoutes[parent].push(menuItem);
       });
       let filtered = Object.fromEntries(
-        Object.entries(filterMenu(groupedRoutes, ['UserManagement', 'ApprovalStep', 'Trajectory', 'Home'])).filter(([_, routes]) => routes.length > 0)
+        Object.entries(filterMenu(groupedRoutes, ['ApprovalStep', 'Trajectory', 'Home'])).filter(([_, routes]) => routes.length > 0)
       );
       options.value = Object.entries(filtered).map(([key, value]) => ({
         value: key,
@@ -263,7 +265,7 @@ export default defineComponent({
           {{
             header: () => (
               <div class="clearfix">
-                <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
+                <ElButton style="margin-top: -5px" type="primary" v-permission={ 'user:add' } onClick={ handleAdd } >
                   新增用户
                 </ElButton>
               </div>
@@ -283,8 +285,8 @@ export default defineComponent({
                   <ElTableColumn label="操作">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                        <ElButton size="small" type="danger" onClick={ () => handleDelete(scope.row) }>删除</ElButton>
+                        <ElButton size="small" type="default" v-permission={ 'user:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="danger" v-permission={ 'user:delete' } onClick={ () => handleDelete(scope.row) }>删除</ElButton>
                       </>
                     )}
                   </ElTableColumn>

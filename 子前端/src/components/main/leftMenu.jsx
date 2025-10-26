@@ -46,7 +46,20 @@ export default defineComponent({
     onMounted(() => {
       const { children } = router.options.routes.find(route => route.name === 'Layout');
       const groupedRoutes = {};
+
+      // 单独处理首页路由，确保其始终被包含
+      const homeRoute = children.find(route => route.name === 'Home');
+      if (homeRoute) {
+        const { parent } = homeRoute.meta;
+        if (!groupedRoutes[parent]) {
+          groupedRoutes[parent] = [];
+        }
+        groupedRoutes[parent].push(homeRoute);
+      }
+
       children.forEach(route => {
+        if (route.name === 'Home') return; // 跳过首页，已单独处理
+        
         const { parent } = route.meta;
         if (!groupedRoutes[parent]) {
           groupedRoutes[parent] = [];

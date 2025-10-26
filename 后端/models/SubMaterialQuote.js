@@ -29,6 +29,11 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
     allowNull: false,
     comment: ' 生产通知单 ID'
   },
+  material_bom_id: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+    comment: '材料BOM ID'
+  },
   product_id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
@@ -46,7 +51,7 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
   },
   delivery: {
     type: DataTypes.STRING(100),
-    allowNull: true,
+    allowNull: false,
     comment: ' 送货方式 '
   },
   packaging: {

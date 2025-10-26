@@ -24,7 +24,7 @@ const SubMaterialBomChild = sequelize.define('SubMaterialBomChild', {
     allowNull: true,
     defaultValue: null,
     comment: ' 数量'
-  },
+  }
 }, {
   sequelize,
   modelName: 'sub_material_bom_child',

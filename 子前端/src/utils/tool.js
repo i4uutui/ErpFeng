@@ -182,12 +182,12 @@ const PreciseMath = {
  */
 function generateNextCode(lastCode) {
   const prefix = lastCode.substring(0, 2);
-  const companyId = lastCode.substring(2, 5);
-  const codeYearMonth = lastCode.substring(5, 11);
-  const numberStr = lastCode.substring(11);
+  const companyId = lastCode.substring(2, 4);
+  const codeYearMonth = lastCode.substring(4, 8);
+  const numberStr = lastCode.substring(8);
   
   const lastNumber = parseInt(numberStr, 10);
-  const currentYearMonth = dayjs().format('YYYYMM');
+  const currentYearMonth = dayjs().format('YYMM');
   
   let nextNumber;
   if (currentYearMonth === codeYearMonth) {
@@ -197,7 +197,7 @@ function generateNextCode(lastCode) {
       // 不同月份，编号从1开始
       nextNumber = 1;
   }
-  const formattedNumber = String(nextNumber).padStart(4, '0');
+  const formattedNumber = String(nextNumber).padStart(3, '0');
   
   // 组合成新的完整编号
   return `${prefix}${companyId}${currentYearMonth}${formattedNumber}`;
@@ -213,9 +213,9 @@ const getNoLast = async (printType) => {
     useStore().setPrintNo(generateNextCode(data.no))
   }else{
     const idStr = String(getItem('company').id)
-    const paddedId = idStr.padStart(3, '0')
-    const yearMonth = dayjs().format('YYYYMM');
-    const no = props.printType + paddedId + yearMonth + '0001'
+    const paddedId = idStr.padStart(2, '0')
+    const yearMonth = dayjs().format('YYMM');
+    const no = props.printType + paddedId + yearMonth + '001'
     useStore().setPrintNo(no)
   }
 }

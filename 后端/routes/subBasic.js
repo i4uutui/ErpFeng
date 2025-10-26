@@ -22,12 +22,12 @@ router.get('/products_code', authMiddleware, async (req, res) => {
       company_id,
       ...whereObj
     },
-    order: [['created_at', 'DESC']],
+    order: [['product_code', 'ASC']],
     limit: parseInt(pageSize),
     offset
   })
   const totalPages = Math.ceil(count / pageSize);
-  row = rows.map(e => e.toJSON())
+  const row = rows.map(e => e.toJSON())
   
   // 返回所需信息
   res.json({ 
@@ -123,13 +123,13 @@ router.get('/part_code', authMiddleware, async (req, res) => {
       company_id,
       ...whereObj
     },
-    order: [['created_at', 'DESC']],
+    order: [['part_code', 'ASC']],
     limit: parseInt(pageSize),
     offset
   })
 
   const totalPages = Math.ceil(count / pageSize);
-  row = rows.map(e => e.toJSON())
+  const row = rows.map(e => e.toJSON())
   
   // 返回所需信息
   res.json({ 
@@ -215,13 +215,13 @@ router.get('/material_code', authMiddleware, async (req, res) => {
       company_id,
       ...whereObj
     },
-    order: [['created_at', 'DESC']],
+    order: [['material_code', 'ASC']],
     limit: parseInt(pageSize),
     offset
   })
   
   const totalPages = Math.ceil(count / pageSize);
-  row = rows.map(e => e.toJSON())
+  const row = rows.map(e => e.toJSON())
   
   // 返回所需信息
   res.json({ 
@@ -313,7 +313,7 @@ router.get('/process_code', authMiddleware, async (req, res) => {
       ...whereObj
     },
     include: [{ model: SubEquipmentCode, as: 'equipment' }],
-    order: [['created_at', 'DESC']],
+    order: [['process_code', 'ASC']],
     limit: parseInt(pageSize),
     offset
   })
@@ -414,7 +414,7 @@ router.get('/equipment_code', authMiddleware, async (req, res) => {
     include: [
       { model: SubProcessCycle, as: 'cycle' }
     ],
-    order: [['created_at', 'DESC']],
+    order: [['equipment_code', 'ASC']],
     limit: parseInt(pageSize),
     offset
   })

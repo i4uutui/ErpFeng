@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, SubOutsourcingOrder, SubMaterialMent, Op, SubNoEncoding } = require('../models');
+const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, SubOutsourcingOrder, SubMaterialMent, Op, SubNoEncoding, SubMaterialBom, SubMaterialBomChild, SubMaterialQuote } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -104,11 +104,12 @@ router.get('/getCustomerInfo', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.get('/getProductsCode', authMiddleware, async (req, res) => {
-  const { product_code } = req.query;
+  const { product_code, id } = req.query;
   const { company_id } = req.user;
   
   let productWhere = {}
   if(product_code) productWhere.product_code = { [Op.like]: `%${product_code}%` }
+  if(id) productWhere.id = id
   const config = {
     where: { is_deleted: 1, company_id, ...productWhere },
     order: [['created_at', 'DESC']],
@@ -158,11 +159,20 @@ router.get('/getPartCode', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.get('/getMaterialCode', authMiddleware, async (req, res) => {
-  const { material_code } = req.query;
+  const { material_code, id } = req.query;
+  const idsArray = req.query['ids[]'];
   const { company_id } = req.user;
-  
+
   let materialWhere = {}
-  if(material_code) productWhere.material_code = { [Op.like]: `%${material_code}%` }
+  if(material_code) materialWhere.material_code = { [Op.like]: `%${material_code}%` }
+  if(id) materialWhere.id = id
+  if(idsArray){
+    const validIds = Array.isArray(idsArray) ? idsArray.filter(id => id !== '' && id !== undefined) : [];
+    if (validIds.length > 0) {
+      materialWhere.id = { [Op.in]: validIds };
+    }
+  }
+  
   const config = {
     where: { is_deleted: 1, company_id, ...materialWhere },
     order: [['created_at', 'DESC']],
@@ -241,12 +251,13 @@ router.get('/getEquipmentCode', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.get('/getSupplierInfo', authMiddleware, async (req, res) => {
-  const { supplier_code } = req.query;
+  const { supplier_code, id } = req.query;
   
   const { company_id } = req.user;
   
   let supplierWhere = {}
   if(supplier_code) supplierWhere.supplier_code = { [Op.like]: `%${supplier_code}%` }
+  if(id) supplierWhere.id = id
   const config = {
     where: { is_deleted: 1, company_id, ...supplierWhere },
     order: [['created_at', 'DESC']],
@@ -270,12 +281,13 @@ router.get('/getSupplierInfo', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.get('/getProductNotice', authMiddleware, async (req, res) => {
-  const { notice } = req.query;
+  const { notice, id } = req.query;
   
   const { company_id } = req.user;
   
   let noticeWhere = {}
   if(notice) noticeWhere.notice = { [Op.like]: `%${notice}%` }
+  if(id) noticeWhere.id = id
   const config = {
     where: { is_deleted: 1, company_id, ...noticeWhere },
     order: [['created_at', 'DESC']],
@@ -536,5 +548,100 @@ router.get('/getNoEncoding', authMiddleware, async (req, res) => {
     code: 200 
   });
 });
+/**
+ * @swagger
+ * /api/getMaterialBom:
+ *   get:
+ *     summary: 获取材料BOM列表
+ *     tags:
+ *       - 常用列表(GetList)
+ */
+router.get('/getMaterialBom', authMiddleware, async (req, res) => {
+  const { product_id } = req.query;
+  const { company_id } = req.user;
+
+  const where = {
+    company_id,
+    archive: 0,
+    is_deleted: 1,
+  }
+  if(product_id) where.product_id = product_id
+  const rows = await SubMaterialBom.findAll({
+    where,
+    attributes: ['id', 'product_id', 'part_id'],
+    include: [
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name'] },
+      { model: SubPartCode, as: 'part', attributes: ['id', 'part_code', 'part_name'] },
+    ]
+  })
+  const result = rows.map(e => {
+    const item = e.toJSON()
+    item.name = `${item.product.product_code} - ${item.part.part_code}`
+    return item
+  })
+  const data = result.map(item => {
+    const { part, product, ...newData } = item
+    return newData
+  })
+  res.json({ code: 200, data })
+})
+/**
+ * @swagger
+ * /api/getMaterialBomChildren:
+ *   get:
+ *     summary: 获取材料BOM子数据
+ *     tags:
+ *       - 常用列表(GetList)
+ */
+router.get('/getMaterialBomChildren', authMiddleware, async (req, res) => {
+  const { id } = req.query
+
+  const rows = await SubMaterialBomChild.findAll({
+    where: {
+      material_bom_id: id
+    },
+    attributes: ['id', 'material_bom_id', 'material_id']
+  })
+  const materialIds = rows.map(e => e.material_id)
+  const result = await SubMaterialCode.findAll({
+    where: {
+      id: materialIds
+    },
+    attributes: ['id', 'material_code', 'material_name', 'model', 'specification', 'other_features']
+  })
+  const data = result.map(e => e.toJSON())
+  
+  res.json({ code: 200, data })
+})
+/**
+ * @swagger
+ * /api/getMaterialBomChildren:
+ *   get:
+ *     summary: 获取报价单列表
+ *     tags:
+ *       - 常用列表(GetList)
+ */
+router.get('/getMaterialQuote', authMiddleware, async (req, res) => {
+  const { company_id } = req.user;
+
+  const rows = await SubMaterialQuote.findAll({
+    where: {
+      company_id,
+    },
+    attributes: ['id', 'supplier_id', 'notice_id', 'material_bom_id', 'product_id', 'material_id', 'price', 'delivery', 'packaging', 'transaction_currency', 'other_transaction_terms', 'remarks'],
+    include: [
+      { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_code', 'supplier_abbreviation'] },
+      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice'] },
+      { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name'] }
+    ]
+  })
+  const data = rows.map(e => {
+    const item = e.toJSON()
+    item.name = `${item.supplier.supplier_code} - ${item.notice_id == 0 ? '非管控材料' : item.notice.notice} - ${item.material.material_code}`
+    return item
+  })
+
+  res.json({ code: 200, data })
+})
 
 module.exports = router;  

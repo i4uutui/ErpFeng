@@ -43,7 +43,9 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width="100" />
                   <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="100" />
-                  <ElTableColumn prop="notice.notice" label="生产订单号" width="100" />
+                  <ElTableColumn label="生产订单号" width="100">
+                    {({row}) => row.notice_id == 0 ? '非管控材料' : row.notice.notice}
+                  </ElTableColumn>
                   <ElTableColumn prop="material.material_code" label="材料编码" width="100" />
                   <ElTableColumn prop="material.material_name" label="材料名称" width="100" />
                   <ElTableColumn prop="material.model" label="型号" width="100" />

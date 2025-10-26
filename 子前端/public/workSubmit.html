@@ -238,7 +238,7 @@
           }
           if(data.code == 402){
             localStorage.clear()
-            const loginUrl = `${window.location.origin}/html-login.html?id=${data.id}&company_id=${data.company_id}`
+            const loginUrl = `${window.location.origin}/waiteLogin.html?id=${data.id}&company_id=${data.company_id}`
             window.location.replace(loginUrl)
           }
         },
@@ -270,7 +270,7 @@
 
         const token = localStorage.getItem('token')
         if(!token){
-          const loginUrl = `${window.location.origin}/html-login.html?id=${data.id}&company_id=${data.company_id}`
+          const loginUrl = `${window.location.origin}/waiteLogin.html?id=${data.id}&company_id=${data.company_id}`
           window.location.replace(loginUrl)
           return
         }

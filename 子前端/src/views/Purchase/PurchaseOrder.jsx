@@ -1,4 +1,4 @@
-import { defineComponent, onMounted, reactive, ref, computed } from 'vue'
+import { defineComponent, onMounted, reactive, ref, computed, watch } from 'vue'
 import { useStore } from '@/stores';
 import { getRandomString, getNoLast } from '@/utils/tool'
 import { reportOperationLog } from '@/utils/log';
@@ -30,6 +30,7 @@ export default defineComponent({
     const approval = getItem('approval').filter(e => e.type == 'material_warehouse')
     let dialogVisible = ref(false)
     let form = ref({
+      quote_id: '',
       notice_id: '',
       notice: '',
       supplier_id: '',
@@ -51,7 +52,7 @@ export default defineComponent({
     })
     let tableData = ref([])
     let allSelect = ref([])
-    let edit = ref(0)
+    let edit = ref(-1)
     let notice_number = ref('')
     let supplier_code = ref('')
     let product_code = ref('')
@@ -62,6 +63,7 @@ export default defineComponent({
     let proList = ref([]) // 产品编码列表
     let materialList = ref([]) // 材料编码列表
     let productNotice = ref([]) // 获取生产订单通知单列表
+    let materialQuote = ref([]) // 报价单列表
     // 用来打印用的
     let printers = ref([]) //打印机列表
     let printDataIds = ref([]) // 需要打印的数据的id
@@ -78,17 +80,34 @@ export default defineComponent({
     onMounted(() => {
       nowDate.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
       fetchProductList()
-      getProductsList() // 产品编码列表
-      getMaterialCode() // 材料编码列表
-      getSupplierInfo() // 供应商编码列表
-      getProductNotice() // 获取生产订单通知单列表
+      // getProductsList() // 产品编码列表
+      // getMaterialCode() // 材料编码列表
+      // getSupplierInfo() // 供应商编码列表
+      // getProductNotice() // 获取生产订单通知单列表
+      getMaterialQuote() // 获取报价单列表
 
       getPrinters()
+    })
+    watch(() => form.value.quote_id, async (newValue) => {
+      if(newValue && edit.value != -1){
+        const row = materialQuote.value.find(o => o.id == value)
+        getProductsList(row.product_id)
+        getMaterialCode(row.material_id)
+        getSupplierInfo(row.supplier_id)
+        getProductNotice(row.notice_id)
+      }
     })
     
     const getPrinters = async () => {
       const res = await request.get('/api/printers')
       printers.value = res.data
+    }
+    // 获取报价单列表
+    const getMaterialQuote = async () => {
+      const res = await request.get('/api/getMaterialQuote')
+      if(res.code == 200){
+        materialQuote.value = res.data
+      }
     }
     // 获取列表
     const fetchProductList = async () => {
@@ -123,27 +142,50 @@ export default defineComponent({
         return map;
       }, new Map()).values())
     }
-    const getProductsList = async () => {
-      const res = await request.get('/api/getProductsCode')
-      proList.value = res.data
+    const getProductsList = async (id) => {
+      if(form.value.notice_id > 0){
+        const res = await request.get('/api/getProductsCode', { params: { id } })
+        proList.value = res.data
+
+        form.value.product_code = res.data[0].product_code
+        form.value.product_name = res.data[0].product_name
+      }
     }
-    const getMaterialCode = async () => {
-      const res = await request.get(`/api/getMaterialCode`)
-      materialList.value = res.data
+    const getMaterialCode = async (id) => {
+      const res = await request.get(`/api/getMaterialCode`, { params: { id } })
+      const data = res.data
+      materialList.value = data
+      form.value.model_spec = `${data[0].model}/${data[0].specification}`
+      form.value.other_features = data[0].other_features
+      form.value.unit = data[0].usage_unit
+
+      form.value.material_code = data[0].material_code
+      form.value.material_name = data[0].material_name
     }
-    const getSupplierInfo = async () => {
-      const res = await request.get('/api/getSupplierInfo')
-      supplierInfo.value = res.data
+    const getSupplierInfo = async (id) => {
+      const res = await request.get('/api/getSupplierInfo', { params: { id } })
+      const data = res.data
+      supplierInfo.value = data
+      form.value.supplier_code = data[0].supplier_code
+      form.value.supplier_abbreviation = data[0].supplier_abbreviation
     }
-    const getProductNotice = async () => {
-      const res = await request.get('/api/getProductNotice')
-      productNotice.value = res.data
+    const getProductNotice = async (id) => {
+      const res = await request.get('/api/getProductNotice', { params: { id } })
+      const data = { id: 0, notice: '非管控材料' }
+      productNotice.value = [data, ...res.data]
+
+      form.value.notice = res.data.length ? res.data[0].notice : '非管控材料'
+      if(id > 0){
+        form.value.order_number = res.data[0].sale.order_number
+        form.value.number = res.data[0].sale.order_number
+        form.value.delivery_time = res.data[0].sale.delivery_time
+      }
     }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
         if (valid){
-          if(!edit.value){
+          if(edit.value == -1){
             const obj = JSON.parse(JSON.stringify(form.value))
             obj.id = getRandomString() // 临时ID
             tableData.value = [obj, ...tableData.value]
@@ -222,6 +264,7 @@ export default defineComponent({
     }
     const getFormData = (e) => {
       const obj = {
+        quote_id: e.quote_id,
         notice_id: e.notice_id,
         notice: e.notice,
         supplier_id: e.supplier_id,
@@ -327,18 +370,19 @@ export default defineComponent({
     }
     // 新增委外加工
     const addOutSourcing = () => {
-      edit.value = 0;
+      edit.value = -1;
       dialogVisible.value = true;
       resetForm()
     }
     // 取消弹窗
     const handleClose = () => {
-      edit.value = 0;
+      edit.value = -1;
       dialogVisible.value = false;
       resetForm()
     }
     const resetForm = () => {
       form.value = {
+        quote_id: '',
         notice_id: '',
         notice: '',
         supplier_id: '',
@@ -391,6 +435,18 @@ export default defineComponent({
       if(row.status == 0){
         return { color: 'red' }
       }
+    }
+    const quoteChange = (value) => {
+      const row = materialQuote.value.find(o => o.id == value)
+      form.value.notice_id = row.notice_id
+      form.value.product_id = row.product_id
+      form.value.material_id = row.material_id
+      form.value.supplier_id = row.supplier_id
+      getProductsList(row.product_id)
+      getMaterialCode(row.material_id)
+      getSupplierInfo(row.supplier_id)
+      getProductNotice(row.notice_id)
+      form.value.price = row.price
     }
     const onPrint = async () => {
       const list = allSelect.value.length ? allSelect.value : tableData.value
@@ -486,8 +542,8 @@ export default defineComponent({
                   <ElTableColumn prop="other_features" label="其它特性" width='100' />
                   <ElTableColumn prop="unit" label="单位" width='100' />
                   <ElTableColumn prop="price" label="单价" width='100' />
-                  <ElTableColumn prop="order_number" label="预计数量" width='100' />
-                  <ElTableColumn prop="number" label="实际数量" width='100' />
+                  {/* <ElTableColumn prop="order_number" label="预计数量" width='100' /> */}
+                  <ElTableColumn prop="number" label="数量" width='100' />
                   <ElTableColumn prop="delivery_time" label="交货时间" width='110' />
                   <ElTableColumn prop="apply_name" label="申请人" width="90" />
                   <ElTableColumn prop="apply_time" label="申请时间" width="110" />
@@ -594,9 +650,9 @@ export default defineComponent({
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
-                <ElFormItem label="供应商编码" prop="supplier_id">
-                  <ElSelect v-model={ form.value.supplier_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择供应商编码" onChange={ (row) => supplierChange(row) }>
-                    {supplierInfo.value.map((e, index) => <ElOption value={ e.id } label={ e.supplier_code } key={ index } />)}
+                <ElFormItem label="报价单" prop="quote_id">
+                  <ElSelect v-model={ form.value.quote_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择报价单" onChange={ (value) => quoteChange(value) }>
+                    {materialQuote.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="生产订单" prop="notice_id">
@@ -618,6 +674,11 @@ export default defineComponent({
                     })}
                   </ElSelect>
                 </ElFormItem>
+                <ElFormItem label="供应商编码" prop="supplier_id">
+                  <ElSelect v-model={ form.value.supplier_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择供应商编码" onChange={ (row) => supplierChange(row) }>
+                    {supplierInfo.value.map((e, index) => <ElOption value={ e.id } label={ e.supplier_code } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
                 <ElFormItem label="型号&规格" prop="model_spec">
                   <ElInput v-model={ form.value.model_spec } placeholder="请输入型号&规格" />
                 </ElFormItem>
@@ -633,8 +694,8 @@ export default defineComponent({
                 {/* <ElFormItem label="预计数量" prop="order_number">
                   <ElInput v-model={ form.value.order_number } disabled placeholder="请输入预计数量" />
                 </ElFormItem> */}
-                <ElFormItem label="实际数量" prop="number">
-                  <ElInput v-model={ form.value.number } placeholder="请输入实际数量" />
+                <ElFormItem label="数量" prop="number">
+                  <ElInput v-model={ form.value.number } placeholder="请输入数量" />
                 </ElFormItem>
                 <ElFormItem label="交货时间" prop="delivery_time">
                   <ElDatePicker v-model={ form.value.delivery_time } value-format="YYYY-MM-DD" type="date" placeholder="请选择交货时间" clearable={ false } />

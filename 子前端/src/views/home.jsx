@@ -20,13 +20,13 @@ export default defineComponent({
                     </ElCol>
                   </ElRow>
                   <ElRow gutter={ 16 }>
-                    <ElCol md={ 7 } xl={ 8 }>
+                    <ElCol md={ 7 } xl={ 7 }>
                       <OrderTotal />
                     </ElCol>
                     <ElCol md={ 10 } xl={ 10 }>
                       <HolidayCalendar />
                     </ElCol>
-                    <ElCol md={ 7 } xl={ 8 }>
+                    <ElCol md={ 7 } xl={ 7 }>
                       <TurnTotal />
                     </ElCol>
                   </ElRow>

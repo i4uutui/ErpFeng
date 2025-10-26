@@ -24,7 +24,13 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   
-  const rows = await AdUser.findAll({ where: { username } })
+  const rows = await AdUser.findAll({
+    where: {
+      username,
+      is_deleted: 1,
+      status: 1
+    }
+  })
   if (rows.length === 0) {
     return res.json({ message: '账号或密码错误', code: 401 });
   }

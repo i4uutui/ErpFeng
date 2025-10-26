@@ -585,6 +585,7 @@ export default defineComponent({
                           <th>单位</th>
                           <th>委外数量</th>
                           <th>加工单价</th>
+                          <th>币别</th>
                           <th>要求交期</th>
                         </tr>
                       </thead>
@@ -601,6 +602,7 @@ export default defineComponent({
                             <td>{ e.unit }</td>
                             <td>{ e.number }</td>
                             <td>{ e.price }</td>
+                            <td>{ e.transaction_currency }</td>
                             <td>{ e.delivery_time }</td>
                           </tr>
                           return tr

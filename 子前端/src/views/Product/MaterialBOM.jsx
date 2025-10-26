@@ -68,7 +68,7 @@ export default defineComponent({
       getPartCode()
       getMaterialCode()
     })
-    
+
     // 获取列表
     const fetchProductList = async () => {
       const res = await request.get('/api/material_bom', {
@@ -96,7 +96,7 @@ export default defineComponent({
     const getMaterialCode = async () => {
       const res = await request.get('/api/getMaterialCode')
       if(res.code == 200){
-        materialList.value = res.data
+        materialList.value = res.data.map(item => ({ ...item, is_show: false }))
       }
     }
     const handleSubmit = async (formEl) => {
@@ -216,6 +216,18 @@ export default defineComponent({
       });
       if(!filtered.length) filtered = [{ material_id: '', number: '' }]
       form.value = { product_id, part_id, children: filtered };
+
+      // 判断材料是否可选,已选的材料不能再选择
+      const showList = children.map(e => e.material_id)
+      materialList.value.forEach(item => {
+        item.is_show = showList.includes(item.id);
+      })
+    }
+    const materialChange = (value) => {
+      const showList = form.value.children.map(e => e.material_id)
+      materialList.value.forEach(item => {
+        item.is_show = showList.includes(item.id);
+      })
     }
     // 新增
     const handleAdd = () => {
@@ -227,6 +239,7 @@ export default defineComponent({
     const handleClose = () => {
       edit.value = 0;
       dialogVisible.value = false;
+      materialList.value.forEach(e => e.is_show = false)
       resetForm()
     }
     const resetForm = () => {
@@ -244,6 +257,12 @@ export default defineComponent({
     }
     const handledeletedJson = (index) => {
       form.value.children.splice(index, 1)
+      // 判断材料是否可选,已选的材料不能再选择
+      const showList = form.value.children.map(e => e.material_id)
+      materialList.value.forEach(e => e.is_show = false)
+      materialList.value.forEach(item => {
+        item.is_show = showList.includes(item.id);
+      })
     }
     const headerCellStyle = ({ columnIndex, rowIndex, column }) => {
       if(rowIndex >= 1 || columnIndex >= 5 && column.label != '操作'){
@@ -336,7 +355,11 @@ export default defineComponent({
                   form.value.children.map((e, index) => (
                     <Fragment key={ index }>
                       <ElFormItem label="材料编码" prop={ `children[${index}].material_id` } rules={ rules.material_id }>
-                        <MySelect v-model={ e.material_id } apiUrl="/api/getMaterialCode" query="material_code" itemValue="material_code" placeholder="请选择材料编码" />
+                        <ElSelect v-model={ e.material_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料编码" onChange={ (value) => materialChange(value) }>
+                          {materialList.value.map((e, index) => {
+                            return <ElOption value={ e.id } label={ e.material_code } key={ index } disabled={ e.is_show } />
+                          })}
+                        </ElSelect>
                       </ElFormItem>
                       <ElFormItem label="数量" prop={ `children[${index}].number` } rules={ rules.number }>
                         <div class="flex">

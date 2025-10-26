@@ -309,7 +309,7 @@ router.post('/material_quote', authMiddleware, async (req, res) => {
   
   const updateData = data.map(e => ({ ...e, company_id, user_id: userId }))
   await SubMaterialQuote.bulkCreate(updateData, {
-    updateOnDuplicate: ['supplier_id', 'notice_id', 'material_id', 'product_id', 'price', 'delivery', 'packaging', 'transaction_currency', 'other_transaction_terms', 'remarks']
+    updateOnDuplicate: ['supplier_id', 'notice_id', 'material_bom_id', 'material_id', 'product_id', 'price', 'delivery', 'packaging', 'transaction_currency', 'other_transaction_terms', 'remarks']
   })
 
   res.json({ message: "添加成功", code: 200 });
@@ -354,7 +354,7 @@ router.post('/material_quote', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.put('/material_quote', authMiddleware, async (req, res) => {
-  const { supplier_id, notice_id, material_id, price, delivery, packaging, transaction_currency, other_transaction_terms, remarks, id } = req.body;
+  const { supplier_id, notice_id, material_bom_id, material_id, price, delivery, packaging, transaction_currency, other_transaction_terms, remarks, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -369,7 +369,7 @@ router.put('/material_quote', authMiddleware, async (req, res) => {
     return res.json({ code: 401, message: '数据出错，请联系管理员' })
   }
   const updateResult = await SubMaterialQuote.update({
-    supplier_id, notice_id, material_id, product_id, price, delivery, packaging, transaction_currency, other_transaction_terms, remarks, company_id,
+    supplier_id, notice_id, material_bom_id, material_id, product_id, price, delivery, packaging, transaction_currency, other_transaction_terms, remarks, company_id,
     user_id: userId
   }, {
     where: { id }
@@ -476,7 +476,7 @@ router.post('/add_material_ment', authMiddleware, async (req, res) => {
     return e
   })
   const result = await SubMaterialMent.bulkCreate(dataValue, {
-    updateOnDuplicate: ['company_id', 'user_id', 'apply_id', 'apply_name', 'apply_time', 'status', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'price', 'order_number', 'number', 'delivery_time']
+    updateOnDuplicate: ['company_id', 'user_id', 'apply_id', 'apply_name', 'apply_time', 'status', 'quote_id', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'price', 'order_number', 'number', 'delivery_time']
   })
 
   // 创建审批流程
@@ -618,14 +618,14 @@ router.post('/handlePurchaseBackFlow', authMiddleware, async (req, res) => {
  *       - 采购单(Purchase)
  */
 router.put('/material_ment', authMiddleware, async (req, res) => {
-  const { notice_id, notice, supplier_id, supplier_code, supplier_abbreviation, product_id, product_code, product_name, material_id, material_code, material_name, model_spec, other_features, unit, price, order_number, number, delivery_time, id } = req.body;
+  const { quote_id, notice_id, notice, supplier_id, supplier_code, supplier_abbreviation, product_id, product_code, product_name, material_id, material_code, material_name, model_spec, other_features, unit, price, order_number, number, delivery_time, id } = req.body;
   const { id: userId, company_id } = req.user;
 
   const result = await SubMaterialMent.findByPk(id)
   if(!result) res.json({ message: '未找到该采购单信息', code: 401 })
   
   const obj = {
-    notice_id, notice, supplier_id, supplier_code, supplier_abbreviation, product_id, product_code, product_name, material_id, material_code, material_name, model_spec, other_features, unit, price, order_number, number, delivery_time, company_id,
+    quote_id, notice_id, notice, supplier_id, supplier_code, supplier_abbreviation, product_id, product_code, product_name, material_id, material_code, material_name, model_spec, other_features, unit, price, order_number, number, delivery_time, company_id,
     user_id: userId
   }
   const updateResult = await SubMaterialMent.update(obj, {

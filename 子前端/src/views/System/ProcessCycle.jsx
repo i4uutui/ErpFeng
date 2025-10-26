@@ -15,6 +15,7 @@ export default defineComponent({
     let dialogVisible = ref(false)
     let form = ref({
       name: '',
+      sort: ''
     })
     let tableData = ref([])
     let currentPage = ref(1);
@@ -62,6 +63,7 @@ export default defineComponent({
             const myForm = {
               id: edit.value,
               name: form.value.name,
+              sort: form.value.sort
             }
             const res = await request.put('/api/process_cycle', myForm);
             if(res && res.code == 200){
@@ -84,18 +86,21 @@ export default defineComponent({
     const handleUplate = (row) => {
       edit.value = row.id;
       form.value.name = row.name;
+      form.value.sort = row.sort;
       dialogVisible.value = true;
     }
     // 新增管理员
     const handleAdd = () => {
       edit.value = 0;
       form.value.name = '';
+      form.value.sort = '';
       dialogVisible.value = true;
     };
     // 取消弹窗
     const handleClose = () => {
       edit.value = 0;
       form.value.name = '';
+      form.value.sort = '';
       dialogVisible.value = false;
     }
     // 分页相关
@@ -124,6 +129,7 @@ export default defineComponent({
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="name" label="名称" />
+                  <ElTableColumn prop="sort" label="排序" />
                   <ElTableColumn prop="created_at" label="创建时间" />
                   <ElTableColumn label="操作">
                     {(scope) => (
@@ -144,6 +150,9 @@ export default defineComponent({
               <ElForm model={ form.value } ref={ formRef } rules={ rules } label-width="80px">
                 <ElFormItem label="名称" prop="name">
                   <ElInput v-model={ form.value.name } placeholder="请输入名称" />
+                </ElFormItem>
+                <ElFormItem label="排序" prop="sort">
+                  <ElInput v-model={ form.value.sort } placeholder="请输入排序" />
                 </ElFormItem>
               </ElForm>
             ),

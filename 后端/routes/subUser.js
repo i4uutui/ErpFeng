@@ -34,7 +34,8 @@ router.get('/user', authMiddleware, async (req, res) => {
   const { count, rows } = await AdUser.findAndCountAll({
     where: {
       is_deleted: 1,
-      parent_id: userId,
+      type: { [Op.ne]: 1 },
+      id: { [Op.not]: userId },
       company_id,
     },
     attributes: ['id', 'name', 'parent_id', 'username', 'parent_id', 'status', 'power', 'created_at'],
@@ -427,7 +428,6 @@ router.delete('/organize', authMiddleware, async (req, res) => {
 
 
 
-// 生产制程
 /**
  * @swagger
  * /api/process_cycle:
@@ -455,8 +455,8 @@ router.get('/process_cycle', authMiddleware, async (req, res) => {
       is_deleted: 1,
       company_id
     },
-    attributes: ['id', 'name', 'created_at'],
-    order: [['created_at', 'DESC']],
+    attributes: ['id', 'name', 'sort', 'created_at'],
+    order: [['sort', 'ASC']],
     limit: parseInt(pageSize),
     offset
   })
@@ -486,12 +486,14 @@ router.get('/process_cycle', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.post('/process_cycle', authMiddleware, async (req, res) => {
-  const { name } = req.body;
+  const { name, sort } = req.body;
   const { id: userId, company_id } = req.user;
   
-  const processCycle = await SubProcessCycle.create({
+  const number = sort ? sort : 0
+  await SubProcessCycle.create({
     name,
     user_id: userId,
+    sort: number,
     company_id
   })
   
@@ -513,7 +515,7 @@ router.post('/process_cycle', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.put('/process_cycle', authMiddleware, async (req, res) => {
-  const { name, sort_date, id } = req.body;
+  const { name, sort_date, sort, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证是否存在
@@ -527,7 +529,8 @@ router.put('/process_cycle', authMiddleware, async (req, res) => {
   if(sort_date) cycleWhere.sort_date = sort_date
   await processCycle.update({
     ...cycleWhere,
-    user_id: userId
+    user_id: userId,
+    sort
   }, { where: { id } })
   
   res.json({ msg: "修改成功", code: 200 });
@@ -1017,7 +1020,7 @@ router.get('/operation_history', authMiddleware, async (req, res) => {
   const row = rows.map(e => e.toJSON())
   // 返回所需信息
   res.json({ 
-    data: formatArrayTime(row), 
+    data: formatArrayTime(row, 'timer'), 
     total: count, 
     totalPages, 
     currentPage: parseInt(page), 

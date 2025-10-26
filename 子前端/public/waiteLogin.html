@@ -99,7 +99,7 @@
               const data = res.data
               localStorage.setItem('token', data.token)
               localStorage.setItem('workUser', JSON.stringify(data.data))
-              const loginUrl = `${window.location.origin}/html-login.html?id=${that.urlData.id}&company_id=${that.urlData.company_id}`
+              const loginUrl = `${window.location.origin}/waiteLogin.html?id=${that.urlData.id}&company_id=${that.urlData.company_id}`
               window.location.replace(loginUrl)
             }else{
               ElMessage.error(res.data.message)

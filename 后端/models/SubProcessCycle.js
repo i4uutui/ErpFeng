@@ -24,6 +24,11 @@ const SubProcessCycle = sequelize.define('SubProcessCycle', {
     allowNull: true,
     comment: '制程名称'
   },
+  sort: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    comment: '排序'
+  },
   sort_date: {
     type: DataTypes.STRING(20),
     allowNull: true,

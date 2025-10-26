@@ -1,4 +1,4 @@
-import { defineComponent, ref, onMounted, reactive } from 'vue'
+import { defineComponent, ref, onMounted, reactive, watch } from 'vue'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
 import { reportOperationLog } from '@/utils/log';
@@ -27,6 +27,7 @@ export default defineComponent({
     let form = ref({
       supplier_id: '',
       notice_id: '',
+      material_bom_id: '',
       material_id: '',
       product_id: '',
       price: '',
@@ -38,15 +39,33 @@ export default defineComponent({
     })
     let supplierList = ref([])
     let noticeList = ref([])
+    let materialBomList = ref([])
     let materialList = ref([])
     let tableData = ref([])
-    let edit = ref(0)
+    let edit = ref(-1)
 
     onMounted(() => {
       getSupplierInfo()
       getProductNotice()
-      getMaterialCode()
     })
+
+    watch(() => form.value.notice_id, async (newValue) => {
+      if(newValue !== '' && newValue > 0 && edit.value != -1){
+        const row = noticeList.value.find(o => o.id == newValue)
+        const res = await request.get('/api/getMaterialBom', { params: { product_id: row.product_id } })
+        if(res.code == 200){
+          materialBomList.value = res.data
+
+          const material = materialBomList.value.find(o => o.id == form.value.material_bom_id)
+          form.value.product_id = material.product_id
+          getMaterialBomChildren(material.id)
+        }
+      }
+      if(newValue === 0 && edit.value != -1){
+        getMaterialCode()
+        form.value.material_bom_id = ''
+      }
+    }, { immediate: true })
 
     const getSupplierInfo = async () => {
       const res = await request.get('/api/getSupplierInfo')
@@ -57,13 +76,35 @@ export default defineComponent({
     const getProductNotice = async () => {
       const res = await request.get('/api/getProductNotice')
       if(res.code == 200){
-        noticeList.value = res.data
+        const data = { id: 0, notice: '非管控材料' }
+        noticeList.value = [data, ...res.data]
       }
     }
     const getMaterialCode = async () => {
       const res = await request.get('/api/getMaterialCode')
       if(res.code == 200){
         materialList.value = res.data
+      }
+    }
+    const getMaterialBomChildren = async (id) => {
+      const res = await request.get('/api/getMaterialBomChildren', { params: { id } })
+      if(res.code == 200){
+        materialList.value = res.data
+      }
+    }
+    // 获取材料BOM列表
+    const noticeChange = async (value) => {
+      if(value){
+        const row = noticeList.value.find(o => o.id == value)
+        const res = await request.get('/api/getMaterialBom', { params: { product_id: row.product_id } })
+        if(res.code == 200){
+          materialBomList.value = res.data
+          materialList.value = []
+          form.value.material_id = ''
+        }
+      }else{
+        getMaterialCode()
+        form.value.material_bom_id = ''
       }
     }
     const handleArchive = async () => {
@@ -76,6 +117,7 @@ export default defineComponent({
         const data = tableData.value.map(e => ({
           supplier_id: e.supplier_id,
           notice_id: e.notice_id,
+          material_bom_id: e.material_bom_id,
           material_id: e.material_id,
           product_id: e.product_id,
           price: e.price,
@@ -126,6 +168,7 @@ export default defineComponent({
             product_id: notice.product_id,
             supplier_id: data.supplier_id,
             notice_id: data.notice_id,
+            material_bom_id: data.material_bom_id,
             material_id: data.material_id,
             price: data.price,
             delivery: data.delivery,
@@ -171,9 +214,12 @@ export default defineComponent({
       resetForm()
     }
     const resetForm = () => {
+      materialBomList.value = []
+      materialList.value = []
       form.value = {
         supplier_id: '',
         notice_id: '',
+        material_bom_id: '',
         material_id: '',
         product_id: '',
         price: '',
@@ -187,6 +233,11 @@ export default defineComponent({
     const supplierChange = (row) => {
       form.value.delivery = row.supply_method
       form.value.transaction_currency = row.transaction_currency
+    }
+    const materialBomChange = (value) => {
+      const row = materialBomList.value.find(o => o.id == value)
+      form.value.product_id = row.product_id
+      getMaterialBomChildren(row.id)
     }
     const goArchive = () => {
       window.open('/#/purchase/material-quote-archive', '_blank')
@@ -225,7 +276,7 @@ export default defineComponent({
                   <ElTableColumn prop="material.model" label="型号" width="100" />
                   <ElTableColumn prop="material.specification" label="规格" width="100" />
                   <ElTableColumn prop="material.other_features" label="其他特性" width="100" />
-                  <ElTableColumn prop="material.purchase_unit" label="采购单位" width="100" />
+                  {/* <ElTableColumn prop="material.purchase_unit" label="采购单位" width="100" /> */}
                   <ElTableColumn prop="price" label="采购单价" width="100" />
                   <ElTableColumn prop="delivery" label="送货方式" width="100" />
                   <ElTableColumn prop="packaging" label="包装要求" width="100" />
@@ -250,14 +301,29 @@ export default defineComponent({
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
-                <ElFormItem label="供应商编码" prop="supplier_id">
-                  <MySelect v-model={ form.value.supplier_id } apiUrl="/api/getSupplierInfo" query="supplier_code" itemValue="supplier_code" placeholder="请选择供应商编码" onChange={ (value) => supplierChange(value) } />
-                </ElFormItem>
                 <ElFormItem label="生产订单号" prop="notice_id">
-                  <MySelect v-model={ form.value.notice_id } apiUrl="/api/getProductNotice" query="notice" itemValue="notice" placeholder="请选择生产订单号" />
+                  <ElSelect v-model={ form.value.notice_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单号" onChange={ (value) => noticeChange(value) }>
+                    {noticeList.value.map((e, index) => {
+                      return <ElOption value={ e.id } label={ e.notice } key={ index } />
+                    })}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="材料BOM" prop='material_bom_id'>
+                  <ElSelect v-model={ form.value.material_bom_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料BOM" disabled={ form.value.notice_id === 0 } onChange={ (value) => materialBomChange(value) }>
+                    {materialBomList.value.map((e, index) => {
+                      return <ElOption value={ e.id } label={ e.name } key={ index } />
+                    })}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="材料编码" prop="material_id">
-                  <MySelect v-model={ form.value.material_id } apiUrl="/api/getMaterialCode" query="material_code" itemValue="material_code" placeholder="请选择材料编码" />
+                  <ElSelect v-model={ form.value.material_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料编码">
+                    {materialList.value.map((e, index) => {
+                      return <ElOption value={ e.id } label={ e.material_code } key={ index } />
+                    })}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="供应商编码" prop="supplier_id">
+                  <MySelect v-model={ form.value.supplier_id } apiUrl="/api/getSupplierInfo" query="supplier_code" itemValue="supplier_code" placeholder="请选择供应商编码" onChange={ (value) => supplierChange(value) } />
                 </ElFormItem>
                 <ElFormItem label="采购单价" prop="price">
                   <ElInput v-model={ form.value.price } placeholder="请输入采购单价" />

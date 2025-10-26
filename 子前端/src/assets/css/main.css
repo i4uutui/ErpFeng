@@ -24,6 +24,13 @@
 .el-menu--vertical .el-sub-menu .el-menu > .el-menu-item{
   padding-left: 30px !important;
 }
+.el-menu-vertical-demo .el-sub-menu .el-sub-menu__title, .el-menu-vertical-demo > .el-menu-item{
+  font-weight: bold;
+  font-size: 16px;
+}
+.el-menu-vertical-demo .el-sub-menu .el-menu--inline .el-menu-item{
+  font-size: 14px;
+}
 :root{
   --el-fill-color-light: #e7e7e7;
 }

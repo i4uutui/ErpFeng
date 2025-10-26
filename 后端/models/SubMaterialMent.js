@@ -18,9 +18,15 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
     allowNull: true,
     comment: '发布的用户id'
   },
+  quote_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    comment: '报价单ID'
+  },
   print_id: {
     type: DataTypes.INTEGER(30),
     allowNull: true,
+    defaultValue: null,
     comment: '打印的id'
   },
   notice_id: {
@@ -54,10 +60,10 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
     comment: '供应商名称'
   },
   product_id: {
-    type: DataTypes.INTEGER(11),
+    type: DataTypes.STRING(50),
     allowNull: true,
     defaultValue: null,
-    comment: '产品ID'
+    comment: '产品Id'
   },
   product_code: {
     type: DataTypes.STRING(50),
@@ -114,13 +120,13 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
     comment: '单价'
   },
   order_number: {
-    type: DataTypes.INTEGER(10),
+    type: DataTypes.STRING(20),
     allowNull: true,
     defaultValue: null,
     comment: '预计数量'
   },
   number: {
-    type: DataTypes.INTEGER(10),
+    type: DataTypes.STRING(20),
     allowNull: true,
     defaultValue: null,
     comment: '实际数量'
@@ -132,7 +138,7 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
     comment: '交货时间'
   },
   apply_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.INTEGER(11),
     allowNull: true,
     defaultValue: null,
     comment: '申请人ID'
@@ -144,7 +150,7 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
     comment: '申请人名称'
   },
   apply_time: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATE, // timestamp对应DATE类型
     allowNull: true,
     defaultValue: null,
     comment: '申请时间'
@@ -156,10 +162,10 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
     comment: '审核当前在第几步，默认0，每审核一步加1'
   },
   status: {
-    type: DataTypes.INTEGER(1),
+    type: DataTypes.INTEGER(11),
     allowNull: true,
     defaultValue: 0,
-    comment: ' 状态（0审批中/1通过/2拒绝） '
+    comment: '状态（0审批中/1通过/2拒绝）'
   },
   is_deleted: {
     type: DataTypes.INTEGER(1),
