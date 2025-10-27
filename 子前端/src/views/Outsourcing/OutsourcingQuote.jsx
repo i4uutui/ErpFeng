@@ -51,7 +51,7 @@ export default defineComponent({
       fetchProductList()
       getSupplierInfo()
       getProductNotice()
-      getProcessBomList()
+      // getProcessBomList()
     })
     
     // 获取列表
@@ -75,8 +75,8 @@ export default defineComponent({
         noticeList.value = res.data
       }
     }
-    const getProcessBomList = async () => {
-      const res = await request.get('/api/getProcessBom')
+    const getProcessBomList = async (product_id) => {
+      const res = await request.get('/api/getProcessBom', { params: { product_id } })
       bomList.value = res.data
     }
     const getProcessBomChildren = async (value) => {
@@ -182,6 +182,11 @@ export default defineComponent({
         remarks: ''
       }
     }
+    const noticeChange = (row) => {
+      if(row && row.product_id){
+        getProcessBomList(row.product_id)
+      }
+    }
     // 分页相关
     function pageSizeChange(val) {
       currentPage.value = 1;
@@ -244,17 +249,14 @@ export default defineComponent({
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
-                <ElFormItem label="供应商编码" prop="supplier_id">
-                  <MySelect v-model={ form.value.supplier_id } apiUrl="/api/getSupplierInfo" query="supplier_code" itemValue="supplier_code" placeholder="请选择供应商编码" />
-                </ElFormItem>
                 <ElFormItem label="生产订单" prop="notice_id">
-                  <MySelect v-model={ form.value.notice_id } apiUrl="/api/getProductNotice" query="notice" itemValue="notice" placeholder="请选择生产订单" />
+                  <MySelect v-model={ form.value.notice_id } apiUrl="/api/getProductNotice" query="notice" itemValue="notice" placeholder="请选择生产订单" onChange={ (value) => noticeChange(value) } />
                 </ElFormItem>
                 <ElFormItem label="工艺BOM" prop="process_bom_id">
                   <ElSelect v-model={ form.value.process_bom_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择工艺BOM" onChange={ (value) => changeBomSelect(value) }>
-                  {bomList.value.map((e, index) => {
-                    return <ElOption value={ e.id } label={ e.name } key={ index } />
-                  })}
+                    {bomList.value.map((e, index) => {
+                      return <ElOption value={ e.id } label={ e.name } key={ index } />
+                    })}
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="工艺工序" prop="process_bom_children_id">
@@ -263,6 +265,9 @@ export default defineComponent({
                     return <ElOption value={ e.id } label={ e.name } key={ index } />
                   })}
                   </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="供应商编码" prop="supplier_id">
+                  <MySelect v-model={ form.value.supplier_id } apiUrl="/api/getSupplierInfo" query="supplier_code" itemValue="supplier_code" placeholder="请选择供应商编码" />
                 </ElFormItem>
                 <ElFormItem label="加工单价" prop="price">
                   <ElInput v-model={ form.value.price } placeholder="请输入加工单价" />

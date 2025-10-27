@@ -629,11 +629,6 @@ export default defineComponent({
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
-                <ElFormItem label="供应商编码" prop="supplier_id">
-                  <ElSelect v-model={ form.value.supplier_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择供应商编码">
-                    {supplierInfo.value.map((e, index) => <ElOption value={ e.id } label={ e.supplier_code } key={ index } />)}
-                  </ElSelect>
-                </ElFormItem>
                 <ElFormItem label="生产订单" prop="notice_id">
                   <ElSelect v-model={ form.value.notice_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单" onChange={ (value) => noticeChange(value) }>
                     {productNotice.value.map((e, index) => <ElOption value={ e.id } label={ e.notice } key={ index } />)}
@@ -651,6 +646,11 @@ export default defineComponent({
                     {procedure.value.map((e, index) => {
                       return <ElOption value={ e.id } label={ e.name } key={ index } />
                     })}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="供应商编码" prop="supplier_id">
+                  <ElSelect v-model={ form.value.supplier_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择供应商编码">
+                    {supplierInfo.value.map((e, index) => <ElOption value={ e.id } label={ e.supplier_code } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="加工单价" prop="price">

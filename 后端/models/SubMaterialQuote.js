@@ -24,16 +24,6 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
     allowNull: false,
     comment: ' 供应商编码 ID'
   },
-  notice_id: {
-    type: DataTypes.INTEGER(11),
-    allowNull: false,
-    comment: ' 生产通知单 ID'
-  },
-  material_bom_id: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-    comment: '材料BOM ID'
-  },
   product_id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
@@ -49,6 +39,16 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
     allowNull: false,
     comment: ' 单价 '
   },
+  transaction_currency: {
+    type: DataTypes.STRING(10),
+    allowNull: true,
+    comment: ' 交易币别 '
+  },
+  unit: {
+    type: DataTypes.STRING(10),
+    allowNull: true,
+    comment: ' 采购单位 '
+  },
   delivery: {
     type: DataTypes.STRING(100),
     allowNull: false,
@@ -58,11 +58,6 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
     type: DataTypes.STRING(100),
     allowNull: true,
     comment: ' 包装要求 '
-  },
-  transaction_currency: {
-    type: DataTypes.STRING(10),
-    allowNull: true,
-    comment: ' 交易币别 '
   },
   other_transaction_terms: {
     type: DataTypes.TEXT,

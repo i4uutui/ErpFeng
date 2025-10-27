@@ -22,18 +22,23 @@ export default defineComponent({
       transaction_currency: [
         { required: true, message: '请输入交易币别', trigger: 'blur' },
       ],
+      unit: [
+        { required: true, message: '请输入采购单位', trigger: 'blur' }
+      ]
     })
     let dialogVisible = ref(false)
     let form = ref({
       supplier_id: '',
-      notice_id: '',
-      material_bom_id: '',
+      supplier_abbreviation: '',
+      // notice_id: '',
+      // material_bom_id: '',
       material_id: '',
-      product_id: '',
+      // product_id: '',
       price: '',
       delivery: '',
       packaging: '', 
-      transaction_currency: '', 
+      transaction_currency: '',
+      unit: '',
       other_transaction_terms: '', 
       remarks: ''
     })
@@ -45,27 +50,29 @@ export default defineComponent({
     let edit = ref(-1)
 
     onMounted(() => {
+      getMaterialCode()
       getSupplierInfo()
-      getProductNotice()
+      // getProductNotice()
+      // noticeChange()
     })
 
-    watch(() => form.value.notice_id, async (newValue) => {
-      if(newValue !== '' && newValue > 0 && edit.value != -1){
-        const row = noticeList.value.find(o => o.id == newValue)
-        const res = await request.get('/api/getMaterialBom', { params: { product_id: row.product_id } })
-        if(res.code == 200){
-          materialBomList.value = res.data
+    // watch(() => form.value.notice_id, async (newValue) => {
+    //   if(newValue !== '' && newValue > 0 && edit.value != -1){
+    //     const row = noticeList.value.find(o => o.id == newValue)
+    //     const res = await request.get('/api/getMaterialBom', { params: { product_id: row.product_id } })
+    //     if(res.code == 200){
+    //       materialBomList.value = res.data
 
-          const material = materialBomList.value.find(o => o.id == form.value.material_bom_id)
-          form.value.product_id = material.product_id
-          getMaterialBomChildren(material.id)
-        }
-      }
-      if(newValue === 0 && edit.value != -1){
-        getMaterialCode()
-        form.value.material_bom_id = ''
-      }
-    }, { immediate: true })
+    //       const material = materialBomList.value.find(o => o.id == form.value.material_bom_id)
+    //       form.value.product_id = material.product_id
+    //       getMaterialBomChildren(material.id)
+    //     }
+    //   }
+    //   if(newValue === 0 && edit.value != -1){
+    //     getMaterialCode()
+    //     form.value.material_bom_id = ''
+    //   }
+    // }, { immediate: true })
 
     const getSupplierInfo = async () => {
       const res = await request.get('/api/getSupplierInfo')
@@ -86,27 +93,28 @@ export default defineComponent({
         materialList.value = res.data
       }
     }
-    const getMaterialBomChildren = async (id) => {
-      const res = await request.get('/api/getMaterialBomChildren', { params: { id } })
-      if(res.code == 200){
-        materialList.value = res.data
-      }
-    }
+    // const getMaterialBomChildren = async (id) => {
+    //   const res = await request.get('/api/getMaterialBomChildren', { params: { id } })
+    //   if(res.code == 200){
+    //     materialList.value = res.data
+    //   }
+    // }
     // 获取材料BOM列表
-    const noticeChange = async (value) => {
-      if(value){
-        const row = noticeList.value.find(o => o.id == value)
-        const res = await request.get('/api/getMaterialBom', { params: { product_id: row.product_id } })
-        if(res.code == 200){
-          materialBomList.value = res.data
-          materialList.value = []
-          form.value.material_id = ''
-        }
-      }else{
-        getMaterialCode()
-        form.value.material_bom_id = ''
-      }
-    }
+    // const noticeChange = async (value) => {
+    //   // if(value){
+    //     // const row = noticeList.value.find(o => o.id == value)
+    //     // const res = await request.get('/api/getMaterialBom', { params: { product_id: row.product_id } })
+    //     const res = await request.get('/api/getMaterialBom')
+    //     if(res.code == 200){
+    //       materialBomList.value = res.data
+    //       materialList.value = []
+    //       form.value.material_id = ''
+    //     }
+    //   // }else{
+    //   //   getMaterialCode()
+    //   //   form.value.material_bom_id = ''
+    //   // }
+    // }
     const handleArchive = async () => {
       if(!tableData.value.length) return ElMessage.error('暂无数据可存档！');
       ElMessageBox.confirm('是否确认存档', '提示', {
@@ -116,14 +124,16 @@ export default defineComponent({
       }).then(async () => {
         const data = tableData.value.map(e => ({
           supplier_id: e.supplier_id,
-          notice_id: e.notice_id,
-          material_bom_id: e.material_bom_id,
+          supplier_abbreviation: e.supplier_abbreviation,
+          // notice_id: e.notice_id,
+          // material_bom_id: e.material_bom_id,
           material_id: e.material_id,
-          product_id: e.product_id,
+          // product_id: e.product_id,
           price: e.price,
           delivery: e.delivery,
           packaging: e.packaging, 
           transaction_currency: e.transaction_currency, 
+          unit: e.unit,
           other_transaction_terms: e.other_transaction_terms, 
           remarks: e.remarks
         }))
@@ -147,16 +157,16 @@ export default defineComponent({
         if (valid){
           const data = form.value
           const supplier = supplierList.value.find(o => o.id == form.value.supplier_id)
-          const notice = noticeList.value.find(o => o.id == form.value.notice_id)
+          // const notice = noticeList.value.find(o => o.id == form.value.notice_id)
           const material = materialList.value.find(o => o.id == form.value.material_id)
           const formData = {
             supplier: {
               supplier_code: supplier.supplier_code,
               supplier_abbreviation: supplier.supplier_abbreviation,
             },
-            notice: {
-              notice: notice.notice,
-            },
+            // notice: {
+            //   notice: notice.notice,
+            // },
             material: {
               material_code: material.material_code,
               material_name: material.material_name,
@@ -165,18 +175,24 @@ export default defineComponent({
               other_features: material.other_features,
               purchase_unit: material.purchase_unit,
             },
-            product_id: notice.product_id,
+            // product_id: data.product_id,
             supplier_id: data.supplier_id,
-            notice_id: data.notice_id,
-            material_bom_id: data.material_bom_id,
+            supplier_code: supplier.supplier_code,
+            supplier_abbreviation: supplier.supplier_abbreviation,
+            // notice_id: data.notice_id,
+            // material_bom_id: data.material_bom_id,
             material_id: data.material_id,
+            material_code: material.material_code,
+            material_name: material.material_name,
             price: data.price,
             delivery: data.delivery,
             packaging: data.packaging,
             transaction_currency: data.transaction_currency,
+            unit: data.unit,
             other_transaction_terms: data.other_transaction_terms,
             remarks: data.remarks,
           }
+          console.log(formData);
           dialogVisible.value = false;
           if(edit.value >= 0){
             tableData.value[edit.value] = formData
@@ -214,31 +230,39 @@ export default defineComponent({
       resetForm()
     }
     const resetForm = () => {
-      materialBomList.value = []
-      materialList.value = []
+      // materialBomList.value = []
+      // materialList.value = []
       form.value = {
         supplier_id: '',
-        notice_id: '',
-        material_bom_id: '',
+        supplier_abbreviation: '',
+        // notice_id: '',
+        // material_bom_id: '',
         material_id: '',
-        product_id: '',
+        material_name: '',
+        // product_id: '',
         price: '',
         delivery: '',
         packaging: '', 
         transaction_currency: '', 
+        unit: '',
         other_transaction_terms: '', 
         remarks: ''
       }
     }
     const supplierChange = (row) => {
+      form.value.supplier_abbreviation = row.supplier_abbreviation
       form.value.delivery = row.supply_method
       form.value.transaction_currency = row.transaction_currency
     }
-    const materialBomChange = (value) => {
-      const row = materialBomList.value.find(o => o.id == value)
-      form.value.product_id = row.product_id
-      getMaterialBomChildren(row.id)
+    const materialChange = (value) => {
+      const row = materialList.value.find(o => o.id == value)
+      form.value.material_name = row.material_name
     }
+    // const materialBomChange = (value) => {
+    //   const row = materialBomList.value.find(o => o.id == value)
+    //   form.value.product_id = row.product_id
+    //   getMaterialBomChildren(row.id)
+    // }
     const goArchive = () => {
       window.open('/#/purchase/material-quote-archive', '_blank')
     }
@@ -270,20 +294,19 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width="100" />
                   <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="100" />
-                  <ElTableColumn prop="notice.notice" label="生产订单号" width="100" />
                   <ElTableColumn prop="material.material_code" label="材料编码" width="100" />
                   <ElTableColumn prop="material.material_name" label="材料名称" width="100" />
                   <ElTableColumn prop="material.model" label="型号" width="100" />
                   <ElTableColumn prop="material.specification" label="规格" width="100" />
                   <ElTableColumn prop="material.other_features" label="其他特性" width="100" />
-                  {/* <ElTableColumn prop="material.purchase_unit" label="采购单位" width="100" /> */}
                   <ElTableColumn prop="price" label="采购单价" width="100" />
+                  <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
+                  <ElTableColumn prop="unit" label="采购单位" width="100" />
                   <ElTableColumn prop="delivery" label="送货方式" width="100" />
                   <ElTableColumn prop="packaging" label="包装要求" width="100" />
-                  <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
                   <ElTableColumn prop="other_transaction_terms" label="其它交易条件" width="120" />
-                  <ElTableColumn prop="remarks" label="备注" width="100" />
-                  <ElTableColumn prop="created_at" label="创建时间" width="100" />
+                  <ElTableColumn prop="remarks" label="备注" width="170" />
+                  <ElTableColumn prop="created_at" label="创建时间" width="120" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
@@ -301,41 +324,50 @@ export default defineComponent({
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
-                <ElFormItem label="生产订单号" prop="notice_id">
+                {/* <ElFormItem label="生产订单号" prop="notice_id">
                   <ElSelect v-model={ form.value.notice_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单号" onChange={ (value) => noticeChange(value) }>
                     {noticeList.value.map((e, index) => {
                       return <ElOption value={ e.id } label={ e.notice } key={ index } />
                     })}
                   </ElSelect>
-                </ElFormItem>
-                <ElFormItem label="材料BOM" prop='material_bom_id'>
-                  <ElSelect v-model={ form.value.material_bom_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料BOM" disabled={ form.value.notice_id === 0 } onChange={ (value) => materialBomChange(value) }>
+                </ElFormItem> */}
+                {/* <ElFormItem label="材料BOM" prop='material_bom_id'>
+                  <ElSelect v-model={ form.value.material_bom_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料BOM" onChange={ (value) => materialBomChange(value) }>
                     {materialBomList.value.map((e, index) => {
                       return <ElOption value={ e.id } label={ e.name } key={ index } />
                     })}
                   </ElSelect>
-                </ElFormItem>
+                </ElFormItem> */}
                 <ElFormItem label="材料编码" prop="material_id">
-                  <ElSelect v-model={ form.value.material_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料编码">
+                  <ElSelect v-model={ form.value.material_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料编码" onChange={ (value) => materialChange(value) }>
                     {materialList.value.map((e, index) => {
                       return <ElOption value={ e.id } label={ e.material_code } key={ index } />
                     })}
                   </ElSelect>
                 </ElFormItem>
+                <ElFormItem label="材料名称" prop="material_id">
+                  <el-input v-model={ form.value.material_name } readonly placeholder="请选择材料名称"></el-input>
+                </ElFormItem>
                 <ElFormItem label="供应商编码" prop="supplier_id">
                   <MySelect v-model={ form.value.supplier_id } apiUrl="/api/getSupplierInfo" query="supplier_code" itemValue="supplier_code" placeholder="请选择供应商编码" onChange={ (value) => supplierChange(value) } />
                 </ElFormItem>
+                <ElFormItem label="供应商名称" prop="supplier_id">
+                  <el-input v-model={ form.value.supplier_abbreviation } readonly placeholder="请选择供应商名称"></el-input>
+                </ElFormItem>
                 <ElFormItem label="采购单价" prop="price">
                   <ElInput v-model={ form.value.price } placeholder="请输入采购单价" />
+                </ElFormItem>
+                <ElFormItem label="交易币别" prop="transaction_currency">
+                  <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
+                </ElFormItem>
+                <ElFormItem label="采购单位" prop="unit">
+                  <ElInput v-model={ form.value.unit } placeholder="请输入采购单位" />
                 </ElFormItem>
                 <ElFormItem label="送货方式" prop="delivery">
                   <ElInput v-model={ form.value.delivery } placeholder="请输入送货方式" />
                 </ElFormItem>
                 <ElFormItem label="包装要求" prop="packaging">
                   <ElInput v-model={ form.value.packaging } placeholder="请输入包装要求" />
-                </ElFormItem>
-                <ElFormItem label="交易币别" prop="transaction_currency">
-                  <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
                 </ElFormItem>
                 <ElFormItem label="其它交易条件" prop="other_transaction_terms">
                   <ElInput v-model={ form.value.other_transaction_terms } placeholder="请输入其它交易条件" />

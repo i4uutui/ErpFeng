@@ -26,6 +26,9 @@ export default defineComponent({
       supplier_id: [
         { required: true, message: '请选择供应商编码', trigger: 'blur' }
       ],
+      notice_id: [
+        { required: true, message: '请选择生产订单', trigger: 'blur' }
+      ]
     })
     const approval = getItem('approval').filter(e => e.type == 'material_warehouse')
     let dialogVisible = ref(false)
@@ -81,9 +84,9 @@ export default defineComponent({
       nowDate.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
       fetchProductList()
       // getProductsList() // 产品编码列表
-      // getMaterialCode() // 材料编码列表
-      // getSupplierInfo() // 供应商编码列表
-      // getProductNotice() // 获取生产订单通知单列表
+      getMaterialCode() // 材料编码列表
+      getSupplierInfo() // 供应商编码列表
+      getProductNotice() // 获取生产订单通知单列表
       getMaterialQuote() // 获取报价单列表
 
       getPrinters()
@@ -143,13 +146,11 @@ export default defineComponent({
       }, new Map()).values())
     }
     const getProductsList = async (id) => {
-      if(form.value.notice_id > 0){
-        const res = await request.get('/api/getProductsCode', { params: { id } })
-        proList.value = res.data
+      const res = await request.get('/api/getProductsCode', { params: { id } })
+      proList.value = res.data
 
-        form.value.product_code = res.data[0].product_code
-        form.value.product_name = res.data[0].product_name
-      }
+      form.value.product_code = res.data[0].product_code
+      form.value.product_name = res.data[0].product_name
     }
     const getMaterialCode = async (id) => {
       const res = await request.get(`/api/getMaterialCode`, { params: { id } })
@@ -157,7 +158,6 @@ export default defineComponent({
       materialList.value = data
       form.value.model_spec = `${data[0].model}/${data[0].specification}`
       form.value.other_features = data[0].other_features
-      form.value.unit = data[0].usage_unit
 
       form.value.material_code = data[0].material_code
       form.value.material_name = data[0].material_name
@@ -409,6 +409,12 @@ export default defineComponent({
       form.value.supplier_abbreviation = supplier.supplier_abbreviation
     }
     const noticeChange = (value) => {
+      if(value == 0){
+        console.log(value);
+        getProductsList()
+        getMaterialCode()
+        return
+      }
       const notice = productNotice.value.find(e => e.id == value)
       form.value.notice = notice.notice
       form.value.product_id = notice.product_id
@@ -417,6 +423,7 @@ export default defineComponent({
       form.value.order_number = notice.sale.order_number
       form.value.number = notice.sale.order_number
       form.value.delivery_time = notice.sale.delivery_time
+      getProductsList(notice.product_id)
     }
     const productChange = (value) => {
       const product = proList.value.find(e => e.id == value)
@@ -438,14 +445,13 @@ export default defineComponent({
     }
     const quoteChange = (value) => {
       const row = materialQuote.value.find(o => o.id == value)
-      form.value.notice_id = row.notice_id
-      form.value.product_id = row.product_id
+      // form.value.notice_id = row.notice_id
+      // form.value.product_id = row.product_id
       form.value.material_id = row.material_id
       form.value.supplier_id = row.supplier_id
-      getProductsList(row.product_id)
+      form.value.unit = row.unit
       getMaterialCode(row.material_id)
       getSupplierInfo(row.supplier_id)
-      getProductNotice(row.notice_id)
       form.value.price = row.price
     }
     const onPrint = async () => {
@@ -531,7 +537,9 @@ export default defineComponent({
                       return spanDom
                     }}
                   </ElTableColumn>
-                  <ElTableColumn prop="notice" label="生产订单号" width='100' />
+                  <ElTableColumn prop="notice" label="生产订单号" width='100'>
+                    {({row}) => row.notice_id == 0 ? '非管控材料' : row.notice}
+                  </ElTableColumn>
                   <ElTableColumn prop="supplier_code" label="供应商编码" width='100' />
                   <ElTableColumn prop="supplier_abbreviation" label="供应商名称" width='100' />
                   <ElTableColumn prop="product_code" label="产品编码" width='100' />
@@ -650,15 +658,21 @@ export default defineComponent({
           {{
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+                <ElFormItem label="生产订单" prop="notice_id">
+                  <ElSelect v-model={ form.value.notice_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单" onChange={ (row) => noticeChange(row) }>
+                    {productNotice.value.map((e, index) => <ElOption value={ e.id } label={ e.notice } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="材料BOM">
+                  <el-input readonly placeholder="请选择材料BOM" readonly></el-input>
+                </ElFormItem>
                 <ElFormItem label="报价单" prop="quote_id">
                   <ElSelect v-model={ form.value.quote_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择报价单" onChange={ (value) => quoteChange(value) }>
                     {materialQuote.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="生产订单" prop="notice_id">
-                  <ElSelect v-model={ form.value.notice_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单" onChange={ (row) => noticeChange(row) }>
-                    {productNotice.value.map((e, index) => <ElOption value={ e.id } label={ e.notice } key={ index } />)}
-                  </ElSelect>
+                <ElFormItem label="交货时间" prop="delivery_time">
+                  <ElDatePicker v-model={ form.value.delivery_time } value-format="YYYY-MM-DD" type="date" placeholder="请选择交货时间" clearable={ false } />
                 </ElFormItem>
                 <ElFormItem label="产品编码" prop="product_id">
                   <ElSelect v-model={ form.value.product_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择产品编码" onChange={ (row) => productChange(row) }>
@@ -667,6 +681,9 @@ export default defineComponent({
                     })}
                   </ElSelect>
                 </ElFormItem>
+                <ElFormItem label="产品名称" prop="product_id">
+                  <el-input v-model={ form.value.product_name } readonly placeholder="请选择产品名称"></el-input>
+                </ElFormItem>
                 <ElFormItem label="材料编码" prop="material_id">
                   <ElSelect v-model={ form.value.material_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料编码" onChange={ (row) => materialChange(row) }>
                     {materialList.value.map((e, index) => {
@@ -674,10 +691,16 @@ export default defineComponent({
                     })}
                   </ElSelect>
                 </ElFormItem>
+                <ElFormItem label="材料名称" prop="material_id">
+                  <el-input v-model={ form.value.material_name } readonly placeholder="请选择材料名称"></el-input>
+                </ElFormItem>
                 <ElFormItem label="供应商编码" prop="supplier_id">
                   <ElSelect v-model={ form.value.supplier_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择供应商编码" onChange={ (row) => supplierChange(row) }>
                     {supplierInfo.value.map((e, index) => <ElOption value={ e.id } label={ e.supplier_code } key={ index } />)}
                   </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="供应商名称" prop="supplier_id">
+                  <el-input v-model={ form.value.supplier_abbreviation } readonly placeholder="请选择供应商名称"></el-input>
                 </ElFormItem>
                 <ElFormItem label="型号&规格" prop="model_spec">
                   <ElInput v-model={ form.value.model_spec } placeholder="请输入型号&规格" />
@@ -685,7 +708,7 @@ export default defineComponent({
                 <ElFormItem label="其它特性" prop="other_features">
                   <ElInput v-model={ form.value.other_features } placeholder="请输入其它特性" />
                 </ElFormItem>
-                <ElFormItem label="单位" prop="unit">
+                <ElFormItem label="采购单位" prop="unit">
                   <ElInput v-model={ form.value.unit } placeholder="请输入单位" />
                 </ElFormItem>
                 <ElFormItem label="单价" prop="price">
@@ -696,9 +719,6 @@ export default defineComponent({
                 </ElFormItem> */}
                 <ElFormItem label="数量" prop="number">
                   <ElInput v-model={ form.value.number } placeholder="请输入数量" />
-                </ElFormItem>
-                <ElFormItem label="交货时间" prop="delivery_time">
-                  <ElDatePicker v-model={ form.value.delivery_time } value-format="YYYY-MM-DD" type="date" placeholder="请选择交货时间" clearable={ false } />
                 </ElFormItem>
               </ElForm>
             ),

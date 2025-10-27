@@ -23,7 +23,12 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
     },
     attributes: ['id', 'notice_number', 'delivery_time', 'customer_abbreviation', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'part_code', 'part_name', 'bom_id', 'order_number', 'customer_order', 'rece_time', 'out_number', 'start_date', 'remarks', 'created_at'],
     include: [
-      { model: SubProcessCycleChild, as: 'cycleChild', attributes: ['cycle_id', 'id', 'end_date', 'load', 'order_number', 'progress_id'], include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort_date'] }] },
+      {
+        model: SubProcessCycleChild,
+        as: 'cycleChild',
+        attributes: ['cycle_id', 'id', 'end_date', 'load', 'order_number', 'progress_id'],
+        order: [[{ model: SubProcessCycle, as: 'cycle' }, 'sort', 'DESC']],
+        include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort_date', 'sort'] }] },
       {
         model: SubProcessBom,
         as: 'bom',
@@ -39,7 +44,7 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
                 model: SubEquipmentCode,
                 as: 'equipment',
                 attributes: ['id', 'equipment_name', 'equipment_code', 'working_hours', 'efficiency', 'quantity'],
-                include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }]
+                include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort'], order: [['sort', 'ASC']] }]
               },
             ]
           }

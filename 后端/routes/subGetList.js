@@ -311,12 +311,16 @@ router.get('/getProductNotice', authMiddleware, async (req, res) => {
  *       - 常用列表(GetList)
  */
 router.get('/getProcessBom', authMiddleware, async (req, res) => {
+  const { product_id } = req.query
   const { company_id } = req.user;
   
+  let whereObj = {}
+  if(product_id) whereObj.product_id = product_id
   const rows = await SubProcessBom.findAll({
     where: {
       archive: 0,
-      company_id
+      company_id,
+      ...whereObj
     },
     attributes: ['id', 'archive', 'product_id', 'part_id'],
     include: [
@@ -628,16 +632,15 @@ router.get('/getMaterialQuote', authMiddleware, async (req, res) => {
     where: {
       company_id,
     },
-    attributes: ['id', 'supplier_id', 'notice_id', 'material_bom_id', 'product_id', 'material_id', 'price', 'delivery', 'packaging', 'transaction_currency', 'other_transaction_terms', 'remarks'],
+    attributes: ['id', 'supplier_id', 'material_id', 'price', 'unit', 'delivery', 'packaging', 'transaction_currency', 'other_transaction_terms', 'remarks'],
     include: [
       { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_code', 'supplier_abbreviation'] },
-      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice'] },
       { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name'] }
     ]
   })
   const data = rows.map(e => {
     const item = e.toJSON()
-    item.name = `${item.supplier.supplier_code} - ${item.notice_id == 0 ? '非管控材料' : item.notice.notice} - ${item.material.material_code}`
+    item.name = `${item.supplier.supplier_code} - ${item.material.material_code}`
     return item
   })
 

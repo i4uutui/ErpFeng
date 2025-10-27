@@ -241,8 +241,8 @@ router.get('/material_quote', authMiddleware, async (req, res) => {
     include: [
       { model: SubMaterialCode, as: 'material' },
       { model: SubSupplierInfo, as: 'supplier' },
-      { model: SubProductNotice, as: 'notice' },
-      { model: SubProductCode, as: 'product' }
+      // { model: SubProductNotice, as: 'notice' },
+      // { model: SubProductCode, as: 'product' }
     ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
@@ -308,17 +308,21 @@ router.post('/material_quote', authMiddleware, async (req, res) => {
   if(!data.length) return res.json({ code: 401, message: '暂无数据可存档！' })
   
   const updateData = data.map(e => ({ ...e, company_id, user_id: userId }))
-  await SubMaterialQuote.bulkCreate(updateData, {
-    updateOnDuplicate: ['supplier_id', 'notice_id', 'material_bom_id', 'material_id', 'product_id', 'price', 'delivery', 'packaging', 'transaction_currency', 'other_transaction_terms', 'remarks']
-  })
+  try {
+    await SubMaterialQuote.bulkCreate(updateData, {
+      updateOnDuplicate: ['supplier_id', 'material_id', 'price', 'unit', 'delivery', 'packaging', 'transaction_currency', 'other_transaction_terms', 'remarks']
+    })
 
-  res.json({ message: "添加成功", code: 200 });
+    res.json({ message: "添加成功", code: 200 });
+  } catch (error) {
+    console.log(error);
+  }
 });
 /**
  * @swagger
  * /api/material_quote:
  *   put:
- *     summary: 修改材料报价
+ *     summary: 修改材料报价（废弃）
  *     tags:
  *       - 采购单(Purchase)
  *     parameters:
@@ -354,7 +358,7 @@ router.post('/material_quote', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.put('/material_quote', authMiddleware, async (req, res) => {
-  const { supplier_id, notice_id, material_bom_id, material_id, price, delivery, packaging, transaction_currency, other_transaction_terms, remarks, id } = req.body;
+  const { supplier_id, material_id, price, delivery, packaging, transaction_currency, unit, other_transaction_terms, remarks, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -369,7 +373,7 @@ router.put('/material_quote', authMiddleware, async (req, res) => {
     return res.json({ code: 401, message: '数据出错，请联系管理员' })
   }
   const updateResult = await SubMaterialQuote.update({
-    supplier_id, notice_id, material_bom_id, material_id, product_id, price, delivery, packaging, transaction_currency, other_transaction_terms, remarks, company_id,
+    supplier_id, material_id, price, delivery, packaging, transaction_currency, unit, other_transaction_terms, remarks, company_id,
     user_id: userId
   }, {
     where: { id }
