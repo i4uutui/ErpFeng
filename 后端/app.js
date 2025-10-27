@@ -10,7 +10,7 @@ const swaggerDocs = require('./config/swagger.js');
 app.use(cors({
   origin: [
     "https://admin.yuanfangzixun.com.cn",
-    "http://feng.yuanfangzixun.com.cn",
+    "https://feng.yuanfangzixun.com.cn",
     "http://localhost:9998",
     "http://localhost:9999",
     "http://localhost:52330"
