@@ -1,4 +1,4 @@
-import { defineComponent, onMounted, reactive, ref, computed } from 'vue'
+import { defineComponent, onMounted, reactive, ref, computed, watch } from 'vue'
 import { useStore } from '@/stores';
 import { getRandomString, getNoLast } from '@/utils/tool'
 import { reportOperationLog } from '@/utils/log';
@@ -57,14 +57,12 @@ export default defineComponent({
     let tableData = ref([])
     let allSelect = ref([])
     let edit = ref(-1)
-    let search = ref({
-      notice_number: '',
-      supplier_code: '',
-      supplier_abbreviation: '',
-      product_code: '',
-      product_name: '',
-      status: ''
-    })
+    let notice_number = ref('')
+    let supplier_code = ref('')
+    let product_code = ref('')
+    let noticeList = ref([])
+    let supplierList = ref([])
+    let productList = ref([])
     let supplierInfo = ref([]) // 供应商编码列表
     let proList = ref([]) // 产品编码列表
     let materialList = ref([]) // 材料编码列表
@@ -80,49 +78,34 @@ export default defineComponent({
     let productName = ref('')
     let productCode = ref('')
     let noticeNumber = ref('')
+    let statusId = ref('')
 
     const printNo = computed(() => store.printNo)
     
     onMounted(() => {
       nowDate.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
-      getPrinters() // 获取打印机列表
-
-      fetchProductList() // 获取数据列表
+      fetchProductList()
+      // getMaterialCode() // 材料编码列表
       getSupplierInfo() // 供应商编码列表
       getProductNotice() // 获取生产通知单列表
       getMaterialQuote() // 获取报价单列表
       getMaterialBom() // 获取材料BOM
+
+      getPrinters()
+    })
+    watch(() => form.value.quote_id, async (newValue) => {
+      if(newValue && edit.value != -1){
+        const row = materialQuote.value.find(o => o.id == value)
+        getProductsList(row.product_id)
+        getMaterialCode(row.material_id)
+        getSupplierInfo(row.supplier_id)
+        getProductNotice(row.notice_id)
+      }
     })
     
-    // 获取打印机列表
     const getPrinters = async () => {
       const res = await request.get('/api/printers')
       printers.value = res.data
-    }
-    // 获取数据列表
-    const fetchProductList = async () => {
-      const res = await request.get('/api/material_ment', { params: search.value });
-      tableData.value = res.data;
-
-      // 打印的时候用的
-      if(!res.data.length) return
-      const data = res.data[0]
-      supplierName.value = data.supplier_abbreviation
-      productName.value = data.product_name
-      productCode.value = data.product_code
-      noticeNumber.value = data.notice
-    }
-    // 获取供应商编码
-    const getSupplierInfo = async () => {
-      const res = await request.get('/api/getSupplierInfo')
-      const data = res.data
-      supplierInfo.value = data
-    }
-    // 获取生产通知单
-    const getProductNotice = async () => {
-      const res = await request.get('/api/getProductNotice')
-      const data = { id: 0, notice: '非管控材料' }
-      productNotice.value = [data, ...res.data]
     }
     // 获取报价单列表
     const getMaterialQuote = async () => {
@@ -131,48 +114,86 @@ export default defineComponent({
         materialQuote.value = res.data
       }
     }
-    // 获取材料BOM列表
     const getMaterialBom = async () => {
       const res = await request.get('/api/getMaterialBom')
       if(res.code == 200){
         materialBomList.value = res.data
       }
     }
-    // 获取材料BOM子数据列表
-    const getMaterialBomChildren = async (id) => {
-      const res = await request.get('/api/getMaterialBomChildren', { params: { id } })
-      if(res.code == 200){
-        if(res.data.length){
-          const data = res.data.flatMap(item => item.material)
-          materialList.value = data.length ? data : []
-          // 默认让系统选中第一个材料
-          if(materialList.value.length){
-            const material = materialList.value[0]
-            form.value.material_id = material.id
-            form.value.material_code = material.material_code
-            form.value.material_name = material.material_name
-            form.value.model_spec = `${material.model}/${material.specification}`
-            form.value.other_features = material.other_features
-          }
-        }
-      }
+    // 获取列表
+    const fetchProductList = async () => {
+      const res = await request.post('/api/material_ment', {
+        notice: notice_number.value,
+        supplier_code: supplier_code.value,
+        product_code: product_code.value,
+        status: statusId.value,
+      });
+      tableData.value = res.data;
+      getNoticeList() //获取订单号用来筛选
+
+      // 打印的时候用的
+      const data = res.data[0]
+      supplierName.value = data.supplier_abbreviation
+      productName.value = data.product_name
+      productCode.value = data.product_code
+      noticeNumber.value = data.notice
     }
-    // 获取产品列表
+    const getNoticeList = async () => {
+      const res = await request.get('/api/getMaterialMent')
+      noticeList.value = Array.from(res.data.map(e => e.notice) .reduce((map, item) => {
+        map.set(item, item);
+        return map;
+      }, new Map()).values())
+      supplierList.value = Array.from(res.data.map(e => e.supplier_code) .reduce((map, item) => {
+        map.set(item, item);
+        return map;
+      }, new Map()).values())
+      productList.value = Array.from(res.data.map(e => e.product_code).reduce((map, item) => {
+        map.set(item, item)
+        return map;
+      }, new Map()).values())
+    }
     const getProductsList = async (id) => {
       const res = await request.get('/api/getProductsCode', { params: { id } })
       proList.value = res.data
 
-      if(id == 0) return
-      form.value.product_id = id
-      form.value.product_code = res.data[0].product_code
-      form.value.product_name = res.data[0].product_name
+      // form.value.product_code = res.data[0].product_code
+      // form.value.product_name = res.data[0].product_name
     }
-    // 弹窗确认按钮
+    const getMaterialCode = async (id) => {
+      const res = await request.get(`/api/getMaterialCode`, { params: { id } })
+      const data = res.data
+      materialList.value = data
+      // form.value.model_spec = `${data[0].model}/${data[0].specification}`
+      // form.value.other_features = data[0].other_features
+
+      // form.value.material_code = data[0].material_code
+      // form.value.material_name = data[0].material_name
+    }
+    const getSupplierInfo = async (id) => {
+      const res = await request.get('/api/getSupplierInfo', { params: { id } })
+      const data = res.data
+      supplierInfo.value = data
+      form.value.supplier_code = data[0].supplier_code
+      form.value.supplier_abbreviation = data[0].supplier_abbreviation
+    }
+    const getProductNotice = async (id) => {
+      const res = await request.get('/api/getProductNotice', { params: { id } })
+      const data = { id: 0, notice: '非管控材料' }
+      productNotice.value = [data, ...res.data]
+
+      form.value.notice = res.data.length ? res.data[0].notice : '非管控材料'
+      if(id > 0){
+        form.value.order_number = res.data[0].sale.order_number
+        form.value.number = res.data[0].sale.order_number
+        form.value.delivery_time = res.data[0].sale.delivery_time
+      }
+    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
         if (valid){
-          if(edit.value === -1){
+          if(edit.value == -1){
             const obj = JSON.parse(JSON.stringify(form.value))
             obj.id = getRandomString() // 临时ID
             tableData.value = [obj, ...tableData.value]
@@ -212,60 +233,6 @@ export default defineComponent({
         }
       })
     }
-    // 权限用户处理反审批接口
-    const handleBackApproval = (row) => {
-      ElMessageBox.confirm('是否确认反审批？', '提示', {
-        confirmButtonText: '通过',
-        cancelButtonText: '拒绝',
-        type: 'warning',
-        distinguishCancelAndClose: true,
-      }).then(async () => {
-        const res = await request.post('/api/handlePurchaseBackFlow', { id: row.id })
-        if(res.code == 200){
-          ElMessage.success('反审批成功')
-          fetchProductList()
-
-          const str = `供应商编码：${row.supplier_code}，生产订单号：${row.notice}，产品编码：${row.product_code}，材料编码：${row.material_code}`
-          reportOperationLog({
-            operationType: 'backApproval',
-            module: '采购单',
-            desc: `反审批了采购单，${str}`,
-            data: { newData: row.id }
-          })
-        }
-      }).catch((action) => {
-        
-      })
-    }
-    // 权限用户处理审批接口
-    const approvalApi = async (action, data) => {
-      const dataIds = data.map(e => e.id)
-      const res = await request.post('/api/handlePurchaseApproval', {
-        data: dataIds,
-        action
-      })
-      if(res.code == 200){
-        ElMessage.success('审批成功')
-        fetchProductList()
-
-        let str = ''
-        data.forEach((e, index) => {
-          const obj = `{ 供应商编码：${e.supplier_code}，生产订单号：${e.notice}，产品编码：${e.product_code}，材料编码：${e.material_code} }`
-          str += obj
-          if(index < data.length - 1){
-            str += '，'
-          }
-        })
-        const appValue = action == 1 ? '通过' : '拒绝'
-        reportOperationLog({
-          operationType: 'approval',
-          module: '采购单',
-          desc: `审批${appValue}了采购单，它们有：${str}`,
-          data: { newData: { data, type: 'purchase_order' } }
-        })
-      }
-    }
-    // 提交数据审核接口
     const setApiData = async (data) => {
       const res = await request.post('/api/add_material_ment', { data, type: 'purchase_order' })
       if(res && res.code == 200){
@@ -288,35 +255,6 @@ export default defineComponent({
         })
       }
     }
-    // 权限用户单个处理审批
-    const handleApproval = async (row) => {
-      if(row.status == 1) return ElMessage.error('该数据已通过审批，无需再重复审批')
-      handleApprovalDialog([row])
-    }
-    // 权限用户批量处理审批
-    const setApprovalAllData = () => {
-      const json = allSelect.value.length ? allSelect.value.filter(o => o.status == 0) : tableData.value.filter(o => o.status == 0)
-      if(json.length == 0){
-        ElMessage.error('暂无可提交的数据')
-      }
-      handleApprovalDialog(json)
-    }
-    // 权限用户审批时，弹窗询问是否确认
-    const handleApprovalDialog = (data) => {
-      ElMessageBox.confirm('是否确认审批？', '提示', {
-        confirmButtonText: '通过',
-        cancelButtonText: '拒绝',
-        type: 'warning',
-        distinguishCancelAndClose: true,
-      }).then(() => {
-        approvalApi(1, data)
-      }).catch((action) => {
-        if(action === 'cancel'){
-          approvalApi(2, data)
-        }
-      })
-    }
-    // 单个提交本地数据进行审批
     const handleStatusData = async (row) => {
       const data = getFormData(row)
       setApiData([data])
@@ -360,16 +298,86 @@ export default defineComponent({
       }
       return obj
     }
-    // 修改采购单
+    // 反审批
+    const handleBackApproval = async (row) => {
+      const res = await request.post('/api/handlePurchaseBackFlow', { id: row.id })
+      if(res.code == 200){
+        ElMessage.success('反审批成功')
+        fetchProductList()
+
+        const str = `供应商编码：${row.supplier_code}，生产订单号：${row.notice}，产品编码：${row.product_code}，材料编码：${row.material_code}`
+        reportOperationLog({
+          operationType: 'backApproval',
+          module: '采购单',
+          desc: `反审批了采购单，${str}`,
+          data: { newData: row.id }
+        })
+      }
+    }
+    // 处理审批
+    const approvalApi = async (action, data) => {
+      const dataIds = data.map(e => e.id)
+      const res = await request.post('/api/handlePurchaseApproval', {
+        data: dataIds,
+        action
+      })
+      if(res.code == 200){
+        ElMessage.success('审批成功')
+        fetchProductList()
+
+        let str = ''
+        data.forEach((e, index) => {
+          const obj = `{ 供应商编码：${e.supplier_code}，生产订单号：${e.notice}，产品编码：${e.product_code}，材料编码：${e.material_code} }`
+          str += obj
+          if(index < data.length - 1){
+            str += '，'
+          }
+        })
+        const appValue = action == 1 ? '通过' : '拒绝'
+        reportOperationLog({
+          operationType: 'approval',
+          module: '采购单',
+          desc: `审批${appValue}了采购单，它们有：${str}`,
+          data: { newData: { data, type: 'purchase_order' } }
+        })
+      }
+    }
+    const handleApproval = async (row) => {
+      if(row.status == 1) return ElMessage.error('该数据已通过审批，无需再重复审批')
+      handleApprovalDialog([row])
+    }
+    // 批量处理审批
+    const setApprovalAllData = () => {
+      const json = allSelect.value.length ? allSelect.value.filter(o => o.status == 0) : tableData.value.filter(o => o.status == 0)
+      if(json.length == 0){
+        ElMessage.error('暂无可提交的数据')
+      }
+      handleApprovalDialog(json)
+    }
+    const handleApprovalDialog = (data) => {
+      ElMessageBox.confirm('是否确认审批？', '提示', {
+        confirmButtonText: '通过',
+        cancelButtonText: '拒绝',
+        type: 'warning',
+        distinguishCancelAndClose: true,
+      }).then(() => {
+        approvalApi(1, data)
+      }).catch((action) => {
+        if(action === 'cancel'){
+          approvalApi(2, data)
+        }
+      })
+    }
     const handleUplate = (row) => {
       edit.value = row.id;
       dialogVisible.value = true;
       form.value = { ...row };
-      console.log(form.value);
-      getProductsList(row.product_id !== 0 ? row.product_id : '')
-      getMaterialBomChildren(row.material_bom_id)
     }
-    // 新增采购单
+    // 用户主动多选，然后保存到allSelect
+    const handleSelectionChange = (select) => {
+      allSelect.value = JSON.parse(JSON.stringify(select))
+    }
+    // 新增委外加工
     const addOutSourcing = () => {
       edit.value = -1;
       dialogVisible.value = true;
@@ -405,52 +413,32 @@ export default defineComponent({
         delivery_time: '',
       }
     }
-    // 待审批时，文字变成红色
-    const handleRowStyle = ({ row }) => {
-      if(row.status == 0){
-        return { color: 'red' }
-      }
+    const supplierChange = (value) => {
+      const supplier = supplierInfo.value.find(e => e.id == value)
+      form.value.supplier_code = supplier.supplier_code
+      form.value.supplier_abbreviation = supplier.supplier_abbreviation
     }
-    // 用户主动多选，然后保存到allSelect
-    const handleSelectionChange = (select) => {
-      allSelect.value = JSON.parse(JSON.stringify(select))
-    }
-    // 生产订单选中后返回的数据
     const noticeChange = (value) => {
-      if(value === 0){
+      if(value == 0){
         getProductsList()
+        getMaterialCode()
         return
       }
       const notice = productNotice.value.find(e => e.id == value)
       form.value.notice = notice.notice
+      form.value.product_id = notice.product_id
+      form.value.product_code = notice.product.product_code
+      form.value.product_name = notice.product.product_name
+      form.value.order_number = notice.sale.order_number
       form.value.number = notice.sale.order_number
-      form.value.delivery_time = notice.delivery_time
+      form.value.delivery_time = notice.sale.delivery_time
       getProductsList(notice.product_id)
     }
-    // 材料BOM选中后返回的数据
-    const materialBomChange = (value) => {
-      // 重新选择材料BOM的话，需要重置材料数据
-      form.value.material_id = ''
-      form.value.material_code = ''
-      form.value.material_name = ''
-      materialList.value = []
-      getMaterialBomChildren(value)
+    const productChange = (value) => {
+      const product = proList.value.find(e => e.id == value)
+      form.value.product_code = product.product_code
+      form.value.product_name = product.product_name
     }
-    // 报价单选中后返回的数据
-    const quoteChange = (value) => {
-      const row = materialQuote.value.find(o => o.id == value)
-      if(!form.value.material_bom_id){
-        form.value.material_id = row.material_id
-        form.value.material_code = row.material.material_code
-        form.value.material_name = row.material.material_name
-      }
-      form.value.supplier_id = row.supplier_id
-      form.value.supplier_code = row.supplier.supplier_code
-      form.value.supplier_abbreviation = row.supplier.supplier_abbreviation
-      form.value.price = row.price
-      form.value.unit = row.unit
-    }
-    // 材料编码选择后返回的数据
     const materialChange = (value) => {
       const material = materialList.value.find(e => e.id == value)
       form.value.material_code = material.material_code
@@ -459,7 +447,18 @@ export default defineComponent({
       form.value.other_features = material.other_features
       form.value.unit = material.usage_unit
     }
-    // 执行打印
+    const handleRowStyle = ({ row }) => {
+      if(row.status == 0){
+        return { color: 'red' }
+      }
+    }
+    const quoteChange = (value) => {
+      const row = materialQuote.value.find(o => o.id == value)
+      form.value.unit = row.unit
+      getMaterialCode(row.material_id)
+      getSupplierInfo(row.supplier_id)
+      form.value.price = row.price
+    }
     const onPrint = async () => {
       const list = allSelect.value.length ? allSelect.value : tableData.value
       if(!list.length) return ElMessage.error('请选择需要打印的数据')
@@ -491,51 +490,47 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div className="flex">
-                <ElForm inline={ true } class="cardHeaderFrom">
-                  <ElFormItem v-permission={ 'PurchaseOrder:add' }>
-                    <ElButton style="margin-top: -5px" type="primary" onClick={ addOutSourcing }> 新增采购单 </ElButton>
-                  </ElFormItem>
-                  <ElFormItem v-permission={ 'PurchaseOrder:set' }>
-                    <ElButton style="margin-top: -5px" type="primary" onClick={ setStatusAllData }> 批量提交 </ElButton>
-                  </ElFormItem>
-                  {
-                    approval.findIndex(e => e.user_id == user.id) >= 0 ? 
-                    <ElFormItem>
-                      <ElButton style="margin-top: -5px" type="primary" onClick={ () => setApprovalAllData() }> 批量审批 </ElButton>
-                    </ElFormItem> : 
-                    <></>
-                  }
-                  <ElFormItem v-permission={ 'PurchaseOrder:print' }>
-                    <ElButton style="margin-top: -5px" type="primary" onClick={ () => onPrint() }> 采购单打印 </ElButton>
-                  </ElFormItem>
-                </ElForm>
-                <ElForm inline={ true } class="cardHeaderFrom">
-                  <ElFormItem label="生产订单号:">
-                    <ElInput v-model={ search.value.notice_number } placeholder="请输入生产订单号" />
-                  </ElFormItem>
-                  <ElFormItem label="供应商编码:">
-                    <ElInput v-model={ search.value.supplier_code } placeholder="请输入供应商编码" />
-                  </ElFormItem>
-                  <ElFormItem label="供应商名称:">
-                    <ElInput v-model={ search.value.supplier_abbreviation } placeholder="请输入供应商名称" />
-                  </ElFormItem>
-                  <ElFormItem label="产品编码:">
-                    <ElInput v-model={ search.value.product_code } placeholder="请输入产品编码" />
-                  </ElFormItem>
-                  <ElFormItem label="产品名称:">
-                    <ElInput v-model={ search.value.product_name } placeholder="请输入产品名称" />
-                  </ElFormItem>
-                  <ElFormItem label="审批状态:">
-                    <ElSelect v-model={ search.value.status } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择审批状态">
-                      {statusList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
-                    </ElSelect>
-                  </ElFormItem>
+              <ElForm inline={ true } class="cardHeaderFrom">
+                <ElFormItem v-permission={ 'PurchaseOrder:add' }>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ addOutSourcing }> 新增采购单 </ElButton>
+                </ElFormItem>
+                <ElFormItem v-permission={ 'PurchaseOrder:set' }>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ setStatusAllData }> 批量提交 </ElButton>
+                </ElFormItem>
+                {
+                  approval.findIndex(e => e.user_id == user.id) >= 0 ? 
                   <ElFormItem>
-                    <ElButton style="margin-top: -5px" type="primary" onClick={ () => fetchProductList() }>查询</ElButton>
-                  </ElFormItem>
-                </ElForm>
-              </div>
+                    <ElButton style="margin-top: -5px" type="primary" onClick={ () => setApprovalAllData() }> 批量审批 </ElButton>
+                  </ElFormItem> : 
+                  <></>
+                }
+                <ElFormItem v-permission={ 'PurchaseOrder:print' }>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => onPrint() }> 采购单打印 </ElButton>
+                </ElFormItem>
+                <ElFormItem label="生产订单号:">
+                  <ElSelect v-model={ notice_number.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择生产订单号">
+                    {noticeList.value.map((e, index) => <ElOption value={ e } label={ e } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="供应商编码:">
+                  <ElSelect v-model={ supplier_code.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择供应商编码">
+                    {supplierList.value.map((e, index) => <ElOption value={ e } label={ e } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="产品编码:">
+                  <ElSelect v-model={ product_code.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择产品编码">
+                    {productList.value.map((e, index) => <ElOption value={ e } label={ e } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="审批状态:">
+                  <ElSelect v-model={ statusId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择审批状态">
+                    {statusList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem>
+                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => fetchProductList() }>筛选</ElButton>
+                </ElFormItem>
+              </ElForm>
             ),
             default: () => (
               <>
@@ -558,10 +553,10 @@ export default defineComponent({
                   <ElTableColumn prop="material_name" label="材料名称" width='100' />
                   <ElTableColumn prop="model_spec" label="型号&规格" width='100' />
                   <ElTableColumn prop="other_features" label="其它特性" width='100' />
-                  <ElTableColumn prop="unit" label="采购单位" width='100' />
-                  <ElTableColumn prop="price" label="采购单价" width='100' />
+                  <ElTableColumn prop="unit" label="单位" width='100' />
+                  <ElTableColumn prop="price" label="单价" width='100' />
                   {/* <ElTableColumn prop="order_number" label="预计数量" width='100' /> */}
-                  <ElTableColumn prop="number" label="采购数量" width='100' />
+                  <ElTableColumn prop="number" label="数量" width='100' />
                   <ElTableColumn prop="delivery_time" label="交货时间" width='110' />
                   <ElTableColumn prop="apply_name" label="申请人" width="90" />
                   <ElTableColumn prop="apply_time" label="申请时间" width="110" />
@@ -624,9 +619,9 @@ export default defineComponent({
                           <th>材料名称</th>
                           <th>型号&规格</th>
                           <th>其它特性</th>
-                          <th>采购单位</th>
-                          <th>采购单价</th>
-                          <th>采购数量</th>
+                          <th>单位</th>
+                          <th>单价</th>
+                          <th>数量</th>
                           <th>交货时间</th>
                         </tr>
                       </thead>
@@ -674,7 +669,7 @@ export default defineComponent({
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="材料BOM">
-                  <ElSelect v-model={ form.value.material_bom_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料BOM" onChange={ (row) => materialBomChange(row) }>
+                  <ElSelect v-model={ form.value.material_bom_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料BOM" onChange={ (row) => noticeChange(row) }>
                     {materialBomList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
@@ -720,17 +715,17 @@ export default defineComponent({
                 <ElFormItem label="其它特性" prop="other_features">
                   <ElInput v-model={ form.value.other_features } placeholder="请输入其它特性" />
                 </ElFormItem>
-                <ElFormItem label="采购单价" prop="price">
-                  <ElInput v-model={ form.value.price } placeholder="请输入采购单价" />
-                </ElFormItem>
                 <ElFormItem label="采购单位" prop="unit">
-                  <ElInput v-model={ form.value.unit } placeholder="请输入采购单位" />
+                  <ElInput v-model={ form.value.unit } placeholder="请输入单位" />
+                </ElFormItem>
+                <ElFormItem label="单价" prop="price">
+                  <ElInput v-model={ form.value.price } placeholder="请输入单价" />
                 </ElFormItem>
                 {/* <ElFormItem label="预计数量" prop="order_number">
                   <ElInput v-model={ form.value.order_number } disabled placeholder="请输入预计数量" />
                 </ElFormItem> */}
-                <ElFormItem label="采购数量" prop="number">
-                  <ElInput v-model={ form.value.number } placeholder="请输入采购数量" />
+                <ElFormItem label="数量" prop="number">
+                  <ElInput v-model={ form.value.number } placeholder="请输入数量" />
                 </ElFormItem>
               </ElForm>
             ),

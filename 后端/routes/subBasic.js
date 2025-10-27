@@ -70,13 +70,7 @@ router.put('/products_code', authMiddleware, async (req, res) => {
   if (!product) {
     return res.json({ message: '产品不存在', code: 401 });
   }
-  
-  const row = await SubProductCode.findOne({
-    where: { product_code, company_id, id: { [Op.ne]: id } }
-  })
-  if(row){
-    return res.json({ message: '编码不能重复', code: 401 })
-  }
+  if(product_code !== product.product_code) return res.json({ code: 401, message: '编码禁止修改' })
   
   await product.update({
     product_code, product_name, drawing, model, specification, other_features, component_structure, unit, production_requirements, company_id,
@@ -167,10 +161,7 @@ router.put('/part_code', authMiddleware, async (req, res) => {
   const part = await SubPartCode.findByPk(id);
   if (!part) return res.status(404).json({ message: '部件不存在' });
   
-  const row = await SubPartCode.findOne({
-    where: { part_code, company_id, id: { [Op.ne]: id } }
-  })
-  if(row) return res.json({ message: '编码不能重复', code: 401 })
+  if(part_code !== part.part_code) return res.json({ code: 401, message: '编码禁止修改' })
   
   await part.update({
     part_code, part_name, model, specification, other_features, unit, production_requirements, remarks, company_id,
@@ -264,10 +255,7 @@ router.put('/material_code', authMiddleware, async (req, res) => {
   const material = await SubMaterialCode.findByPk(id);
   if (!material) return res.json({ message: '材料不存在', code: 401 });
   
-  const rows = await SubMaterialCode.findAll({
-    where: { material_code, company_id, id: { [Op.ne]: id } }
-  })
-  if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
+  if(material_code !== material.material_code) return res.json({ code: 401, message: '编码禁止修改' })
   
   await SubMaterialCode.update({
     material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, remarks, company_id,
@@ -361,14 +349,9 @@ router.put('/process_code', authMiddleware, async (req, res) => {
   const process = await SubProcessCode.findByPk(id);
   if (!process) return res.json({ message: '工艺不存在', code: 401 });
   
-  const rows = await SubProcessCode.findAll({
-    where: { process_code, company_id, id: { [Op.ne]: id } }
-  })
-  if(rows.length != 0){
-    return res.json({ message: '编码不能重复', code: 401 })
-  }
+  if(process_code !== process.process_code) return res.json({ code: 401, message: '编码禁止修改' })
   
-  await SubProcessCode.update({
+  await process.update({
     process_code, process_name, remarks, equipment_id, company_id,
     user_id: userId
   }, { where: { id } })
@@ -420,7 +403,7 @@ router.get('/equipment_code', authMiddleware, async (req, res) => {
   })
   
   const totalPages = Math.ceil(count / pageSize);
-  row = rows.map(e => e.toJSON())
+  const row = rows.map(e => e.toJSON())
   
   // 返回所需信息
   res.json({ 
@@ -464,12 +447,9 @@ router.put('/equipment_code', authMiddleware, async (req, res) => {
   const equipment = await SubEquipmentCode.findByPk(id);
   if (!equipment) return res.json({ message: '设备不存在', code: 401 });
   
-  const rows = await SubEquipmentCode.findAll({
-    where: { equipment_code, company_id, id: { [Op.ne]: id } }
-  })
-  if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
+  if(equipment_code !== equipment.equipment_code) return res.json({ code: 401, message: '编码禁止修改' })
   
-  await SubEquipmentCode.update({
+  await equipment.update({
     equipment_code, equipment_name, quantity, cycle_id, working_hours, efficiency, available, remarks, company_id,
     user_id: userId
   }, { where: { id } })

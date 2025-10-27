@@ -11,7 +11,7 @@
  Target Server Version : 50722 (5.7.22)
  File Encoding         : 65001
 
- Date: 27/10/2025 10:13:40
+ Date: 28/10/2025 00:16:59
 */
 
 SET NAMES utf8mb4;
@@ -113,14 +113,14 @@ INSERT INTO `ad_user` VALUES (2, 2, 'admin99', '$2b$10$Ukc2Byd6TFsl0u2p68J0leC7t
 INSERT INTO `ad_user` VALUES (3, 1, '2121', '$2b$10$EpPaXdgc4ugWWT1Qi.DFSeRoz9XyBa3N7mKkNGuXEBvmy.pe8HEWq', NULL, NULL, 1, 0, 1, 1, '2025-07-08 10:35:09', '2025-07-08 14:21:49');
 INSERT INTO `ad_user` VALUES (4, 1, '121', '$2b$10$qJOWecY5nOd6ICarLgePce3XPyVtXXrp1dkbB9ZQvtydVrKLz8uGG', '2132', '[[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EmployeeInfo\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"SalesOrder\"],[\"仓库管理\"],[\"仓库管理\",\"ProductHouse\"],[\"仓库管理\",\"MaterialHouse\"],[\"仓库管理\",\"WarehouseRate\"],[\"采购管理\"],[\"委外管理\"],[\"采购管理\",\"PurchaseOrder\"],[\"采购管理\",\"MaterialQuote\"],[\"采购管理\",\"SupplierInfo\"],[\"委外管理\",\"OutsourcingQuote\"],[\"委外管理\",\"OutsourcingOrder\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:print\"]]', 2, 1, 1, 1, '2025-07-08 14:10:45', '2025-09-23 16:45:29');
 INSERT INTO `ad_user` VALUES (5, 1, 'admin2', '$2b$10$qJOWecY5nOd6ICarLgePce3XPyVtXXrp1dkbB9ZQvtydVrKLz8uGG', '哈哈', '[[\"系统管理\"],[\"系统管理\",\"OrganizeManagement\"],[\"系统管理\",\"ProcessCycle\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\"],[\"基础资料\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"基础资料\",\"EmployeeInfo\"],[\"订单管理\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"SalesOrder\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductNotice\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"产品信息\"],[\"产品信息\",\"MaterialBOM\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品信息\",\"MaterialBOMArchive\"],[\"产品信息\",\"ProcessBOM\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品信息\",\"ProcessBOMArchive\"],[\"委外管理\"],[\"委外管理\",\"OutsourcingOrder\"],[\"委外管理\",\"OutsourcingQuote\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"仓库管理\"],[\"仓库管理\",\"ProductHouse\"],[\"仓库管理\",\"MaterialHouse\"],[\"仓库管理\",\"WarehouseRate\"],[\"采购管理\"],[\"采购管理\",\"SupplierInfo\"],[\"采购管理\",\"MaterialQuote\"],[\"采购管理\",\"PurchaseOrder\"],[\"首页\"],[\"首页\",\"Home\"]]', 2, 1, 1, 1, '2025-07-08 14:20:13', '2025-10-14 14:41:54');
-INSERT INTO `ad_user` VALUES (6, 3, 'xuqinghua', '$2b$10$MUd.2TTjcfV8u2o0DRY.5OPdroD0SgSZaLr/xKnpnXXB.VkcIz27C', '徐庆华', NULL, 1, 0, 1, 1, '2025-10-16 00:03:16', '2025-10-24 00:00:02');
+INSERT INTO `ad_user` VALUES (6, 3, 'xuqinghua', '$2b$10$MUd.2TTjcfV8u2o0DRY.5OPdroD0SgSZaLr/xKnpnXXB.VkcIz27C', '徐庆华', NULL, 1, 0, 1, 1, '2025-10-16 00:03:16', '2025-10-24 00:00:39');
 INSERT INTO `ad_user` VALUES (7, 3, 'xufurong', '$2b$10$6nBULA3lrE67GJgCSHHd8Of9H24WkaXNSGRPpvadq7ZTOBSuqCoWG', '徐芙蓉', '[[\"基础资料\"],[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"PartCode\",\"PartCode:add\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:add\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"订单管理\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"]]', 2, 6, 0, 0, '2025-10-16 14:45:16', '2025-10-16 14:50:42');
 INSERT INTO `ad_user` VALUES (8, 1, '1231', '$2b$10$SNysIqFfTVzbYdYilDmMwOt0zF0O5rkfXbZETcW/4.4Gc.8dIN.uK', '2121', '[[\"产品信息\"],[\"产品信息\",\"ProcessBOMArchive\"],[\"产品信息\",\"ProcessBOM\"],[\"产品信息\",\"MaterialBOMArchive\"],[\"产品信息\",\"MaterialBOM\"]]', 2, 1, 1, 1, '2025-10-16 14:48:37', '2025-10-16 14:48:45');
 INSERT INTO `ad_user` VALUES (9, 1, '312121', '$2b$10$d5SvhAYPngTVFoyT0RZzYOrgX.9QzeCxcddQ2wUMnsE6Kl14rRdHW', '21213131', '[[\"采购管理\"],[\"采购管理\",\"MaterialQuote\"],[\"采购管理\",\"PurchaseOrder\"]]', 2, 1, 0, 1, '2025-10-16 14:48:59', '2025-10-21 12:45:08');
 INSERT INTO `ad_user` VALUES (10, 3, 'liang', '$2b$10$zkLfaAwf0gbLrsGcXv.fjebNp4OllOlRfQkpsoP3X8eb1ci6H3HDW', '梁伟锋', '[[\"系统管理\"],[\"基础资料\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"系统管理\",\"OrganizeManagement\"]]', 2, 6, 1, 0, '2025-10-16 14:49:57', '2025-10-16 14:50:40');
 INSERT INTO `ad_user` VALUES (11, 3, 'lupeisen', '$2b$10$AfLUeYHX4zV7k9IQRtFXr.mtSMVEfsEopPbPHWPFrpBn3ta4j4uVy', 'lupeisen', '[[\"系统管理\"],[\"系统管理\",\"OrganizeManagement\"],[\"系统管理\",\"ProcessCycle\"]]', 2, 6, 0, 0, '2025-10-16 14:50:25', '2025-10-16 14:50:38');
-INSERT INTO `ad_user` VALUES (12, 3, 'xuchudong', '$2b$10$AbSNt3BZd8xWJVX3qIcAGusDOmOH7tFWv55xLtR6FamIqvai06yp.', '徐楚东', '[[\"基础资料\"],[\"基础资料\",\"ProductCode\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"系统管理\"],[\"系统管理\",\"ProcessCycle\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:add\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:add\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:edit\"],[\"订单管理\"],[\"订单管理\",\"CustomerInfo\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:delete\"],[\"订单管理\",\"SalesOrder\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:add\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:edit\"],[\"订单管理\",\"ProductNotice\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:finish\"],[\"订单管理\",\"FinishNotice\"],[\"产品信息\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:delete\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品信息\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品信息\",\"MaterialBOM\"],[\"产品信息\",\"MaterialBOMArchive\"],[\"产品信息\",\"MaterialBOMArchive\",\"MaterialBOM:cope\"],[\"产品信息\",\"ProcessBOM\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:add\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:edit\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:delete\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品信息\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品信息\",\"ProcessBOMArchive\"],[\"产品信息\",\"ProcessBOMArchive\",\"ProcessBOM:cope\"],[\"采购管理\"],[\"采购管理\",\"SupplierInfo\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:add\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:edit\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:add\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:edit\"],[\"采购管理\",\"MaterialQuote\"],[\"采购管理\",\"PurchaseOrder\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:add\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:edit\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:set\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:print\"],[\"委外管理\"],[\"委外管理\",\"OutsourcingQuote\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:add\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:edit\"],[\"委外管理\",\"OutsourcingOrder\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:set\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:print\"],[\"生产管理\",\"ProductionProgress\"],[\"生产管理\",\"WorkOrder\"],[\"生产管理\",\"WorkOrder\",\"WorkOrder:print\"],[\"生产管理\"],[\"仓库管理\"],[\"仓库管理\",\"WarehouseRate\"],[\"仓库管理\",\"WarehouseRate\",\"WarehouseRate:edit\"],[\"仓库管理\",\"MaterialHouse\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addIn\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addOut\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:set\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:print\"],[\"仓库管理\",\"ProductHouse\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addIn\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addOut\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:set\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:print\"],[\"财务管理\"],[\"财务管理\",\"EmployeePieceRate\"],[\"财务管理\",\"AccountsReceivable\"],[\"财务管理\",\"AccountsPayable\"],[\"财务管理\",\"AccountsOutsourcing\"],[\"系统管理\",\"OrganizeManagement\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"PartCode\",\"PartCode:add\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"MaterialCode\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:add\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"ProcessCode\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:add\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:edit\"],[\"基础资料\",\"EquipmentCode\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"]]', 2, 6, 1, 1, '2025-10-16 14:55:08', '2025-10-19 12:16:11');
-INSERT INTO `ad_user` VALUES (15, 3, 'xufurong', '$2b$10$eKSswMJLQwO5oYeVYn4Oo.j2M2B7d2cN38fautp5/8UiiRajQ/0Zm', '徐芙蓉', '[[\"系统管理\",\"OrganizeManagement\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:add\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:add\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:delete\"],[\"基础资料\",\"PartCode\",\"PartCode:add\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:add\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:delete\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:add\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:edit\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:delete\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:add\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"系统管理\",\"UserManagement\",\"user:add\"],[\"系统管理\",\"UserManagement\",\"user:edit\"],[\"系统管理\",\"UserManagement\",\"user:delete\"]]', 2, 6, 1, 1, '2025-10-19 16:00:54', '2025-10-24 21:03:10');
+INSERT INTO `ad_user` VALUES (12, 3, 'xuchudong', '$2b$10$X8j4FSLo4roCW3ZRFz529e.uK5va/4lmhZ2MnGeyFFhFtP/gPbbrG', '徐楚东', '[[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:add\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:add\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:edit\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:delete\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:add\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:finish\"],[\"订单管理\",\"FinishNotice\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:add\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:set\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:print\"],[\"生产管理\",\"ProductionProgress\"],[\"生产管理\",\"WorkOrder\",\"WorkOrder:print\"],[\"仓库管理\",\"WarehouseRate\",\"WarehouseRate:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addIn\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addOut\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:set\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:print\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addIn\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addOut\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:set\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:print\"],[\"财务管理\",\"EmployeePieceRate\"],[\"财务管理\",\"AccountsReceivable\"],[\"财务管理\",\"AccountsPayable\"],[\"财务管理\",\"AccountsOutsourcing\"],[\"系统管理\",\"OrganizeManagement\"],[\"基础资料\",\"PartCode\",\"PartCode:add\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:add\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:add\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:add\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:add\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品工程\",\"MaterialBOMArchive\",\"MaterialBOM:cope\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:add\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:edit\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品工程\",\"ProcessBOMArchive\",\"ProcessBOM:cope\"],[\"系统管理\",\"UserManagement\",\"user:add\"],[\"系统管理\",\"UserManagement\",\"user:edit\"],[\"系统管理\",\"UserManagement\",\"user:delete\"],[\"基础资料\",\"ProductCode\",\"ProductCode:delete\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:delete\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:delete\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:delete\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:delete\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:edit\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:add\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:archive\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:newPage\"],[\"采购管理\",\"MaterialQuoteArchive\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:add\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:edit\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:set\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:print\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:edit\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:edit\"]]', 2, 6, 1, 1, '2025-10-16 14:55:08', '2025-10-27 20:19:54');
+INSERT INTO `ad_user` VALUES (15, 3, 'xuyun', '$2b$10$RD1Ptk4dH57P2TQmYmCIQ.sMPfEj82Xu0xWLqd2XvQxmnDyzgOwdW', '粟云', '[[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:add\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:add\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:delete\"],[\"基础资料\",\"PartCode\",\"PartCode:add\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:add\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:delete\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:add\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:edit\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:delete\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:add\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"系统管理\",\"UserManagement\",\"user:add\"],[\"系统管理\",\"UserManagement\",\"user:edit\"],[\"系统管理\",\"UserManagement\",\"user:delete\"],[\"系统管理\",\"OrganizeManagement\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:delete\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:add\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:finish\"],[\"订单管理\",\"FinishNotice\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:delete\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品工程\",\"MaterialBOMArchive\",\"MaterialBOM:cope\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:add\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:edit\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:delete\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品工程\",\"ProcessBOMArchive\",\"ProcessBOM:cope\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:add\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:edit\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:add\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:archive\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:newPage\"],[\"采购管理\",\"MaterialQuoteArchive\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:add\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:edit\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:set\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:print\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:add\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:set\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:print\"],[\"生产管理\",\"ProductionProgress\"],[\"生产管理\",\"WorkOrder\",\"WorkOrder:print\"],[\"仓库管理\",\"WarehouseRate\",\"WarehouseRate:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addIn\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addOut\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:set\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:print\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addIn\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addOut\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:edit\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:set\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:print\"],[\"财务管理\",\"EmployeePieceRate\"],[\"财务管理\",\"AccountsReceivable\"],[\"财务管理\",\"AccountsPayable\"],[\"财务管理\",\"AccountsOutsourcing\"]]', 2, 6, 1, 1, '2025-10-19 16:00:54', '2025-10-27 20:18:05');
 
 -- ----------------------------
 -- Table structure for sub_approval_step
@@ -247,8 +247,8 @@ INSERT INTO `sub_approval_user` VALUES (91, 1, 'product_warehouse', 44, 5, '哈�
 INSERT INTO `sub_approval_user` VALUES (92, 1, 'product_warehouse', 44, 4, '2132', NULL, 2, 1, '2025-10-12 14:21:03', '2025-10-12 14:22:13');
 INSERT INTO `sub_approval_user` VALUES (93, 1, 'product_warehouse', 43, 5, '哈哈', NULL, 1, 1, '2025-10-12 14:21:03', '2025-10-12 14:21:48');
 INSERT INTO `sub_approval_user` VALUES (94, 1, 'product_warehouse', 43, 4, '2132', NULL, 2, 1, '2025-10-12 14:21:03', '2025-10-12 14:22:13');
-INSERT INTO `sub_approval_user` VALUES (95, 1, 'purchase_order', 5, 5, '哈哈', NULL, 1, 0, '2025-10-26 18:08:55', '2025-10-26 18:08:55');
-INSERT INTO `sub_approval_user` VALUES (96, 1, 'purchase_order', 5, 4, '2132', NULL, 2, 0, '2025-10-26 18:08:55', '2025-10-26 18:08:55');
+INSERT INTO `sub_approval_user` VALUES (95, 1, 'purchase_order', 5, 5, '哈哈', NULL, 1, 0, '2025-10-27 23:37:51', '2025-10-27 23:37:51');
+INSERT INTO `sub_approval_user` VALUES (96, 1, 'purchase_order', 5, 4, '2132', NULL, 2, 0, '2025-10-27 23:37:51', '2025-10-27 23:37:51');
 
 -- ----------------------------
 -- Table structure for sub_const_type
@@ -405,11 +405,11 @@ CREATE TABLE `sub_equipment_code`  (
 -- Records of sub_equipment_code
 -- ----------------------------
 INSERT INTO `sub_equipment_code` VALUES (3, 1, 1, '123', '钻床', 12, 3, '7', 56, 8, '无', 1, '2025-07-08 16:06:29', '2025-10-22 11:39:46');
-INSERT INTO `sub_equipment_code` VALUES (4, 1, 1, '122', '退火炉', 22, 1, '10', 40, 4, '无', 1, '2025-08-09 16:06:56', '2025-10-22 11:39:41');
+INSERT INTO `sub_equipment_code` VALUES (4, 1, 1, '122', '退火炉', 26, 1, '10', 40, 4, '无', 1, '2025-08-09 16:06:56', '2025-10-27 20:32:23');
 INSERT INTO `sub_equipment_code` VALUES (5, 1, 1, '124', '激光机', 5, 1, '8', 40, 5, '无', 1, '2025-08-29 09:33:14', '2025-10-22 11:39:35');
-INSERT INTO `sub_equipment_code` VALUES (6, 6, 3, 'JX01', '打字机', 2, 6, '10', 20, 2, '', 1, '2025-10-18 10:17:12', '2025-10-23 23:45:15');
-INSERT INTO `sub_equipment_code` VALUES (7, 6, 3, 'JX02', '16T冲床', 8, 6, '10', 80, 8, '', 1, '2025-10-18 10:21:33', '2025-10-23 23:49:17');
-INSERT INTO `sub_equipment_code` VALUES (8, 6, 3, 'JX03', '钻床-A', 5, 6, '10', 50, 5, '', 1, '2025-10-18 10:24:42', '2025-10-23 23:55:05');
+INSERT INTO `sub_equipment_code` VALUES (6, 6, 3, 'JX01', '打字机', 2, 6, '10', 20, 2, '', 1, '2025-10-18 10:17:12', '2025-10-23 23:47:35');
+INSERT INTO `sub_equipment_code` VALUES (7, 6, 3, 'JX02', '16T冲床', 8, 6, '10', 80, 8, '', 1, '2025-10-18 10:21:33', '2025-10-23 23:51:20');
+INSERT INTO `sub_equipment_code` VALUES (8, 6, 3, 'JX03', '钻床-A', 5, 6, '10', 50, 5, '', 1, '2025-10-18 10:24:42', '2025-10-23 23:51:15');
 INSERT INTO `sub_equipment_code` VALUES (9, 6, 3, 'JX04', '手动研磨机', 4, 9, '10', 30, 3, '1台维修中', 1, '2025-10-18 10:38:09', '2025-10-18 10:38:09');
 
 -- ----------------------------
@@ -427,12 +427,32 @@ CREATE TABLE `sub_material_bom`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_bom
 -- ----------------------------
-INSERT INTO `sub_material_bom` VALUES (26, 1, 1, 19, 6, 0, 1, '2025-10-26 15:03:32', '2025-10-26 15:03:37');
+INSERT INTO `sub_material_bom` VALUES (5, 1, 1, 11, 6, 0, 1, '2025-07-27 11:10:29', '2025-08-03 11:04:19');
+INSERT INTO `sub_material_bom` VALUES (6, 1, 1, 10, 5, 0, 1, '2025-07-27 11:22:56', '2025-08-03 11:04:19');
+INSERT INTO `sub_material_bom` VALUES (7, 1, 1, 9, 6, 0, 1, '2025-07-27 11:50:06', '2025-08-03 11:04:19');
+INSERT INTO `sub_material_bom` VALUES (8, 1, 1, 10, 6, 0, 1, '2025-08-02 11:04:51', '2025-08-03 11:04:19');
+INSERT INTO `sub_material_bom` VALUES (9, 1, 1, 19, 5, 0, 1, '2025-08-11 10:19:02', '2025-08-13 14:40:29');
+INSERT INTO `sub_material_bom` VALUES (10, 1, 1, 19, 6, 0, 1, '2025-08-11 10:19:02', '2025-08-13 14:40:29');
+INSERT INTO `sub_material_bom` VALUES (11, 1, 1, 19, 10, 0, 1, '2025-08-11 10:19:02', '2025-08-13 14:40:29');
+INSERT INTO `sub_material_bom` VALUES (12, 1, 1, 17, 7, 0, 1, '2025-08-13 10:38:41', '2025-08-13 14:40:29');
+INSERT INTO `sub_material_bom` VALUES (13, 1, 1, 19, 6, 0, 1, '2025-08-13 14:41:35', '2025-08-17 09:48:46');
+INSERT INTO `sub_material_bom` VALUES (14, 1, 1, 17, 7, 0, 1, '2025-08-13 14:41:55', '2025-08-17 09:48:46');
+INSERT INTO `sub_material_bom` VALUES (15, 1, 1, 19, 10, 0, 1, '2025-08-13 14:42:03', '2025-08-17 09:48:46');
+INSERT INTO `sub_material_bom` VALUES (16, 1, 1, 17, 7, 0, 1, '2025-08-21 09:35:05', '2025-09-25 14:39:53');
+INSERT INTO `sub_material_bom` VALUES (17, 1, 1, 16, 8, 0, 1, '2025-09-25 14:38:28', '2025-09-25 14:39:53');
+INSERT INTO `sub_material_bom` VALUES (18, 1, 1, 11, 9, 0, 1, '2025-09-25 14:39:31', '2025-09-25 14:39:53');
+INSERT INTO `sub_material_bom` VALUES (19, 1, 1, 14, 10, 0, 1, '2025-09-25 14:39:45', '2025-09-25 14:39:53');
+INSERT INTO `sub_material_bom` VALUES (20, 1, 1, 14, 13, 0, 1, '2025-09-25 14:44:26', '2025-09-25 14:44:42');
+INSERT INTO `sub_material_bom` VALUES (21, 1, 1, 14, 10, 0, 1, '2025-09-25 14:44:36', '2025-09-25 14:44:42');
+INSERT INTO `sub_material_bom` VALUES (22, 3, 12, 20, 21, 1, 0, '2025-10-18 14:29:06', '2025-10-18 15:10:13');
+INSERT INTO `sub_material_bom` VALUES (23, 3, 6, 20, 21, 1, 1, '2025-10-18 14:30:01', '2025-10-19 15:37:50');
+INSERT INTO `sub_material_bom` VALUES (24, 3, 12, 20, 22, 1, 1, '2025-10-18 15:08:30', '2025-10-18 15:08:30');
+INSERT INTO `sub_material_bom` VALUES (25, 1, 1, 15, 8, 1, 1, '2025-10-21 21:04:49', '2025-10-21 21:23:26');
 
 -- ----------------------------
 -- Table structure for sub_material_bom_child
@@ -443,16 +463,45 @@ CREATE TABLE `sub_material_bom_child`  (
   `material_bom_id` int(11) NOT NULL COMMENT '材料BOM的父表id',
   `material_id` int(11) NOT NULL COMMENT '材料编码ID，关联材料编码表',
   `number` int(20) NULL DEFAULT NULL COMMENT '数量',
+  `is_buy` int(11) NULL DEFAULT 0 COMMENT '是否已采购，0未采购1已采购',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表子表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料BOM表子表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_bom_child
 -- ----------------------------
-INSERT INTO `sub_material_bom_child` VALUES (39, 26, 3, 5, '2025-10-26 15:03:32', '2025-10-26 15:03:32');
-INSERT INTO `sub_material_bom_child` VALUES (41, 26, 2, 6, '2025-10-26 15:37:07', '2025-10-26 15:37:07');
+INSERT INTO `sub_material_bom_child` VALUES (6, 12, 2, 12, 0, '2025-08-13 10:38:41', '2025-08-13 10:38:41');
+INSERT INTO `sub_material_bom_child` VALUES (7, 12, 2, 22, 0, '2025-08-13 10:38:41', '2025-08-13 10:38:41');
+INSERT INTO `sub_material_bom_child` VALUES (8, 12, 2, 24, 0, '2025-08-13 10:38:41', '2025-08-13 10:38:41');
+INSERT INTO `sub_material_bom_child` VALUES (9, 11, 2, 23, 0, '2025-08-13 10:59:47', '2025-08-13 10:59:47');
+INSERT INTO `sub_material_bom_child` VALUES (10, 11, 2, 34, 0, '2025-08-13 10:59:47', '2025-08-13 10:59:47');
+INSERT INTO `sub_material_bom_child` VALUES (11, 10, 2, 12, 0, '2025-08-13 10:59:52', '2025-08-13 10:59:52');
+INSERT INTO `sub_material_bom_child` VALUES (12, 13, 3, 12, 0, '2025-08-13 14:41:35', '2025-08-17 09:48:42');
+INSERT INTO `sub_material_bom_child` VALUES (13, 14, 2, 12, 0, '2025-08-13 14:41:55', '2025-08-13 14:41:55');
+INSERT INTO `sub_material_bom_child` VALUES (14, 14, 2, 22, 0, '2025-08-13 14:41:55', '2025-08-13 14:41:55');
+INSERT INTO `sub_material_bom_child` VALUES (15, 14, 3, 24, 0, '2025-08-13 14:41:55', '2025-08-17 09:38:34');
+INSERT INTO `sub_material_bom_child` VALUES (16, 15, 2, 23, 0, '2025-08-13 14:42:03', '2025-08-13 14:42:03');
+INSERT INTO `sub_material_bom_child` VALUES (17, 15, 2, 34, 0, '2025-08-13 14:42:03', '2025-08-13 14:42:03');
+INSERT INTO `sub_material_bom_child` VALUES (18, 16, 3, 12, 0, '2025-08-21 09:35:05', '2025-08-21 09:35:05');
+INSERT INTO `sub_material_bom_child` VALUES (19, 17, 2, 600, 0, '2025-09-25 14:38:28', '2025-09-25 14:38:28');
+INSERT INTO `sub_material_bom_child` VALUES (20, 17, 3, 400, 0, '2025-09-25 14:38:28', '2025-09-25 14:38:28');
+INSERT INTO `sub_material_bom_child` VALUES (21, 18, 3, 900, 0, '2025-09-25 14:39:31', '2025-09-25 14:39:31');
+INSERT INTO `sub_material_bom_child` VALUES (22, 19, 2, 600, 0, '2025-09-25 14:39:45', '2025-09-25 14:39:45');
+INSERT INTO `sub_material_bom_child` VALUES (23, 19, 3, 700, 0, '2025-09-25 14:39:45', '2025-09-25 14:39:45');
+INSERT INTO `sub_material_bom_child` VALUES (24, 20, 2, 198, 0, '2025-09-25 14:44:26', '2025-09-25 14:44:26');
+INSERT INTO `sub_material_bom_child` VALUES (25, 20, 2, 158, 0, '2025-09-25 14:44:26', '2025-09-25 14:44:26');
+INSERT INTO `sub_material_bom_child` VALUES (26, 21, 2, 485, 0, '2025-09-25 14:44:36', '2025-09-25 14:44:36');
+INSERT INTO `sub_material_bom_child` VALUES (27, 22, 4, 5, 0, '2025-10-18 14:29:06', '2025-10-18 14:29:06');
+INSERT INTO `sub_material_bom_child` VALUES (28, 23, 5, 1, 0, '2025-10-18 14:30:01', '2025-10-18 14:30:01');
+INSERT INTO `sub_material_bom_child` VALUES (29, 24, 6, 2, 0, '2025-10-18 15:08:30', '2025-10-18 15:08:30');
+INSERT INTO `sub_material_bom_child` VALUES (30, 24, 4, 5, 0, '2025-10-18 15:08:30', '2025-10-18 15:08:30');
+INSERT INTO `sub_material_bom_child` VALUES (31, 23, 4, 3, 0, '2025-10-19 15:37:50', '2025-10-19 15:37:50');
+INSERT INTO `sub_material_bom_child` VALUES (34, 25, 3, 30, 0, '2025-10-21 21:04:49', '2025-10-21 21:04:49');
+INSERT INTO `sub_material_bom_child` VALUES (36, 25, 2, 60, 0, '2025-10-21 21:04:49', '2025-10-21 21:04:49');
+INSERT INTO `sub_material_bom_child` VALUES (37, 25, 3, 40, 0, '2025-10-21 21:23:26', '2025-10-21 21:23:26');
+INSERT INTO `sub_material_bom_child` VALUES (38, 25, 2, 50, 0, '2025-10-21 21:23:26', '2025-10-21 21:23:26');
 
 -- ----------------------------
 -- Table structure for sub_material_code
@@ -474,16 +523,22 @@ CREATE TABLE `sub_material_code`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料编码基础信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_code
 -- ----------------------------
 INSERT INTO `sub_material_code` VALUES (2, 1, 1, '123', '121', '2121', '21', '2121', '21', '21', '21', 1, '2025-07-08 15:36:33', '2025-08-12 10:18:06');
 INSERT INTO `sub_material_code` VALUES (3, 1, 1, '789', '555', '5356', '35353', '353', '353', '5353', '353', 1, '2025-08-17 09:38:16', '2025-10-21 14:56:14');
-INSERT INTO `sub_material_code` VALUES (4, 12, 3, 'WC-A00001', '线码', '工字型', '20*10', 'X', '个', '盒（100个）', '', 1, '2025-10-18 05:10:39', '2025-10-18 05:10:39');
-INSERT INTO `sub_material_code` VALUES (5, 12, 3, 'WC-A00002', '折叠器', '中号', '100*30', '加厚型', '个', '个', '', 1, '2025-10-18 14:27:16', '2025-10-18 14:27:16');
-INSERT INTO `sub_material_code` VALUES (6, 12, 3, 'WC-B00001', '螺杆', 'M8', 'L30', '镀锌螺杆', '个', '盒（200个）', '', 1, '2025-10-18 14:35:20', '2025-10-18 14:35:20');
+INSERT INTO `sub_material_code` VALUES (4, 6, 3, 'H0101-0089', '车首管', 'JHD-AT-0074*146L', 'JHD-AT-0074*146L', '', 'PCS', 'KG', '', 1, '2025-10-18 05:10:39', '2025-10-27 16:21:45');
+INSERT INTO `sub_material_code` VALUES (5, 6, 3, 'H0201-0053', '五通', 'φ43*4.6T*100L JHD-AK-002G偏心铣弧口', 'φ43*4.6T*100L JHD-AK-002G偏心铣弧口', '', 'PCS', 'KG', '', 1, '2025-10-18 14:27:16', '2025-10-27 16:21:38');
+INSERT INTO `sub_material_code` VALUES (6, 6, 3, 'M0101-0668', '中管', 'φ40.8*2.2T*410L', 'φ40.8*2.2T*410L', '', 'PCS', 'KG', '', 1, '2025-10-18 14:35:20', '2025-10-27 16:21:23');
+INSERT INTO `sub_material_code` VALUES (7, 6, 3, 'M0101-1123', '手提管', 'φ22.2*2.0T*200L', 'φ22.2*2.0T*200L', '', 'PCS', 'KG', '', 1, '2025-10-27 16:17:44', '2025-10-27 16:21:15');
+INSERT INTO `sub_material_code` VALUES (8, 6, 3, 'M0101-0565', '下管', 'φ28.6*2.0T*220L', 'φ28.6*2.0T*220L', '', 'PCS', 'KG', '', 1, '2025-10-27 16:19:44', '2025-10-27 16:21:30');
+INSERT INTO `sub_material_code` VALUES (9, 6, 3, 'M0103-0015', '过线管', '方27*17*2000L(CM-15114)(成品15L,一分百)', '方27*17*2000L(CM-15114)(成品15L,一分百)', '', 'PCS', 'KG', '', 1, '2025-10-27 16:21:05', '2025-10-27 16:21:05');
+INSERT INTO `sub_material_code` VALUES (10, 6, 3, 'M0103-0234', '主梁管', '方121*65*600L', '方121*65*600L', '', 'PCS', 'KG', '', 1, '2025-10-27 16:23:05', '2025-10-27 16:23:05');
+INSERT INTO `sub_material_code` VALUES (11, 6, 3, 'H0801-0004', '水壶螺母', 'YD008-044（M4）', 'YD008-044（M4）', '', '个', '盒（50个）', '', 1, '2025-10-27 16:28:28', '2025-10-27 16:28:28');
+INSERT INTO `sub_material_code` VALUES (12, 6, 3, 'H0703-0001', '油压线扣', '/YD007-004', '/YD007-004', '', '个', '盒（100个）', '', 1, '2025-10-27 16:29:45', '2025-10-27 16:29:45');
 
 -- ----------------------------
 -- Table structure for sub_material_ment
@@ -494,6 +549,7 @@ CREATE TABLE `sub_material_ment`  (
   `company_id` int(11) NULL DEFAULT NULL COMMENT '企业id',
   `user_id` int(11) NULL DEFAULT NULL COMMENT '发布的用户id',
   `quote_id` int(11) NULL DEFAULT NULL COMMENT '报价单ID',
+  `material_bom_id` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '材料BOM ID',
   `print_id` int(30) NULL DEFAULT NULL COMMENT '打印的id',
   `notice_id` int(11) NULL DEFAULT NULL COMMENT '生产订单ID',
   `notice` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生产订单',
@@ -527,9 +583,9 @@ CREATE TABLE `sub_material_ment`  (
 -- ----------------------------
 -- Records of sub_material_ment
 -- ----------------------------
-INSERT INTO `sub_material_ment` VALUES (3, 1, 1, NULL, 15, 6, '2222', 2, '1234', '151', '10', '1233', '212', 3, '789', '555', '535/35353', '353', '353', '2.5', '18000', '18000', '2025-07-07', 1, '我是名字', '2025-09-23 14:54:56', 1, 0, 1, '2025-09-23 14:54:56', '2025-10-11 15:06:49');
-INSERT INTO `sub_material_ment` VALUES (4, 1, 1, NULL, 15, 8, '1122', 2, '1234', '151', '19', 'A001', '圆珠笔', 2, '123', '121', '2121/21', '2121', '21', '2.6', '15000', '15000', '2025-10-31', 1, '我是名字', '2025-09-26 14:03:04', 1, 0, 1, '2025-09-26 14:03:04', '2025-10-11 15:06:49');
-INSERT INTO `sub_material_ment` VALUES (5, 1, 1, 6, NULL, 0, '非管控材料', 2, '1234', '151', NULL, '', '', 2, '123', '121', '2121/21', '2121', '21', '90', '', '21212121', '2025-10-31', 1, '我是名字', '2025-10-26 18:08:55', 0, 0, 1, '2025-10-26 18:08:55', '2025-10-26 18:08:55');
+INSERT INTO `sub_material_ment` VALUES (3, 1, 1, NULL, NULL, 15, 6, '2222', 2, '1234', '151', '10', '1233', '212', 3, '789', '555', '535/35353', '353', '353', '2.5', '18000', '18000', '2025-07-07', 1, '我是名字', '2025-09-23 14:54:56', 1, 1, 1, '2025-09-23 14:54:56', '2025-10-24 12:59:26');
+INSERT INTO `sub_material_ment` VALUES (4, 1, 1, NULL, NULL, 15, 8, '1122', 2, '1234', '151', '19', 'A001', '圆珠笔', 2, '123', '121', '2121/21', '2121', '21', '2.6', '15000', '15000', '2025-10-31', 1, '我是名字', '2025-09-26 14:03:04', 1, 1, 1, '2025-09-26 14:03:04', '2025-10-24 12:59:29');
+INSERT INTO `sub_material_ment` VALUES (5, 1, 1, 1, '11', NULL, 8, '1122', 2, '1234', '151', '19', 'A001', '圆珠笔', 2, '123', '121', '2121/21', '2121', '个2', '24', '', '15000', '2025-10-15', 1, '我是名字', '2025-10-27 23:37:51', 0, 0, 1, '2025-10-27 23:37:51', '2025-10-27 23:37:51');
 
 -- ----------------------------
 -- Table structure for sub_material_quote
@@ -540,11 +596,9 @@ CREATE TABLE `sub_material_quote`  (
   `company_id` int(11) NOT NULL COMMENT '企业id',
   `user_id` int(11) NOT NULL COMMENT '发布的用户id',
   `supplier_id` int(11) NULL DEFAULT NULL COMMENT '供应商id',
-  `notice_id` int(11) NULL DEFAULT NULL COMMENT '生产通知单id',
-  `material_bom_id` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '材料BOM ID',
-  `product_id` int(11) NULL DEFAULT NULL COMMENT '产品编码id',
-  `material_id` int(11) NULL DEFAULT NULL COMMENT '材料编码ID',
+  `material_id` int(11) NOT NULL COMMENT '材料编码ID',
   `price` int(11) NULL DEFAULT NULL COMMENT '单价',
+  `unit` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '采购单位',
   `delivery` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '送货方式',
   `packaging` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '包装要求',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
@@ -554,14 +608,14 @@ CREATE TABLE `sub_material_quote`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料报价信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料报价信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_quote
 -- ----------------------------
-INSERT INTO `sub_material_quote` VALUES (4, 1, 1, 2, 8, '26', 19, 2, 45, '515', '无', '1', '无', '无', 1, '2025-10-26 15:40:03', '2025-10-26 15:40:03');
-INSERT INTO `sub_material_quote` VALUES (5, 1, 1, 1, 8, '26', 19, 2, 50, '15', '无', '1515', '无', '无', 1, '2025-10-26 15:40:03', '2025-10-26 15:40:03');
-INSERT INTO `sub_material_quote` VALUES (6, 1, 1, 2, 0, '', NULL, 2, 90, '515', '无', '1', '无', '无', 1, '2025-10-26 17:45:33', '2025-10-26 17:45:33');
+INSERT INTO `sub_material_quote` VALUES (1, 1, 1, 2, 2, 24, NULL, '1111', '1111', '1111', '1111', '1111', 1, '2025-07-27 21:43:20', '2025-09-26 13:28:03');
+INSERT INTO `sub_material_quote` VALUES (2, 1, 1, 1, 2, 21, NULL, '2222', '222', '22', '222', '22', 1, '2025-07-27 22:40:03', '2025-09-26 13:41:17');
+INSERT INTO `sub_material_quote` VALUES (3, 1, 1, 2, 3, 111, NULL, '515', '2www', '1', '1www', 'ee1eee', 1, '2025-10-23 13:26:53', '2025-10-23 13:26:53');
 
 -- ----------------------------
 -- Table structure for sub_no_encoding
@@ -575,18 +629,11 @@ CREATE TABLE `sub_no_encoding`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_no_encoding
 -- ----------------------------
-INSERT INTO `sub_no_encoding` VALUES (15, 1, 'ES0012025100007', 'ES', '2025-10-11 15:06:49', '2025-10-11 15:06:49');
-INSERT INTO `sub_no_encoding` VALUES (16, 1, 'TV0012025100001', 'TV', '2025-10-11 15:11:38', '2025-10-11 15:11:38');
-INSERT INTO `sub_no_encoding` VALUES (17, 1, 'SI0012025100001', 'SI', '2025-10-11 15:15:49', '2025-10-11 15:15:49');
-INSERT INTO `sub_no_encoding` VALUES (18, 1, 'SO0012025100001', 'SO', '2025-10-12 12:50:17', '2025-10-12 12:50:17');
-INSERT INTO `sub_no_encoding` VALUES (19, 1, 'PO0012025100001', 'PO', '2025-10-12 13:45:42', '2025-10-12 13:45:42');
-INSERT INTO `sub_no_encoding` VALUES (20, 1, 'PO0012025100002', 'PO', '2025-10-15 10:45:50', '2025-10-15 10:45:50');
-INSERT INTO `sub_no_encoding` VALUES (21, 1, 'PO0012025100003', 'PO', '2025-10-15 11:20:18', '2025-10-15 11:20:18');
 
 -- ----------------------------
 -- Table structure for sub_operation_history
@@ -603,35 +650,92 @@ CREATE TABLE `sub_operation_history`  (
   `data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '操作数据（JSON 格式，存储前后数据对比）',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户操作日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 82 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户操作日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_operation_history
 -- ----------------------------
-INSERT INTO `sub_operation_history` VALUES (1, 3, 12, '徐楚东', 'login', '登录', '用户{ 徐楚东 }成功登录', '{\"newData\":{\"username\":\"xuchudong\",\"password\":\"***\"}}', '2025-10-24 12:52:43');
-INSERT INTO `sub_operation_history` VALUES (2, 1, 1, '我是名字', 'login', '登录', '用户{ 我是名字 }成功登录', '{\"newData\":{\"username\":\"admin1\",\"password\":\"***\"}}', '2025-10-24 12:52:55');
-INSERT INTO `sub_operation_history` VALUES (3, 3, 12, '徐楚东', 'login', '登录', '用户{ 徐楚东 }成功登录', '{\"newData\":{\"username\":\"xuchudong\",\"password\":\"***\"}}', '2025-10-24 13:01:20');
-INSERT INTO `sub_operation_history` VALUES (4, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-10-24 13:02:07');
-INSERT INTO `sub_operation_history` VALUES (5, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-10-24 13:03:01');
-INSERT INTO `sub_operation_history` VALUES (6, 3, 15, '徐芙蓉', 'login', '登录', '用户{ 徐芙蓉 }成功登录', '{\"newData\":{\"username\":\"xufurong\",\"password\":\"***\"}}', '2025-10-24 13:07:51');
-INSERT INTO `sub_operation_history` VALUES (7, 3, 6, '徐庆华', 'update', '生产制程', '修改生产制程：名称：备料组', '{\"newData\":{\"id\":6,\"name\":\"备料组\",\"sort\":\"0\"}}', '2025-10-24 13:37:21');
-INSERT INTO `sub_operation_history` VALUES (8, 3, 6, '徐庆华', 'update', '生产制程', '修改生产制程：名称：焊接组', '{\"newData\":{\"id\":7,\"name\":\"焊接组\",\"sort\":\"2\"}}', '2025-10-24 13:37:55');
-INSERT INTO `sub_operation_history` VALUES (9, 3, 6, '徐庆华', 'update', '生产制程', '修改生产制程：名称：焊接组', '{\"newData\":{\"id\":7,\"name\":\"焊接组\",\"sort\":\"1\"}}', '2025-10-24 13:38:03');
-INSERT INTO `sub_operation_history` VALUES (10, 3, 6, '徐庆华', 'update', '生产制程', '修改生产制程：名称：备料组', '{\"newData\":{\"id\":6,\"name\":\"备料组\",\"sort\":\"2\"}}', '2025-10-24 13:38:06');
-INSERT INTO `sub_operation_history` VALUES (11, 3, 6, '徐庆华', 'update', '生产制程', '修改生产制程：名称：研磨组', '{\"newData\":{\"id\":9,\"name\":\"研磨组\",\"sort\":\"3\"}}', '2025-10-24 13:38:45');
-INSERT INTO `sub_operation_history` VALUES (12, 3, 6, '徐庆华', 'update', '生产制程', '修改生产制程：名称：热处理', '{\"newData\":{\"id\":8,\"name\":\"热处理\",\"sort\":\"4\"}}', '2025-10-24 13:38:49');
-INSERT INTO `sub_operation_history` VALUES (13, 3, 6, '徐庆华', 'update', '生产制程', '修改生产制程：名称：补土组', '{\"newData\":{\"id\":10,\"name\":\"补土组\",\"sort\":\"5\"}}', '2025-10-24 13:38:53');
-INSERT INTO `sub_operation_history` VALUES (14, 3, 6, '徐庆华', 'update', '生产制程', '修改生产制程：名称：后段组', '{\"newData\":{\"id\":11,\"name\":\"后段组\",\"sort\":\"6\"}}', '2025-10-24 13:39:01');
-INSERT INTO `sub_operation_history` VALUES (15, 3, 6, '徐庆华', 'add', '生产制程', '新增生产制程：名称：哈哈', '{\"newData\":{\"name\":\"哈哈\",\"sort\":\"\"}}', '2025-10-24 13:39:13');
-INSERT INTO `sub_operation_history` VALUES (16, 1, 1, '我是名字', 'login', '登录', '用户{ 我是名字 }成功登录', '{\"newData\":{\"username\":\"admin1\",\"password\":\"***\"}}', '2025-10-25 02:46:52');
-INSERT INTO `sub_operation_history` VALUES (17, 1, 1, '我是名字', 'login', '登录', '用户{ 我是名字 }成功登录', '{\"newData\":{\"username\":\"admin1\",\"password\":\"***\"}}', '2025-10-26 03:35:38');
-INSERT INTO `sub_operation_history` VALUES (18, 1, 1, '我是名字', 'update', '材料BOM', '修改材料BOM，产品编码：12324，部件编码：1238，材料编码：123,789', '{\"newData\":{\"id\":25,\"product_id\":15,\"part_id\":8,\"children\":[{\"id\":36,\"material_bom_id\":25,\"material_id\":2,\"number\":60,\"material\":{\"id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\"}},{\"id\":37,\"material_bom_id\":25,\"material_id\":3,\"number\":40,\"material\":{\"id\":3,\"material_code\":\"789\",\"material_name\":\"555\",\"specification\":\"35353\"}}],\"archive\":1}}', '2025-10-26 06:19:27');
-INSERT INTO `sub_operation_history` VALUES (19, 1, 1, '我是名字', 'update', '材料BOM', '修改材料BOM，产品编码：12324，部件编码：1238，材料编码：123,789', '{\"newData\":{\"id\":25,\"product_id\":15,\"part_id\":8,\"children\":[{\"id\":36,\"material_bom_id\":25,\"material_id\":2,\"number\":60,\"material\":{\"id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"specification\":\"21\"}},{\"id\":37,\"material_bom_id\":25,\"material_id\":3,\"number\":40,\"material\":{\"id\":3,\"material_code\":\"789\",\"material_name\":\"555\",\"specification\":\"35353\"}}],\"archive\":1}}', '2025-10-26 06:40:39');
-INSERT INTO `sub_operation_history` VALUES (20, 1, 1, '我是名字', 'add', '材料BOM', '新增材料BOM，产品编码：A001，部件编码：C001，材料编码：789,123', '{\"newData\":{\"product_id\":19,\"part_id\":6,\"children\":[{\"material_id\":3,\"number\":\"5\"},{\"material_id\":2,\"number\":\"10\"}],\"archive\":1}}', '2025-10-26 07:03:33');
-INSERT INTO `sub_operation_history` VALUES (21, 1, 1, '我是名字', 'keyup', '材料BOM', '存档材料BOM，{ 产品编码：A001，部件编码：C001，材料编码：789,123 }', '{\"newData\":{\"ids\":[26],\"archive\":0}}', '2025-10-26 07:03:37');
-INSERT INTO `sub_operation_history` VALUES (22, 1, 1, '我是名字', 'keyup', '原材料报价', '存档原材料报价', '{\"newData\":{\"data\":[{\"supplier_id\":2,\"notice_id\":8,\"material_bom_id\":26,\"material_id\":2,\"product_id\":19,\"price\":\"45\",\"delivery\":\"515\",\"packaging\":\"无\",\"transaction_currency\":\"1\",\"other_transaction_terms\":\"无\",\"remarks\":\"无\"},{\"supplier_id\":1,\"notice_id\":8,\"material_bom_id\":26,\"material_id\":2,\"product_id\":19,\"price\":\"50\",\"delivery\":\"15\",\"packaging\":\"无\",\"transaction_currency\":\"1515\",\"other_transaction_terms\":\"无\",\"remarks\":\"无\"}]}}', '2025-10-26 07:40:03');
-INSERT INTO `sub_operation_history` VALUES (23, 1, 1, '我是名字', 'keyup', '原材料报价', '存档原材料报价', '{\"newData\":{\"data\":[{\"supplier_id\":2,\"notice_id\":0,\"material_bom_id\":\"\",\"material_id\":2,\"price\":\"90\",\"delivery\":\"515\",\"packaging\":\"无\",\"transaction_currency\":\"1\",\"other_transaction_terms\":\"无\",\"remarks\":\"无\"}]}}', '2025-10-26 09:45:33');
-INSERT INTO `sub_operation_history` VALUES (24, 1, 1, '我是名字', 'keyApproval', '采购单', '采购单提交审核：{ 供应商编码：1234，生产订单号：非管控材料，产品编码：，材料编码：123 }', '{\"newData\":{\"data\":[{\"quote_id\":6,\"notice_id\":0,\"notice\":\"非管控材料\",\"supplier_id\":2,\"supplier_code\":\"1234\",\"supplier_abbreviation\":\"151\",\"product_id\":null,\"product_code\":\"\",\"product_name\":\"\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"model_spec\":\"2121/21\",\"other_features\":\"2121\",\"unit\":\"21\",\"price\":90,\"order_number\":\"\",\"number\":\"21212121\",\"delivery_time\":\"2025-10-31\"}],\"type\":\"purchase_order\"}}', '2025-10-26 10:08:55');
+INSERT INTO `sub_operation_history` VALUES (1, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-10-24 01:29:08');
+INSERT INTO `sub_operation_history` VALUES (2, 1, 1, '我是名字', 'login', '登录', '用户{ 我是名字 }成功登录', '{\"newData\":{\"username\":\"admin1\",\"password\":\"***\"}}', '2025-10-24 02:34:18');
+INSERT INTO `sub_operation_history` VALUES (3, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-10-24 02:35:32');
+INSERT INTO `sub_operation_history` VALUES (4, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-10-24 02:37:48');
+INSERT INTO `sub_operation_history` VALUES (5, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-10-24 02:39:19');
+INSERT INTO `sub_operation_history` VALUES (6, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-10-24 02:39:34');
+INSERT INTO `sub_operation_history` VALUES (7, 3, 6, '徐庆华', 'update', '生产制程', '修改生产制程：名称：A备料组', '{\"newData\":{\"id\":6,\"name\":\"A备料组\"}}', '2025-10-24 02:50:41');
+INSERT INTO `sub_operation_history` VALUES (8, 3, 6, '徐庆华', 'update', '生产制程', '修改生产制程：名称：B焊接组', '{\"newData\":{\"id\":7,\"name\":\"B焊接组\"}}', '2025-10-24 02:50:49');
+INSERT INTO `sub_operation_history` VALUES (9, 3, 6, '徐庆华', 'update', '生产制程', '修改生产制程：名称：C热处理', '{\"newData\":{\"id\":8,\"name\":\"C热处理\"}}', '2025-10-24 02:50:55');
+INSERT INTO `sub_operation_history` VALUES (10, 3, 6, '徐庆华', 'update', '生产制程', '修改生产制程：名称：D后段组', '{\"newData\":{\"id\":11,\"name\":\"D后段组\"}}', '2025-10-24 02:52:17');
+INSERT INTO `sub_operation_history` VALUES (11, 3, 6, '徐庆华', 'update', '生产制程', '修改生产制程：名称：E研磨组', '{\"newData\":{\"id\":9,\"name\":\"E研磨组\"}}', '2025-10-24 02:52:24');
+INSERT INTO `sub_operation_history` VALUES (12, 3, 6, '徐庆华', 'update', '生产制程', '修改生产制程：名称：F补土组', '{\"newData\":{\"id\":10,\"name\":\"F补土组\"}}', '2025-10-24 02:52:30');
+INSERT INTO `sub_operation_history` VALUES (13, 3, 6, '徐庆华', 'add', '供应商资料', '新增供应商资料，供应商编码：GA002', '{\"newData\":{\"supplier_code\":\"GA002\",\"supplier_abbreviation\":\"城至\",\"contact_person\":\"吴总\",\"contact_information\":\"12345678901\",\"supplier_full_name\":\"东莞市城至精密五金有限公司\",\"supplier_address\":\"东莞市万江区尖沙咀\",\"supplier_category\":\"委外加工\",\"supply_method\":\"送货上门\",\"transaction_method\":\"现金\",\"transaction_currency\":\"人民币\",\"other_transaction_terms\":\"月结60天\"}}', '2025-10-24 03:26:23');
+INSERT INTO `sub_operation_history` VALUES (14, 1, 1, '我是名字', 'login', '登录', '用户{ 我是名字 }成功登录', '{\"newData\":{\"username\":\"admin1\",\"password\":\"***\"}}', '2025-10-24 04:57:17');
+INSERT INTO `sub_operation_history` VALUES (15, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-10-24 05:18:59');
+INSERT INTO `sub_operation_history` VALUES (16, 1, 1, '我是名字', 'login', '登录', '用户{ 我是名字 }成功登录', '{\"newData\":{\"username\":\"admin1\",\"password\":\"***\"}}', '2025-10-24 05:36:10');
+INSERT INTO `sub_operation_history` VALUES (17, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-10-24 06:00:23');
+INSERT INTO `sub_operation_history` VALUES (18, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-10-25 02:42:40');
+INSERT INTO `sub_operation_history` VALUES (19, 1, 1, '我是名字', 'login', '登录', '用户{ 我是名字 }成功登录', '{\"newData\":{\"username\":\"admin1\",\"password\":\"***\"}}', '2025-10-26 10:19:05');
+INSERT INTO `sub_operation_history` VALUES (20, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-10-27 00:58:33');
+INSERT INTO `sub_operation_history` VALUES (21, 3, 6, '徐庆华', 'keyup', '工艺BOM', '存档工艺BOM，产品编码：WA-A00001，部件编码：X001，材料编码：PA001,PA002；', '{\"newData\":{\"ids\":[59],\"archive\":0}}', '2025-10-27 01:18:16');
+INSERT INTO `sub_operation_history` VALUES (22, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-10-27 03:53:52');
+INSERT INTO `sub_operation_history` VALUES (23, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-10-27 06:34:33');
+INSERT INTO `sub_operation_history` VALUES (24, 3, 6, '徐庆华', 'add', '产品编码', '新增产品编码：WA-A00002', '{\"newData\":{\"product_code\":\"WA-A00002\",\"product_name\":\"0612铝车架\",\"drawing\":\"0612\",\"model\":\"山地车\",\"specification\":\"32寸\",\"other_features\":\"配载重货架\",\"component_structure\":\"整体车架+独立货架\",\"unit\":\"套\",\"production_requirements\":\"1.产品表面研磨清洗；2.产品杜绝补土；3.按订单要求打字码\"}}', '2025-10-27 06:44:03');
+INSERT INTO `sub_operation_history` VALUES (25, 3, 6, '徐庆华', 'update', '部件编码', '修改部件编码：X001', '{\"newData\":{\"id\":21,\"company_id\":3,\"user_id\":12,\"part_code\":\"X001\",\"part_name\":\"车首管\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-18\",\"updated_at\":\"2025-10-18\"}}', '2025-10-27 06:54:38');
+INSERT INTO `sub_operation_history` VALUES (26, 3, 6, '徐庆华', 'update', '部件编码', '修改部件编码：X002', '{\"newData\":{\"id\":22,\"company_id\":3,\"user_id\":12,\"part_code\":\"X002\",\"part_name\":\"主梁管\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-18\",\"updated_at\":\"2025-10-18\"}}', '2025-10-27 06:54:57');
+INSERT INTO `sub_operation_history` VALUES (27, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X003', '{\"newData\":{\"part_code\":\"X003\",\"part_name\":\"辅助管\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 06:58:25');
+INSERT INTO `sub_operation_history` VALUES (28, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X004', '{\"newData\":{\"part_code\":\"X004\",\"part_name\":\"上管\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:03:56');
+INSERT INTO `sub_operation_history` VALUES (29, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X005', '{\"newData\":{\"part_code\":\"X005\",\"part_name\":\"下管\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:04:18');
+INSERT INTO `sub_operation_history` VALUES (30, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X006', '{\"newData\":{\"part_code\":\"X006\",\"part_name\":\"座管\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:04:59');
+INSERT INTO `sub_operation_history` VALUES (31, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X007', '{\"newData\":{\"part_code\":\"X007\",\"part_name\":\"吴桐\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:06:48');
+INSERT INTO `sub_operation_history` VALUES (32, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X008', '{\"newData\":{\"part_code\":\"X008\",\"part_name\":\"后上叉R\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:07:21');
+INSERT INTO `sub_operation_history` VALUES (33, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X009', '{\"newData\":{\"part_code\":\"X009\",\"part_name\":\"后上叉L\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:11:47');
+INSERT INTO `sub_operation_history` VALUES (34, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X010', '{\"newData\":{\"part_code\":\"X010\",\"part_name\":\"后下叉R\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:12:39');
+INSERT INTO `sub_operation_history` VALUES (35, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X011', '{\"newData\":{\"part_code\":\"X011\",\"part_name\":\"后下叉L\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:12:57');
+INSERT INTO `sub_operation_history` VALUES (36, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X012', '{\"newData\":{\"part_code\":\"X012\",\"part_name\":\"电池盒板\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:23:24');
+INSERT INTO `sub_operation_history` VALUES (37, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X013', '{\"newData\":{\"part_code\":\"X013\",\"part_name\":\"手提管\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:23:46');
+INSERT INTO `sub_operation_history` VALUES (38, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X014', '{\"newData\":{\"part_code\":\"X014\",\"part_name\":\"中管\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:24:25');
+INSERT INTO `sub_operation_history` VALUES (39, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X016', '{\"newData\":{\"part_code\":\"X016\",\"part_name\":\"上支杆\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:24:50');
+INSERT INTO `sub_operation_history` VALUES (40, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X017', '{\"newData\":{\"part_code\":\"X017\",\"part_name\":\"下枝杆\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:25:37');
+INSERT INTO `sub_operation_history` VALUES (41, 3, 6, '徐庆华', 'update', '部件编码', '修改部件编码：X015', '{\"newData\":{\"id\":35,\"company_id\":3,\"user_id\":6,\"part_code\":\"X015\",\"part_name\":\"上支杆\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-27\",\"updated_at\":\"2025-10-27\"}}', '2025-10-27 07:26:02');
+INSERT INTO `sub_operation_history` VALUES (42, 3, 6, '徐庆华', 'update', '部件编码', '修改部件编码：X016', '{\"newData\":{\"id\":36,\"company_id\":3,\"user_id\":6,\"part_code\":\"X016\",\"part_name\":\"下枝杆\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-27\",\"updated_at\":\"2025-10-27\"}}', '2025-10-27 07:26:12');
+INSERT INTO `sub_operation_history` VALUES (43, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X017', '{\"newData\":{\"part_code\":\"X017\",\"part_name\":\"下叉\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:27:35');
+INSERT INTO `sub_operation_history` VALUES (44, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X018', '{\"newData\":{\"part_code\":\"X018\",\"part_name\":\"过线管\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:28:00');
+INSERT INTO `sub_operation_history` VALUES (45, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X019', '{\"newData\":{\"part_code\":\"X019\",\"part_name\":\"上叉\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:28:29');
+INSERT INTO `sub_operation_history` VALUES (46, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：Y001', '{\"newData\":{\"part_code\":\"Y001\",\"part_name\":\"左钩爪\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:28:56');
+INSERT INTO `sub_operation_history` VALUES (47, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：Y002', '{\"newData\":{\"part_code\":\"Y002\",\"part_name\":\"右钩爪\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:29:16');
+INSERT INTO `sub_operation_history` VALUES (48, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：Y003', '{\"newData\":{\"part_code\":\"Y003\",\"part_name\":\"上叉支杆\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:30:12');
+INSERT INTO `sub_operation_history` VALUES (49, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：Y004', '{\"newData\":{\"part_code\":\"Y004\",\"part_name\":\"组立折叠器\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:30:34');
+INSERT INTO `sub_operation_history` VALUES (50, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：Y005', '{\"newData\":{\"part_code\":\"Y005\",\"part_name\":\"组立前三角\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:31:01');
+INSERT INTO `sub_operation_history` VALUES (51, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：Y006', '{\"newData\":{\"part_code\":\"Y006\",\"part_name\":\"组立后三角\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:31:21');
+INSERT INTO `sub_operation_history` VALUES (52, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：Z001', '{\"newData\":{\"part_code\":\"Z001\",\"part_name\":\"成品车架\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:32:05');
+INSERT INTO `sub_operation_history` VALUES (53, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：Z002', '{\"newData\":{\"part_code\":\"Z002\",\"part_name\":\"前三角\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:32:27');
+INSERT INTO `sub_operation_history` VALUES (54, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：Z003', '{\"newData\":{\"part_code\":\"Z003\",\"part_name\":\"后三角\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:32:48');
+INSERT INTO `sub_operation_history` VALUES (55, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：Z004', '{\"newData\":{\"part_code\":\"Z004\",\"part_name\":\"上叉支杆\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"PCS\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 07:33:10');
+INSERT INTO `sub_operation_history` VALUES (56, 3, 6, '徐庆华', 'update', '原材料编码', '修改原材料编码：H0101-0089', '{\"newData\":{\"id\":4,\"user_id\":12,\"company_id\":3,\"material_code\":\"H0101-0089\",\"material_name\":\"头管\",\"model\":\"JHD-AT-0074*146L\",\"specification\":\"JHD-AT-0074*146L\",\"other_features\":\"\",\"usage_unit\":\"PCS\",\"purchase_unit\":\"PCS\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-18\",\"updated_at\":\"2025-10-18\"}}', '2025-10-27 07:47:47');
+INSERT INTO `sub_operation_history` VALUES (57, 3, 6, '徐庆华', 'update', '原材料编码', '修改原材料编码：H0201-0053', '{\"newData\":{\"id\":5,\"user_id\":12,\"company_id\":3,\"material_code\":\"H0201-0053\",\"material_name\":\"普通五通\",\"model\":\"φ43*4.6T*100L JHD-AK-002G偏心铣弧口\",\"specification\":\"φ43*4.6T*100L JHD-AK-002G偏心铣弧口\",\"other_features\":\"\",\"usage_unit\":\"PCS\",\"purchase_unit\":\"PCS\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-18\",\"updated_at\":\"2025-10-18\"}}', '2025-10-27 07:49:59');
+INSERT INTO `sub_operation_history` VALUES (58, 3, 6, '徐庆华', 'update', '原材料编码', '修改原材料编码：M0101-0668', '{\"newData\":{\"id\":6,\"user_id\":12,\"company_id\":3,\"material_code\":\"M0101-0668\",\"material_name\":\"中管\",\"model\":\"φ40.8*2.2T*410L\",\"specification\":\"φ40.8*2.2T*410L\",\"other_features\":\"\",\"usage_unit\":\"PCS\",\"purchase_unit\":\"PCS\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-18\",\"updated_at\":\"2025-10-18\"}}', '2025-10-27 07:51:05');
+INSERT INTO `sub_operation_history` VALUES (59, 3, 6, '徐庆华', 'add', '原材料编码', '新增原材料编码：M0101-1123', '{\"newData\":{\"material_code\":\"M0101-1123\",\"material_name\":\"手提管\",\"model\":\"φ22.2*2.0T*200L\",\"specification\":\"φ22.2*2.0T*200L\",\"other_features\":\"\",\"usage_unit\":\"PCS\",\"purchase_unit\":\"PCS\",\"remarks\":\"\"}}', '2025-10-27 08:17:44');
+INSERT INTO `sub_operation_history` VALUES (60, 3, 6, '徐庆华', 'update', '原材料编码', '修改原材料编码：H0101-0089', '{\"newData\":{\"id\":4,\"user_id\":6,\"company_id\":3,\"material_code\":\"H0101-0089\",\"material_name\":\"车首管\",\"model\":\"JHD-AT-0074*146L\",\"specification\":\"JHD-AT-0074*146L\",\"other_features\":\"\",\"usage_unit\":\"PCS\",\"purchase_unit\":\"PCS\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-18\",\"updated_at\":\"2025-10-27\"}}', '2025-10-27 08:18:17');
+INSERT INTO `sub_operation_history` VALUES (61, 3, 6, '徐庆华', 'update', '原材料编码', '修改原材料编码：H0201-0053', '{\"newData\":{\"id\":5,\"user_id\":6,\"company_id\":3,\"material_code\":\"H0201-0053\",\"material_name\":\"五通\",\"model\":\"φ43*4.6T*100L JHD-AK-002G偏心铣弧口\",\"specification\":\"φ43*4.6T*100L JHD-AK-002G偏心铣弧口\",\"other_features\":\"\",\"usage_unit\":\"PCS\",\"purchase_unit\":\"PCS\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-18\",\"updated_at\":\"2025-10-27\"}}', '2025-10-27 08:18:25');
+INSERT INTO `sub_operation_history` VALUES (62, 3, 6, '徐庆华', 'add', '原材料编码', '新增原材料编码：M0101-0565', '{\"newData\":{\"material_code\":\"M0101-0565\",\"material_name\":\"下管\",\"model\":\"φ28.6*2.0T*220L\",\"specification\":\"φ28.6*2.0T*220L\",\"other_features\":\"\",\"usage_unit\":\"PCS\",\"purchase_unit\":\"PCS\",\"remarks\":\"\"}}', '2025-10-27 08:19:44');
+INSERT INTO `sub_operation_history` VALUES (63, 3, 6, '徐庆华', 'add', '原材料编码', '新增原材料编码：M0103-0015', '{\"newData\":{\"material_code\":\"M0103-0015\",\"material_name\":\"过线管\",\"model\":\"方27*17*2000L(CM-15114)(成品15L,一分百)\",\"specification\":\"方27*17*2000L(CM-15114)(成品15L,一分百)\",\"other_features\":\"\",\"usage_unit\":\"PCS\",\"purchase_unit\":\"KG\",\"remarks\":\"\"}}', '2025-10-27 08:21:06');
+INSERT INTO `sub_operation_history` VALUES (64, 3, 6, '徐庆华', 'update', '原材料编码', '修改原材料编码：M0101-1123', '{\"newData\":{\"id\":7,\"user_id\":6,\"company_id\":3,\"material_code\":\"M0101-1123\",\"material_name\":\"手提管\",\"model\":\"φ22.2*2.0T*200L\",\"specification\":\"φ22.2*2.0T*200L\",\"other_features\":\"\",\"usage_unit\":\"PCS\",\"purchase_unit\":\"KG\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-27\",\"updated_at\":\"2025-10-27\"}}', '2025-10-27 08:21:15');
+INSERT INTO `sub_operation_history` VALUES (65, 3, 6, '徐庆华', 'update', '原材料编码', '修改原材料编码：M0101-0668', '{\"newData\":{\"id\":6,\"user_id\":6,\"company_id\":3,\"material_code\":\"M0101-0668\",\"material_name\":\"中管\",\"model\":\"φ40.8*2.2T*410L\",\"specification\":\"φ40.8*2.2T*410L\",\"other_features\":\"\",\"usage_unit\":\"PCS\",\"purchase_unit\":\"KG\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-18\",\"updated_at\":\"2025-10-27\"}}', '2025-10-27 08:21:23');
+INSERT INTO `sub_operation_history` VALUES (66, 3, 6, '徐庆华', 'update', '原材料编码', '修改原材料编码：M0101-0565', '{\"newData\":{\"id\":8,\"user_id\":6,\"company_id\":3,\"material_code\":\"M0101-0565\",\"material_name\":\"下管\",\"model\":\"φ28.6*2.0T*220L\",\"specification\":\"φ28.6*2.0T*220L\",\"other_features\":\"\",\"usage_unit\":\"PCS\",\"purchase_unit\":\"KG\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-27\",\"updated_at\":\"2025-10-27\"}}', '2025-10-27 08:21:30');
+INSERT INTO `sub_operation_history` VALUES (67, 3, 6, '徐庆华', 'update', '原材料编码', '修改原材料编码：H0201-0053', '{\"newData\":{\"id\":5,\"user_id\":6,\"company_id\":3,\"material_code\":\"H0201-0053\",\"material_name\":\"五通\",\"model\":\"φ43*4.6T*100L JHD-AK-002G偏心铣弧口\",\"specification\":\"φ43*4.6T*100L JHD-AK-002G偏心铣弧口\",\"other_features\":\"\",\"usage_unit\":\"PCS\",\"purchase_unit\":\"KG\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-18\",\"updated_at\":\"2025-10-27\"}}', '2025-10-27 08:21:38');
+INSERT INTO `sub_operation_history` VALUES (68, 3, 6, '徐庆华', 'update', '原材料编码', '修改原材料编码：H0101-0089', '{\"newData\":{\"id\":4,\"user_id\":6,\"company_id\":3,\"material_code\":\"H0101-0089\",\"material_name\":\"车首管\",\"model\":\"JHD-AT-0074*146L\",\"specification\":\"JHD-AT-0074*146L\",\"other_features\":\"\",\"usage_unit\":\"PCS\",\"purchase_unit\":\"KG\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-18\",\"updated_at\":\"2025-10-27\"}}', '2025-10-27 08:21:45');
+INSERT INTO `sub_operation_history` VALUES (69, 3, 6, '徐庆华', 'add', '原材料编码', '新增原材料编码：M0103-0234', '{\"newData\":{\"material_code\":\"M0103-0234\",\"material_name\":\"主梁管\",\"model\":\"方121*65*600L\",\"specification\":\"方121*65*600L\",\"other_features\":\"\",\"usage_unit\":\"PCS\",\"purchase_unit\":\"KG\",\"remarks\":\"\"}}', '2025-10-27 08:23:05');
+INSERT INTO `sub_operation_history` VALUES (70, 3, 6, '徐庆华', 'add', '原材料编码', '新增原材料编码：H0801-0004', '{\"newData\":{\"material_code\":\"H0801-0004\",\"material_name\":\"水壶螺母\",\"model\":\"YD008-044（M4）\",\"specification\":\"YD008-044（M4）\",\"other_features\":\"\",\"usage_unit\":\"个\",\"purchase_unit\":\"盒（50个）\",\"remarks\":\"\"}}', '2025-10-27 08:28:29');
+INSERT INTO `sub_operation_history` VALUES (71, 3, 6, '徐庆华', 'add', '原材料编码', '新增原材料编码：H0703-0001', '{\"newData\":{\"material_code\":\"H0703-0001\",\"material_name\":\"油压线扣\",\"model\":\"/YD007-004\",\"specification\":\"/YD007-004\",\"other_features\":\"\",\"usage_unit\":\"个\",\"purchase_unit\":\"盒（100个）\",\"remarks\":\"\"}}', '2025-10-27 08:29:45');
+INSERT INTO `sub_operation_history` VALUES (72, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：019', '{\"newData\":{\"part_code\":\"019\",\"part_name\":\"X\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"X\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 08:31:42');
+INSERT INTO `sub_operation_history` VALUES (73, 3, 6, '徐庆华', 'delete', '部件编码', '删除部件编码：019', '{\"newData\":50}', '2025-10-27 08:32:05');
+INSERT INTO `sub_operation_history` VALUES (74, 3, 6, '徐庆华', 'add', '部件编码', '新增部件编码：X021', '{\"newData\":{\"part_code\":\"X021\",\"part_name\":\"X\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"X\",\"production_requirements\":\"\",\"remarks\":\"\"}}', '2025-10-27 08:33:25');
+INSERT INTO `sub_operation_history` VALUES (75, 3, 6, '徐庆华', 'update', '部件编码', '修改部件编码：X020', '{\"newData\":{\"id\":51,\"company_id\":3,\"user_id\":6,\"part_code\":\"X020\",\"part_name\":\"X\",\"model\":\"\",\"specification\":\"\",\"other_features\":\"\",\"unit\":\"X\",\"production_requirements\":\"\",\"remarks\":\"\",\"is_deleted\":1,\"created_at\":\"2025-10-27\",\"updated_at\":\"2025-10-27\"}}', '2025-10-27 08:33:42');
+INSERT INTO `sub_operation_history` VALUES (76, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-10-27 12:12:40');
+INSERT INTO `sub_operation_history` VALUES (77, 1, 1, '我是名字', 'update', '产品编码', '修改产品编码：123', '{\"newData\":{\"id\":9,\"company_id\":1,\"user_id\":1,\"product_code\":\"123\",\"product_name\":\"113\",\"drawing\":\"图只可以\",\"model\":\"21\",\"specification\":\"2131\",\"other_features\":\"3131\",\"component_structure\":\"1313\",\"unit\":\"212\",\"production_requirements\":\"21\",\"is_deleted\":1,\"created_at\":\"2025-07-08\",\"updated_at\":\"2025-07-14\"}}', '2025-10-27 12:27:23');
+INSERT INTO `sub_operation_history` VALUES (78, 1, 1, '我是名字', 'update', '设备编码', '修改设备编码：122', '{\"newData\":{\"id\":4,\"company_id\":1,\"user_id\":1,\"equipment_code\":\"122\",\"equipment_name\":\"退火炉\",\"quantity\":22,\"cycle_id\":1,\"working_hours\":\"10\",\"efficiency\":40,\"available\":4,\"remarks\":\"无\",\"is_deleted\":1,\"created_at\":\"2025-08-09\",\"updated_at\":\"2025-10-22\",\"cycle\":{\"id\":1,\"company_id\":1,\"user_id\":1,\"name\":\"备料组\",\"sort\":\"0\",\"sort_date\":\"4\",\"is_deleted\":1,\"created_at\":\"2025-08-21T01:30:12.000Z\",\"updated_at\":\"2025-10-26T10:10:51.000Z\"}}}', '2025-10-27 12:32:14');
+INSERT INTO `sub_operation_history` VALUES (79, 1, 1, '我是名字', 'update', '设备编码', '修改设备编码：122', '{\"newData\":{\"id\":4,\"company_id\":1,\"user_id\":1,\"equipment_code\":\"122\",\"equipment_name\":\"退火炉\",\"quantity\":22,\"cycle_id\":1,\"working_hours\":\"10\",\"efficiency\":40,\"available\":4,\"remarks\":\"无\",\"is_deleted\":1,\"created_at\":\"2025-08-09\",\"updated_at\":\"2025-10-22\",\"cycle\":{\"id\":1,\"company_id\":1,\"user_id\":1,\"name\":\"备料组\",\"sort\":\"0\",\"sort_date\":\"4\",\"is_deleted\":1,\"created_at\":\"2025-08-21T01:30:12.000Z\",\"updated_at\":\"2025-10-26T10:10:51.000Z\"}}}', '2025-10-27 12:32:16');
+INSERT INTO `sub_operation_history` VALUES (80, 1, 1, '我是名字', 'update', '设备编码', '修改设备编码：122', '{\"newData\":{\"id\":4,\"company_id\":1,\"user_id\":1,\"equipment_code\":\"122\",\"equipment_name\":\"退火炉\",\"quantity\":\"26\",\"cycle_id\":1,\"working_hours\":\"10\",\"efficiency\":40,\"available\":4,\"remarks\":\"无\",\"is_deleted\":1,\"created_at\":\"2025-08-09\",\"updated_at\":\"2025-10-22\",\"cycle\":{\"id\":1,\"company_id\":1,\"user_id\":1,\"name\":\"备料组\",\"sort\":\"0\",\"sort_date\":\"4\",\"is_deleted\":1,\"created_at\":\"2025-08-21T01:30:12.000Z\",\"updated_at\":\"2025-10-26T10:10:51.000Z\"}}}', '2025-10-27 12:32:23');
+INSERT INTO `sub_operation_history` VALUES (81, 1, 1, '我是名字', 'keyApproval', '采购单', '采购单提交审核：{ 供应商编码：1234，生产订单号：1122，产品编码：A001，材料编码：123 }', '{\"newData\":{\"data\":[{\"quote_id\":1,\"material_bom_id\":11,\"notice_id\":8,\"notice\":\"1122\",\"supplier_id\":2,\"supplier_code\":\"1234\",\"supplier_abbreviation\":\"151\",\"product_id\":19,\"product_code\":\"A001\",\"product_name\":\"圆珠笔\",\"material_id\":2,\"material_code\":\"123\",\"material_name\":\"121\",\"model_spec\":\"2121/21\",\"other_features\":\"2121\",\"unit\":\"个2\",\"price\":24,\"order_number\":\"\",\"number\":\"15000\",\"delivery_time\":\"2025-10-15\"}],\"type\":\"purchase_order\"}}', '2025-10-27 15:37:51');
 
 -- ----------------------------
 -- Table structure for sub_outsourcing_order
@@ -668,8 +772,8 @@ CREATE TABLE `sub_outsourcing_order`  (
 -- ----------------------------
 -- Records of sub_outsourcing_order
 -- ----------------------------
-INSERT INTO `sub_outsourcing_order` VALUES (11, 1, 1, 16, 8, 1, 58, 75, '￥', 3, 600, '无1', '无2', '无', '2025-09-30', '无', 1, 1, '我是名字', '2025-09-26 21:29:06', 0, 1, '2025-09-26 14:40:30', '2025-10-25 10:47:54');
-INSERT INTO `sub_outsourcing_order` VALUES (12, 1, 1, 16, 8, 1, 57, 74, '21', 21, 21, '121', '2121', '212', '2025-09-25', '2121', 1, 1, '我是名字', '2025-09-26 21:29:06', 0, 1, '2025-09-26 21:29:06', '2025-10-25 10:47:56');
+INSERT INTO `sub_outsourcing_order` VALUES (11, 1, 1, 16, 8, 1, 58, 75, '￥', 3, 600, '无1', '无2', '无', '2025-09-30', '无', 1, 1, '我是名字', '2025-09-26 21:29:06', 0, 1, '2025-09-26 14:40:30', '2025-10-24 13:05:23');
+INSERT INTO `sub_outsourcing_order` VALUES (12, 1, 1, 16, 8, 1, 57, 74, '21', 21, 21, '121', '2121', '212', '2025-09-25', '2121', 1, 1, '我是名字', '2025-09-26 21:29:06', 0, 1, '2025-09-26 21:29:06', '2025-10-24 13:05:26');
 
 -- ----------------------------
 -- Table structure for sub_outsourcing_quote
@@ -694,7 +798,7 @@ CREATE TABLE `sub_outsourcing_quote`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '委外报价信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '委外报价信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_outsourcing_quote
@@ -702,6 +806,7 @@ CREATE TABLE `sub_outsourcing_quote`  (
 INSERT INTO `sub_outsourcing_quote` VALUES (5, 1, 1, 8, 1, 57, '73', '3', 3, 15000, '￥', '无', NULL, '', 1, '2025-09-26 14:07:56', '2025-09-26 14:28:40');
 INSERT INTO `sub_outsourcing_quote` VALUES (6, 3, 12, 9, 3, 60, '77', '2', 1, 800, '人民币', '现金', NULL, '', 1, '2025-10-19 16:43:13', '2025-10-19 16:45:48');
 INSERT INTO `sub_outsourcing_quote` VALUES (8, 1, 1, 8, 2, 57, '74', '2.5', 3, 15000, '2121', '313131', NULL, '', 1, '2025-10-23 13:42:18', '2025-10-23 13:42:18');
+INSERT INTO `sub_outsourcing_quote` VALUES (9, 3, 6, 9, 3, 60, '78', '2.1', 2, 800, 'X', 'X', NULL, '', 1, '2025-10-24 11:44:48', '2025-10-24 11:44:48');
 
 -- ----------------------------
 -- Table structure for sub_part_code
@@ -723,7 +828,7 @@ CREATE TABLE `sub_part_code`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '部件编码基础信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 52 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '部件编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_part_code
@@ -743,8 +848,37 @@ INSERT INTO `sub_part_code` VALUES (17, 1, 1, '12317', '21217', '212', '1212', '
 INSERT INTO `sub_part_code` VALUES (18, 1, 1, '12318', '21218', '212', '1212', '121', '3131', '3131', '3131', 1, '2025-07-08 15:35:24', '2025-07-08 15:35:24');
 INSERT INTO `sub_part_code` VALUES (19, 1, 1, '12319', '21219', '212', '1212', '121', '3131', '3131', '3131', 1, '2025-07-08 15:35:24', '2025-07-08 15:35:24');
 INSERT INTO `sub_part_code` VALUES (20, 1, 1, '12320', '21220', '212', '1212', '121', '3131', '3131', '3131', 1, '2025-07-08 15:35:24', '2025-07-08 15:35:24');
-INSERT INTO `sub_part_code` VALUES (21, 12, 3, 'X001', '车首管', 'X', 'X', 'X', 'PCS', 'X', '', 1, '2025-10-18 04:59:23', '2025-10-18 04:59:23');
-INSERT INTO `sub_part_code` VALUES (22, 12, 3, 'X002', '主梁管', 'X', 'X', 'X', 'PCS', 'X', '', 1, '2025-10-18 15:07:26', '2025-10-18 15:07:26');
+INSERT INTO `sub_part_code` VALUES (21, 6, 3, 'X001', '车首管', '', '', '', 'PCS', '', '', 1, '2025-10-18 04:59:23', '2025-10-27 14:54:38');
+INSERT INTO `sub_part_code` VALUES (22, 6, 3, 'X002', '主梁管', '', '', '', 'PCS', '', '', 1, '2025-10-18 15:07:26', '2025-10-27 14:54:57');
+INSERT INTO `sub_part_code` VALUES (23, 6, 3, 'X003', '辅助管', '', '', '', 'PCS', '', '', 1, '2025-10-27 14:58:25', '2025-10-27 14:58:25');
+INSERT INTO `sub_part_code` VALUES (24, 6, 3, 'X004', '上管', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:03:56', '2025-10-27 15:03:56');
+INSERT INTO `sub_part_code` VALUES (25, 6, 3, 'X005', '下管', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:04:18', '2025-10-27 15:04:18');
+INSERT INTO `sub_part_code` VALUES (26, 6, 3, 'X006', '座管', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:04:59', '2025-10-27 15:04:59');
+INSERT INTO `sub_part_code` VALUES (27, 6, 3, 'X007', '吴桐', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:06:48', '2025-10-27 15:06:48');
+INSERT INTO `sub_part_code` VALUES (28, 6, 3, 'X008', '后上叉R', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:07:21', '2025-10-27 15:07:21');
+INSERT INTO `sub_part_code` VALUES (29, 6, 3, 'X009', '后上叉L', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:11:47', '2025-10-27 15:11:47');
+INSERT INTO `sub_part_code` VALUES (30, 6, 3, 'X010', '后下叉R', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:12:39', '2025-10-27 15:12:39');
+INSERT INTO `sub_part_code` VALUES (31, 6, 3, 'X011', '后下叉L', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:12:57', '2025-10-27 15:12:57');
+INSERT INTO `sub_part_code` VALUES (32, 6, 3, 'X012', '电池盒板', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:23:24', '2025-10-27 15:23:24');
+INSERT INTO `sub_part_code` VALUES (33, 6, 3, 'X013', '手提管', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:23:45', '2025-10-27 15:23:45');
+INSERT INTO `sub_part_code` VALUES (34, 6, 3, 'X014', '中管', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:24:25', '2025-10-27 15:24:25');
+INSERT INTO `sub_part_code` VALUES (35, 6, 3, 'X015', '上支杆', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:24:50', '2025-10-27 15:26:02');
+INSERT INTO `sub_part_code` VALUES (36, 6, 3, 'X016', '下枝杆', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:25:37', '2025-10-27 15:26:12');
+INSERT INTO `sub_part_code` VALUES (37, 6, 3, 'X017', '下叉', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:27:35', '2025-10-27 15:27:35');
+INSERT INTO `sub_part_code` VALUES (38, 6, 3, 'X018', '过线管', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:27:59', '2025-10-27 15:27:59');
+INSERT INTO `sub_part_code` VALUES (39, 6, 3, 'X019', '上叉', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:28:29', '2025-10-27 15:28:29');
+INSERT INTO `sub_part_code` VALUES (40, 6, 3, 'Y001', '左钩爪', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:28:56', '2025-10-27 15:28:56');
+INSERT INTO `sub_part_code` VALUES (41, 6, 3, 'Y002', '右钩爪', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:29:16', '2025-10-27 15:29:16');
+INSERT INTO `sub_part_code` VALUES (42, 6, 3, 'Y003', '上叉支杆', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:30:11', '2025-10-27 15:30:11');
+INSERT INTO `sub_part_code` VALUES (43, 6, 3, 'Y004', '组立折叠器', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:30:34', '2025-10-27 15:30:34');
+INSERT INTO `sub_part_code` VALUES (44, 6, 3, 'Y005', '组立前三角', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:31:01', '2025-10-27 15:31:01');
+INSERT INTO `sub_part_code` VALUES (45, 6, 3, 'Y006', '组立后三角', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:31:21', '2025-10-27 15:31:21');
+INSERT INTO `sub_part_code` VALUES (46, 6, 3, 'Z001', '成品车架', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:32:05', '2025-10-27 15:32:05');
+INSERT INTO `sub_part_code` VALUES (47, 6, 3, 'Z002', '前三角', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:32:27', '2025-10-27 15:32:27');
+INSERT INTO `sub_part_code` VALUES (48, 6, 3, 'Z003', '后三角', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:32:48', '2025-10-27 15:32:48');
+INSERT INTO `sub_part_code` VALUES (49, 6, 3, 'Z004', '上叉支杆', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:33:10', '2025-10-27 15:33:10');
+INSERT INTO `sub_part_code` VALUES (50, 6, 3, '019', 'X', '', '', '', 'X', '', '', 0, '2025-10-27 16:31:42', '2025-10-27 16:32:05');
+INSERT INTO `sub_part_code` VALUES (51, 6, 3, 'X020', 'X', '', '', '', 'X', '', '', 1, '2025-10-27 16:33:25', '2025-10-27 16:33:42');
 
 -- ----------------------------
 -- Table structure for sub_process_bom
@@ -771,7 +905,7 @@ CREATE TABLE `sub_process_bom`  (
 INSERT INTO `sub_process_bom` VALUES (56, 1, 1, NULL, NULL, 19, 8, 0, 1, '2025-09-24 15:58:17', '2025-09-24 16:03:21');
 INSERT INTO `sub_process_bom` VALUES (57, 1, 1, NULL, NULL, 14, 12, 0, 1, '2025-09-25 14:50:12', '2025-09-25 14:51:59');
 INSERT INTO `sub_process_bom` VALUES (58, 1, 1, NULL, NULL, 14, 8, 0, 1, '2025-09-25 14:51:50', '2025-09-25 14:51:59');
-INSERT INTO `sub_process_bom` VALUES (59, 3, 6, NULL, NULL, 20, 21, 1, 1, '2025-10-19 15:45:17', '2025-10-22 14:28:32');
+INSERT INTO `sub_process_bom` VALUES (59, 3, 6, NULL, NULL, 20, 21, 0, 1, '2025-10-19 15:45:17', '2025-10-27 09:18:16');
 INSERT INTO `sub_process_bom` VALUES (60, 3, 6, NULL, NULL, 20, 22, 0, 1, '2025-10-19 15:49:23', '2025-10-19 16:42:00');
 INSERT INTO `sub_process_bom` VALUES (61, 1, 1, NULL, NULL, 14, 8, 1, 1, '2025-10-21 21:32:41', '2025-10-21 21:35:24');
 
@@ -867,17 +1001,17 @@ CREATE TABLE `sub_process_cycle`  (
 -- ----------------------------
 -- Records of sub_process_cycle
 -- ----------------------------
-INSERT INTO `sub_process_cycle` VALUES (1, 1, 1, '备料组', NULL, '4', 1, '2025-08-21 09:30:12', '2025-10-23 13:54:15');
-INSERT INTO `sub_process_cycle` VALUES (2, 1, 1, '设备组', NULL, '4', 1, '2025-08-21 09:30:39', '2025-09-04 15:46:36');
-INSERT INTO `sub_process_cycle` VALUES (3, 1, 1, '生产组', NULL, '5', 1, '2025-08-21 09:30:45', '2025-09-04 15:45:43');
-INSERT INTO `sub_process_cycle` VALUES (4, 1, 1, '其他组', NULL, NULL, 1, '2025-10-16 19:09:55', '2025-10-16 19:15:34');
-INSERT INTO `sub_process_cycle` VALUES (5, 1, 1, '不好组', NULL, NULL, 1, '2025-10-16 19:15:43', '2025-10-16 19:15:43');
-INSERT INTO `sub_process_cycle` VALUES (6, 3, 6, '备料组', '2', '1', 1, '2025-10-18 10:10:27', '2025-10-24 21:38:06');
-INSERT INTO `sub_process_cycle` VALUES (7, 3, 6, '焊接组', '1', '2', 1, '2025-10-18 10:10:44', '2025-10-24 21:38:03');
-INSERT INTO `sub_process_cycle` VALUES (8, 3, 6, '热处理', '4', '4', 1, '2025-10-18 10:11:22', '2025-10-24 21:38:49');
-INSERT INTO `sub_process_cycle` VALUES (9, 3, 6, '研磨组', '3', '5', 1, '2025-10-18 10:11:37', '2025-10-24 21:38:45');
-INSERT INTO `sub_process_cycle` VALUES (10, 3, 6, '补土组', '5', '6', 1, '2025-10-18 10:11:55', '2025-10-24 21:38:53');
-INSERT INTO `sub_process_cycle` VALUES (11, 3, 6, '后段组', '6', '8', 1, '2025-10-18 10:12:08', '2025-10-24 21:39:01');
+INSERT INTO `sub_process_cycle` VALUES (1, 1, 1, '备料组', '0', '4', 1, '2025-08-21 09:30:12', '2025-10-26 18:10:51');
+INSERT INTO `sub_process_cycle` VALUES (2, 1, 1, '设备组', '0', '4', 1, '2025-08-21 09:30:39', '2025-10-26 18:10:52');
+INSERT INTO `sub_process_cycle` VALUES (3, 1, 1, '生产组', '0', '5', 1, '2025-08-21 09:30:45', '2025-10-26 18:10:52');
+INSERT INTO `sub_process_cycle` VALUES (4, 1, 1, '其他组', '0', NULL, 1, '2025-10-16 19:09:55', '2025-10-26 18:10:53');
+INSERT INTO `sub_process_cycle` VALUES (5, 1, 1, '不好组', '0', NULL, 1, '2025-10-16 19:15:43', '2025-10-26 18:10:53');
+INSERT INTO `sub_process_cycle` VALUES (6, 3, 6, 'A备料组', '0', '1', 1, '2025-10-18 10:10:27', '2025-10-26 18:10:54');
+INSERT INTO `sub_process_cycle` VALUES (7, 3, 6, 'B焊接组', '0', '1', 1, '2025-10-18 10:10:44', '2025-10-26 18:10:54');
+INSERT INTO `sub_process_cycle` VALUES (8, 3, 6, 'C热处理', '0', '1.5', 1, '2025-10-18 10:11:22', '2025-10-26 18:10:54');
+INSERT INTO `sub_process_cycle` VALUES (9, 3, 6, 'E研磨组', '0', '5', 1, '2025-10-18 10:11:37', '2025-10-26 18:10:55');
+INSERT INTO `sub_process_cycle` VALUES (10, 3, 6, 'F补土组', '0', '6', 1, '2025-10-18 10:11:55', '2025-10-26 18:10:55');
+INSERT INTO `sub_process_cycle` VALUES (11, 3, 6, 'D后段组', '0', '8', 1, '2025-10-18 10:12:08', '2025-10-26 18:10:57');
 
 -- ----------------------------
 -- Table structure for sub_process_cycle_child
@@ -901,17 +1035,17 @@ CREATE TABLE `sub_process_cycle_child`  (
 INSERT INTO `sub_process_cycle_child` VALUES (259, 1, 227, '2025-10-31', NULL, NULL, '2025-10-13 11:37:22', '2025-10-15 10:41:33');
 INSERT INTO `sub_process_cycle_child` VALUES (260, 2, 227, '2025-10-31', NULL, NULL, '2025-10-13 11:37:22', '2025-10-15 10:41:37');
 INSERT INTO `sub_process_cycle_child` VALUES (261, 3, 227, '2025-10-31', NULL, NULL, '2025-10-13 11:37:22', '2025-10-15 10:41:43');
-INSERT INTO `sub_process_cycle_child` VALUES (262, 6, 228, '2025-10-24', NULL, NULL, '2025-10-19 16:54:26', '2025-10-19 16:57:48');
+INSERT INTO `sub_process_cycle_child` VALUES (262, 6, 228, '2025-10-28', NULL, NULL, '2025-10-19 16:54:26', '2025-10-24 13:11:28');
 INSERT INTO `sub_process_cycle_child` VALUES (263, 7, 228, '2025-10-29', NULL, NULL, '2025-10-19 16:54:26', '2025-10-19 16:58:06');
 INSERT INTO `sub_process_cycle_child` VALUES (264, 8, 228, '2025-11-05', NULL, NULL, '2025-10-19 16:54:26', '2025-10-19 16:58:34');
 INSERT INTO `sub_process_cycle_child` VALUES (265, 9, 228, '2025-11-08', NULL, NULL, '2025-10-19 16:54:26', '2025-10-19 16:58:50');
 INSERT INTO `sub_process_cycle_child` VALUES (266, 10, 228, '2025-11-17', NULL, NULL, '2025-10-19 16:54:26', '2025-10-19 16:59:15');
 INSERT INTO `sub_process_cycle_child` VALUES (267, 11, 228, '2025-10-28', NULL, NULL, '2025-10-19 16:54:26', '2025-10-19 16:59:33');
-INSERT INTO `sub_process_cycle_child` VALUES (268, 6, 229, '2025-10-23', NULL, NULL, '2025-10-19 16:54:26', '2025-10-19 16:57:34');
+INSERT INTO `sub_process_cycle_child` VALUES (268, 6, 229, '2025-10-28', NULL, NULL, '2025-10-19 16:54:26', '2025-10-24 13:11:28');
 INSERT INTO `sub_process_cycle_child` VALUES (269, 7, 229, '2025-10-28', NULL, NULL, '2025-10-19 16:54:26', '2025-10-19 16:57:56');
 INSERT INTO `sub_process_cycle_child` VALUES (270, 8, 229, '2025-11-03', NULL, NULL, '2025-10-19 16:54:26', '2025-10-19 16:58:18');
 INSERT INTO `sub_process_cycle_child` VALUES (271, 9, 229, '2025-11-08', NULL, NULL, '2025-10-19 16:54:26', '2025-10-19 16:58:50');
-INSERT INTO `sub_process_cycle_child` VALUES (272, 10, 229, '2025-11-17', NULL, NULL, '2025-10-19 16:54:26', '2025-10-19 16:59:15');
+INSERT INTO `sub_process_cycle_child` VALUES (272, 10, 229, '2025-11-19', NULL, NULL, '2025-10-19 16:54:26', '2025-10-24 13:16:56');
 INSERT INTO `sub_process_cycle_child` VALUES (273, 11, 229, '2025-10-28', NULL, NULL, '2025-10-19 16:54:26', '2025-10-19 16:59:33');
 
 -- ----------------------------
@@ -935,7 +1069,7 @@ CREATE TABLE `sub_product_code`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '产品编码基础信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '产品编码基础信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_product_code
@@ -952,6 +1086,7 @@ INSERT INTO `sub_product_code` VALUES (17, 1, 1, '12671', '4841', 'eewqw', 'ewe'
 INSERT INTO `sub_product_code` VALUES (18, 1, 1, '43456', '2345', '23', '423', '42', 'ewf', '5', '3553', '12', 0, '2025-08-08 14:10:41', '2025-08-08 14:58:55');
 INSERT INTO `sub_product_code` VALUES (19, 1, 1, 'A001', '圆珠笔', 'qqqwe', 'eeqqwq', 'sewww', 'ersdsd', 'ewww', 'ff', 'rww', 1, '2025-08-10 10:09:09', '2025-08-21 15:44:55');
 INSERT INTO `sub_product_code` VALUES (20, 3, 12, 'WA-A00001', '0611铝车架', '0611', '城市代步Q1', '36寸', '折叠型', '整车结构', '台', '1.字码2510001-2510800；2.车架补土后烤漆', 1, '2025-10-18 04:34:51', '2025-10-18 04:37:04');
+INSERT INTO `sub_product_code` VALUES (21, 3, 6, 'WA-A00002', '0612铝车架', '0612', '山地车', '32寸', '配载重货架', '整体车架+独立货架', '套', '1.产品表面研磨清洗；2.产品杜绝补土；3.按订单要求打字码', 1, '2025-10-27 14:44:02', '2025-10-27 14:44:02');
 
 -- ----------------------------
 -- Table structure for sub_product_notice
@@ -1126,7 +1261,7 @@ CREATE TABLE `sub_supplier_info`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '供应商信息信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '供应商信息信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_supplier_info
@@ -1134,6 +1269,7 @@ CREATE TABLE `sub_supplier_info`  (
 INSERT INTO `sub_supplier_info` VALUES (1, 1, 1, '123', '2121', '13', '15', '1515', '212', '5151', '15', '15151', '1515', '15', 1, '2025-07-10 00:03:15', '2025-07-10 00:03:15');
 INSERT INTO `sub_supplier_info` VALUES (2, 1, 1, '1234', '151', '153333333', '1', '515', '155', '511', '515', '15', '1', '515', 1, '2025-07-10 00:03:27', '2025-07-10 00:03:37');
 INSERT INTO `sub_supplier_info` VALUES (3, 12, 3, 'GA001', '俊宏达', '小张', '136123456678', '东莞市俊宏达铝业科技有限公司', '东莞市常平镇常黄路38号', '材料供应', '送货上门', '现金', '人民币', '月结90天', 1, '2025-10-19 16:27:11', '2025-10-19 16:30:08');
+INSERT INTO `sub_supplier_info` VALUES (4, 6, 3, 'GA002', '城至', '吴总', '12345678901', '东莞市城至精密五金有限公司', '东莞市万江区尖沙咀', '委外加工', '送货上门', '现金', '人民币', '月结60天', 1, '2025-10-24 11:26:22', '2025-10-24 11:26:22');
 
 -- ----------------------------
 -- Table structure for sub_warehouse_apply

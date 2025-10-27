@@ -229,20 +229,25 @@ router.put('/supplier_info', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.get('/material_quote', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, supplier_code, supplier_abbreviation, material_code, material_name } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
   
+  let materialWhere = {}
+  let supplierWhere = {}
+  if(supplier_code) supplierWhere.supplier_code = supplier_code
+  if(supplier_abbreviation) supplierWhere.supplier_abbreviation = supplier_abbreviation
+  if(material_code) materialWhere.material_code = material_code
+  if(material_name) materialWhere.material_name = material_name
   const { count, rows } = await SubMaterialQuote.findAndCountAll({
     where: {
       is_deleted: 1,
       company_id,
     },
+    attributes: ['id', 'price', 'transaction_currency', 'unit', 'delivery', 'packaging', 'other_transaction_terms', 'remarks', 'created_at'],
     include: [
-      { model: SubMaterialCode, as: 'material' },
-      { model: SubSupplierInfo, as: 'supplier' },
-      // { model: SubProductNotice, as: 'notice' },
-      // { model: SubProductCode, as: 'product' }
+      { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name', 'model', 'specification', 'other_features'], where: materialWhere },
+      { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_code', 'supplier_abbreviation'], where: supplierWhere },
     ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
@@ -411,15 +416,29 @@ router.put('/material_quote', authMiddleware, async (req, res) => {
  *         schema:
  *           type: string
  */
-router.post('/material_ment', authMiddleware, async (req, res) => {
-  const { notice, supplier_code, product_code, status } = req.body;
+router.get('/material_ment', authMiddleware, async (req, res) => {
+  const { notice, supplier_code, supplier_abbreviation, product_code, product_name, status } = req.query;
   const { company_id } = req.user;
   
-  let whereMent = {}
-  if(notice) whereMent.notice = notice
-  if(supplier_code) whereMent.supplier_code = supplier_code
-  if(product_code) whereMent.product_code = product_code
-  whereMent.status = status ? status : [0, 2]
+  let whereMent = {};
+  if (notice) whereMent.notice = { [Op.like]: `%${notice}%` };
+  if (supplier_code) whereMent.supplier_code = { [Op.like]: `%${supplier_code}%` };
+  if (supplier_abbreviation) whereMent.supplier_abbreviation = { [Op.like]: `%${supplier_abbreviation}%` };
+  if (product_code) whereMent.product_code = { [Op.like]: `%${product_code}%` };
+  if (product_name) whereMent.product_name = { [Op.like]: `%${product_name}%` };
+  
+  const otherFields = [notice, supplier_code, supplier_abbreviation, product_code, product_name];
+  const hasOtherValues = otherFields.some(field => field !== undefined && field !== '');
+  
+  console.log(status);
+  if (status !== undefined && status !== '') {
+    whereMent.status = status;
+  } else {
+    if (!hasOtherValues) {
+      whereMent.status = [0, 2];
+    }
+  }
+
   const rows = await SubMaterialMent.findAll({
     where: {
       is_deleted: 1,
@@ -431,7 +450,7 @@ router.post('/material_ment', authMiddleware, async (req, res) => {
     ],
     order: [['created_at', 'DESC']],
   })
-  const fromData = rows.map(item => item.dataValues)
+  const fromData = rows.map(item => item.toJSON());
   
   // 返回所需信息
   res.json({ 
@@ -480,7 +499,7 @@ router.post('/add_material_ment', authMiddleware, async (req, res) => {
     return e
   })
   const result = await SubMaterialMent.bulkCreate(dataValue, {
-    updateOnDuplicate: ['company_id', 'user_id', 'apply_id', 'apply_name', 'apply_time', 'status', 'quote_id', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'price', 'order_number', 'number', 'delivery_time']
+    updateOnDuplicate: ['company_id', 'user_id', 'apply_id', 'apply_name', 'apply_time', 'status', 'quote_id', 'material_bom_id', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'price', 'order_number', 'number', 'delivery_time']
   })
 
   // 创建审批流程
@@ -622,14 +641,14 @@ router.post('/handlePurchaseBackFlow', authMiddleware, async (req, res) => {
  *       - 采购单(Purchase)
  */
 router.put('/material_ment', authMiddleware, async (req, res) => {
-  const { quote_id, notice_id, notice, supplier_id, supplier_code, supplier_abbreviation, product_id, product_code, product_name, material_id, material_code, material_name, model_spec, other_features, unit, price, order_number, number, delivery_time, id } = req.body;
+  const { quote_id, material_bom_id, notice_id, notice, supplier_id, supplier_code, supplier_abbreviation, product_id, product_code, product_name, material_id, material_code, material_name, model_spec, other_features, unit, price, order_number, number, delivery_time, id } = req.body;
   const { id: userId, company_id } = req.user;
 
   const result = await SubMaterialMent.findByPk(id)
   if(!result) res.json({ message: '未找到该采购单信息', code: 401 })
   
   const obj = {
-    quote_id, notice_id, notice, supplier_id, supplier_code, supplier_abbreviation, product_id, product_code, product_name, material_id, material_code, material_name, model_spec, other_features, unit, price, order_number, number, delivery_time, company_id,
+    quote_id, material_bom_id, notice_id, notice, supplier_id, supplier_code, supplier_abbreviation, product_id, product_code, product_name, material_id, material_code, material_name, model_spec, other_features, unit, price, order_number, number, delivery_time, company_id,
     user_id: userId
   }
   const updateResult = await SubMaterialMent.update(obj, {
@@ -642,7 +661,14 @@ router.put('/material_ment', authMiddleware, async (req, res) => {
   res.json({ message: '修改成功', code: 200 });
 })
 
-// 获取no编码
+/**
+ * @swagger
+ * /api/sub_no_encoding:
+ *   get:
+ *     summary: 获取no编码
+ *     tags:
+ *       - 采购单(Purchase)
+ */
 router.get('/sub_no_encoding', authMiddleware, async (req, res) => {
   const { printType } = req.query;
   const { company_id } = req.user;
@@ -659,6 +685,14 @@ router.get('/sub_no_encoding', authMiddleware, async (req, res) => {
   res.json({ code: 200, data: lastRecord })
 }) 
 
+/**
+ * @swagger
+ * /api/printers:
+ *   get:
+ *     summary: 获取打印机列表
+ *     tags:
+ *       - 采购单(Purchase)
+ */
 router.get('/printers', authMiddleware, async (req, res) => {
   const printers = await getPrinters();
   if(printers){
@@ -672,6 +706,14 @@ router.get('/printers', authMiddleware, async (req, res) => {
   }
   res.json({ message: '获取打印机失败，请检查', code: 401 })
 })
+/**
+ * @swagger
+ * /api/printers:
+ *   post:
+ *     summary: 执行打印
+ *     tags:
+ *       - 采购单(Purchase)
+ */
 router.post('/printers', upload.single('file'), authMiddleware, async (req, res) => {
   const { printerName, printerType, no, ids } = req.body;
   const tempFilePath = req.file.path;

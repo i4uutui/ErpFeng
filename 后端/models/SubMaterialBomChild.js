@@ -24,6 +24,11 @@ const SubMaterialBomChild = sequelize.define('SubMaterialBomChild', {
     allowNull: true,
     defaultValue: null,
     comment: ' 数量'
+  },
+  is_buy: {
+    type: DataTypes.INTEGER(),
+    allowNull: false,
+    comment: ' 是否已采购，0未采购1已采购 '
   }
 }, {
   sequelize,

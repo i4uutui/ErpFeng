@@ -580,7 +580,7 @@ router.get('/getMaterialBom', authMiddleware, async (req, res) => {
   })
   const result = rows.map(e => {
     const item = e.toJSON()
-    item.name = `${item.product.product_code} - ${item.part.part_code}`
+    item.name = `${item.product.product_code}:${item.product.product_name} - ${item.part.part_code}:${item.part.part_name}`
     return item
   })
   const data = result.map(item => {
@@ -604,16 +604,12 @@ router.get('/getMaterialBomChildren', authMiddleware, async (req, res) => {
     where: {
       material_bom_id: id
     },
-    attributes: ['id', 'material_bom_id', 'material_id']
+    attributes: ['id', 'material_bom_id', 'material_id', 'is_buy'],
+    include: [
+      { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name', 'model', 'specification', 'other_features'] }
+    ]
   })
-  const materialIds = rows.map(e => e.material_id)
-  const result = await SubMaterialCode.findAll({
-    where: {
-      id: materialIds
-    },
-    attributes: ['id', 'material_code', 'material_name', 'model', 'specification', 'other_features']
-  })
-  const data = result.map(e => e.toJSON())
+  const data = rows.map(e => e.toJSON())
   
   res.json({ code: 200, data })
 })
@@ -640,7 +636,7 @@ router.get('/getMaterialQuote', authMiddleware, async (req, res) => {
   })
   const data = rows.map(e => {
     const item = e.toJSON()
-    item.name = `${item.supplier.supplier_code} - ${item.material.material_code}`
+    item.name = `${item.supplier.supplier_code}:${item.supplier.supplier_abbreviation} - ${item.material.material_code}:${item.material.material_name}`
     return item
   })
 

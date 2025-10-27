@@ -102,7 +102,7 @@ const routes = [
           buttons: [
             { code: 'ProductCode:add', label: '新增' },
             { code: 'ProductCode:edit', label: '修改' },
-            { code: 'ProductCode:delete', label: '删除' },
+            // { code: 'ProductCode:delete', label: '删除' },
           ]
         }
       },
@@ -117,7 +117,7 @@ const routes = [
           buttons: [
             { code: 'PartCode:add', label: '新增' },
             { code: 'PartCode:edit', label: '修改' },
-            { code: 'PartCode:delete', label: '删除' },
+            // { code: 'PartCode:delete', label: '删除' },
           ]
         }
       },
@@ -132,7 +132,7 @@ const routes = [
           buttons: [
             { code: 'MaterialCode:add', label: '新增' },
             { code: 'MaterialCode:edit', label: '修改' },
-            { code: 'MaterialCode:delete', label: '删除' },
+            // { code: 'MaterialCode:delete', label: '删除' },
           ]
         }
       },
@@ -147,7 +147,7 @@ const routes = [
           buttons: [
             { code: 'ProcessCode:add', label: '新增' },
             { code: 'ProcessCode:edit', label: '修改' },
-            { code: 'ProcessCode:delete', label: '删除' },
+            // { code: 'ProcessCode:delete', label: '删除' },
           ]
         }
       },
@@ -162,7 +162,7 @@ const routes = [
           buttons: [
             { code: 'EquipmentCode:add', label: '新增' },
             { code: 'EquipmentCode:edit', label: '修改' },
-            { code: 'EquipmentCode:delete', label: '删除' },
+            // { code: 'EquipmentCode:delete', label: '删除' },
           ]
         }
       },

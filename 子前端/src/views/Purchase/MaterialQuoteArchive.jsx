@@ -3,6 +3,12 @@ import request from '@/utils/request';
 
 export default defineComponent({
   setup(){
+    let search = ref({
+      supplier_code: '',
+      supplier_abbreviation: '',
+      material_code: '',
+      material_name: '',
+    })
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(10);
@@ -17,7 +23,8 @@ export default defineComponent({
       const res = await request.get('/api/material_quote', {
         params: {
           page: currentPage.value,
-          pageSize: pageSize.value
+          pageSize: pageSize.value,
+          ...search.value
         },
       });
       tableData.value = res.data;
@@ -38,6 +45,27 @@ export default defineComponent({
       <>
         <ElCard>
           {{
+            header: () => (
+              <div class="flex">
+                <ElForm inline={ true } class="cardHeaderFrom">
+                  <ElFormItem label="供应商编码:">
+                    <ElInput v-model={ search.value.supplier_code } style="width: 240px" placeholder="请输入产品编码" />
+                  </ElFormItem>
+                  <ElFormItem label="供应商名称:">
+                    <ElInput v-model={ search.value.supplier_abbreviation } style="width: 240px" placeholder="请输入产品名称" />
+                  </ElFormItem>
+                  <ElFormItem label="材料编码:">
+                    <ElInput v-model={ search.value.material_code } style="width: 240px" placeholder="请输入产品编码" />
+                  </ElFormItem>
+                  <ElFormItem label="材料名称:">
+                    <ElInput v-model={ search.value.material_name } style="width: 240px" placeholder="请输入材料名称" />
+                  </ElFormItem>
+                  <ElFormItem>
+                    <ElButton style="margin-top: -5px" type="primary" onClick={ () => fetchProductList() }>查询</ElButton>
+                  </ElFormItem>
+                </ElForm>
+              </div>
+            ),
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>

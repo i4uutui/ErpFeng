@@ -219,7 +219,7 @@ export default defineComponent({
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" v-permission={ 'ProductCode:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                        <ElButton size="small" type="danger" v-permission={ 'ProductCode:delete' } onClick={ () => handleDelete(scope.row) }>删除</ElButton>
+                        {/* <ElButton size="small" type="danger" v-permission={ 'ProductCode:delete' } onClick={ () => handleDelete(scope.row) }>删除</ElButton> */}
                       </>
                     )}
                   </ElTableColumn>
@@ -234,7 +234,7 @@ export default defineComponent({
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="80px">
                 <ElFormItem label="产品编码" prop="product_code">
-                  <ElInput v-model={ form.value.product_code } placeholder="请输入产品编码" />
+                  <ElInput v-model={ form.value.product_code } placeholder="请输入产品编码" disabled={ edit.value != 0 } />
                 </ElFormItem>
                 <ElFormItem label="产品名称" prop="product_name">
                   <ElInput v-model={ form.value.product_name } placeholder="请输入产品名称" />
@@ -248,14 +248,14 @@ export default defineComponent({
                 <ElFormItem label="规格" prop="specification">
                   <ElInput v-model={ form.value.specification } placeholder="请输入规格" />
                 </ElFormItem>
+                <ElFormItem label="单位" prop="unit">
+                  <ElInput v-model={ form.value.unit } placeholder="请输入单位" />
+                </ElFormItem>
                 <ElFormItem label="其它特性" prop="other_features">
                   <ElInput v-model={ form.value.other_features } placeholder="请输入其它特性" />
                 </ElFormItem>
                 <ElFormItem label="产品结构" prop="component_structure">
                   <ElInput v-model={ form.value.component_structure } placeholder="请输入产品结构" />
-                </ElFormItem>
-                <ElFormItem label="单位" prop="unit">
-                  <ElInput v-model={ form.value.unit } placeholder="请输入单位" />
                 </ElFormItem>
                 <ElFormItem label="生产要求" prop="production_requirements">
                   <ElInput v-model={ form.value.production_requirements } placeholder="请输入生产要求" />

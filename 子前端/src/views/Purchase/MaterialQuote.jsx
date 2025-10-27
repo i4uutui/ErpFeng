@@ -1,4 +1,4 @@
-import { defineComponent, ref, onMounted, reactive, watch } from 'vue'
+import { defineComponent, ref, onMounted, reactive } from 'vue'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
 import { reportOperationLog } from '@/utils/log';
@@ -30,10 +30,7 @@ export default defineComponent({
     let form = ref({
       supplier_id: '',
       supplier_abbreviation: '',
-      // notice_id: '',
-      // material_bom_id: '',
       material_id: '',
-      // product_id: '',
       price: '',
       delivery: '',
       packaging: '', 
@@ -52,27 +49,7 @@ export default defineComponent({
     onMounted(() => {
       getMaterialCode()
       getSupplierInfo()
-      // getProductNotice()
-      // noticeChange()
     })
-
-    // watch(() => form.value.notice_id, async (newValue) => {
-    //   if(newValue !== '' && newValue > 0 && edit.value != -1){
-    //     const row = noticeList.value.find(o => o.id == newValue)
-    //     const res = await request.get('/api/getMaterialBom', { params: { product_id: row.product_id } })
-    //     if(res.code == 200){
-    //       materialBomList.value = res.data
-
-    //       const material = materialBomList.value.find(o => o.id == form.value.material_bom_id)
-    //       form.value.product_id = material.product_id
-    //       getMaterialBomChildren(material.id)
-    //     }
-    //   }
-    //   if(newValue === 0 && edit.value != -1){
-    //     getMaterialCode()
-    //     form.value.material_bom_id = ''
-    //   }
-    // }, { immediate: true })
 
     const getSupplierInfo = async () => {
       const res = await request.get('/api/getSupplierInfo')
@@ -93,28 +70,6 @@ export default defineComponent({
         materialList.value = res.data
       }
     }
-    // const getMaterialBomChildren = async (id) => {
-    //   const res = await request.get('/api/getMaterialBomChildren', { params: { id } })
-    //   if(res.code == 200){
-    //     materialList.value = res.data
-    //   }
-    // }
-    // 获取材料BOM列表
-    // const noticeChange = async (value) => {
-    //   // if(value){
-    //     // const row = noticeList.value.find(o => o.id == value)
-    //     // const res = await request.get('/api/getMaterialBom', { params: { product_id: row.product_id } })
-    //     const res = await request.get('/api/getMaterialBom')
-    //     if(res.code == 200){
-    //       materialBomList.value = res.data
-    //       materialList.value = []
-    //       form.value.material_id = ''
-    //     }
-    //   // }else{
-    //   //   getMaterialCode()
-    //   //   form.value.material_bom_id = ''
-    //   // }
-    // }
     const handleArchive = async () => {
       if(!tableData.value.length) return ElMessage.error('暂无数据可存档！');
       ElMessageBox.confirm('是否确认存档', '提示', {
@@ -125,10 +80,7 @@ export default defineComponent({
         const data = tableData.value.map(e => ({
           supplier_id: e.supplier_id,
           supplier_abbreviation: e.supplier_abbreviation,
-          // notice_id: e.notice_id,
-          // material_bom_id: e.material_bom_id,
           material_id: e.material_id,
-          // product_id: e.product_id,
           price: e.price,
           delivery: e.delivery,
           packaging: e.packaging, 
@@ -157,16 +109,12 @@ export default defineComponent({
         if (valid){
           const data = form.value
           const supplier = supplierList.value.find(o => o.id == form.value.supplier_id)
-          // const notice = noticeList.value.find(o => o.id == form.value.notice_id)
           const material = materialList.value.find(o => o.id == form.value.material_id)
           const formData = {
             supplier: {
               supplier_code: supplier.supplier_code,
               supplier_abbreviation: supplier.supplier_abbreviation,
             },
-            // notice: {
-            //   notice: notice.notice,
-            // },
             material: {
               material_code: material.material_code,
               material_name: material.material_name,
@@ -175,12 +123,9 @@ export default defineComponent({
               other_features: material.other_features,
               purchase_unit: material.purchase_unit,
             },
-            // product_id: data.product_id,
             supplier_id: data.supplier_id,
             supplier_code: supplier.supplier_code,
             supplier_abbreviation: supplier.supplier_abbreviation,
-            // notice_id: data.notice_id,
-            // material_bom_id: data.material_bom_id,
             material_id: data.material_id,
             material_code: material.material_code,
             material_name: material.material_name,
@@ -230,16 +175,11 @@ export default defineComponent({
       resetForm()
     }
     const resetForm = () => {
-      // materialBomList.value = []
-      // materialList.value = []
       form.value = {
         supplier_id: '',
         supplier_abbreviation: '',
-        // notice_id: '',
-        // material_bom_id: '',
         material_id: '',
         material_name: '',
-        // product_id: '',
         price: '',
         delivery: '',
         packaging: '', 
@@ -258,11 +198,6 @@ export default defineComponent({
       const row = materialList.value.find(o => o.id == value)
       form.value.material_name = row.material_name
     }
-    // const materialBomChange = (value) => {
-    //   const row = materialBomList.value.find(o => o.id == value)
-    //   form.value.product_id = row.product_id
-    //   getMaterialBomChildren(row.id)
-    // }
     const goArchive = () => {
       window.open('/#/purchase/material-quote-archive', '_blank')
     }

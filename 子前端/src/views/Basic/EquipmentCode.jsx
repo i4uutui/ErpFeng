@@ -212,7 +212,7 @@ export default defineComponent({
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" v-permission={ 'EquipmentCode:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                        <ElButton size="small" type="danger" v-permission={ 'EquipmentCode:delete' } onClick={ () => handleDelete(scope.row) }>删除</ElButton>
+                        {/* <ElButton size="small" type="danger" v-permission={ 'EquipmentCode:delete' } onClick={ () => handleDelete(scope.row) }>删除</ElButton> */}
                       </>
                     )}
                   </ElTableColumn>
@@ -227,7 +227,7 @@ export default defineComponent({
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
                 <ElFormItem label="设备编码" prop="equipment_code">
-                  <ElInput v-model={ form.value.equipment_code } placeholder="请输入设备编码" />
+                  <ElInput v-model={ form.value.equipment_code } placeholder="请输入设备编码" disabled={ edit.value != 0 } />
                 </ElFormItem>
                 <ElFormItem label="设备名称" prop="equipment_name">
                   <ElInput v-model={ form.value.equipment_name } placeholder="请输入设备名称" />

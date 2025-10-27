@@ -215,7 +215,7 @@ const getNoLast = async (printType) => {
     const idStr = String(getItem('company').id)
     const paddedId = idStr.padStart(2, '0')
     const yearMonth = dayjs().format('YYMM');
-    const no = props.printType + paddedId + yearMonth + '001'
+    const no = printType + paddedId + yearMonth + '001'
     useStore().setPrintNo(no)
   }
 }

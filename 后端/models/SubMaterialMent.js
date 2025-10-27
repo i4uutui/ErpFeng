@@ -23,6 +23,12 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
     allowNull: true,
     comment: '报价单ID'
   },
+  material_bom_id: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    defaultValue: null,
+    comment: '材料BOM ID'
+  },
   print_id: {
     type: DataTypes.INTEGER(30),
     allowNull: true,

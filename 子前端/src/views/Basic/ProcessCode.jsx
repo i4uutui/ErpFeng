@@ -184,7 +184,7 @@ export default defineComponent({
                     {(scope) => (
                       <>
                         <ElButton size="small" type="default" v-permission={ 'ProcessCode:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                        <ElButton size="small" type="danger" v-permission={ 'ProcessCode:delete' } onClick={ () => handleDelete(scope.row) }>删除</ElButton>
+                        {/* <ElButton size="small" type="danger" v-permission={ 'ProcessCode:delete' } onClick={ () => handleDelete(scope.row) }>删除</ElButton> */}
                       </>
                     )}
                   </ElTableColumn>
@@ -199,7 +199,7 @@ export default defineComponent({
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
                 <ElFormItem label="工艺编码" prop="process_code">
-                  <ElInput v-model={ form.value.process_code } placeholder="请输入工艺编码" />
+                  <ElInput v-model={ form.value.process_code } placeholder="请输入工艺编码" disabled={ edit.value != 0 } />
                 </ElFormItem>
                 <ElFormItem label="工艺名称" prop="process_name">
                   <ElInput v-model={ form.value.process_name } placeholder="请输入工艺名称" />

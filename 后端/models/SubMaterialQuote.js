@@ -24,11 +24,6 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
     allowNull: false,
     comment: ' 供应商编码 ID'
   },
-  product_id: {
-    type: DataTypes.INTEGER(11),
-    allowNull: false,
-    comment: ' 产品编码 ID'
-  },
   material_id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
