@@ -50,7 +50,7 @@ export default defineComponent({
               <ElAvatar shape="circle" size={ 40 } fit="cover" src={ user.avatar_url }>
                 <img src={ imageError } style={{ width: "40px", borderRadius: '50%' }} />
               </ElAvatar>
-              <div class="pl10">欢迎你，{ user.username }</div>
+              <div class="pl10">欢迎你，{ user.name }</div>
               <div style={{ color: 'red', marginLeft: '10px', cursor: 'pointer' }} onClick={ loginOut }>退出</div>
             </div>
           </ElCol>

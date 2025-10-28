@@ -39,6 +39,7 @@ const SubNoEncoding = require('./SubNoEncoding.js') // 打印的编码表
 const SubDateInfo = require('./SubDateInfo.js') // 日历记录的表
 
 AdUser.belongsTo(AdCompanyInfo, { foreignKey: 'company_id', as: 'company' })
+AdUser.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
 
 AdUser.hasMany(AdOrganize, { foreignKey: 'menber_id', as: 'organize' });
 AdOrganize.hasMany(AdOrganize, { foreignKey: 'pid', as: 'children' });

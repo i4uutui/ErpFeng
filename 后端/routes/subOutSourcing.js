@@ -20,8 +20,8 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
  *         schema:
  *           type: int
  */
-router.post('/outsourcing_quote', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.body;
+router.get('/outsourcing_quote', authMiddleware, async (req, res) => {
+  const { page = 1, pageSize = 10 } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
   
@@ -215,16 +215,28 @@ router.put('/outsourcing_quote', authMiddleware, async (req, res) => {
  *         schema:
  *           type: int
  */
-router.post('/outsourcing_order', authMiddleware, async (req, res) => {
-  const { notice, supplier_code, status } = req.body;
+router.get('/outsourcing_order', authMiddleware, async (req, res) => {
+  const { notice, supplier_code, supplier_abbreviation, status } = req.query;
   const { company_id } = req.user;
   
-  const whereNotice = {}
-  const whereSupplier = {}
   let whereOrder = {}
-  if(notice) whereNotice.notice = notice
-  if(supplier_code) whereSupplier.supplier_code = supplier_code
-  whereOrder.status = status ? status : [0, 2]
+  let whereNotice = {}
+  let whereSupplier = {}
+  if (notice) whereNotice.notice = { [Op.like]: `%${notice}%` };
+  if (supplier_code) whereSupplier.supplier_code = { [Op.like]: `%${supplier_code}%` };
+  if (supplier_abbreviation) whereSupplier.supplier_abbreviation = { [Op.like]: `%${supplier_abbreviation}%` };
+  
+  const otherFields = [notice, supplier_code, supplier_abbreviation];
+  const hasOtherValues = otherFields.some(field => field !== undefined && field !== '');
+  
+  if (status !== undefined && status !== '') {
+    whereOrder.status = status;
+  } else {
+    if (!hasOtherValues) {
+      whereOrder.status = [0, 2];
+    }
+  }
+
   const rows = await SubOutsourcingOrder.findAll({
     where: {
       is_deleted: 1,

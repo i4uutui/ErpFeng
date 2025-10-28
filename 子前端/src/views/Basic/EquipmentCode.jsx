@@ -49,6 +49,7 @@ export default defineComponent({
       available: '',
       remarks: '',
     })
+    let processCycle = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(10);
@@ -57,6 +58,7 @@ export default defineComponent({
 
     onMounted(() => {
       fetchProductList()
+      getProcessCycle()
     })
     watch(() => [form.value.available, form.value.working_hours], ([newAvailable, newWorkingHours]) => {
       // 转换为数字（处理空字符串或非数字情况）
@@ -83,6 +85,12 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    const getProcessCycle = async () => {
+      const res = await request.get('/api/getProcessCycle', { params: { type: 'sort' } })
+      if(res.code == 200){
+        processCycle.value = res.data
+      }
+    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
@@ -233,7 +241,9 @@ export default defineComponent({
                   <ElInput v-model={ form.value.equipment_name } placeholder="请输入设备名称" />
                 </ElFormItem>
                 <ElFormItem label="制程组" prop="cycle_id">
-                  <MySelect v-model={ form.value.cycle_id } apiUrl="/api/getProcessCycle" query="name" itemValue="name" placeholder="请选择制程组" />
+                  <ElSelect v-model={ form.value.cycle_id } multiple={false} filterable remote remote-show-suffix clearable placeholder="请选择制程组">
+                    {processCycle.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="设备总数量" prop="quantity">
                   <ElInput v-model={ form.value.quantity } type="number" placeholder="请输入设备数量" />

@@ -11,12 +11,27 @@ const routes = [
         name: 'Home',
         component: () => import('../views/home.jsx'),
         meta: {
-          title: '首页',
+          title: '系统首页',
           parent: '首页',
           menu: true
         }
       },
       // 系统管理
+      {
+        path: '/system/employee-info',
+        name: 'EmployeeInfo',
+        component: () => import('@/views/system/EmployeeInfo.jsx'),
+        meta: {
+          title: '员工信息',
+          parent: '系统管理',
+          menu: true,
+          buttons: [
+            { code: 'EmployeeInfo:add', label: '新增' },
+            { code: 'EmployeeInfo:edit', label: '修改' },
+            { code: 'EmployeeInfo:delete', label: '删除' },
+          ]
+        }
+      },
       {
         path: '/system/user',
         name: 'UserManagement',
@@ -52,16 +67,16 @@ const routes = [
           menu: true,
         }
       },
-      {
-        path: '/system/organize',
-        name: 'OrganizeManagement',
-        component: () => import('@/views/System/OrganizeManagement.jsx'),
-        meta: {
-          title: '组织架构',
-          parent: '系统管理',
-          menu: true
-        }
-      },
+      // {
+      //   path: '/system/organize',
+      //   name: 'OrganizeManagement',
+      //   component: () => import('@/views/System/OrganizeManagement.jsx'),
+      //   meta: {
+      //     title: '组织架构',
+      //     parent: '系统管理',
+      //     menu: true
+      //   }
+      // },
       {
         path: '/system/ProcessCycle',
         name: 'ProcessCycle',
@@ -163,21 +178,6 @@ const routes = [
             { code: 'EquipmentCode:add', label: '新增' },
             { code: 'EquipmentCode:edit', label: '修改' },
             // { code: 'EquipmentCode:delete', label: '删除' },
-          ]
-        }
-      },
-      {
-        path: '/basic/employee-info',
-        name: 'EmployeeInfo',
-        component: () => import('@/views/Basic/EmployeeInfo.jsx'),
-        meta: {
-          title: '员工信息',
-          parent: '基础资料',
-          menu: true,
-          buttons: [
-            { code: 'EmployeeInfo:add', label: '新增' },
-            { code: 'EmployeeInfo:edit', label: '修改' },
-            { code: 'EmployeeInfo:delete', label: '删除' },
           ]
         }
       },

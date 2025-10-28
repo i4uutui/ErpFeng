@@ -9,6 +9,7 @@ import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
 import html2pdf from 'html2pdf.js';
 import WinPrint from '@/components/print/winPrint';
+import HeadForm from '@/components/form/HeadForm';
 
 export default defineComponent({
   setup() {
@@ -459,6 +460,11 @@ export default defineComponent({
       form.value.other_features = material.other_features
       form.value.unit = material.usage_unit
     }
+    const supplierChange = (value) => {
+      const supplier = supplierInfo.value.find(e => e.id == value)
+      form.value.supplier_code = supplier.supplier_code
+      form.value.supplier_abbreviation = supplier.supplier_abbreviation
+    }
     // 执行打印
     const onPrint = async () => {
       const list = allSelect.value.length ? allSelect.value : tableData.value
@@ -491,51 +497,61 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div className="flex">
-                <ElForm inline={ true } class="cardHeaderFrom">
-                  <ElFormItem v-permission={ 'PurchaseOrder:add' }>
-                    <ElButton style="margin-top: -5px" type="primary" onClick={ addOutSourcing }> 新增采购单 </ElButton>
-                  </ElFormItem>
-                  <ElFormItem v-permission={ 'PurchaseOrder:set' }>
-                    <ElButton style="margin-top: -5px" type="primary" onClick={ setStatusAllData }> 批量提交 </ElButton>
-                  </ElFormItem>
-                  {
-                    approval.findIndex(e => e.user_id == user.id) >= 0 ? 
-                    <ElFormItem>
-                      <ElButton style="margin-top: -5px" type="primary" onClick={ () => setApprovalAllData() }> 批量审批 </ElButton>
-                    </ElFormItem> : 
-                    <></>
-                  }
-                  <ElFormItem v-permission={ 'PurchaseOrder:print' }>
-                    <ElButton style="margin-top: -5px" type="primary" onClick={ () => onPrint() }> 采购单打印 </ElButton>
-                  </ElFormItem>
-                </ElForm>
-                <ElForm inline={ true } class="cardHeaderFrom">
-                  <ElFormItem label="生产订单号:">
-                    <ElInput v-model={ search.value.notice_number } placeholder="请输入生产订单号" />
-                  </ElFormItem>
-                  <ElFormItem label="供应商编码:">
-                    <ElInput v-model={ search.value.supplier_code } placeholder="请输入供应商编码" />
-                  </ElFormItem>
-                  <ElFormItem label="供应商名称:">
-                    <ElInput v-model={ search.value.supplier_abbreviation } placeholder="请输入供应商名称" />
-                  </ElFormItem>
-                  <ElFormItem label="产品编码:">
-                    <ElInput v-model={ search.value.product_code } placeholder="请输入产品编码" />
-                  </ElFormItem>
-                  <ElFormItem label="产品名称:">
-                    <ElInput v-model={ search.value.product_name } placeholder="请输入产品名称" />
-                  </ElFormItem>
-                  <ElFormItem label="审批状态:">
-                    <ElSelect v-model={ search.value.status } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择审批状态">
-                      {statusList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
-                    </ElSelect>
-                  </ElFormItem>
-                  <ElFormItem>
-                    <ElButton style="margin-top: -5px" type="primary" onClick={ () => fetchProductList() }>查询</ElButton>
-                  </ElFormItem>
-                </ElForm>
-              </div>
+              <HeadForm>
+                {{
+                  left: () => (
+                    <>
+                      <ElFormItem v-permission={ 'PurchaseOrder:add' }>
+                        <ElButton type="primary" onClick={ addOutSourcing } style={{ width: '100px' }}> 新增采购单 </ElButton>
+                      </ElFormItem>
+                      <ElFormItem v-permission={ 'PurchaseOrder:set' }>
+                        <ElButton type="primary" onClick={ setStatusAllData } style={{ width: '100px' }}> 批量提交 </ElButton>
+                      </ElFormItem>
+                      {
+                        approval.findIndex(e => e.user_id == user.id) >= 0 ? 
+                        <ElFormItem>
+                          <ElButton type="primary" onClick={ () => setApprovalAllData() } style={{ width: '100px' }}> 批量审批 </ElButton>
+                        </ElFormItem> : 
+                        <></>
+                      }
+                      <ElFormItem v-permission={ 'PurchaseOrder:print' }>
+                        <ElButton type="primary" onClick={ () => onPrint() }> 采购单打印 </ElButton>
+                      </ElFormItem>
+                    </>
+                  ),
+                  center: () => (
+                    <>
+                      <ElFormItem label="生产订单号:">
+                        <ElInput v-model={ search.value.notice_number } placeholder="请输入生产订单号" style={{ width: '192px' }} />
+                      </ElFormItem>
+                      <ElFormItem label="供应商编码:">
+                        <ElInput v-model={ search.value.supplier_code } placeholder="请输入供应商编码" style={{ width: '192px' }} />
+                      </ElFormItem>
+                      <ElFormItem label="供应商名称:">
+                        <ElInput v-model={ search.value.supplier_abbreviation } placeholder="请输入供应商名称" style={{ width: '192px' }} />
+                      </ElFormItem>
+                      <ElFormItem label="产品编码:">
+                        <ElInput v-model={ search.value.product_code } placeholder="请输入产品编码" style={{ width: '192px' }} />
+                      </ElFormItem>
+                      <ElFormItem label="产品名称:">
+                        <ElInput v-model={ search.value.product_name } placeholder="请输入产品名称" style={{ width: '192px' }} />
+                      </ElFormItem>
+                      <ElFormItem label="审批状态:">
+                        <ElSelect v-model={ search.value.status } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择审批状态" style={{ width: '192px' }}>
+                          {statusList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                        </ElSelect>
+                      </ElFormItem>
+                    </>
+                  ),
+                  right: () => (
+                    <>
+                      <ElFormItem>
+                        <ElButton type="primary" onClick={ () => fetchProductList() }>查询</ElButton>
+                      </ElFormItem>
+                    </>
+                  )
+                }}
+              </HeadForm>
             ),
             default: () => (
               <>

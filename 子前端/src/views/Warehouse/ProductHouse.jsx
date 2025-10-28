@@ -9,6 +9,7 @@ import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
 import html2pdf from 'html2pdf.js';
 import WinPrint from '@/components/print/winPrint';
+import HeadForm from '@/components/form/HeadForm';
 
 export default defineComponent({
   setup(){
@@ -513,63 +514,75 @@ export default defineComponent({
         <ElCard style={{ height: '100%' }}>
           {{
             header: () => (
-              <ElForm ref={ formCard } inline={ true } class="cardHeaderFrom">
-                <ElFormItem v-permission={ 'ProductHouse:addIn' }>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => handleAdd(1) }>新增入库单</ElButton>
-                </ElFormItem>
-                <ElFormItem v-permission={ 'ProductHouse:addOut' }>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => handleAdd(2) }>新增出库单</ElButton>
-                </ElFormItem>
-                <ElFormItem v-permission={ 'ProductHouse:set' }>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => setStatusAllData() }> 批量提交 </ElButton>
-                </ElFormItem>
-                {
-                  approval.findIndex(e => e.user_id == user.id) >= 0 ? 
-                  <ElFormItem>
-                    <ElButton style="margin-top: -5px" type="primary" onClick={ () => setApprovalAllData() }> 批量审批 </ElButton>
-                  </ElFormItem> : 
-                  <></>
-                }
-                <ElFormItem v-permission={ 'ProductHouse:print' }>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => onPrint() }> 出入库打印 </ElButton>
-                </ElFormItem>
-                <ElFormItem label="仓库名称:">
-                  <ElSelect v-model={ houseId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择仓库名称">
-                    {houseList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
-                  </ElSelect>
-                </ElFormItem>
-                <ElFormItem label="出入库:">
-                  <ElSelect v-model={ operateId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择出入库" onChange={ (row) => formOperateSelect(row) }>
-                    {operate.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
-                  </ElSelect>
-                </ElFormItem>
-                <ElFormItem label="出入库方式:">
-                  <ElSelect v-model={ typeId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择出入库方式">
-                    {typeSelectList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
-                  </ElSelect>
-                </ElFormItem>
-                <ElFormItem label="客户:">
-                  <ElSelect v-model={ customerId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择客户" onChange={ (row) => formcustomerSelect(row) }>
-                    {customerList.value.map((e, index) => <ElOption value={ e.id } label={ e.customer_abbreviation } key={ index } />)}
-                  </ElSelect>
-                </ElFormItem>
-                <ElFormItem label="产品名称:">
-                  <ElSelect v-model={ productId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择产品名称">
-                    {productList.value.map((e, index) => <ElOption value={ e.id } label={ e.product_name } key={ index } />)}
-                  </ElSelect>
-                </ElFormItem>
-                <ElFormItem label="审批状态:">
-                  <ElSelect v-model={ statusId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择审批状态">
-                    {statusList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
-                  </ElSelect>
-                </ElFormItem>
-                <ElFormItem label="周期:">
-                  <ElDatePicker v-model={ dateTime.value } type="daterange" clearable={ false } range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="YYYY-MM-DD" onChange={ (row) => dateChange(row) } />
-                </ElFormItem>
-                <ElFormItem>
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ () => filterQuery() }>筛选</ElButton>
-                </ElFormItem>
-              </ElForm>
+              <HeadForm headerWidth="550px">
+                {{
+                  left: () => (
+                    <>
+                      <ElFormItem v-permission={ 'ProductHouse:addIn' }>
+                        <ElButton type="primary" onClick={ () => handleAdd(1) } style={{ width: '100px' }}>新增入库单</ElButton>
+                      </ElFormItem>
+                      <ElFormItem v-permission={ 'ProductHouse:addOut' }>
+                        <ElButton type="primary" onClick={ () => handleAdd(2) } style={{ width: '100px' }}>新增出库单</ElButton>
+                      </ElFormItem>
+                      <ElFormItem v-permission={ 'ProductHouse:set' }>
+                        <ElButton type="primary" onClick={ () => setStatusAllData() } style={{ width: '100px' }}> 批量提交 </ElButton>
+                      </ElFormItem>
+                      {
+                        approval.findIndex(e => e.user_id == user.id) >= 0 ? 
+                        <ElFormItem>
+                          <ElButton type="primary" onClick={ () => setApprovalAllData() } style={{ width: '100px' }}> 批量审批 </ElButton>
+                        </ElFormItem> : 
+                        <></>
+                      }
+                      <ElFormItem v-permission={ 'ProductHouse:print' }>
+                        <ElButton type="primary" onClick={ () => onPrint() } style={{ width: '100px' }}> 出入库打印 </ElButton>
+                      </ElFormItem>
+                    </>
+                  ),
+                  center: () => (
+                    <>
+                      <ElFormItem label="仓库名称:">
+                        <ElSelect v-model={ houseId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择仓库名称" style={{ width: '160px' }}>
+                          {houseList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                        </ElSelect>
+                      </ElFormItem>
+                      <ElFormItem label="出入库:">
+                        <ElSelect v-model={ operateId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择出入库" onChange={ (row) => formOperateSelect(row) } style={{ width: '160px' }}>
+                          {operate.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                        </ElSelect>
+                      </ElFormItem>
+                      <ElFormItem label="出入库方式:">
+                        <ElSelect v-model={ typeId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择出入库方式" style={{ width: '160px' }}>
+                          {typeSelectList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                        </ElSelect>
+                      </ElFormItem>
+                      <ElFormItem label="客户:">
+                        <ElSelect v-model={ customerId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择客户" onChange={ (row) => formcustomerSelect(row) } style={{ width: '160px' }}>
+                          {customerList.value.map((e, index) => <ElOption value={ e.id } label={ e.customer_abbreviation } key={ index } />)}
+                        </ElSelect>
+                      </ElFormItem>
+                      <ElFormItem label="产品名称:">
+                        <ElSelect v-model={ productId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择产品名称" style={{ width: '160px' }}>
+                          {productList.value.map((e, index) => <ElOption value={ e.id } label={ e.product_name } key={ index } />)}
+                        </ElSelect>
+                      </ElFormItem>
+                      <ElFormItem label="审批状态:">
+                        <ElSelect v-model={ statusId.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择审批状态" style={{ width: '160px' }}>
+                          {statusList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                        </ElSelect>
+                      </ElFormItem>
+                      <ElFormItem label="周期:">
+                        <ElDatePicker v-model={ dateTime.value } type="daterange" clearable={ false } range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="YYYY-MM-DD" onChange={ (row) => dateChange(row) } />
+                      </ElFormItem>
+                    </>
+                  ),
+                  right: () => (
+                    <ElFormItem>
+                      <ElButton type="primary" onClick={ () => filterQuery() }>查询</ElButton>
+                    </ElFormItem>
+                  )
+                }}
+              </HeadForm>
             ),
             default: () => (
               <>

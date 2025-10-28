@@ -8,7 +8,6 @@ const bcrypt = require('bcrypt');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { PreciseMath, processStockOut } = require('../middleware/tool')
 
-// 获取后台用户列表（分页）
 /**
  * @swagger
  * /api/user:
@@ -38,13 +37,11 @@ router.get('/user', authMiddleware, async (req, res) => {
       id: { [Op.not]: userId },
       company_id,
     },
-    attributes: ['id', 'name', 'parent_id', 'username', 'parent_id', 'status', 'power', 'created_at'],
-    include: [{
-      model: AdOrganize,
-      as: 'organize',
-      where: { is_deleted: 1 },
-      required: false
-    }],
+    attributes: ['id', 'name', 'cycle_id', 'parent_id', 'username', 'parent_id', 'status', 'power', 'created_at'],
+    include: [
+      { model: AdOrganize, as: 'organize', where: { is_deleted: 1 }, required: false },
+      { model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }
+    ],
     order: [['created_at', 'DESC']],
     limit: parseInt(pageSize),
     offset
@@ -71,7 +68,6 @@ router.get('/user', authMiddleware, async (req, res) => {
   });
 });
 
-// 添加用户
 /**
  * @swagger
  * /api/user:
@@ -97,7 +93,7 @@ router.get('/user', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.post('/user', authMiddleware, async (req, res) => {
-  const { username, password, name, power, status } = req.body;
+  const { username, password, name,cycle_id, power, status } = req.body;
   
   const { id: parent_id, company_id } = req.user
 
@@ -119,14 +115,13 @@ router.post('/user', authMiddleware, async (req, res) => {
   const type = 2
   
   AdUser.create({
-    username, name, power, status, parent_id, company_id, type,
+    username, name, cycle_id, power, status, parent_id, company_id, type,
     password: hashedPassword
   })
   
   res.json({ message: '添加成功', code: 200 });
 });
 
-// 更新子管理员接口
 /**
  * @swagger
  * /api/user:
@@ -155,7 +150,7 @@ router.post('/user', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.put('/user', authMiddleware, async (req, res) => {
-  const { username, password, name, power, status, id } = req.body;
+  const { username, password, name, cycle_id, power, status, id } = req.body;
   
   const { id: parent_id, company_id } = req.user
   
@@ -186,7 +181,7 @@ router.put('/user', authMiddleware, async (req, res) => {
 
   // 更新管理员信息
   await AdUser.update({
-    username, name, power, type, company_id, parent_id, status,
+    username, name, cycle_id, power, type, company_id, parent_id, status,
     password: passwordToUpdate
   }, { where: { id } })
   

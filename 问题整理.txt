@@ -32,14 +32,6 @@
 5、制程日总负荷 = 所有工序对应的制程的每日负荷相加
 
 
-
-要清空sub_no_encoding表
-sub_process_cycle表要将sort设置为0
-sub_material_bom_child表增加is_buy字段，默认0
-sub_material_quote表增加material_bom_id字段
-sub_material_ment表增加quote_id字段
-
-
 0W-20机油
 壳
 

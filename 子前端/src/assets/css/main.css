@@ -21,6 +21,11 @@
   margin-right: 10px;
   margin-bottom: 10px;
 }
+.cardHeaderFrom .el-form-item__label{
+  text-align: justify;
+  text-align-last: justify;
+  display: inline-block;
+}
 .el-menu--vertical .el-sub-menu .el-menu > .el-menu-item{
   padding-left: 30px !important;
 }

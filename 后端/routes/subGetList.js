@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, SubOutsourcingOrder, SubMaterialMent, Op, SubNoEncoding, SubMaterialBom, SubMaterialBomChild, SubMaterialQuote } = require('../models');
+const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, SubOutsourcingOrder, SubMaterialMent, Op, SubNoEncoding, SubMaterialBom, SubMaterialBomChild, SubMaterialQuote, SubOutsourcingQuote } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 
@@ -386,12 +386,13 @@ router.get('/getProcessBomChildren', authMiddleware, async (req, res) => {
  *       - 常用列表(GetList)
  */
 router.get('/getProcessCycle', authMiddleware, async (req, res) => {
+  const { type } = req.query
   const { company_id } = req.user;
   
+  const where = { company_id };
+  if(type === 'sort') where.sort = { [Op.gt]: 0 };
   const rows = await SubProcessCycle.findAll({
-    where: {
-      company_id
-    }
+    where
   })
   const cycleRows = rows.map(e => e.toJSON())
   res.json({ data: cycleRows, code: 200 })
@@ -432,29 +433,47 @@ router.post('/getConstType', authMiddleware, async (req, res) => {
  *       - 常用列表(GetList)
  */
 router.get('/getOutsourcingQuote', authMiddleware, async (req, res) => {
+  const { notice_id } = req.query
   const { company_id } = req.user;
   
-  const rows = await SubOutsourcingOrder.findAll({
-    where: {
-      is_deleted: 1,
-      company_id,
-    },
-    attributes: ['id', 'supplier_id', 'notice_id'],
+  let where = {
+    is_deleted: 1,
+    company_id,
+  }
+  if(notice_id) where.notice_id = notice_id
+  const rows = await SubOutsourcingQuote.findAll({
+    where,
+    attributes: ['id', 'supplier_id', 'notice_id', 'price', 'transaction_currency', 'other_transaction_terms'],
     include: [
       { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_abbreviation', 'supplier_code'] },
-      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice'] },
+      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice', 'sale_id'], include: [{ model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number', 'unit', 'delivery_time'] }] },
       {
         model: SubProcessBom,
         as: 'processBom',
-        attributes: ['id', 'product_id'],
+        attributes: ['id', 'product_id', 'part_id', 'archive'],
         include: [
-          { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code'] },
+          { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing', 'model', 'specification'] },
+          { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
         ]
       },
+      {
+        model: SubProcessBomChild,
+        as: 'processChildren',
+        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'time', 'price', 'points'],
+        include: [
+          { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
+          { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'equipment_code', 'equipment_name'] }
+        ]
+      }
     ],
     order: [['created_at', 'DESC']],
   })
-  const fromData = rows.map(item => item.toJSON())
+  const fromData = rows.map(e => {
+    const item = e.toJSON()
+    const product = item.processBom.product
+    item.name = `${product.product_code}:${product.product_name}`
+    return item
+  })
   
   // 返回所需信息
   res.json({ 
@@ -576,7 +595,8 @@ router.get('/getMaterialBom', authMiddleware, async (req, res) => {
     include: [
       { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name'] },
       { model: SubPartCode, as: 'part', attributes: ['id', 'part_code', 'part_name'] },
-    ]
+    ],
+    order: [['created_at', 'DESC']],
   })
   const result = rows.map(e => {
     const item = e.toJSON()
@@ -632,7 +652,8 @@ router.get('/getMaterialQuote', authMiddleware, async (req, res) => {
     include: [
       { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_code', 'supplier_abbreviation'] },
       { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name'] }
-    ]
+    ],
+    order: [['created_at', 'DESC']],
   })
   const data = rows.map(e => {
     const item = e.toJSON()

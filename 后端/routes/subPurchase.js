@@ -430,7 +430,6 @@ router.get('/material_ment', authMiddleware, async (req, res) => {
   const otherFields = [notice, supplier_code, supplier_abbreviation, product_code, product_name];
   const hasOtherValues = otherFields.some(field => field !== undefined && field !== '');
   
-  console.log(status);
   if (status !== undefined && status !== '') {
     whereMent.status = status;
   } else {

@@ -29,6 +29,11 @@ const SubOutsourcingOrder = sequelize.define('SubOutsourcingOrder', {
     allowNull: false,
     comment: ' 生产通知单ID'
   },
+  quote_id: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    comment: ' 委外报价ID '
+  },
   supplier_id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,

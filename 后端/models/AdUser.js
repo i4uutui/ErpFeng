@@ -29,6 +29,11 @@ const AdUser = sequelize.define("AdUser", {
     allowNull: true,
     comment: ' 姓名 '
   },
+  cycle_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    comment: ' 制程ID '
+  },
   power: {
     type: DataTypes.TEXT('long'),
     allowNull: true,

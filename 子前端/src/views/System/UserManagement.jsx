@@ -10,7 +10,6 @@ export default defineComponent({
     const formRef = ref(null);
     const props = reactive({
       multiple: true,
-      // checkStrictly: false,
     })
     const user = getItem('user')
     const rules = reactive({
@@ -27,9 +26,11 @@ export default defineComponent({
       uid: user.id,
       username: '',
       password: '',
+      cycle_id: '',
       name: '',
       power: [] // 新增权限字段
     })
+    let processCycle = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(10);
@@ -41,6 +42,7 @@ export default defineComponent({
     onMounted(() => {
       fetchAdminList()
       generateCascaderOptions()
+      getProcessCycle()
     })
 
     // 获取子管理员列表
@@ -54,6 +56,13 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    // 获取制程
+    const getProcessCycle = async () => {
+      const res = await request.get('/api/getProcessCycle')
+      if(res.code == 200){
+        processCycle.value = res.data
+      }
+    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
@@ -78,6 +87,7 @@ export default defineComponent({
               username: form.value.username,
               password: form.value.password,
               name: form.value.name,
+              cycle_id: form.value.cycle_id,
               power: JSON.stringify(form.value.power),
               status: form.value.status,
               uid: user.id,
@@ -132,6 +142,7 @@ export default defineComponent({
       form.value.status = row.status;
       form.value.uid = row.uid;
       form.value.company = row.company;
+      form.value.cycle_id = row.cycle_id
       
       if(rules.password){
         delete rules.password
@@ -151,16 +162,12 @@ export default defineComponent({
         const menuItem = {
           value: route.name, // 菜单权限标识
           label: route.meta.title,
-          // disabled: true,
-          // checked: false,
           children: [] // 存放按钮权限
         };
         if (route.meta.buttons && route.meta.buttons.length) {
           menuItem.children = route.meta.buttons.map(btn => ({
             value: btn.code, // 按钮权限标识
             label: btn.label, // 按钮显示名称
-            // disabled: true,
-            // checked: false,
           }));
         }
         groupedRoutes[parent].push(menuItem);
@@ -172,8 +179,6 @@ export default defineComponent({
         value: key,
         label: key,
         children: value,
-        // disabled: false,
-        // checked: false,
       }));
     }
     // 新增管理员
@@ -183,6 +188,7 @@ export default defineComponent({
       form.value.username = '';
       form.value.password = '';
       form.value.name = '';
+      form.value.cycle_id = ''
       form.value.power = []; // 清空权限选择
 
       placeholder.value = '请输入密码'
@@ -198,23 +204,11 @@ export default defineComponent({
       form.value.username = '';
       form.value.password = '';
       form.value.name = '';
+      form.value.cycle_id = ''
       form.value.power = []; // 清空权限选择
     }
     const handleChange = (values) => {
-      // console.log(values);
-      // // 初始化勾选状态
-      // findCheckNode(options.value)
-      // const nodeRef = cascaderRef.value.getCheckedNodes()
-      // nodeRef.forEach(e => {
-      //   const value = findNodeByName(options.value, e.value)
-      //   if(value.children && value.children.length){
-      //     value.children.forEach(o => {
-      //       o.disabled = false
-      //     })
-      //   }
-      // })
-      // syncChildrenCheckStatus(options.value)
-      // console.log(nodeRef);
+
     }
     function syncChildrenCheckStatus(nodes) {
       nodes.forEach(node => {
@@ -240,15 +234,6 @@ export default defineComponent({
       }
       return null;
     }
-    // 初始化勾选状态
-    // const findCheckNode = (arr, disabled = false) => {
-    //   arr.forEach(e => {
-    //     e.disabled = disabled
-    //     if(e.children && e.children.length){
-    //       findCheckNode(e.children, true)
-    //     }
-    //   })
-    // }
     // 分页相关
     function pageSizeChange(val) {
       currentPage.value = 1;
@@ -275,9 +260,7 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
                   <ElTableColumn prop="username" label="用户名" width="180" />
                   <ElTableColumn prop="name" label="姓名" width="180" />
-                  <ElTableColumn label="工作岗位" width="180">
-                    {({ row }) => <span>{ row.organizeNames.length ? row.organizeNames.join('，') : 'null' }</span>}
-                  </ElTableColumn>
+                  <ElTableColumn prop="cycle.name" label="工作岗位" width="180"></ElTableColumn>
                   <ElTableColumn prop="status" label="是否开启" width="180">
                     {(scope) => <ElSwitch v-model={ scope.row.status } active-value={ 1 } inactive-value={ 0 } onChange={ () => closeUser(scope.row) } />}
                   </ElTableColumn>
@@ -308,6 +291,11 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="姓名" prop="name">
                   <ElInput v-model={ form.value.name } placeholder="请输入姓名" />
+                </ElFormItem>
+                <ElFormItem label="所属部门" prop="cycle_id">
+                  <ElSelect v-model={ form.value.cycle_id } multiple={false} filterable remote remote-show-suffix clearable placeholder="请选择所属部门">
+                    {processCycle.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="菜单权限" prop="power" class="userCascader">
                   <ElCascader ref={ cascaderRef } v-model={ form.value.power } options={ options.value } props={ props } showAllLevels={ false } collapseTags={ true } placeholder="请选择用户权限" onChange={ handleChange }>

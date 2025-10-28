@@ -56,9 +56,11 @@ export default defineComponent({
     
     // 获取列表
     const fetchProductList = async () => {
-      const res = await request.post('/api/outsourcing_quote', {
-        page: currentPage.value,
-        pageSize: pageSize.value
+      const res = await request.get('/api/outsourcing_quote', {
+        params: {
+          page: currentPage.value,
+          pageSize: pageSize.value
+        }
       });
       tableData.value = res.data;
       total.value = res.total;
@@ -150,11 +152,14 @@ export default defineComponent({
       form.value.process_bom_children_id = ''
       getProcessBomChildren(value)
     }
-    const handleUplate = (row) => {
+    const handleUplate = async (row) => {
       edit.value = row.id;
-      dialogVisible.value = true;
+      row.process_bom_children_id = Number(row.process_bom_children_id)
       form.value = { ...row };
-      getProcessBomChildren(row.process_bom_id)
+      const notice = noticeList.value.find(o => o.id == row.notice_id)
+      await getProcessBomList(notice.product_id)
+      await getProcessBomChildren(row.process_bom_id)
+      dialogVisible.value = true;
     }
     // 新增
     const handleAdd = () => {

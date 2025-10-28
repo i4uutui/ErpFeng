@@ -124,7 +124,7 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
-                  <ElTableColumn prop="id" label="ID" width="180" />
+                  {/* <ElTableColumn prop="id" label="ID" width="180" /> */}
                   <ElTableColumn prop="user_name" label="操作人名称" width="180" />
                   <ElTableColumn label="操作类型" width="180">
                     {({row}) => <span>{ typeValue[row.operation_type] }</span>}
