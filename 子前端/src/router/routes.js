@@ -193,7 +193,7 @@ const routes = [
           buttons: [
             { code: 'CustomerInfo:add', label: '新增' },
             { code: 'CustomerInfo:edit', label: '修改' },
-            { code: 'CustomerInfo:delete', label: '删除' },
+            // { code: 'CustomerInfo:delete', label: '删除' },
           ]
         }
       },

@@ -1,12 +1,16 @@
-import { defineComponent, ref, onMounted, reactive } from 'vue'
+import { defineComponent, ref, onMounted, reactive, nextTick } from 'vue'
 import request from '@/utils/request';
 import router from '@/router';
 import { getItem } from '@/assets/js/storage';
 import { reportOperationLog } from '@/utils/log';
+import { getPageHeight } from '@/utils/tool';
 
 export default defineComponent({
   setup(){
     const formRef = ref(null);
+    const formCard = ref(null)
+    const pagin = ref(null)
+    const formHeight = ref(0);
     const rules = reactive({
       name: [
         { required: true, message: '请输入制程名称', trigger: 'blur' },
@@ -19,11 +23,15 @@ export default defineComponent({
     })
     let tableData = ref([])
     let currentPage = ref(1);
-    let pageSize = ref(10);
+    let pageSize = ref(20);
     let total = ref(0);
     let edit = ref(0)
 
     onMounted(() => {
+      nextTick(async () => {
+        formHeight.value = await getPageHeight([formCard.value, pagin.value]);
+      })
+
       fetchAdminList()
     })
 
@@ -119,7 +127,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="clearfix">
+              <div class="clearfix" ref={ formCard }>
                 <ElButton style="margin-top: -5px" type="primary" v-permission={ 'ProcessCycle:add' } onClick={ handleAdd } >
                   新增生产制程
                 </ElButton>
@@ -127,7 +135,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
                   <ElTableColumn prop="name" label="名称" />
                   <ElTableColumn prop="sort" label="排序" />
                   <ElTableColumn prop="created_at" label="创建时间" />
@@ -139,7 +147,7 @@ export default defineComponent({
                     )}
                   </ElTableColumn>
                 </ElTable>
-                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
+                <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>
             )
           }}

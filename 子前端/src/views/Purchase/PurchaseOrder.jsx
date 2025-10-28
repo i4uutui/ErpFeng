@@ -497,7 +497,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <HeadForm>
+              <HeadForm headerWidth="270px">
                 {{
                   left: () => (
                     <>
@@ -515,7 +515,7 @@ export default defineComponent({
                         <></>
                       }
                       <ElFormItem v-permission={ 'PurchaseOrder:print' }>
-                        <ElButton type="primary" onClick={ () => onPrint() }> 采购单打印 </ElButton>
+                        <ElButton type="primary" onClick={ () => onPrint() } style={{ width: '100px' }}> 采购单打印 </ElButton>
                       </ElFormItem>
                     </>
                   ),

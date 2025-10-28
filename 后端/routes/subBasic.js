@@ -495,7 +495,7 @@ router.get('/employee_info', authMiddleware, async (req, res) => {
     },
     attributes: ['id', 'company_id', 'employee_id', 'name', 'cycle_id', 'position', 'salary_attribute', 'remarks', 'created_at'],
     include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }],
-    order: [['created_at', 'DESC']],
+    order: [['cycle_id', 'ASC'], ['employee_id', 'ASC']],
     limit: parseInt(pageSize),
     offset
   })

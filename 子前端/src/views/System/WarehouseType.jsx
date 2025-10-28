@@ -1,11 +1,13 @@
-import { defineComponent, ref, onMounted, reactive } from 'vue'
+import { defineComponent, ref, onMounted, reactive, nextTick } from 'vue'
 import request from '@/utils/request';
-import { getItem } from '@/assets/js/storage';
 import { reportOperationLog } from '@/utils/log';
+import { getPageHeight } from '@/utils/tool';
 
 export default defineComponent({
   setup(){
     const formRef = ref(null);
+    const formCard = ref(null)
+    const formHeight = ref(0);
     const rules = reactive({
       ware_id: [
         { required: true, message: '请选择仓库类型', trigger: 'blur' },
@@ -24,6 +26,10 @@ export default defineComponent({
     let edit = ref(0)
 
     onMounted(() => {
+      nextTick(async () => {
+        formHeight.value = await getPageHeight([formCard.value]);
+      })
+
       fetchAdminList()
       getWareTypeList()
     })
@@ -108,7 +114,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="clearfix">
+              <div class="clearfix" ref={ formCard }>
                 <ElButton style="margin-top: -5px" type="primary" v-permission={ 'Warehouse:add' } onClick={ handleAdd } >
                   新增仓库
                 </ElButton>
@@ -116,7 +122,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
                   <ElTableColumn prop="name" label="仓库名称" />
                   <ElTableColumn prop="ware.name" label="仓库类型" />
                   <ElTableColumn prop="created_at" label="创建时间" />

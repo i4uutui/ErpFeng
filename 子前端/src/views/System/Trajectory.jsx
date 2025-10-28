@@ -1,10 +1,13 @@
-import { defineComponent, ref, onMounted, reactive } from 'vue'
+import { defineComponent, ref, onMounted, reactive, nextTick } from 'vue'
 import request from '@/utils/request';
 import router from '@/router';
-import { filterMenu } from '@/utils/tool';
+import { filterMenu, getPageHeight } from '@/utils/tool';
 
 export default defineComponent({
   setup(){
+    const formCard = ref(null)
+    const pagin = ref(null)
+    const formHeight = ref(0);
     const typeValue = reactive({
       add: '新增',
       update: '修改',
@@ -26,10 +29,14 @@ export default defineComponent({
     let userList = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
-    let pageSize = ref(10);
+    let pageSize = ref(20);
     let total = ref(0);
 
     onMounted(() => {
+      nextTick(async () => {
+        formHeight.value = await getPageHeight([formCard.value, pagin.value]);
+      })
+
       fetchAdminList()
       fetchUserList()
       generateCascaderOptions()
@@ -102,7 +109,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <ElForm inline={ true }>
+              <ElForm inline={ true } ref={ formCard }>
                 <ElFormItem label="操作人名称">
                   <ElSelect v-model={ user_id.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择操作类型">
                     {userList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
@@ -123,7 +130,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
                   {/* <ElTableColumn prop="id" label="ID" width="180" /> */}
                   <ElTableColumn prop="user_name" label="操作人名称" width="180" />
                   <ElTableColumn label="操作类型" width="180">
@@ -133,7 +140,7 @@ export default defineComponent({
                   <ElTableColumn prop="desc" label="操作描述" />
                   <ElTableColumn prop="created_at" label="操作时间" width="180" />
                 </ElTable>
-                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
+                <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>
             )
           }}

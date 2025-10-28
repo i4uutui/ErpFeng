@@ -1,6 +1,6 @@
 import { defineComponent, onMounted, reactive, ref, nextTick, computed } from 'vue'
 import { useStore } from '@/stores';
-import { getRandomString, PreciseMath, numberToChinese, getNoLast } from '@/utils/tool'
+import { getRandomString, PreciseMath, numberToChinese, getNoLast, getPageHeight } from '@/utils/tool'
 import { reportOperationLog } from '@/utils/log';
 import { getItem } from '@/assets/js/storage';
 import request from '@/utils/request';
@@ -87,8 +87,8 @@ export default defineComponent({
       const lastYearEnd = today.endOf('day').format('YYYY-MM-DD HH:mm:ss')
       dateTime.value = [lastYearStart, lastYearEnd]
 
-      nextTick(() => {
-        getFormHeight();
+      nextTick(async () => {
+        formHeight.value = await getPageHeight([formCard.value]);
       })
 
       await getConstType()
@@ -455,14 +455,6 @@ export default defineComponent({
       const endTime = `${value[1]} 23:59:59`
       dateTime.value = [startTime, endTime]
     }
-    // 计算页面中表单的高度
-    const getFormHeight = async () => {
-      await nextTick()
-      if (formCard.value) {
-        const offsetH = formCard.value.$el.offsetHeight;
-        formHeight.value = offsetH; // 选择需要的高度类型
-      }
-    };
     const getConstList = () => {
       if (!constType.value) return [];
 
@@ -518,18 +510,18 @@ export default defineComponent({
       }); 
     }
     const getPrintType = () => {
-      if(tableData.value.length){
-        return tableData.value[0].operate == 1 ? 'SI' : 'SO'
-      }
-      return ''
+    if(tableData.value.length){
+      return tableData.value[0].operate == 1 ? 'SI' : 'SO'
     }
+    return ''
+  }
 
     return() => (
       <>
         <ElCard style={{ height: '100%' }}>
           {{
             header: () => (
-              <HeadForm headerWidth="550px">
+              <HeadForm headerWidth="270px" ref={ formCard }>
                 {{
                   left: () => (
                     <>

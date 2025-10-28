@@ -219,6 +219,17 @@ const getNoLast = async (printType) => {
     useStore().setPrintNo(no)
   }
 }
+/**
+ * 计算页面中元素的高度
+ * @returns {string} 返回的结果
+ */
+const getPageHeight = async (arr) => {
+  let h = 0
+  arr.forEach(e => {
+    if(e) h += e.$el ? e.$el.offsetHeight : e.offsetHeight;
+  })
+  return h
+};
 
 export {
   numberToChinese,
@@ -226,5 +237,6 @@ export {
   isEmptyValue,
   PreciseMath,
   generateNextCode,
-  getNoLast
+  getNoLast,
+  getPageHeight
 }

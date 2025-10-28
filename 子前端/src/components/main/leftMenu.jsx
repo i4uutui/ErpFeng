@@ -88,7 +88,7 @@ export default defineComponent({
     return() => (
       <>
         <ElAside style={{ width: "150px", backgroundColor: '#eee' }}>
-          <ElMenu default-active="2" class="el-menu-vertical-demo" defaultActive={ menuDefaultActive.value } router unique-opened openeds={openedMenus.value} onOpen={handleMenuOpen} onClose={handleMenuClose}>
+          <ElMenu class="el-menu-vertical-demo" defaultActive={ menuDefaultActive.value } router unique-opened openeds={openedMenus.value} onOpen={handleMenuOpen} onClose={handleMenuClose}>
             {menuRoutes.value.map(({ title, children }) => {
               if(children.length != 1){
                 return (

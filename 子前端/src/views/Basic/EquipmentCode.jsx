@@ -2,7 +2,6 @@ import { defineComponent, ref, onMounted, reactive, watch } from 'vue'
 import { reportOperationLog } from '@/utils/log';
 import { PreciseMath } from '@/utils/tool'
 import request from '@/utils/request';
-import MySelect from '@/components/tables/mySelect.vue';
 
 export default defineComponent({
   setup(){
@@ -16,26 +15,51 @@ export default defineComponent({
       ],
       quantity: [
         { required: true, message: '请输入设备总数量', trigger: 'blur' },
+        { trigger: 'blur', validator: (rule, value, callback) => {
+          if(value < 0){
+            return callback(new Error('设备总数量不能小于0'))
+          }else if(value < form.value.available){
+            return callback(new Error('设备总数量不能小于可用设备数量'))
+          }else{
+            callback()
+          }
+        } }
       ],
       cycle_id: [
         { required: true, message: '请选择制程组', trigger: 'blur' },
       ],
       working_hours: [
         { required: true, message: '请输入工作时长(时)', trigger: 'blur' },
-      ],
-      efficiency: [
-        { required: true, message: '请输入设备效能', trigger: 'blur' },
-      ],
-      available: [
-        { required: true, message: '请输入可用设备数量', trigger: 'blur' },
-        { type: 'number', message: '请输入数字', trigger: 'blur' }, // 验证是否为数字
         { trigger: 'blur', validator: (rule, value, callback) => {
           if(value < 0){
-            return callback(new Error('数字不能小于0'))
+            return callback(new Error('工作时长不能小于0'))
           }else{
             callback()
           }
-        } }, // 验证是否 ≥ 0
+        } }
+      ],
+      efficiency: [
+        { required: true, message: '请输入设备效能', trigger: 'blur' },
+        { trigger: 'blur', validator: (rule, value, callback) => {
+          if(value < 0){
+            return callback(new Error('设备效能不能小于0'))
+          }else{
+            callback()
+          }
+        } }
+      ],
+      available: [
+        { required: true, message: '请输入可用设备数量', trigger: 'blur' },
+        { type: 'number', message: '请输入数字', trigger: 'blur' },
+        { trigger: 'blur', validator: (rule, value, callback) => {
+          if(value < 0){
+            return callback(new Error('可用设备数量不能小于0'))
+          }else if(value > form.value.quantity){
+            return callback(new Error('可用设备数量不能大于设备总数量'))
+          }else{
+            callback()
+          }
+        } },
       ],
     })
     let dialogVisible = ref(false)
@@ -183,6 +207,12 @@ export default defineComponent({
         remarks: '',
       }
     }
+    // 如果有设备在维修时，变红
+    const handleRowStyle = ({ row }) => {
+      if(row.quantity != row.available){
+        return { color: 'red' }
+      }
+    }
     // 分页相关
     function pageSizeChange(val) {
       currentPage.value = 1;
@@ -207,7 +237,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                <ElTable data={ tableData.value } border stripe rowStyle={ handleRowStyle } style={{ width: "100%" }}>
                   <ElTableColumn prop="equipment_code" label="设备编码" />
                   <ElTableColumn prop="equipment_name" label="设备名称" />
                   <ElTableColumn prop="cycle.name" label="所属部门" />
@@ -246,10 +276,14 @@ export default defineComponent({
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="设备总数量" prop="quantity">
-                  <ElInput v-model={ form.value.quantity } type="number" placeholder="请输入设备数量" />
+                  <ElInput v-model={ form.value.quantity } type="number" placeholder="请输入设备数量" onUpdate:modelValue={ (val) => {
+                    form.value.quantity = val === '' ? null : Number(val)
+                  } } />
                 </ElFormItem>
                 <ElFormItem label="工作时长(H)" prop="working_hours">
-                  <ElInput v-model={ form.value.working_hours } type="number" placeholder="请输入工作时长(H)" />
+                  <ElInput v-model={ form.value.working_hours } type="number" placeholder="请输入工作时长(H)" onUpdate:modelValue={ (val) => {
+                    form.value.working_hours = val === '' ? null : Number(val)
+                  } } />
                 </ElFormItem>
                 <ElFormItem label="可用设备数量" prop="available">
                   <ElInput v-model={ form.value.available } type="number" placeholder="请输入可用设备数量" onUpdate:modelValue={ (val) => {
@@ -257,7 +291,9 @@ export default defineComponent({
                   } } />
                 </ElFormItem>
                 <ElFormItem label="设备效能" prop="efficiency">
-                  <ElInput v-model={ form.value.efficiency } placeholder="请输入设备效能" />
+                  <ElInput v-model={ form.value.efficiency } type="number" placeholder="请输入设备效能" onUpdate:modelValue={ (val) => {
+                    form.value.efficiency = val === '' ? null : Number(val)
+                  } } />
                 </ElFormItem>
                 <ElFormItem label="异常设备说明" prop="remarks">
                   <ElInput v-model={ form.value.remarks } placeholder="请输入异常设备说明" />

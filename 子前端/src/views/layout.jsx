@@ -21,13 +21,13 @@ export default defineComponent({
         <ElFooter height='40px' style="backgroundColor: #FFF">
           <div class="flex row-center" style={{ height: "40px" }}>
             <div class="flex-1 text-left">
-            开发者 ┃ 东莞元方企业管理咨询有限公司 ┃ 徐庆华 18666885858
+            开发者： 东莞元方企业管理咨询有限公司 | 徐庆华 18666885858
             </div>
             <div class="flex-1 text-center">
-            粤ICP备2024266535号-2 ┃ v1.0
+            粤ICP备2024266535号-2 | v1.0
             </div>
             <div class="flex-1 text-right">
-              使用企业 ┃ { company.name } ┃ 使用者 ┃ { user.username }
+              使用企业： { company.name } | 使用者： { user.username }
             </div>
           </div>
         </ElFooter>
