@@ -5,6 +5,8 @@ import { getItem, setItem } from '@/assets/js/storage';
 import request from '@/utils/request';
 import imageError from '@/assets/images/0fc7d20532fdaf769a25683617711.png'
 import logo from '@/assets/images/logo.png'
+import yun from '@/assets/images/yun.png'
+import company from '@/assets/images/company.png'
 import "./main.css"
 
 export default defineComponent({
@@ -36,17 +38,22 @@ export default defineComponent({
 
     return() => (
       <>
-        <ElRow align='middle' style={{ height: "64px" }}>
-          <ElCol span={ 8 }>
-            <img src={ logo } style={{ width: "340px" }} />
-          </ElCol>
-          <ElCol span={ 8 }>
-            <div class="f28" style={{ fontWeight: 'bold', textAlign: 'center' }}>
-              {/* 企业数字化管理平台 */}
+        <ElRow align='middle' style={{ height: "74px" }}>
+          <ElCol span={ 5 }>
+            <div class="flex">
+              <img src={ logo } style={{ height: "60px" }} />
+              <img src={ yun } style={{ height: "60px", marginLeft: "10px" }} />
             </div>
           </ElCol>
-          <ElCol span={ 8 }>
+          <ElCol span={ 14 }>
+            <div class="f28" style={{ fontWeight: 'bold', textAlign: 'center' }}>
+              {/* 企业数字化管理平台 */}
+              <img src={ company } style={{ height: "60px", width: '760px' }} />
+            </div>
+          </ElCol>
+          <ElCol span={ 5 }>
             <div class="flex row-right">
+              <div style={{ marginRight: '20px', color: 'blue' }}>版本更新</div>
               <ElAvatar shape="circle" size={ 40 } fit="cover" src={ user.avatar_url }>
                 <img src={ imageError } style={{ width: "40px", borderRadius: '50%' }} />
               </ElAvatar>
