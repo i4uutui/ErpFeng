@@ -48,16 +48,16 @@ export default defineComponent({
           <ElCol span={ 14 }>
             <div class="f28" style={{ fontWeight: 'bold', textAlign: 'center' }}>
               {/* 企业数字化管理平台 */}
-              <img src={ company } style={{ height: "60px", width: '760px' }} />
+              <img src={ company } style={{ height: "60px" }} />
             </div>
           </ElCol>
           <ElCol span={ 5 }>
             <div class="flex row-right">
-              <div style={{ marginRight: '20px', color: 'blue' }}>版本更新</div>
-              <ElAvatar shape="circle" size={ 40 } fit="cover" src={ user.avatar_url }>
+              <div style={{ marginRight: '20px', color: 'blue' }}>版本更新 !</div>
+              <ElAvatar shape="circle" size={ 60 } fit="cover" src={ user.avatar_url }>
                 <img src={ imageError } style={{ width: "40px", borderRadius: '50%' }} />
               </ElAvatar>
-              <div class="pl10">欢迎你，{ user.name }</div>
+              <div class="pl20">欢迎你，{ user.name }</div>
               <div style={{ color: 'red', marginLeft: '10px', cursor: 'pointer' }} onClick={ loginOut }>退出</div>
             </div>
           </ElCol>
