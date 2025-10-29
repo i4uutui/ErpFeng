@@ -1,10 +1,12 @@
 import { defineComponent, ref, onMounted, reactive } from 'vue'
 import { reportOperationLog } from '@/utils/log';
 import request from '@/utils/request';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
     const formRef = ref(null);
+    const user = reactive(getItem('user'))
     const rules = reactive({
       product_code: [
         { required: true, message: '请输入产品编码', trigger: 'blur' },
@@ -234,7 +236,7 @@ export default defineComponent({
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="80px">
                 <ElFormItem label="产品编码" prop="product_code">
-                  <ElInput v-model={ form.value.product_code } placeholder="请输入产品编码" disabled={ edit.value != 0 } />
+                  <ElInput v-model={ form.value.product_code } placeholder="请输入产品编码" disabled={ !(edit.value == 0 || user.type == 1) } />
                 </ElFormItem>
                 <ElFormItem label="产品名称" prop="product_name">
                   <ElInput v-model={ form.value.product_name } placeholder="请输入产品名称" />

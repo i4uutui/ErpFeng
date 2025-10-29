@@ -2,10 +2,12 @@ import { defineComponent, ref, onMounted, reactive } from 'vue'
 import MySelect from '@/components/tables/mySelect.vue';
 import request from '@/utils/request';
 import { reportOperationLog } from '@/utils/log';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
     const formRef = ref(null);
+    const user = reactive(getItem('user'))
     const rules = reactive({
       process_code: [
         { required: true, message: '请输入工艺编码', trigger: 'blur' },
@@ -199,7 +201,7 @@ export default defineComponent({
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
                 <ElFormItem label="工艺编码" prop="process_code">
-                  <ElInput v-model={ form.value.process_code } placeholder="请输入工艺编码" disabled={ edit.value != 0 } />
+                  <ElInput v-model={ form.value.process_code } placeholder="请输入工艺编码" disabled={ !(edit.value == 0 || user.type == 1) } />
                 </ElFormItem>
                 <ElFormItem label="工艺名称" prop="process_name">
                   <ElInput v-model={ form.value.process_name } placeholder="请输入工艺名称" />

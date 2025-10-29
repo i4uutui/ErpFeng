@@ -2,10 +2,12 @@ import { defineComponent, ref, onMounted, reactive, watch } from 'vue'
 import { reportOperationLog } from '@/utils/log';
 import { PreciseMath } from '@/utils/tool'
 import request from '@/utils/request';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
     const formRef = ref(null);
+    const user = reactive(getItem('user'))
     const rules = reactive({
       equipment_code: [
         { required: true, message: '请输入设备编码', trigger: 'blur' },
@@ -265,7 +267,7 @@ export default defineComponent({
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
                 <ElFormItem label="设备编码" prop="equipment_code">
-                  <ElInput v-model={ form.value.equipment_code } placeholder="请输入设备编码" disabled={ edit.value != 0 } />
+                  <ElInput v-model={ form.value.equipment_code } placeholder="请输入设备编码" disabled={ !(edit.value == 0 || user.type == 1) } />
                 </ElFormItem>
                 <ElFormItem label="设备名称" prop="equipment_name">
                   <ElInput v-model={ form.value.equipment_name } placeholder="请输入设备名称" />

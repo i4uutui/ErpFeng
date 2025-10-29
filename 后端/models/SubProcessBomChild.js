@@ -51,7 +51,7 @@ const SubProcessBomChild = sequelize.define('SubProcessBomChild', {
     comment: ' 单件工时 (小时)'
   },
   price: {
-    type: DataTypes.INTEGER(11),
+    type: DataTypes.DECIMAL(11, 2),
     allowNull: true,
     defaultValue: null,
     comment: ' 加工单价 '

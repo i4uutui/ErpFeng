@@ -63,14 +63,14 @@ router.post('/products_code', authMiddleware, async (req, res) => {
 router.put('/products_code', authMiddleware, async (req, res) => {
   const { product_code, product_name, drawing, model, specification, other_features, component_structure, unit, production_requirements, id } = req.body;
   
-  const { id: userId, company_id } = req.user;
+  const { id: userId, company_id, type } = req.user;
   
   // 验证产品是否存在
   const product = await SubProductCode.findByPk(id);
   if (!product) {
     return res.json({ message: '产品不存在', code: 401 });
   }
-  if(product_code !== product.product_code) return res.json({ code: 401, message: '编码禁止修改' })
+  if(type != 1) return res.json({ code: 401, message: '编码禁止修改' })
   
   await product.update({
     product_code, product_name, drawing, model, specification, other_features, component_structure, unit, production_requirements, company_id,
@@ -155,13 +155,13 @@ router.post('/part_code', authMiddleware, async (req, res) => {
 // 更新部件编码接口
 router.put('/part_code', authMiddleware, async (req, res) => {
   const { part_code, part_name, model, specification, other_features, unit, production_requirements, remarks, id } = req.body;
-  const { id: userId, company_id } = req.user;
+  const { id: userId, company_id, type } = req.user;
   
   // 验证部件是否存在
   const part = await SubPartCode.findByPk(id);
   if (!part) return res.status(404).json({ message: '部件不存在' });
   
-  if(part_code !== part.part_code) return res.json({ code: 401, message: '编码禁止修改' })
+  if(type != 1) return res.json({ code: 401, message: '编码禁止修改' })
   
   await part.update({
     part_code, part_name, model, specification, other_features, unit, production_requirements, remarks, company_id,
@@ -249,13 +249,13 @@ router.post('/material_code', authMiddleware, async (req, res) => {
 // 更新材料编码接口
 router.put('/material_code', authMiddleware, async (req, res) => {
   const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, remarks, id } = req.body;
-  const { id: userId, company_id } = req.user;
+  const { id: userId, company_id, type } = req.user;
   
   // 验证材料是否存在
   const material = await SubMaterialCode.findByPk(id);
   if (!material) return res.json({ message: '材料不存在', code: 401 });
   
-  if(material_code !== material.material_code) return res.json({ code: 401, message: '编码禁止修改' })
+  if(type != 1) return res.json({ code: 401, message: '编码禁止修改' })
   
   await SubMaterialCode.update({
     material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, remarks, company_id,
@@ -343,13 +343,13 @@ router.post('/process_code', authMiddleware, async (req, res) => {
 // 更新工艺编码接口
 router.put('/process_code', authMiddleware, async (req, res) => {
   const { process_code, process_name, remarks, equipment_id, id } = req.body;
-  const { id: userId, company_id } = req.user;
+  const { id: userId, company_id, type } = req.user;
   
   // 验证工艺是否存在
   const process = await SubProcessCode.findByPk(id);
   if (!process) return res.json({ message: '工艺不存在', code: 401 });
   
-  if(process_code !== process.process_code) return res.json({ code: 401, message: '编码禁止修改' })
+  if(type != 1) return res.json({ code: 401, message: '编码禁止修改' })
   
   await process.update({
     process_code, process_name, remarks, equipment_id, company_id,
@@ -441,13 +441,13 @@ router.post('/equipment_code', authMiddleware, async (req, res) => {
 // 更新设备信息接口
 router.put('/equipment_code', authMiddleware, async (req, res) => {
   const { equipment_code, equipment_name, quantity, cycle_id, working_hours, efficiency, available, remarks, id } = req.body;
-  const { id: userId, company_id } = req.user;
+  const { id: userId, company_id, type } = req.user;
   
   // 验证设备是否存在
   const equipment = await SubEquipmentCode.findByPk(id);
   if (!equipment) return res.json({ message: '设备不存在', code: 401 });
   
-  if(equipment_code !== equipment.equipment_code) return res.json({ code: 401, message: '编码禁止修改' })
+  if(type !== 1) return res.json({ code: 401, message: '编码禁止修改' })
   
   await equipment.update({
     equipment_code, equipment_name, quantity, cycle_id, working_hours, efficiency, available, remarks, company_id,

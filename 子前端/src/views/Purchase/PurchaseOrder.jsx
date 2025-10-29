@@ -29,6 +29,9 @@ export default defineComponent({
       ],
       notice_id: [
         { required: true, message: '请选择生产订单', trigger: 'blur' }
+      ],
+      material_bom_id: [
+        { required: true, message: '请选择材料BOM', trigger: 'blur' }
       ]
     })
     const approval = getItem('approval').filter(e => e.type == 'material_warehouse')
@@ -36,6 +39,7 @@ export default defineComponent({
     let form = ref({
       quote_id: '',
       material_bom_id: '',
+      material_bom_children_id: '',
       notice_id: '',
       notice: '',
       supplier_id: '',
@@ -144,20 +148,30 @@ export default defineComponent({
       const res = await request.get('/api/getMaterialBomChildren', { params: { id } })
       if(res.code == 200){
         if(res.data.length){
-          const data = res.data.flatMap(item => item.material)
+          const data = res.data.flatMap(item => ({
+            ...item.material,
+            material_bom_children_id: item.id,
+            is_buy: item.is_buy
+          }))
           materialList.value = data.length ? data : []
           // 默认让系统选中第一个材料
-          if(materialList.value.length){
-            const material = materialList.value[0]
-            form.value.material_id = material.id
-            form.value.material_code = material.material_code
-            form.value.material_name = material.material_name
-            form.value.model_spec = `${material.model}/${material.specification}`
-            form.value.other_features = material.other_features
+          if(materialList.value.length && !form.value.material_id){
+            for(const item of materialList.value){
+              if (item.is_buy == 0){
+                form.value.material_bom_children_id = item.material_bom_children_id
+                form.value.material_id = item.id
+                form.value.material_code = item.material_code
+                form.value.material_name = item.material_name
+                form.value.model_spec = `${item.model}/${item.specification}`
+                form.value.other_features = item.other_features
+                break;
+              }
+            }
           }
         }
       }
     }
+    const arr = [{ is_buy: 1 }, { is_buy: 1 }, { is_buy: 0 }, { is_buy: 1 }]
     // 获取产品列表
     const getProductsList = async (id) => {
       const res = await request.get('/api/getProductsCode', { params: { id } })
@@ -176,6 +190,7 @@ export default defineComponent({
           if(edit.value === -1){
             const obj = JSON.parse(JSON.stringify(form.value))
             obj.id = getRandomString() // 临时ID
+            console.log(obj);
             tableData.value = [obj, ...tableData.value]
             // 重置
             dialogVisible.value = false;
@@ -336,6 +351,7 @@ export default defineComponent({
     const getFormData = (e) => {
       const obj = {
         quote_id: e.quote_id,
+        material_bom_children_id: e.material_bom_children_id,
         material_bom_id: e.material_bom_id,
         notice_id: e.notice_id,
         notice: e.notice,
@@ -386,6 +402,7 @@ export default defineComponent({
       form.value = {
         quote_id: '',
         material_bom_id: '',
+        material_bom_children_id: '',
         notice_id: '',
         notice: '',
         supplier_id: '',
@@ -454,6 +471,7 @@ export default defineComponent({
     // 材料编码选择后返回的数据
     const materialChange = (value) => {
       const material = materialList.value.find(e => e.id == value)
+      form.value.material_bom_children_id = material.material_bom_children_id
       form.value.material_code = material.material_code
       form.value.material_name = material.material_name
       form.value.model_spec = `${material.model}/${material.specification}`
@@ -689,7 +707,7 @@ export default defineComponent({
                     {productNotice.value.map((e, index) => <ElOption value={ e.id } label={ e.notice } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="材料BOM">
+                <ElFormItem label="材料BOM" prop="material_bom_id">
                   <ElSelect v-model={ form.value.material_bom_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料BOM" onChange={ (row) => materialBomChange(row) }>
                     {materialBomList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
@@ -715,7 +733,7 @@ export default defineComponent({
                 <ElFormItem label="材料编码" prop="material_id">
                   <ElSelect v-model={ form.value.material_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料编码" onChange={ (row) => materialChange(row) }>
                     {materialList.value.map((e, index) => {
-                      return <ElOption value={ e.id } label={ e.material_code } key={ index } />
+                      return <ElOption value={ e.id } label={ e.material_code } key={ index } disabled={ e.is_buy == 1 ? true : false } />
                     })}
                   </ElSelect>
                 </ElFormItem>

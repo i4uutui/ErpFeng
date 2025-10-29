@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const dayjs = require('dayjs')
-const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialMent, SubApprovalUser, SubApprovalStep, SubNoEncoding, Op, SubOutsourcingOrder, SubWarehouseApply } = require('../models')
+const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialMent, SubApprovalUser, SubApprovalStep, SubNoEncoding, Op, SubOutsourcingOrder, SubWarehouseApply, SubMaterialBomChild } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { print, getPrinters, getDefaultPrinter } = require("pdf-to-printer");
@@ -500,6 +500,15 @@ router.post('/add_material_ment', authMiddleware, async (req, res) => {
   const result = await SubMaterialMent.bulkCreate(dataValue, {
     updateOnDuplicate: ['company_id', 'user_id', 'apply_id', 'apply_name', 'apply_time', 'status', 'quote_id', 'material_bom_id', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'price', 'order_number', 'number', 'delivery_time']
   })
+  const childValue = data.map(e => ({
+    material_bom_id: e.material_bom_id,
+    material_id: e.material_id,
+    is_buy: 1,
+    id: e.material_bom_children_id
+  }))
+  SubMaterialBomChild.bulkCreate(childValue, {
+    updateOnDuplicate: ['is_buy']
+  })
 
   // 创建审批流程
   const resData = result.flatMap(e => {
@@ -656,7 +665,7 @@ router.put('/material_ment', authMiddleware, async (req, res) => {
     }
   })
   if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
-  
+
   res.json({ message: '修改成功', code: 200 });
 })
 
