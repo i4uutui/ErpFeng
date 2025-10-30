@@ -36,7 +36,7 @@ export default defineComponent({
       product_id: '',
       part_id: '',
       children: [
-        { process_id: '', equipment_id: '', time: '', price: '', points: '', sort: 1 }
+        { process_id: '', equipment_id: '', time: '', price: '', points: '1', sort: 1 }
       ]
     })
     let productsList = ref([])
@@ -67,7 +67,7 @@ export default defineComponent({
             },
             time: '',
             price: '',
-            points: ''
+            points: '1'
           });
         }
         return newItem;
@@ -229,7 +229,7 @@ export default defineComponent({
       let filtered = children.filter(item => {
         return !Object.values(item).every(isEmptyValue);
       });
-      if(!filtered.length) filtered = [{ process_id: '', equipment_id: '', time: '', price: '', points: '' }]
+      if(!filtered.length) filtered = [{ process_id: '', equipment_id: '', time: '', price: '', points: '1' }]
       form.value = { children: filtered, id, product_id, part_id };
     }
     // 新增
@@ -249,12 +249,12 @@ export default defineComponent({
         product_id: '',
         part_id: '',
         children: [
-          { process_id: '', equipment_id: '', time: '', price: '', points: '' }
+          { process_id: '', equipment_id: '', time: '', price: '', points: '1' }
         ]
       }
     }
     const handleAddJson = () => {
-      const obj = { process_id: '', equipment_id: '', time: '', price: '', points: '' }
+      const obj = { process_id: '', equipment_id: '', time: '', price: '', points: '1' }
       form.value.children.push(obj)
     }
     const handledeletedJson = (index) => {

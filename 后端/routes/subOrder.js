@@ -3,6 +3,7 @@ const router = express.Router();
 const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessCycleChild, Op } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
+const { PreciseMath } = require('../middleware/tool');
 
 // 获取客户信息列表（分页）
 router.get('/customer_info', authMiddleware, async (req, res) => {
@@ -174,8 +175,64 @@ router.put('/sale_order', authMiddleware, async (req, res) => {
   const { customer_id, product_id, rece_time, customer_order, product_req, order_number, unit, delivery_time, goods_time, goods_address, actual_number, id } = req.body;
   
   const { id: userId, company_id } = req.user;
+
+  const result = await SubSaleOrder.findByPk(id)
+  if(!result) return res.json({ message: '订单不存在，或已被删除', code: 401})
   
-  const updateResult = await SubSaleOrder.update({
+  if(order_number != result.order_number){
+    const notice = await SubProductNotice.findOne({
+      where: {
+        sale_id: id,
+        company_id
+      },
+      attributes: ['id']
+    })
+    if(notice){
+      const [ progress, bomChild ] = await Promise.all([
+        SubProductionProgress.findAll({
+          where: {
+            notice_id: notice.id,
+            company_id
+          },
+          attributes: ['id', 'out_number', 'house_number', 'order_number', 'bom_id', 'company_id', 'user_id']
+        }),
+        SubProcessBomChild.findAll({
+          where: {
+            notice_id: notice.id,
+            company_id
+          },
+          attributes: ['id', 'order_number', 'add_finish', 'process_bom_id']
+        })
+      ])
+      if(progress && progress.length){
+        const progressResult = progress.map(e => {
+          const item = e.toJSON()
+          item.out_number = item.house_number ? PreciseMath.sub(order_number, item.house_number) : order_number
+          return item
+        })
+        await SubProductionProgress.bulkCreate(progressResult, {
+          updateOnDuplicate: ['out_number', 'company_id', 'user_id']
+        })
+      }
+      if(bomChild && bomChild.length && progress && progress.length){
+        const bomChildResult = bomChild.map(e => {
+          const item = e.toJSON()
+          progress.forEach(o => {
+            if(o.bom_id == item.process_bom_id){
+              const n = item.add_finish ? PreciseMath.sub(order_number, item.add_finish) : order_number
+              item.order_number = o.house_number ? PreciseMath.sub(n, o.house_number) : n
+            }
+          })
+          return item
+        })
+        await SubProcessBomChild.bulkCreate(bomChildResult, {
+          updateOnDuplicate: ['order_number']
+        })
+      }
+    }
+  }
+
+  await result.update({
     customer_id, product_id, rece_time, customer_order, product_req, order_number, unit, delivery_time, goods_time, goods_address, actual_number, company_id,
     user_id: userId,
   }, {
@@ -183,7 +240,6 @@ router.put('/sale_order', authMiddleware, async (req, res) => {
       id
     }
   })
-  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
   
   res.json({ message: '修改成功', code: 200 });
 });
@@ -467,7 +523,7 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
     return data
   })
   if(wait.length != 0){
-    SubProcessBomChild.bulkCreate(wait, {updateOnDuplicate:["order_number", 'all_time']})
+    SubProcessBomChild.bulkCreate(wait, {updateOnDuplicate:["order_number", 'all_time', 'notice_id', 'notice', 'company_id']})
   }
   noticeRow.bom = bomRows
   

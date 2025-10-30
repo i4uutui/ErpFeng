@@ -14,145 +14,172 @@ const { PreciseMath } = require('../middleware/tool');
 // 获取生产进度表列表
 router.get('/production_progress', authMiddleware, async (req, res) => {
   const { company_id } = req.user;
+  const today = dayjs().startOf('day');
   
-  const rows = await SubProductionProgress.findAll({
-    where: {
-      is_deleted: 1,
-      company_id,
-      is_finish: 1
-    },
-    attributes: ['id', 'notice_number', 'delivery_time', 'customer_abbreviation', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'part_code', 'part_name', 'bom_id', 'order_number', 'customer_order', 'rece_time', 'out_number', 'start_date', 'remarks', 'created_at'],
-    include: [
-      {
-        model: SubProcessCycleChild,
-        as: 'cycleChild',
-        attributes: ['cycle_id', 'id', 'end_date', 'load', 'order_number', 'progress_id'],
-        order: [['cycle', 'sort', 'ASC']],
-        include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort_date', 'sort'] }] },
-      {
-        model: SubProcessBom,
-        as: 'bom',
-        attributes: ['id', 'part_id', 'product_id'],
-        include: [
-          {
-            model: SubProcessBomChild,
-            as: 'children',
-            attributes: ['id', 'order_number', 'equipment_id', 'process_bom_id', 'process_id', 'time', 'all_time', 'all_load', 'add_finish'],
-            include: [
-              { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
-              {
-                model: SubEquipmentCode,
-                as: 'equipment',
-                attributes: ['id', 'equipment_name', 'equipment_code', 'working_hours', 'efficiency', 'quantity'],
-                include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort'], order: [['sort', 'ASC']] }]
-              },
-            ]
-          }
-        ]
+  const [ rows, dates ] = await Promise.all([
+    SubProductionProgress.findAll({
+      where: {
+        is_deleted: 1,
+        company_id,
+        is_finish: 1
       },
-    ],
-    order: [['created_at', 'DESC']],
-  })
-  // 用户设置的假期
-  const dates = await SubDateInfo.findAll({
-    where: {
-      company_id
-    },
-    attributes: ['date']
-  })
-  const specialDates = dates.map(e => {
-    const item = e.toJSON()
-    return dayjs(item.date).startOf('day')
-  })
-  const uniqueSpecialDates = [...new Set(specialDates.map(d => d.format('YYYY-MM-DD')))].map(d => dayjs(d));
+      attributes: ['id', 'notice_id', 'customer_abbreviation', 'product_id', 'part_id', 'bom_id', 'house_number', 'out_number', 'start_date', 'remarks', 'created_at'],
+      include: [
+        { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing'] },
+        { model: SubPartCode, as: 'part', attributes: ['id', 'part_code', 'part_name'] },
+        {
+          model: SubProductNotice,
+          as: 'notice',
+          attributes: ['id', 'notice', 'delivery_time'],
+          include: [
+            { model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number', 'rece_time', 'customer_order'] }
+          ]
+        },
+        {
+          model: SubProcessCycleChild,
+          as: 'cycleChild',
+          attributes: ['cycle_id', 'id', 'end_date', 'load', 'order_number', 'progress_id'],
+          order: [['cycle', 'sort', 'ASC']],
+          include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort_date', 'sort'] }] },
+        {
+          model: SubProcessBom,
+          as: 'bom',
+          attributes: ['id', 'part_id', 'product_id'],
+          include: [
+            {
+              model: SubProcessBomChild,
+              as: 'children',
+              attributes: ['id', 'order_number', 'equipment_id', 'process_bom_id', 'process_id', 'time', 'all_time', 'all_load', 'add_finish'],
+              include: [
+                { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
+                {
+                  model: SubEquipmentCode,
+                  as: 'equipment',
+                  attributes: ['id', 'equipment_name', 'equipment_code', 'working_hours', 'efficiency', 'quantity'],
+                  include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort'], order: [['sort', 'ASC']] }]
+                },
+              ]
+            }
+          ]
+        },
+      ],
+      order: [['created_at', 'DESC']],
+    }),
+    // 用户设置的假期
+    SubDateInfo.findAll({
+      where: { company_id },
+      attributes: ['date']
+    })
+  ])
+  
+  // 缓存并处理假期数据（字符串格式）
+  const uniqueSpecialDateStrs = [...new Set(
+    dates.map(e => dayjs(e.date).format('YYYY-MM-DD'))
+  )];
 
-  const today = dayjs();
-  const fromData = rows.map((item, idx) => {
-    const data = item.toJSON()
+  // 处理生产进度数据
+  const fromData = rows.map(item => {
+    const data = item.toJSON();
     const startDate = item.start_date ? dayjs(item.start_date).startOf('day') : null;
     if (!startDate) return data;
 
-    // 按sort排序当前进度的所有制程子项
-    data.cycleChild.sort((a, b) => {
-      return (Number(a.cycle.sort) || 0) - (Number(b.cycle.sort) || 0);
-    });
-    // 计算每个制程的累计前置最短周期
+    // 排序cycleChild（提前提取sort值避免重复访问）
+    data.cycleChild.sort((a, b) => (a.cycle?.sort || 0) - (b.cycle?.sort || 0));
+
+    // 计算累计前置周期（提前提取sort_date）
     const cumulativeSortDates = [];
     let totalSortDate = 0;
     data.cycleChild.forEach((cycleChild, index) => {
       if (index > 0) {
-        // 累加前序制程的最短周期
-        const prevCycle = data.cycleChild[index - 1];
-        totalSortDate += Number(prevCycle.cycle.sort_date) || 0;
+        totalSortDate += Number(data.cycleChild[index - 1].cycle?.sort_date) || 0;
       }
       cumulativeSortDates.push(totalSortDate);
     });
-    if (item.start_date){
-      // 如果起始日期早于今天，则用今天作为实际起始日期
-      const loadStartDate = startDate.isBefore(today) ? today.startOf('day') : startDate;
-      data.cycleChild.forEach((cycleChild, index) => {
-        // 如果当前周期子项没有结束日期，跳过（无法计算周期长度）
-        if (!cycleChild.end_date) return;
-        // 计算当前制程的预计起始时间 = 原始起始时间 + 前置最短周期总和
-        const currentStartDate = loadStartDate.clone().add(cumulativeSortDates[index], 'day');
-        // 预计生产起始时间 + 最短周期 ：使用计算后的起始时间
-        const load_startDate = currentStartDate.startOf('day');
-        // 预交排期
-        const endDate = dayjs(cycleChild.end_date).startOf('day');
 
-        // 计算起始日期到结束日期的天数差（endDate - load_startDate）
-        const dayDiff = endDate.diff(load_startDate, 'day');
-        const totalDays = dayDiff + 1; // 包含起始日和结束日
+    const loadStartDate = startDate.valueOf() < today.valueOf() ? today : startDate;
+    // 提前构建bomChildren的Map索引
+    const bomChildrenMap = new Map();
+    data.bom?.children?.forEach(bomChild => {
+      const cycleId = bomChild.equipment?.cycle?.id;
+      if (cycleId) {
+        bomChildrenMap.has(cycleId) 
+          ? bomChildrenMap.get(cycleId).push(bomChild)
+          : bomChildrenMap.set(cycleId, [bomChild]);
+      }
+    });
 
-        // 计算区间内的特殊日期数量（需要跳过的天数）
-        const specialDaysInRange = uniqueSpecialDates.filter(specialDate => {
-          // 特殊日期是否在 [currentLoadStartDate, endDate] 区间内
-          return specialDate.isSameOrAfter(load_startDate) && specialDate.isSameOrBefore(endDate);
-        }).length;
-        // 有效天数 = 总日历天数 - 特殊日期数量（至少为1）
-        const validDays = Math.max(totalDays - specialDaysInRange, 1);
-        // 匹配对应的BOM子项
-        const matchedBomChildren = data.bom?.children?.filter(
-          bomChild => bomChild.equipment?.cycle?.id === cycleChild.cycle?.id
-        );
-        if(matchedBomChildren && matchedBomChildren.length > 0){
-          // 计算bom.children.all_load和cycleChild.load
-          matchedBomChildren.forEach(bomChild => {
-            if (bomChild.all_time) {
-              // 日均负载 = 总耗时 / 周期总天数（d），保留1位小数
-              bomChild.all_load = parseFloat((bomChild.all_time / validDays).toFixed(1));
-              // 同时将该设备的日均负载累加到当前周期的总负载中
-              cycleChild.load = (parseFloat(cycleChild.load || '0') + bomChild.all_load).toFixed(1);
-            }
-          });
-          cycleChild.load = parseFloat(cycleChild.load).toFixed(1)
+    data.cycleChild.forEach((cycleChild, index) => {
+      if (!cycleChild.end_date) return;
+      const currentStartDate = loadStartDate.clone().add(cumulativeSortDates[index], 'day');
+      const loadStart = currentStartDate.startOf('day');
+      const endDate = dayjs(cycleChild.end_date).startOf('day');
+
+      // 用时间戳计算天数差
+      const dayDiff = Math.floor((endDate.valueOf() - loadStart.valueOf()) / (1000 * 60 * 60 * 24));
+      const totalDays = dayDiff + 1;
+
+      // 用字符串比较筛选特殊日期
+      const loadStartStr = loadStart.format('YYYY-MM-DD');
+      const endDateStr = endDate.format('YYYY-MM-DD');
+      const specialDaysInRange = uniqueSpecialDateStrs.filter(date => {
+        return date >= loadStartStr && date <= endDateStr;
+      }).length;
+
+      const validDays = Math.max(totalDays - specialDaysInRange, 1);
+      const matchedBomChildren = bomChildrenMap.get(cycleChild.cycle?.id) || [];
+      
+      matchedBomChildren.forEach(bomChild => {
+        if (bomChild.all_time) {
+          bomChild.all_load = Number((bomChild.all_time / validDays).toFixed(1));
+          cycleChild.load = Number((Number(cycleChild.load || 0) + bomChild.all_load).toFixed(1));
         }
-      })
-    }
-    return data
-  })
-  
-  // 返回所需信息
+      });
+    });
+
+    return data;
+  });
+
   res.json({ data: formatArrayTime(fromData), code: 200 });
 });
-// router.put('/production_progress', authMiddleware, async (req, res) => {
-//   const { id, part_id, out_number, order_number, remarks } = req.body
-//   const { id: userId, company_id } = req.user;
+router.post('/set_out_number', authMiddleware, async (req, res) => {
+  const { id, house_number, order_number } = req.body
+  const { id: userId, company_id } = req.user;
   
-//   const row = await SubProductionProgress.findAll({
-//     where: { id }
-//   })
-//   if(row.length == 0){
-//     return res.json({ message: '数据不存在，或已被删除', code: 401 })
-//   }
-//   await SubProductionProgress.update({
-//     part_id, out_number, order_number, remarks
-//   }, {
-//     where: { id, company_id }
-//   })
+  if(house_number <= 0) return res.json({ message: '委外/库存数量不能等于' + house_number, code: 401 })
+  const result = await SubProductionProgress.findOne({
+    where: { id },
+    attributes: ['id', 'company_id', 'user_id', 'out_number', 'notice_id', 'bom_id']
+  })
+  if(!result) return res.json({ message: '数据不存在，或已被删除', code: 401 })
+  const row = result.toJSON()
   
-//   res.json({ message: '修改成功', code: 200 });
-// })
+  row.out_number = PreciseMath.sub(order_number, house_number)
+  row.house_number = house_number
+  await SubProductionProgress.update(row, { where: { id } })
+
+  const bomChild = await SubProcessBomChild.findAll({
+    where: {
+      notice_id: row.notice_id,
+      company_id
+    },
+    attributes: ['id', 'order_number', 'add_finish', 'process_bom_id']
+  })
+  if(bomChild && bomChild.length){
+    const bomChildResult = bomChild.map(e => {
+      const item = e.toJSON()
+      if(row.bom_id == item.process_bom_id){
+        const n = item.add_finish ? PreciseMath.sub(order_number, item.add_finish) : order_number
+        item.order_number = house_number ? PreciseMath.sub(n, house_number) : n
+      }
+      return item
+    })
+    await SubProcessBomChild.bulkCreate(bomChildResult, {
+      updateOnDuplicate: ['order_number']
+    })
+  }
+
+  res.json({ message: '修改成功', code: 200 });
+})
 router.put('/set_production_date', authMiddleware, async (req, res) => {
   const { params, type } = req.body
   const { id: userId, company_id } = req.user;

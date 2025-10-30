@@ -366,6 +366,17 @@ export default defineComponent({
         }
       }
     };
+    const houseBlur = async (row) => {
+      const res = await request.post('/api/set_out_number', {
+        id: row.id,
+        house_number: row.house_number,
+        order_number: row.notice.sale.order_number
+      })
+      if(res.code == 200){
+        fetchProductList()
+      }
+    }
+
     return() => (
       <>
         <ElCard>
@@ -398,46 +409,50 @@ export default defineComponent({
               <>
                 <ElTable data={ tableData.value } border stripe style={{ width: "100%", height: '400px' }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle } class="production">
                   <ElTableColumn label="生产订单号" width="120">
-                    { ({row}) => <div class="myCell">{row.notice_number}</div> }
+                    { ({row}) => <div class="myCell">{row.notice.notice}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="客户名称" width="120">
                     { ({row}) => <div class="myCell">{row.customer_abbreviation}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="客户订单号" width="120">
-                    { ({row}) => <div class="myCell">{row.customer_order}</div> }
+                    { ({row}) => <div class="myCell">{row.notice.sale.customer_order}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="接单日期" width="110">
-                    { ({row}) => <div class="myCell">{row.rece_time}</div> }
+                    { ({row}) => <div class="myCell">{row.notice.sale.rece_time}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="产品编码" width="120">
-                    { ({row}) => <div class="myCell">{row.product_code}</div> }
+                    { ({row}) => <div class="myCell">{row.product.product_code}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="产品名称" width="100">
-                    { ({row}) => <div class="myCell">{row.product_name}</div> }
+                    { ({row}) => <div class="myCell">{row.product.product_name}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="工程图号" width="100">
-                    { ({row}) => <div class="myCell">{row.product_drawing}</div> }
+                    { ({row}) => <div class="myCell">{row.product.drawing}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="生产特别要求" width="170">
                     { ({row}) => <div class="myCell">{row.remarks}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="订单数量" width="100">
-                    { ({row}) => <div class="myCell">{row.out_number}</div> }
+                    { ({row}) => <div class="myCell">{row.notice.sale.order_number}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="委外/库存数量" width="100">
-                    { ({row}) => <div class="myCell"></div> }
+                    { ({row}) => (
+                      <div class="myCell">
+                        <ElInput v-model={ row.house_number } type="number" placeholder="请输入" onBlur={ () => houseBlur(row) } />
+                      </div>
+                    ) }
                   </ElTableColumn>
                   <ElTableColumn label="生产数量" width="100">
                     { ({row}) => <div class="myCell">{row.out_number}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="客户交期" width="110">
-                    { ({row}) => <div class="myCell">{row.delivery_time}</div> }
+                    { ({row}) => <div class="myCell">{row.notice.delivery_time}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="部件编码" width="110">
-                    { ({row}) => <div class="myCell">{row.part_code}</div> }
+                    { ({row}) => <div class="myCell">{row.part.part_code}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="部件名称" width="110">
-                    { ({row}) => <div class="myCell">{row.part_name}</div> }
+                    { ({row}) => <div class="myCell">{row.part.part_name}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="预计生产起始时间" width="170">
                     {({row}) => <div class="myCell"><ElDatePicker v-model={ row.start_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 140px" onBlur={ (value) => dateChange(value, row) }></ElDatePicker></div>}

@@ -79,6 +79,11 @@ const SubProductionProgress = sequelize.define('SubProductionProgress', {
     allowNull: false,
     comment: 'Bom表的id'
   },
+  house_number: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    comment: '生产数量'
+  },
   order_number: {
     type: DataTypes.INTEGER(20),
     allowNull: true,
