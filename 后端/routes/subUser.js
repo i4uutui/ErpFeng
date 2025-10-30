@@ -43,6 +43,7 @@ router.get('/user', authMiddleware, async (req, res) => {
       { model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }
     ],
     order: [['created_at', 'DESC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -452,6 +453,7 @@ router.get('/process_cycle', authMiddleware, async (req, res) => {
     },
     attributes: ['id', 'name', 'sort', 'created_at'],
     order: [['sort', 'ASC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -1008,6 +1010,7 @@ router.get('/operation_history', authMiddleware, async (req, res) => {
       ...whereHistory
     },
     order: [['created_at', 'DESC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })

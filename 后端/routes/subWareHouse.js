@@ -301,10 +301,11 @@ router.get('/get_wareHouser', authMiddleware, async (req, res) => {
       house_id,
       is_deleted: 1
     },
+    attributes: ['id', 'code', 'name', 'model_spec', 'other_features', 'ware_id', 'house_id', 'item_id', 'unit', 'inv_unit', 'initial', 'number_in', 'number_out', 'number_new', 'price', 'price_total', 'price_in', 'price_out', 'last_in_time', 'last_out_time'],
     order: [
       ['id', 'DESC'],
     ],
-    attributes: ['id', 'code', 'name', 'model_spec', 'other_features', 'ware_id', 'house_id', 'item_id', 'unit', 'inv_unit', 'initial', 'number_in', 'number_out', 'number_new', 'price', 'price_total', 'price_in', 'price_out', 'last_in_time', 'last_out_time'],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })

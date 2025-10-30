@@ -95,24 +95,34 @@ export default defineComponent({
       currentPage.value = val;
       fetchProductList();
     }
-    
+    const goBack = () => {
+      window.location.href = "/#/product/material-bom";
+    }
+
     return() => (
       <>
         <ElCard>
           {{
             header: () => (
-              <div class="clearfix flex">
-                <div class="flex pl10">
-                  <span>产品编码：</span>
-                  <ElInput v-model={ product_code.value } style="width: 240px" placeholder="请输入产品编码" />
-                </div>
-                <div class="flex pl10">
-                  <span>产品名称：</span>
-                  <ElInput v-model={ product_name.value } style="width: 240px" placeholder="请输入产品名称" />
+              <div class="flex row-between">
+                <div class="flex flex-1">
+                  <div class="flex pl10">
+                    <span>产品编码：</span>
+                    <ElInput v-model={ product_code.value } style="width: 240px" placeholder="请输入产品编码" />
+                  </div>
+                  <div class="flex pl10">
+                    <span>产品名称：</span>
+                    <ElInput v-model={ product_name.value } style="width: 240px" placeholder="请输入产品名称" />
+                  </div>
+                  <div class="pl10">
+                    <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList } >
+                      查询
+                    </ElButton>
+                  </div>
                 </div>
                 <div class="pl10">
-                  <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList } >
-                    查询
+                  <ElButton style="margin-top: -5px" type="warning" onClick={ () => goBack() } >
+                    返回
                   </ElButton>
                 </div>
               </div>

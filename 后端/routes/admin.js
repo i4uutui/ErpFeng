@@ -69,6 +69,7 @@ router.get('/company', async (req, res) => {
       }
     },
     order: [['created_at', 'DESC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -188,6 +189,7 @@ router.get('/user', async (req, res) => {
       { model: AdCompanyInfo, as: 'company' },
     ],
     order: [['created_at', 'DESC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })

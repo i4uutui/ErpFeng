@@ -30,6 +30,7 @@ router.get('/getSaleOrder', authMiddleware, async (req, res) => {
       { model: SubCustomerInfo, as: 'customer'}
     ],
     order: [['created_at', 'DESC']],
+    distinct: true,
   }
   const { count, rows } = await SubSaleOrder.findAndCountAll(config);
   const row = rows.map(e => e.toJSON())
@@ -57,6 +58,7 @@ router.get('/getProductQuotation', authMiddleware, async (req, res) => {
       [Op.like]: `%${notice}%`
     } },
     order: [['created_at', 'DESC']],
+    distinct: true,
   }
   const { count, rows } = await SubProductQuotation.findAndCountAll(config);
   const row = rows.map(e => e.toJSON())
@@ -85,6 +87,7 @@ router.get('/getCustomerInfo', authMiddleware, async (req, res) => {
   const config = {
     where: { is_deleted: 1, company_id, ...customerWhere },
     order: [['created_at', 'DESC']],
+    distinct: true,
   }
   const { count, rows } = await SubCustomerInfo.findAndCountAll(config);
   const row = rows.map(e => e.toJSON())
@@ -113,6 +116,7 @@ router.get('/getProductsCode', authMiddleware, async (req, res) => {
   const config = {
     where: { is_deleted: 1, company_id, ...productWhere },
     order: [['created_at', 'DESC']],
+    distinct: true,
   }
   const { count, rows } = await SubProductCode.findAndCountAll(config);
   const row = rows.map(e => e.toJSON())
@@ -140,6 +144,7 @@ router.get('/getPartCode', authMiddleware, async (req, res) => {
   const config = {
     where: { is_deleted: 1, company_id, ...partWhere },
     order: [['created_at', 'DESC']],
+    distinct: true,
   }
   const { count, rows } = await SubPartCode.findAndCountAll(config);
   const row = rows.map(e => e.toJSON())
@@ -176,6 +181,7 @@ router.get('/getMaterialCode', authMiddleware, async (req, res) => {
   const config = {
     where: { is_deleted: 1, company_id, ...materialWhere },
     order: [['created_at', 'DESC']],
+    distinct: true,
   }
   const { count, rows } = await SubMaterialCode.findAndCountAll(config);
   const row = rows.map(e => e.toJSON())
@@ -230,6 +236,7 @@ router.get('/getEquipmentCode', authMiddleware, async (req, res) => {
       [Op.like]: `%${equipment_code}%`
     } },
     order: [['created_at', 'DESC']],
+    distinct: true,
   }
   const { count, rows } = await SubEquipmentCode.findAndCountAll(config);
   const row = rows.map(e => e.toJSON())
@@ -261,6 +268,7 @@ router.get('/getSupplierInfo', authMiddleware, async (req, res) => {
   const config = {
     where: { is_deleted: 1, company_id, ...supplierWhere },
     order: [['created_at', 'DESC']],
+    distinct: true,
   }
   const { count, rows } = await SubSupplierInfo.findAndCountAll(config);
   const row = rows.map(e => e.toJSON())

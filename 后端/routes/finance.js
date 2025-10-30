@@ -45,6 +45,7 @@ router.get('/rate_wage', authMiddleware, async (req, res) => {
       { model: SubEmployeeInfo, as: 'menber', attributes: ['id', 'name', 'cycle_id', 'cycle_name', 'employee_id'] }
     ],
     order: [['created_at', 'DESC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -104,6 +105,7 @@ router.get('/getReceivablePrice', authMiddleware, async (req, res) => {
       { model: SubSaleOrder, as: 'sale', attributes: ['id', 'customer_order'] }
     ],
     order: [['created_at', 'DESC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -185,6 +187,7 @@ router.get('/getOutSourcingPrice', authMiddleware, async (req, res) => {
       }
     ],
     order: [['created_at', 'DESC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })

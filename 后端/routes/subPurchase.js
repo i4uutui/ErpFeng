@@ -51,6 +51,7 @@ router.get('/supplier_info', authMiddleware, async (req, res) => {
       company_id,
     },
     order: [['created_at', 'DESC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -250,6 +251,7 @@ router.get('/material_quote', authMiddleware, async (req, res) => {
       { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_code', 'supplier_abbreviation'], where: supplierWhere },
     ],
     order: [['created_at', 'DESC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })

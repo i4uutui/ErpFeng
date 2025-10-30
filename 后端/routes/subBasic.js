@@ -23,6 +23,7 @@ router.get('/products_code', authMiddleware, async (req, res) => {
       ...whereObj
     },
     order: [['product_code', 'ASC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -118,6 +119,7 @@ router.get('/part_code', authMiddleware, async (req, res) => {
       ...whereObj
     },
     order: [['part_code', 'ASC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -207,6 +209,7 @@ router.get('/material_code', authMiddleware, async (req, res) => {
       ...whereObj
     },
     order: [['material_code', 'ASC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -302,6 +305,7 @@ router.get('/process_code', authMiddleware, async (req, res) => {
     },
     include: [{ model: SubEquipmentCode, as: 'equipment' }],
     order: [['process_code', 'ASC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -398,6 +402,7 @@ router.get('/equipment_code', authMiddleware, async (req, res) => {
       { model: SubProcessCycle, as: 'cycle' }
     ],
     order: [['equipment_code', 'ASC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -496,6 +501,7 @@ router.get('/employee_info', authMiddleware, async (req, res) => {
     attributes: ['id', 'company_id', 'employee_id', 'name', 'cycle_id', 'position', 'salary_attribute', 'remarks', 'created_at'],
     include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }],
     order: [['cycle_id', 'ASC'], ['employee_id', 'ASC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })

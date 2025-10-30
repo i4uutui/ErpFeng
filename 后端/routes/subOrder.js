@@ -17,6 +17,7 @@ router.get('/customer_info', authMiddleware, async (req, res) => {
       company_id,
     },
     order: [['created_at', 'DESC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -133,6 +134,7 @@ router.get('/sale_order', authMiddleware, async (req, res) => {
       { model: SubProductCode, as: 'product' }
     ],
     order: [['created_at', 'DESC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -211,6 +213,7 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
       [{ model: SubProductCode, as: 'product' }, 'product_name', 'DESC'],
       ['created_at', 'DESC']
     ],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -313,6 +316,7 @@ router.get('/product_notice', authMiddleware, async (req, res) => {
     order: [
       ['created_at', 'DESC']
     ],
+    distinct: true,
     limit: parseInt(pageSize),
     offset,
     nest: true,

@@ -39,9 +39,8 @@ router.get('/material_bom', authMiddleware, async (req, res) => {
         ]
       }
     ],
-    order: [
-      ['id', 'DESC']
-    ],
+    order: [['id', 'DESC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
@@ -186,11 +185,12 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
     ],
     order: [
       ['id', 'DESC'],
+      ['children', 'process_index', 'ASC']
     ],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
-
   const totalPages = Math.ceil(count / pageSize)
   const fromData = rows.map(item => item.dataValues)
 

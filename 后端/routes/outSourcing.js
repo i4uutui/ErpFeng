@@ -48,6 +48,7 @@ router.post('/outsourcing_quote', authMiddleware, async (req, res) => {
       }
     ],
     order: [['created_at', 'DESC']],
+    distinct: true,
     limit: parseInt(pageSize),
     offset
   })
