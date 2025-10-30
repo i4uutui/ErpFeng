@@ -344,7 +344,7 @@ router.post('/cope_bom', authMiddleware, async (req, res) => {
   const originalData = originalBom.toJSON();
   const mainData = {
     ...mainFields.reduce((obj, key) => ({ ...obj, [key]: originalData[key] }), {}),
-    archive: 1,
+    archive: 0,
     company_id,
     user_id: userId
   };

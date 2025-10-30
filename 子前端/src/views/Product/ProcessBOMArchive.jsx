@@ -35,7 +35,7 @@ const rules = reactive({
       product_id: '',
       part_id: '',
       children: [
-        { process_id: '', equipment_id: '', time: '', price: '', points: '' }
+        { process_id: '', equipment_id: '', time: '', price: '', points: '1' }
       ]
     })
     let tableData = ref([])
@@ -187,14 +187,14 @@ const rules = reactive({
       let filtered = children.filter(item => {
         return !Object.values(item).every(isEmptyValue);
       });
-      if(!filtered.length) filtered = [{ process_id: '', equipment_id: '', time: '', price: '', points: '' }]
+      if(!filtered.length) filtered = [{ process_id: '', equipment_id: '', time: '', price: '', points: '1' }]
       form.value = { children: filtered, id, product_id, part_id };
     }
     const handledeletedJson = (index) => {
       form.value.children.splice(index, 1)
     }
     const handleAddJson = () => {
-      const obj = { process_id: '', equipment_id: '', time: '', price: '', points: '' }
+      const obj = { process_id: '', equipment_id: '', time: '', price: '', points: '1' }
       form.value.children.push(obj)
     }
     // 取消弹窗
@@ -208,7 +208,7 @@ const rules = reactive({
         product_id: '',
         part_id: '',
         children: [
-          { process_id: '', equipment_id: '', time: '', price: '', points: '' }
+          { process_id: '', equipment_id: '', time: '', price: '', points: '1' }
         ]
       }
     }
