@@ -180,7 +180,7 @@ export default defineComponent({
         groupedRoutes[parent].push(menuItem);
       });
       let filtered = Object.fromEntries(
-        Object.entries(filterMenu(groupedRoutes, ['ApprovalStep', 'Trajectory', 'Home'])).filter(([_, routes]) => routes.length > 0)
+        Object.entries(filterMenu(groupedRoutes, ['ApprovalStep', 'Trajectory', 'Home', 'Version'])).filter(([_, routes]) => routes.length > 0)
       );
       options.value = Object.entries(filtered).map(([key, value]) => ({
         value: key,

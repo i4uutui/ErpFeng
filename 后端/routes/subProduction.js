@@ -27,7 +27,7 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
         model: SubProcessCycleChild,
         as: 'cycleChild',
         attributes: ['cycle_id', 'id', 'end_date', 'load', 'order_number', 'progress_id'],
-        order: [[{ model: SubProcessCycle, as: 'cycle' }, 'sort', 'DESC']],
+        order: [['cycle', 'sort', 'ASC']],
         include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort_date', 'sort'] }] },
       {
         model: SubProcessBom,
@@ -72,16 +72,31 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
     const startDate = item.start_date ? dayjs(item.start_date).startOf('day') : null;
     if (!startDate) return data;
 
+    // 按sort排序当前进度的所有制程子项
+    data.cycleChild.sort((a, b) => {
+      return (Number(a.cycle.sort) || 0) - (Number(b.cycle.sort) || 0);
+    });
+    // 计算每个制程的累计前置最短周期
+    const cumulativeSortDates = [];
+    let totalSortDate = 0;
+    data.cycleChild.forEach((cycleChild, index) => {
+      if (index > 0) {
+        // 累加前序制程的最短周期
+        const prevCycle = data.cycleChild[index - 1];
+        totalSortDate += Number(prevCycle.cycle.sort_date) || 0;
+      }
+      cumulativeSortDates.push(totalSortDate);
+    });
     if (item.start_date){
       // 如果起始日期早于今天，则用今天作为实际起始日期
       const loadStartDate = startDate.isBefore(today) ? today.startOf('day') : startDate;
       data.cycleChild.forEach((cycleChild, index) => {
         // 如果当前周期子项没有结束日期，跳过（无法计算周期长度）
         if (!cycleChild.end_date) return;
-        // 上一个周期的最短周期（天数），第一个周期没有上一个，所以为空
-        const sort_date = index > 0 ? Number(data.cycleChild[index - 1].cycle.sort_date) : ''
-        // 预计生产起始时间 + 最短周期 ：使用原始的起始时间
-        const load_startDate = index > 0 ? loadStartDate.clone().add(sort_date, 'day').startOf('day') : loadStartDate
+        // 计算当前制程的预计起始时间 = 原始起始时间 + 前置最短周期总和
+        const currentStartDate = loadStartDate.clone().add(cumulativeSortDates[index], 'day');
+        // 预计生产起始时间 + 最短周期 ：使用计算后的起始时间
+        const load_startDate = currentStartDate.startOf('day');
         // 预交排期
         const endDate = dayjs(cycleChild.end_date).startOf('day');
 
@@ -120,24 +135,24 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
   // 返回所需信息
   res.json({ data: formatArrayTime(fromData), code: 200 });
 });
-router.put('/production_progress', authMiddleware, async (req, res) => {
-  const { id, part_id, out_number, order_number, remarks } = req.body
-  const { id: userId, company_id } = req.user;
+// router.put('/production_progress', authMiddleware, async (req, res) => {
+//   const { id, part_id, out_number, order_number, remarks } = req.body
+//   const { id: userId, company_id } = req.user;
   
-  const row = await SubProductionProgress.findAll({
-    where: { id }
-  })
-  if(row.length == 0){
-    return res.json({ message: '数据不存在，或已被删除', code: 401 })
-  }
-  await SubProductionProgress.update({
-    part_id, out_number, order_number, remarks
-  }, {
-    where: { id, company_id }
-  })
+//   const row = await SubProductionProgress.findAll({
+//     where: { id }
+//   })
+//   if(row.length == 0){
+//     return res.json({ message: '数据不存在，或已被删除', code: 401 })
+//   }
+//   await SubProductionProgress.update({
+//     part_id, out_number, order_number, remarks
+//   }, {
+//     where: { id, company_id }
+//   })
   
-  res.json({ message: '修改成功', code: 200 });
-})
+//   res.json({ message: '修改成功', code: 200 });
+// })
 router.put('/set_production_date', authMiddleware, async (req, res) => {
   const { params, type } = req.body
   const { id: userId, company_id } = req.user;
@@ -257,7 +272,7 @@ router.post('/mobile_work_order', EmployeeAuth, async (req, res) => {
 
   dataValue.add_finish = dataValue.add_finish ? PreciseMath.add(dataValue.add_finish, quantity) : quantity
   dataValue.order_number = PreciseMath.sub(dataValue.order_number, quantity)
-  dataValue.all_time = (dataValue.order_number * dataValue.time / 60 / 60).toFixed(1)
+  dataValue.all_time = (dataValue.order_number * dataValue.time).toFixed(1)
 
   await SubRateWage.create({ 
     company_id: companyId,

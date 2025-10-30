@@ -35,33 +35,29 @@ export default defineComponent({
         router.push('/login');
       }).catch(() => {})
     }
+    const goVersion = () => {
+      router.push('/version')
+    }
 
     return() => (
       <>
-        <ElRow align='middle' style={{ height: "74px" }}>
-          <ElCol span={ 5 }>
-            <div class="flex">
-              <img src={ logo } style={{ height: "60px" }} />
-              <img src={ yun } style={{ height: "60px", marginLeft: "10px" }} />
-            </div>
-          </ElCol>
-          <ElCol span={ 14 }>
-            <div class="f28" style={{ fontWeight: 'bold', textAlign: 'center' }}>
-              {/* 企业数字化管理平台 */}
-              <img src={ company } style={{ height: "60px" }} />
-            </div>
-          </ElCol>
-          <ElCol span={ 5 }>
-            <div class="flex row-right">
-              <div style={{ marginRight: '20px', color: 'blue' }}>版本更新 !</div>
-              <ElAvatar shape="circle" size={ 60 } fit="cover" src={ user.avatar_url }>
-                <img src={ imageError } style={{ width: "40px", borderRadius: '50%' }} />
-              </ElAvatar>
-              <div class="pl20">欢迎你，{ user.name }</div>
-              <div style={{ color: 'red', marginLeft: '10px', cursor: 'pointer' }} onClick={ loginOut }>退出</div>
-            </div>
-          </ElCol>
-        </ElRow>
+        <div class="flex row-between" style={{ height: '100%' }}>
+          <div class="flex flex-1">
+            <img src={ logo } style={{ height: "60px" }} />
+            <img class="ml10" src={ yun } style={{ height: "60px" }} />
+          </div>
+          <div>
+            <img src={ company } style={{ height: "60px" }} />
+          </div>
+          <div class="flex flex-1 row-right">
+            <div class="mr20" style={{ color: 'blue', cursor: 'pointer' }} onClick={ () => goVersion() }>更新日志 !</div>
+            <ElAvatar shape="circle" size={ 60 } fit="cover" src={ user.avatar_url }>
+              <img src={ imageError } style={{ width: "40px", borderRadius: '50%' }} />
+            </ElAvatar>
+            <div class="pl20">欢迎你，{ user.name }</div>
+            <div class="ml10" style={{ color: 'red', cursor: 'pointer' }} onClick={ loginOut }>退出</div>
+          </div>
+        </div>
       </>
     )
   }

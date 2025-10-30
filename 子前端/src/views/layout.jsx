@@ -14,7 +14,7 @@ export default defineComponent({
         <ElHeader height='74px' style={{ borderBottom: "1px solid #eee", backgroundColor: '#FFF' }}>
           <Mhead />
         </ElHeader>
-        <ElContainer style={{ height: "calc(100vh - 104px)" }}>
+        <ElContainer style={{ height: "calc(100vh - 114px)" }}>
           <LeftMenu></LeftMenu>
           <ElMain><RouterView /></ElMain>
         </ElContainer>

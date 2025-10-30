@@ -39,6 +39,9 @@
 .el-menu-vertical-demo > .is-active > .el-sub-menu__title{
   color: var(--el-menu-active-color);
 }
+.el-menu{
+  border-right: 0 !important;
+}
 :root{
   --el-fill-color-light: #e7e7e7;
 }

@@ -16,6 +16,17 @@ const routes = [
           menu: true
         }
       },
+      // 版本更新
+      {
+        path: '/version',
+        name: 'Version',
+        component: () => import('../views/version/index.jsx'),
+        meta: {
+          title: '版本更新',
+          parent: '首页',
+          menu: false
+        }
+      },
       // 系统管理
       {
         path: '/system/employee-info',

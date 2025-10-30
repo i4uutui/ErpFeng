@@ -22,26 +22,22 @@ export default defineComponent({
       openedMenus.value = openedMenus.value.filter(k => k !== key);
     };
     // 监听路由变化，更新激活状态和展开状态
-    watch(
-      () => route.path,
-      (newPath) => {
-        menuDefaultActive.value = newPath;
+    watch(() => route.path, (newPath) => {
+      menuDefaultActive.value = newPath;
+      
+      // 找到当前路由对应的父菜单并展开
+      menuRoutes.value.forEach(group => {
+        const hasActiveChild = group.children.some(route => 
+          newPath.startsWith(route.path)
+        );
         
-        // 找到当前路由对应的父菜单并展开
-        menuRoutes.value.forEach(group => {
-          const hasActiveChild = group.children.some(route => 
-            newPath.startsWith(route.path)
-          );
-          
-          if (hasActiveChild && !openedMenus.value.includes(group.title)) {
-            openedMenus.value.push(group.title);
-          } else if (!hasActiveChild && openedMenus.value.includes(group.title)) {
-            openedMenus.value = openedMenus.value.filter(k => k !== group.title);
-          }
-        });
-      },
-      { immediate: true } // 初始化时立即执行
-    );
+        if (hasActiveChild && !openedMenus.value.includes(group.title)) {
+          openedMenus.value.push(group.title);
+        } else if (!hasActiveChild && openedMenus.value.includes(group.title)) {
+          openedMenus.value = openedMenus.value.filter(k => k !== group.title);
+        }
+      });
+    }, { immediate: true });
 
     onMounted(() => {
       const { children } = router.options.routes.find(route => route.name === 'Layout');
@@ -87,7 +83,7 @@ export default defineComponent({
 
     return() => (
       <>
-        <ElAside style={{ width: "150px", backgroundColor: '#eee' }}>
+        <ElAside style={{ width: "150px", backgroundColor: '#FFFFFF', borderRight: "solid 1px var(--el-menu-border-color)" }}>
           <ElMenu class="el-menu-vertical-demo" defaultActive={ menuDefaultActive.value } router unique-opened openeds={openedMenus.value} onOpen={handleMenuOpen} onClose={handleMenuClose}>
             {menuRoutes.value.map(({ title, children }) => {
               if(children.length != 1){

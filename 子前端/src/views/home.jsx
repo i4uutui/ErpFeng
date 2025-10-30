@@ -10,7 +10,7 @@ export default defineComponent({
     return() => (
       <>
         <div class='home'>
-          <ElCard style={{ height: '100%' }}>
+          <ElCard style={{ height: '100%', overflow: 'auto' }}>
             {{
               default: () => (
                 <>

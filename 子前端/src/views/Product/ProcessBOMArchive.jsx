@@ -1,4 +1,5 @@
 import { defineComponent, ref, onMounted, reactive, computed } from 'vue'
+import { CirclePlusFilled, RemoveFilled } from '@element-plus/icons-vue'
 import { isEmptyValue } from '@/utils/tool'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
@@ -6,13 +7,48 @@ import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
+    const formRef = ref(null);
+const rules = reactive({
+      product_id: [
+        { required: true, message: '请选择产品编码', trigger: 'blur' },
+      ],
+      part_id: [
+        { required: true, message: '请选择部件编码', trigger: 'blur' },
+      ],
+      process_id: [
+        { required: true, message: '请选择工艺编码', trigger: 'blur' }
+      ],
+      equipment_id: [
+        { required: true, message: '请选择设备编码', trigger: 'blur' },
+      ],
+      time: [
+        { required: true, message: '请输入单件工时(秒)', trigger: 'blur' },
+      ],
+      price: [
+        { required: true, message: '请输入加工单价', trigger: 'blur' },
+      ],
+      points: [
+        { required: true, message: '请输入段数点数', trigger: 'blur' },
+      ]
+    })
+    let form = ref({
+      product_id: '',
+      part_id: '',
+      children: [
+        { process_id: '', equipment_id: '', time: '', price: '', points: '' }
+      ]
+    })
     let tableData = ref([])
+    let dialogVisible = ref(false)
+    let productsList = ref([])
+    let processList = ref([])
+    let partList = ref([])
     let currentPage = ref(1);
     let pageSize = ref(10);
     let total = ref(0);
-    let edit = ref(0)
     let product_code = ref('')
     let product_name = ref('')
+    let edit = ref('')
 
     const maxBomLength = computed(() => {
       if (tableData.value.length === 0) return 0;
@@ -45,6 +81,9 @@ export default defineComponent({
     
     onMounted(() => {
       fetchProductList()
+      getProductsCode()
+      getPartCode()
+      getProcessCode()
     })
     
     // 获取列表
@@ -61,6 +100,24 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    const getProductsCode = async () => {
+      const res = await request.get('/api/getProductsCode')
+      if(res.code == 200){
+        productsList.value = res.data
+      }
+    }
+    const getPartCode = async () => {
+      const res = await request.get('/api/getPartCode')
+      if(res.code == 200){
+        partList.value = res.data
+      }
+    }
+    const getProcessCode = async () => {
+      const res = await request.get('/api/getProcessCode')
+      if(res.code == 200){
+        processList.value = res.data
+      }
+    }
     const handleCope = (row) => {
       ElMessageBox.confirm('是否确认复制新增', '提示', {
         confirmButtonText: '确认',
@@ -80,6 +137,40 @@ export default defineComponent({
         }
       }).catch(() => {})
     }
+    const handleSubmit = async (formEl) => {
+      if (!formEl) return
+      await formEl.validate(async (valid, fields) => {
+        if (valid){
+          const low = { ...form.value, archive: 0 }
+          low.children.forEach((e, index) => e.process_index = index + 1)
+          // 修改
+          low.children.forEach(e => e.process_bom_id = edit.value)
+          const myForm = {
+            id: edit.value,
+            ...low
+          }
+          const res = await request.put('/api/process_bom', myForm);
+          if(res && res.code == 200){
+            ElMessage.success('修改成功');
+            dialogVisible.value = false;
+            fetchProductList();
+
+            const product = productsList.value.find(o => o.id == myForm.product_id)
+            const part = partList.value.find(o => o.id == myForm.part_id)
+            const process = low.children.map(e => {
+              const obj = processList.value.find(o => o.id == e.process_id)
+              return obj.process_code
+            })
+            reportOperationLog({
+              operationType: 'update',
+              module: '工艺BOM',
+              desc: `修改工艺BOM，产品编码：${product.product_code}，部件编码：${part.part_code}，工艺编码：${process.toString()}`,
+              data: { newData: myForm }
+            })
+          }
+        }
+      })
+    }
     const headerCellStyle = ({ columnIndex, rowIndex, column }) => {
       if(rowIndex >= 1 || columnIndex >= 5 && column.label != '操作'){
         return { backgroundColor: '#fbe1e5' }
@@ -90,8 +181,36 @@ export default defineComponent({
         return { backgroundColor: '#fbe1e5' }
       }
     }
-    const goArchive = () => {
-      window.open('/product/process-bom-archive', '_blank')
+    const handleUplate = ({ id, product_id, part_id, children }) => {
+      edit.value = id;
+      dialogVisible.value = true;
+      let filtered = children.filter(item => {
+        return !Object.values(item).every(isEmptyValue);
+      });
+      if(!filtered.length) filtered = [{ process_id: '', equipment_id: '', time: '', price: '', points: '' }]
+      form.value = { children: filtered, id, product_id, part_id };
+    }
+    const handledeletedJson = (index) => {
+      form.value.children.splice(index, 1)
+    }
+    const handleAddJson = () => {
+      const obj = { process_id: '', equipment_id: '', time: '', price: '', points: '' }
+      form.value.children.push(obj)
+    }
+    // 取消弹窗
+    const handleClose = () => {
+      edit.value = 0;
+      dialogVisible.value = false;
+      resetForm()
+    }
+    const resetForm = () => {
+      form.value = {
+        product_id: '',
+        part_id: '',
+        children: [
+          { process_id: '', equipment_id: '', time: '', price: '', points: '' }
+        ]
+      }
     }
     // 分页相关
     function pageSizeChange(val) {
@@ -146,10 +265,11 @@ export default defineComponent({
                       </ElTableColumn>
                     ))
                   }
-                  <ElTableColumn label="操作" width="140" fixed="right">
+                  <ElTableColumn label="操作" width="180" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" v-permission={ 'ProcessBOM:cope' } onClick={ () => handleCope(scope.row) }>复制新增</ElButton>
+                        <ElButton size="small" type="primary" v-permission={ 'ProcessBOM:cope' } onClick={ () => handleCope(scope.row) }>复制新增</ElButton>
+                        <ElButton size="small" type="default" v-permission={ 'ProcessBOM:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                       </>
                     )}
                   </ElTableColumn>
@@ -159,6 +279,65 @@ export default defineComponent({
             )
           }}
         </ElCard>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺BOM信息' : '新增工艺BOM信息' } bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
+          {{
+            default: () => (
+              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+                <ElFormItem label="产品编码" prop="product_id">
+                  <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_code" itemValue="product_code" placeholder="请选择产品编码" />
+                </ElFormItem>
+                <ElFormItem label="部件编码" prop="part_id">
+                  <MySelect v-model={ form.value.part_id } apiUrl="/api/getPartCode" query="part_code" itemValue="part_code" placeholder="请选择部件编码" />
+                </ElFormItem>
+                <div>
+                  {
+                    form.value.children.map((e, index) => (
+                      <div key={ index }>
+                        <ElFormItem label="工艺编码" prop={ `children[${index}].process_id` } rules={ rules.process_id }>
+                          <MySelect v-model={ e.process_id } apiUrl="/api/getProcessCode" query="process_code" itemValue="process_code" placeholder="请选择工艺编码" />
+                        </ElFormItem>
+                        <ElFormItem label="设备编码" prop={ `children[${index}].equipment_id` } rules={ rules.equipment_id }>
+                          <MySelect v-model={ e.equipment_id } apiUrl="/api/getEquipmentCode" query="equipment_code" itemValue="equipment_code" placeholder="请选择设备编码" />
+                        </ElFormItem>
+                        <ElFormItem label="单件工时(秒)" prop={ `children[${index}].time` } rules={ rules.time }>
+                          <ElInput v-model={ e.time } placeholder="请输入单件工时(秒)" />
+                        </ElFormItem>
+                        <ElFormItem label="加工单价" prop={ `children[${index}].price` } rules={ rules.price }>
+                          <ElInput v-model={ e.price } placeholder="请输入加工单价" />
+                        </ElFormItem>
+                        <ElFormItem label="段数点数" prop={ `children[${index}].points` } rules={ rules.points }>
+                          <div class="flex">
+                            <ElInput v-model={ e.points } placeholder="请输入段数点数" />
+                            <div class="flex">
+                              {{
+                                default: () => {
+                                  let dom = []
+                                  if(index == form.value.children.length - 1 && index < 20){
+                                    dom.push(<ElIcon style={{ fontSize: '26px', color: '#409eff', cursor: "pointer" }} onClick={ handleAddJson }><CirclePlusFilled /></ElIcon>)
+                                  }
+                                  if(form.value.children.length > 1){
+                                    dom.push(<ElIcon style={{ fontSize: '26px', color: 'red', cursor: "pointer" }} onClick={ () => handledeletedJson(index) }><RemoveFilled /></ElIcon>)
+                                  }
+                                  return dom
+                                }
+                              }}
+                            </div>
+                          </div>
+                        </ElFormItem>
+                      </div>
+                    ))
+                  }
+                </div>
+              </ElForm>
+            ),
+            footer: () => (
+              <span class="dialog-footer">
+                <ElButton onClick={ handleClose }>取消</ElButton>
+                <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
+              </span>
+            )
+          }}
+        </ElDialog>
       </>
     )
   }

@@ -455,7 +455,7 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
         notice_id: noticeRow.id,
         notice: noticeRow.notice,
         company_id,
-        all_time: (orders * o.time / 60 / 60).toFixed(1)
+        all_time: (orders * o.time).toFixed(1)
       }
       o.order_number = orders
       wait.push(obj)
