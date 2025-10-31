@@ -19,6 +19,11 @@ const SubMaterialBomChild = sequelize.define('SubMaterialBomChild', {
     allowNull: false,
     comment: ' 材料编码 ID，关联材料编码表 '
   },
+  process_index: {
+    type: DataTypes.INTEGER(5),
+    allowNull: false,
+    comment: ' 工序下标 '
+  },
   number: {
     type: DataTypes.INTEGER(20),
     allowNull: true,

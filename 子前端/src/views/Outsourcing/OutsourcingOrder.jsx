@@ -1,6 +1,6 @@
-import { defineComponent, onMounted, reactive, ref, computed } from 'vue'
+import { defineComponent, onMounted, reactive, ref, computed, nextTick } from 'vue'
 import { useStore } from '@/stores';
-import { getRandomString, getNoLast } from '@/utils/tool'
+import { getRandomString, getNoLast, getPageHeight } from '@/utils/tool'
 import { reportOperationLog } from '@/utils/log';
 import { getItem } from '@/assets/js/storage';
 import request from '@/utils/request';
@@ -24,6 +24,8 @@ export default defineComponent({
     const user = getItem('user')
     const nowDate = ref()
     const formRef = ref(null);
+    const formCard = ref(null)
+    const formHeight = ref(0);
     const rules = reactive({
       supplier_id: [
         { required: true, message: '请选择供应商编码', trigger: 'blur' }
@@ -78,6 +80,9 @@ export default defineComponent({
     const printNo = computed(() => store.printNo)
     
     onMounted(() => {
+      nextTick(async () => {
+        formHeight.value = await getPageHeight([formCard.value]);
+      })
       nowDate.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
       getPrinters() // 打印机列表
       fetchProductList() // 数据列表
@@ -464,7 +469,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <HeadForm headerWidth="270px">
+              <HeadForm headerWidth="270px" ref={ formCard }>
                 {{
                   left: () => (
                     <>
@@ -514,7 +519,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe rowStyle={ handleRowStyle } onSelectionChange={ (select) => handleSelectionChange(select) }>
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } rowStyle={ handleRowStyle } onSelectionChange={ (select) => handleSelectionChange(select) }>
                   <ElTableColumn type="selection" width="55" />
                   <ElTableColumn label="状态" width='80'>
                     {({row}) => {

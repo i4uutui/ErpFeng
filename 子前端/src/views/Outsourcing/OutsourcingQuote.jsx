@@ -1,10 +1,14 @@
-import { defineComponent, onMounted, ref, reactive } from 'vue'
+import { defineComponent, onMounted, ref, reactive, nextTick } from 'vue'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
+import { getPageHeight } from '@/utils/tool';
 
 export default defineComponent({
   setup(){
     const formRef = ref(null);
+    const formCard = ref(null)
+    const pagin = ref(null)
+    const formHeight = ref(0);
     const rules = reactive({
       supplier_id: [
         { required: true, message: '请选择供应商编码', trigger: 'blur' }
@@ -38,7 +42,7 @@ export default defineComponent({
     })
     let tableData = ref([])
     let currentPage = ref(1);
-    let pageSize = ref(10);
+    let pageSize = ref(20);
     let total = ref(0);
     let edit = ref(0)
     let supplierList = ref([])
@@ -48,6 +52,9 @@ export default defineComponent({
     let allSelect = ref([]) // 用户选择的列表
     
     onMounted(() => {
+      nextTick(async () => {
+        formHeight.value = await getPageHeight([formCard.value, pagin.value]);
+      })
       fetchProductList()
       getSupplierInfo()
       getProductNotice()
@@ -208,7 +215,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="clearfix">
+              <div class="clearfix" ref={ formCard }>
                 <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } v-permission={ 'OutsourcingQuote:add' }>
                   新增委外报价
                 </ElButton>
@@ -216,7 +223,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }} onSelectionChange={ (select) => handleSelectionChange(select) }>
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }} onSelectionChange={ (select) => handleSelectionChange(select) }>
                   <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width="100" />
                   <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="100" />
                   <ElTableColumn prop="notice.notice" label="生产订单" width="120" />
@@ -245,7 +252,7 @@ export default defineComponent({
                     )}
                   </ElTableColumn>
                 </ElTable>
-                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
+                <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>
             )
           }}

@@ -1,17 +1,23 @@
-import { defineComponent, onMounted, ref } from 'vue'
-import { PreciseMath } from '@/utils/tool'
+import { defineComponent, nextTick, onMounted, ref } from 'vue'
+import { getPageHeight, PreciseMath } from '@/utils/tool'
 import request from '@/utils/request';
 import dayjs from "dayjs"
 
 export default defineComponent({
   setup() {
+    const formCard = ref(null)
+    const pagin = ref(null)
+    const formHeight = ref(0);
     let tableData = ref([])
     let currentPage = ref(1);
-    let pageSize = ref(10);
+    let pageSize = ref(20);
     let total = ref(0);
     let dateTime = ref([])
 
     onMounted(() => {
+      nextTick(async () => {
+        formHeight.value = await getPageHeight([formCard.value, pagin.value]);
+      })
       const currentDate = dayjs();
       const firstDay = currentDate.startOf('month').format('YYYY-MM-DD HH:mm:ss');
       const lastDay = currentDate.endOf('month').format('YYYY-MM-DD HH:mm:ss');
@@ -51,7 +57,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <ElForm inline={ true }>
+              <ElForm inline={ true } ref={ formCard }>
                 <ElFormItem label="周期:">
                   <el-date-picker v-model={ dateTime.value } type="daterange" clearable={ false } range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="YYYY-MM-DD" onChange={ (row) => dateChange(row) } />
                 </ElFormItem>
@@ -62,7 +68,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
                   <ElTableColumn prop="menber.employee_id" label="员工工号" />
                   <ElTableColumn prop="menber.name" label="员工姓名" />
                   <ElTableColumn prop="menber.cycle_name" label="员工制程" />
@@ -80,7 +86,7 @@ export default defineComponent({
                     {({row}) => <span>{ PreciseMath.add(row.number, row.bomChildren.price) }</span>}
                   </ElTableColumn>
                 </ElTable>
-                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
+                <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>
             )
           }}

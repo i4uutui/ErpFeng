@@ -1,6 +1,6 @@
-import { defineComponent, ref, onMounted, reactive, computed } from 'vue'
+import { defineComponent, ref, onMounted, reactive, computed, nextTick } from 'vue'
 import { CirclePlusFilled, RemoveFilled } from '@element-plus/icons-vue'
-import { isEmptyValue } from '@/utils/tool'
+import { getPageHeight, isEmptyValue } from '@/utils/tool'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
 import { reportOperationLog } from '@/utils/log';
@@ -8,7 +8,10 @@ import { reportOperationLog } from '@/utils/log';
 export default defineComponent({
   setup(){
     const formRef = ref(null);
-const rules = reactive({
+    const formCard = ref(null)
+    const pagin = ref(null)
+    const formHeight = ref(0);
+    const rules = reactive({
       product_id: [
         { required: true, message: '请选择产品编码', trigger: 'blur' },
       ],
@@ -44,7 +47,7 @@ const rules = reactive({
     let processList = ref([])
     let partList = ref([])
     let currentPage = ref(1);
-    let pageSize = ref(10);
+    let pageSize = ref(20);
     let total = ref(0);
     let product_code = ref('')
     let product_name = ref('')
@@ -80,6 +83,9 @@ const rules = reactive({
     });
     
     onMounted(() => {
+      nextTick(async () => {
+        formHeight.value = await getPageHeight([formCard.value, pagin.value]);
+      })
       fetchProductList()
       getProductsCode()
       getPartCode()
@@ -230,7 +236,7 @@ const rules = reactive({
         <ElCard>
           {{
             header: () => (
-              <div class="flex row-between">
+              <div class="flex row-between" ref={ formCard }>
                 <div class='flex flex-1'>
                   <div class="flex pl10">
                     <span>产品编码：</span>
@@ -255,7 +261,7 @@ const rules = reactive({
             ),
             default: () => (
               <>
-                <ElTable data={ processedTableData.value } border stripe style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
+                <ElTable data={ processedTableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
                   <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" />
                   <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" />
                   <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" />
@@ -284,7 +290,7 @@ const rules = reactive({
                     )}
                   </ElTableColumn>
                 </ElTable>
-                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
+                <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>
             )
           }}

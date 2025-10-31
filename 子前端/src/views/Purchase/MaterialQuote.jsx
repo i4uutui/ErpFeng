@@ -1,11 +1,14 @@
-import { defineComponent, ref, onMounted, reactive } from 'vue'
+import { defineComponent, ref, onMounted, reactive, nextTick } from 'vue'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
 import { reportOperationLog } from '@/utils/log';
+import { getPageHeight } from '@/utils/tool';
 
 export default defineComponent({
   setup(){
     const formRef = ref(null);
+    const formCard = ref(null)
+    const formHeight = ref(0);
     const rules = reactive({
       supplier_id: [
         { required: true, message: '请选择供应商编码', trigger: 'blur' },
@@ -47,6 +50,9 @@ export default defineComponent({
     let edit = ref(-1)
 
     onMounted(() => {
+      nextTick(async () => {
+        formHeight.value = await getPageHeight([formCard.value]);
+      })
       getMaterialCode()
       getSupplierInfo()
     })
@@ -207,8 +213,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-
-              <div class="flex row-between">
+              <div class="flex row-between" ref={ formCard }>
                 <div>
                   <ElButton style="margin-top: -5px" type="primary" v-permission={ 'MaterialQuote:add' } onClick={ handleAdd } >
                     新增材料报价
@@ -226,7 +231,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
                   <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width="100" />
                   <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="100" />
                   <ElTableColumn prop="material.material_code" label="材料编码" width="100" />

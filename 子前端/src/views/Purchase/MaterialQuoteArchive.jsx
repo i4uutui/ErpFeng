@@ -1,8 +1,12 @@
-import { defineComponent, ref, onMounted, reactive } from 'vue'
+import { defineComponent, ref, onMounted, nextTick } from 'vue'
 import request from '@/utils/request';
+import { getPageHeight } from '@/utils/tool';
 
 export default defineComponent({
   setup(){
+    const formCard = ref(null)
+    const pagin = ref(null)
+    const formHeight = ref(0);
     let search = ref({
       supplier_code: '',
       supplier_abbreviation: '',
@@ -11,10 +15,13 @@ export default defineComponent({
     })
     let tableData = ref([])
     let currentPage = ref(1);
-    let pageSize = ref(10);
+    let pageSize = ref(20);
     let total = ref(0);
 
     onMounted(() => {
+      nextTick(async () => {
+        formHeight.value = await getPageHeight([formCard.value, pagin.value]);
+      })
       fetchProductList()
     })
 
@@ -46,7 +53,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="flex">
+              <div class="flex" ref={ formCard }>
                 <ElForm inline={ true } class="cardHeaderFrom">
                   <ElFormItem label="供应商编码:">
                     <ElInput v-model={ search.value.supplier_code } style="width: 240px" placeholder="请输入产品编码" />
@@ -68,7 +75,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
                   <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width="100" />
                   <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="100" />
                   {/* <ElTableColumn label="生产订单号" width="100">
@@ -88,7 +95,7 @@ export default defineComponent({
                   <ElTableColumn prop="remarks" label="备注" width="170" />
                   <ElTableColumn prop="created_at" label="创建时间" width="120" />
                 </ElTable>
-                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
+                <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>
             )
           }}

@@ -262,30 +262,6 @@ const routes = [
           menu: true,
         }
       },
-      // {
-      //   path: '/order/product-delivery',
-      //   name: 'ProductDelivery',
-      //   component: () => import('@/views/Order/ProductDelivery.jsx'),
-      //   meta: {
-      //     title: '产品出货单',
-      //     parent: '订单管理',
-      //     menu: true,
-      //     buttons: [
-      //       { code: 'ProductDelivery:print', label: '打印' },
-      //     ]
-      //   }
-      // },
-      // 产品信息
-      // {
-      //   path: '/product/product-bom',
-      //   name: 'ProductBOM',
-      //   component: () => import('@/views/Product/ProductBOM.vue'),
-      //   meta: {
-      //     title: '产品BOM',
-      //     parent: '产品信息',
-      //     menu: true
-      //   }
-      // },
       {
         path: '/product/material-bom',
         name: 'MaterialBOM',

@@ -1,13 +1,44 @@
-import { defineComponent, ref, onMounted, reactive, computed } from 'vue'
-import { getRandomString, isEmptyValue } from '@/utils/tool';
+import { defineComponent, ref, onMounted, reactive, computed, nextTick } from 'vue'
+import { CirclePlusFilled, RemoveFilled } from '@element-plus/icons-vue'
+import { getPageHeight, getRandomString, isEmptyValue } from '@/utils/tool';
 import request from '@/utils/request';
 import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
+    const formRef = ref(null);
+    const formCard = ref(null)
+    const pagin = ref(null)
+    const formHeight = ref(0);
+    const rules = reactive({
+      product_id: [
+        { required: true, message: '请选择产品编码', trigger: 'blur' },
+      ],
+      part_id: [
+        { required: true, message: '请选择部件编码', trigger: 'blur' },
+      ],
+      material_id: [
+        { required: true, message: '请选择材料编码', trigger: 'blur' }
+      ],
+      number: [
+        { required: true, message: '请输入数量', trigger: 'blur' },
+      ]
+    })
+    let dialogVisible = ref(false)
+    let form = ref({
+      product_id: '',
+      part_id: '',
+      children: [
+        { material_id: '', number: '' }
+      ]
+    })
+    let productsList = ref([])
+    let partList = ref([])
+    let materialList = ref([])
+    let edit = ref(0)
     let tableData = ref([])
     let currentPage = ref(1);
-    let pageSize = ref(10);
+    let pageSize = ref(20);
     let total = ref(0);
     let product_code = ref('')
     let product_name = ref('')
@@ -36,7 +67,13 @@ export default defineComponent({
     });
     
     onMounted(() => {
+      nextTick(async () => {
+        formHeight.value = await getPageHeight([formCard.value, pagin.value]);
+      })
       fetchProductList()
+      getProductsCode()
+      getPartCode()
+      getMaterialCode()
     })
     
     // 获取列表
@@ -53,6 +90,24 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    const getProductsCode = async () => {
+      const res = await request.get('/api/getProductsCode')
+      if(res.code == 200){
+        productsList.value = res.data
+      }
+    }
+    const getPartCode = async () => {
+      const res = await request.get('/api/getPartCode')
+      if(res.code == 200){
+        partList.value = res.data
+      }
+    }
+    const getMaterialCode = async () => {
+      const res = await request.get('/api/getMaterialCode')
+      if(res.code == 200){
+        materialList.value = res.data.map(item => ({ ...item, is_show: false }))
+      }
+    }
     const handleCope = (row) => {
       ElMessageBox.confirm('是否确认复制新增', '提示', {
         confirmButtonText: '确认',
@@ -72,6 +127,39 @@ export default defineComponent({
         }
       }).catch(() => {})
     }
+    const handleSubmit = async (formEl) => {
+      if (!formEl) return
+      await formEl.validate(async (valid, fields) => {
+        if (valid){
+          const low = { ...form.value, archive: 0 }
+          low.children.forEach((e, index) => e.process_index = index + 1)
+          // 修改
+          const myForm = {
+            id: edit.value,
+            ...low
+          }
+          const res = await request.put('/api/material_bom', myForm);
+          if(res && res.code == 200){
+            ElMessage.success('修改成功');
+            dialogVisible.value = false;
+            fetchProductList();
+
+            const product = productsList.value.find(o => o.id == myForm.product_id)
+            const part = partList.value.find(o => o.id == myForm.part_id)
+            const material = myForm.children.map(e => {
+              const obj = materialList.value.find(o => o.id == e.material_id)
+              return obj.material_code
+            })
+            reportOperationLog({
+              operationType: 'update',
+              module: '材料BOM',
+              desc: `修改材料BOM，产品编码：${product.product_code}，部件编码：${part.part_code}，材料编码：${material.toString()}`,
+              data: { newData: myForm }
+            })
+          }
+        }
+      })
+    }
     const headerCellStyle = ({ columnIndex, rowIndex, column }) => {
       if(rowIndex >= 1 || columnIndex >= 5 && column.label != '操作'){
         return { backgroundColor: '#fbe1e5' }
@@ -82,8 +170,55 @@ export default defineComponent({
         return { backgroundColor: '#fbe1e5' }
       }
     }
-    const goArchive = () => {
-      window.open('/product/material-bom-archive', '_blank')
+    const handleUplate = ({ id, product_id, part_id, children }) => {
+      edit.value = id;
+      dialogVisible.value = true;
+      let filtered = children.filter(item => {
+        return !Object.values(item).every(isEmptyValue);
+      });
+      if(!filtered.length) filtered = [{ material_id: '', number: '' }]
+      form.value = { product_id, part_id, children: filtered };
+
+      // 判断材料是否可选,已选的材料不能再选择
+      const showList = children.map(e => e.material_id)
+      materialList.value.forEach(item => {
+        item.is_show = showList.includes(item.id);
+      })
+    }
+    const materialChange = (value) => {
+      const showList = form.value.children.map(e => e.material_id)
+      materialList.value.forEach(item => {
+        item.is_show = showList.includes(item.id);
+      })
+    }
+    // 取消弹窗
+    const handleClose = () => {
+      edit.value = 0;
+      dialogVisible.value = false;
+      materialList.value.forEach(e => e.is_show = false)
+      resetForm()
+    }
+    const resetForm = () => {
+      form.value = {
+        product_id: '',
+        part_id: '',
+        children: [
+          { material_id: '', number: '' }
+        ]
+      }
+    }
+    const handledeletedJson = (index) => {
+      form.value.children.splice(index, 1)
+      // 判断材料是否可选,已选的材料不能再选择
+      const showList = form.value.children.map(e => e.material_id)
+      materialList.value.forEach(e => e.is_show = false)
+      materialList.value.forEach(item => {
+        item.is_show = showList.includes(item.id);
+      })
+    }
+    const handleAddJson = () => {
+      const obj = { material_id: '', number: '' }
+      form.value.children.push(obj)
     }
     // 分页相关
     function pageSizeChange(val) {
@@ -104,7 +239,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="flex row-between">
+              <div class="flex row-between" ref={ formCard }>
                 <div class="flex flex-1">
                   <div class="flex pl10">
                     <span>产品编码：</span>
@@ -129,7 +264,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ processedTableData.value } border stripe style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
+                <ElTable data={ processedTableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
                   <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" />
                   <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" />
                   <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" />
@@ -145,19 +280,72 @@ export default defineComponent({
                       </ElTableColumn>
                     ))
                   }
-                  <ElTableColumn label="操作" width="140" fixed="right">
+                  <ElTableColumn label="操作" width="180" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" v-permission={ 'MaterialBOM:cope' } onClick={ () => handleCope(scope.row) }>复制新增</ElButton>
+                        <ElButton size="small" type="primary" v-permission={ 'MaterialBOM:cope' } onClick={ () => handleCope(scope.row) }>复制新增</ElButton>
+                        <ElButton size="small" type="default" v-permission={ 'MaterialBOM:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                       </>
                     )}
                   </ElTableColumn>
                 </ElTable>
-                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
+                <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>
             )
           }}
         </ElCard>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改材料BOM信息' : '新增材料BOM信息' } bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
+          {{
+            default: () => (
+              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+                <ElFormItem label="产品编码" prop="product_id">
+                  <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_code" itemValue="product_code" placeholder="请选择产品编码" />
+                </ElFormItem>
+                <ElFormItem label="部件编码" prop="part_id" data-index={ form.value.children.length }>
+                  <MySelect v-model={ form.value.part_id } apiUrl="/api/getPartCode" query="part_code" itemValue="part_code" placeholder="请选择部件编码" />
+                </ElFormItem>
+                {
+                  form.value.children.map((e, index) => (
+                    <Fragment key={ index }>
+                      <ElFormItem label="材料编码" prop={ `children[${index}].material_id` } rules={ rules.material_id }>
+                        <ElSelect v-model={ e.material_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料编码" onChange={ (value) => materialChange(value) }>
+                          {materialList.value.map((e, index) => {
+                            return <ElOption value={ e.id } label={ e.material_code } key={ index } disabled={ e.is_show } />
+                          })}
+                        </ElSelect>
+                      </ElFormItem>
+                      <ElFormItem label="数量" prop={ `children[${index}].number` } rules={ rules.number }>
+                        <div class="flex">
+                          <ElInput v-model={ e.number } placeholder="请输入数量" />
+                          <div class="flex">
+                            {{
+                              default: () => {
+                                let dom = []
+                                if(index == form.value.children.length - 1 && index < 20){
+                                  dom.push(<ElIcon style={{ fontSize: '26px', color: '#409eff', cursor: "pointer" }} onClick={ handleAddJson }><CirclePlusFilled /></ElIcon>)
+                                }
+                                if(form.value.children.length > 1){
+                                  dom.push(<ElIcon style={{ fontSize: '26px', color: 'red', cursor: "pointer" }} onClick={ () => handledeletedJson(index) }><RemoveFilled /></ElIcon>)
+                                }
+                                return dom
+                              }
+                            }}
+                          </div>
+                        </div>
+                      </ElFormItem>
+                    </Fragment>
+                  ))
+                }
+              </ElForm>
+            ),
+            footer: () => (
+              <span class="dialog-footer">
+                <ElButton onClick={ handleClose }>取消</ElButton>
+                <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
+              </span>
+            )
+          }}
+        </ElDialog>
       </>
     )
   }

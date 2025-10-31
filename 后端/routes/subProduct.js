@@ -33,13 +33,16 @@ router.get('/material_bom', authMiddleware, async (req, res) => {
       {
         model: SubMaterialBomChild,
         as: 'children',
-        attributes: ['id', 'material_bom_id', 'material_id', 'number'],
+        attributes: ['id', 'material_bom_id', 'material_id', 'number', 'process_index'],
         include: [
           { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name', 'specification'] },
         ]
       }
     ],
-    order: [['id', 'DESC']],
+    order: [
+      ['id', 'DESC'],
+      ['children', 'process_index', 'ASC']
+    ],
     distinct: true,
     limit: parseInt(pageSize),
     offset
@@ -108,7 +111,7 @@ router.put('/material_bom', authMiddleware, async (req, res) => {
     // 批量新增/更新保留的子项
     const childrens = children.map(e => ({ material_bom_id: material.id, ...e }));
     await SubMaterialBomChild.bulkCreate(childrens, {
-      updateOnDuplicate: ['material_bom_id', 'material_id', 'number'], // 按需调整更新字段
+      updateOnDuplicate: ['material_bom_id', 'material_id', 'number', 'process_index'], // 按需调整更新字段
     });
   }
   res.json({ message: '修改成功', code: 200 });

@@ -1,10 +1,13 @@
-import { defineComponent, onMounted, ref } from 'vue'
+import { defineComponent, nextTick, onMounted, ref } from 'vue'
 import request from '@/utils/request';
 import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
+import { getPageHeight } from '@/utils/tool';
 
 export default defineComponent({
   setup(){
+    const formCard = ref(null)
+    const formHeight = ref(0);
     let tableData = ref([])
     let noticeList = ref([])
     let notice_number = ref('')
@@ -32,7 +35,9 @@ export default defineComponent({
     })
 
     onMounted(() => {
-      // fetchProductList()
+      nextTick(async () => {
+        formHeight.value = await getPageHeight([formCard.value]);
+      })
       getNoticeList()
     })
 
@@ -59,7 +64,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="flex">
+              <div class="flex" ref={ formCard }>
                 <div class="pr10 flex">
                   <span style="width: 120px">生产订单号:</span>
                   <ElSelect v-model={ notice_number.value } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单号" onChange={ () => fetchProductList() }>
@@ -78,7 +83,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
                   <ElTableColumn prop='notice_number' label="生产订单号" width="100" />
                   <ElTableColumn prop='product_code' label="产品编码" width="100" />
                   <ElTableColumn prop='product_name' label="产品名称" width="100" />

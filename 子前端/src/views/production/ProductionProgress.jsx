@@ -1,17 +1,13 @@
-import { defineComponent, onMounted, ref, reactive, computed } from 'vue'
+import { defineComponent, onMounted, ref, reactive, computed, nextTick } from 'vue'
 import dayjs from 'dayjs';
 import request from '@/utils/request';
 import "@/assets/css/production.scss"
+import { getPageHeight } from '@/utils/tool';
 
 export default defineComponent({
   setup(){
-    let form = ref({
-      id: '',
-      part_id: '',
-      out_number: '',
-      order_number: '',
-      remarks: '',
-    })
+    const formCard = ref(null)
+    const formHeight = ref(0);
     let tableData = ref([])
     let endDate = ref('')
     let uniqueEquipments = ref([])
@@ -43,21 +39,39 @@ export default defineComponent({
       // 计算极限负荷
       const equipmentMap = new Map(); // 去重
       tableData.value.forEach(item => {
-        item.bom?.children?.forEach(child => {
-          const { equipment } = child;
-          if (equipment && equipment.id) {
-            const key = `${equipment.id}`;
-            if (!equipmentMap.has(key)) {
-              equipmentMap.set(key, true);
-              const cycleData = cycleMap.get(equipment.cycle.id);
-              if (cycleData) {
-                cycleData.maxLoad += Number(equipment.efficiency || 0);
+        // item.bom?.children?.forEach(child => {
+        //   const { equipment } = child;
+        //   if (equipment && equipment.id) {
+        //     const key = `${equipment.id}`;
+        //     if (!equipmentMap.has(key)) {
+        //       equipmentMap.set(key, true);
+        //       const cycleData = cycleMap.get(equipment.cycle.id);
+        //       if (cycleData) {
+        //         cycleData.maxLoad += Number(equipment.efficiency || 0);
+        //       }
+        //     }
+        //   }
+        // });
+        item.cycleChild?.forEach(cycleChild => {
+          if (cycleChild.cycle?.equipment?.length) {
+            // 遍历当前周期下的所有设备
+            cycleChild.cycle.equipment.forEach(equ => {
+              if (equ && equ.id) {
+                const key = `${equ.id}`;
+                // 只计算未统计过的设备
+                if (!equipmentMap.has(key)) {
+                  equipmentMap.set(key, true);
+                  // 找到对应的周期数据并累加效率
+                  const cycleData = cycleMap.get(cycleChild.cycle.id);
+                  if (cycleData) {
+                    cycleData.maxLoad += Number(equ.efficiency || 0);
+                  }
+                }
               }
-            }
+            });
           }
-        });
+        })
       });
-
       // 生成日期列表
       const today = dayjs().startOf('day');
       const end = dayjs(endDate.value).startOf('day');
@@ -128,6 +142,10 @@ export default defineComponent({
     });
     
     onMounted(async () => {
+      nextTick(async () => {
+        // 无效果，待以后优化本页面
+        formHeight.value = await getPageHeight([formCard.value]);
+      })
       await fetchSpecialDates();
       await fetchProductList();
     })
@@ -136,7 +154,8 @@ export default defineComponent({
     const fetchProductList = async () => {
       const res = await request.get('/api/production_progress');
       tableData.value = res.data;
-      endDate.value = tableData.value[0].delivery_time
+      if(!tableData.value.length) return
+      endDate.value = tableData.value[0].notice.delivery_time
       // 集合equipment并且去重
       uniqueEquipments.value = [...res.data
         .flatMap(item => item?.bom?.children ?? [])
@@ -213,7 +232,7 @@ export default defineComponent({
         closeOnPressEscape: false,
         distinguishCancelAndClose: true
       }).then(() => {
-        const table  = tableData.value.filter(e => e.notice_number == row.notice_number)
+        const table  = tableData.value.filter(e => e.notice.notice == row.notice.notice)
         let params = []
         table.forEach(e => {
           params.push({
@@ -256,7 +275,7 @@ export default defineComponent({
       }).then(() => {
         let arr = []
         tableData.value.forEach(e => {
-          if(e.notice_number == param.notice_number){
+          if(e.notice_id == param.notice_id){
             e.cycleChild.forEach(o => {
               if(o.cycle.id == row.cycle.id){
                 arr.push(o)
@@ -383,7 +402,7 @@ export default defineComponent({
           {{
             header: () => {
               if(loadStats.value?.dates?.length && loadStats.value?.stats?.length){
-                return <ElTable data={loadStats.value.stats} border style={{ width: "100%" }} size="small" cellStyle={ loadCellStyle }>
+                return <ElTable data={loadStats.value.stats} border ref={ formCard } style={{ width: "100%" }} size="small" cellStyle={ loadCellStyle }>
                   <ElTableColumn prop="name" label="制程" width="100" align="center" />
                   <ElTableColumn label="极限负荷" width="90" align="center" >
                     {{
@@ -407,7 +426,7 @@ export default defineComponent({
             },
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%", height: '400px' }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle } class="production">
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%", height: '400px' }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle } class="production">
                   <ElTableColumn label="生产订单号" width="120">
                     { ({row}) => <div class="myCell">{row.notice.notice}</div> }
                   </ElTableColumn>

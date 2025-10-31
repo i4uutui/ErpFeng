@@ -1,11 +1,16 @@
-import { defineComponent, onMounted, ref, reactive } from 'vue'
+import { defineComponent, onMounted, ref, reactive, nextTick } from 'vue'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
 import { reportOperationLog } from '@/utils/log';
+import { getPageHeight } from '@/utils/tool';
+import HeadForm from '@/components/form/HeadForm';
 
 export default defineComponent({
   setup(){
     const formRef = ref(null);
+    const formCard = ref(null)
+    const pagin = ref(null)
+    const formHeight = ref(0);
     const rules = reactive({
       sale_id: [
         { required: true, message: '请选择销售订单', trigger: 'blur' },
@@ -30,11 +35,21 @@ export default defineComponent({
     })
     let tableData = ref([])
     let currentPage = ref(1);
-    let pageSize = ref(10);
+    let pageSize = ref(20);
     let total = ref(0);
     let edit = ref(0)
+    let search = ref({
+      notice: '',
+      customer_code: '',
+      customer_abbreviation: '',
+      product_code: '',
+      product_name: '',
+    })
 
     onMounted(() => {
+      nextTick(async () => {
+        formHeight.value = await getPageHeight([formCard.value, pagin.value]);
+      })
       fetchProductList()
     })
 
@@ -43,7 +58,8 @@ export default defineComponent({
       const res = await request.get('/api/product_quotation', {
         params: {
           page: currentPage.value,
-          pageSize: pageSize.value
+          pageSize: pageSize.value,
+          ...search.value
         },
       });
       tableData.value = res.data;
@@ -134,18 +150,47 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="clearfix">
-                <ElButton style="margin-top: -5px" type="primary" v-permission={ 'ProductQuote:add' } onClick={ handleAdd } >
-                  新增产品报价
-                </ElButton>
-              </div>
+              <HeadForm headerWidth="150px" ref={ formCard }>
+                {{
+                  left: () => (
+                    <ElFormItem v-permission={ 'ProductQuote:add' }>
+                      <ElButton type="primary" onClick={ handleAdd } style={{ width: '100px' }}>新增产品报价</ElButton>
+                    </ElFormItem>
+                  ),
+                  center: () => (
+                    <>
+                      <ElFormItem label="报价单号">
+                        <ElInput v-model={ search.value.notice } placeholder="请输入报价单号" style={{ width: '160px' }} />
+                      </ElFormItem>
+                      <ElFormItem label="客户编码">
+                        <ElInput v-model={ search.value.customer_code } placeholder="请输入客户编码" style={{ width: '160px' }} />
+                      </ElFormItem>
+                      <ElFormItem label="客户名称">
+                        <ElInput v-model={ search.value.customer_abbreviation } placeholder="请输入客户名称" style={{ width: '160px' }} />
+                      </ElFormItem>
+                      <ElFormItem label="产品编码">
+                        <ElInput v-model={ search.value.product_code } placeholder="请输入产品编码" style={{ width: '160px' }} />
+                      </ElFormItem>
+                      <ElFormItem label="产品名称">
+                        <ElInput v-model={ search.value.product_name } placeholder="请输入产品名称" style={{ width: '160px' }} />
+                      </ElFormItem>
+                    </>
+                  ),
+                  right: () => (
+                    <ElFormItem>
+                      <ElButton type="primary" onClick={ fetchProductList }>查询</ElButton>
+                    </ElFormItem>
+                  )
+                }}
+              </HeadForm>
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%" }}>
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
                   <ElTableColumn prop="notice" label="报价单号" width="100" />
-                  <ElTableColumn prop="product.product_code" label="产品编码" width="120" />
+                  <ElTableColumn prop="customer.customer_code" label="客户编码" width="120" />
                   <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" width="120" />
+                  <ElTableColumn prop="product.product_code" label="产品编码" width="100" />
                   <ElTableColumn prop="product.product_name" label="产品名称" width="100" />
                   <ElTableColumn prop="product.model" label="型号" width="120" />
                   <ElTableColumn prop="product.specification" label="规格" width="100" />
@@ -165,7 +210,7 @@ export default defineComponent({
                     )}
                   </ElTableColumn>
                 </ElTable>
-                <ElPagination layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
+                <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>
             )
           }}
