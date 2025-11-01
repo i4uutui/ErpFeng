@@ -511,7 +511,10 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
 
 
   const allCycles = await SubProcessCycle.findAll({
-    where: { company_id },
+    where: {
+      company_id,
+      sort: { [Op.gt]: 0 }
+    },
     attributes: ['id'],
   })
   if(allCycles.length == 0) return res.json({ message: '未配置制程组，请先配置生产制程组', code: 401 })
@@ -534,6 +537,70 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
   })
   const bomResult =  bom.map(e => e.toJSON())
   if(bomResult.length == 0) return res.json({ message: '该订单无工艺BOM，或工艺BOM未存档，暂时无法排产', code: 401 })
+  
+
+
+
+  
+  let progress = []
+  bomResult.forEach(item => {
+    // 这是进度表的基础数据
+    const obj = {
+      company_id,
+      user_id: userId,
+      notice_id: noticeRow.id,
+      sale_id: noticeRow.sale.id,
+      product_id: noticeRow.product.id,
+      part_id: item.part.id,
+      bom_id: item.id,
+      out_number: noticeRow.sale.order_number,
+      house_number: null,
+      start_date: '',
+      remarks: ''
+    }
+    progress.push(obj)
+  })
+  const progressArr = ['company_id', 'user_id', 'notice_id', 'product_id', 'sale_id', 'out_number', 'part_id', 'bom_id', 'start_date', 'house_number', 'remarks'] 
+  const progressResult = await SubProductionProgress.bulkCreate(progress, {updateOnDuplicate: progressArr})
+  const progressRows = progressResult.map(e => e.toJSON())
+
+  const cycleChildData = [];
+  // 遍历每条新创建的进度
+  progressRows.forEach(progress => {
+    const cycleChildDataForProgress = cycle.map(cycle => ({
+      cycle_id: cycle.id,
+      progress_id: progress.id
+    }));
+
+    // 将当前进度的子周期数据合并到总列表
+    cycleChildData.push(...cycleChildDataForProgress);
+  })
+  // 批量插入
+  await SubProcessCycleChild.bulkCreate(cycleChildData)
+
+  if(progress.length){
+    // 设置此数据为已排产
+    await SubProductNotice.update({
+      is_notice: 0
+    }, { where: { id } })
+  }
+  
+  res.json({ message: '操作成功', code: 200 });
+  return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   let wait = []
   const bomRows = bom.map(e => {
     const data = e.toJSON()

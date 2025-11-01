@@ -44,6 +44,7 @@ export default defineComponent({
     let productsList = ref([])
     let partList = ref([])
     let processList = ref([])
+    let deviceList = ref([])
     let tableData = ref([])
     let edit = ref(0)
     let loading = ref(false)
@@ -84,6 +85,7 @@ export default defineComponent({
       getProductsCode()
       getPartCode()
       getProcessCode()
+      getDeviceList()
     })
     
     // 获取列表
@@ -113,6 +115,12 @@ export default defineComponent({
       const res = await request.get('/api/getProcessCode')
       if(res.code == 200){
         processList.value = res.data
+      }
+    }
+    const getDeviceList = async () => {
+      const res = await request.get('/api/getEquipmentCode')
+      if(res.code == 200){
+        deviceList.value = res.data
       }
     }
     const handleSubmit = async (formEl) => {
@@ -275,6 +283,11 @@ export default defineComponent({
         return { backgroundColor: '#fbe1e5' }
       }
     }
+    // 选择工艺后自动带出设备
+    const processChange = (row, index) => {
+      const device_id = row.equipment_id
+      form.value.children[index].equipment_id = device_id
+    }
     const goArchive = () => {
       window.open('/#/product/process-bom-archive', '_blank')
     }
@@ -351,10 +364,14 @@ export default defineComponent({
                         <div class="pl20">{ index + 1 }.</div>
                         <div key={ index }>
                           <ElFormItem label="工艺编码" prop={ `children[${index}].process_id` } rules={ rules.process_id }>
-                            <MySelect v-model={ e.process_id } apiUrl="/api/getProcessCode" query="process_code" itemValue="process_code" placeholder="请选择工艺编码" />
+                            <MySelect v-model={ e.process_id } apiUrl="/api/getProcessCode" query="process_code" itemValue="process_code" placeholder="请选择工艺编码" onChange={ (value) => processChange(value, index) } />
                           </ElFormItem>
                           <ElFormItem label="设备编码" prop={ `children[${index}].equipment_id` } rules={ rules.equipment_id }>
-                            <MySelect v-model={ e.equipment_id } apiUrl="/api/getEquipmentCode" query="equipment_code" itemValue="equipment_code" placeholder="请选择设备编码" />
+                            <ElSelect v-model={ e.equipment_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择设备编码">
+                              {deviceList.value.map((e, index) => e && (
+                                <ElOption value={ e.id } label={ e.equipment_code } key={ index } />
+                              ))}
+                            </ElSelect>
                           </ElFormItem>
                           <ElFormItem label="单件工时(秒)" prop={ `children[${index}].time` } rules={ rules.time }>
                             <ElInput v-model={ e.time } placeholder="请输入单件工时(秒)" />

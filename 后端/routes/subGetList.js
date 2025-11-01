@@ -231,10 +231,13 @@ router.get('/getEquipmentCode', authMiddleware, async (req, res) => {
   const { equipment_code } = req.query;
   const { company_id } = req.user;
   
+  const where = {
+    is_deleted: 1,
+    company_id
+  }
+  if(equipment_code) where.equipment_code = { [Op.like]: `%${equipment_code}%` }
   const config = {
-    where: { is_deleted: 1, company_id, equipment_code: {
-      [Op.like]: `%${equipment_code}%`
-    } },
+    where,
     order: [['created_at', 'DESC']],
     distinct: true,
   }

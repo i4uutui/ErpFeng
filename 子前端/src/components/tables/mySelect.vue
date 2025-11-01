@@ -1,5 +1,5 @@
 <template>
-  <ElSelect v-model="valueData" :multiple="multiple" filterable remote remote-show-suffix valueKey="id" :placeholder="placeholder" @change="changeSelect">
+  <ElSelect v-model="valueData" :disabled="disabled" :multiple="multiple" filterable remote remote-show-suffix valueKey="id" :placeholder="placeholder" @change="changeSelect">
     <ElOption v-for="(item, index) in option" :value="item[itemId]" :label="item[itemValue]" :key="index">
       <div v-if="arrValue.length">
         <span v-for="(o, idx) in arrValue" :key="idx">
@@ -43,6 +43,10 @@ const props = defineProps({
     default: ''
   },
   multiple: {
+    type: Boolean,
+    default: false
+  },
+  disabled: {
     type: Boolean,
     default: false
   }

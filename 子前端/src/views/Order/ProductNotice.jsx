@@ -251,7 +251,7 @@ export default defineComponent({
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
                 <ElFormItem label="客户订单号" prop="sale_id">
-                  <MySelect v-model={ form.value.sale_id } apiUrl="/api/getSaleOrder" query="customer_order" itemValue="customer_order" placeholder="请选择客户订单号" onChange={ (value) => noticeChange(value) } />
+                  <MySelect v-model={ form.value.sale_id } disabled={ edit.value != 0 } apiUrl="/api/getSaleOrder" query="customer_order" itemValue="customer_order" placeholder="请选择客户订单号" onChange={ (value) => noticeChange(value) } />
                 </ElFormItem>
                 <ElFormItem label="生产订单号" prop="notice">
                   <ElInput v-model={ form.value.notice } placeholder="请输入生产订单号" />

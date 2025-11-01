@@ -1,17 +1,13 @@
-import { defineComponent, onMounted, ref, reactive, computed } from 'vue'
+import { defineComponent, onMounted, ref, reactive, computed, nextTick } from 'vue'
 import dayjs from 'dayjs';
 import request from '@/utils/request';
 import "@/assets/css/production.scss"
+import { getPageHeight } from '@/utils/tool';
 
 export default defineComponent({
   setup(){
-    let form = ref({
-      id: '',
-      part_id: '',
-      out_number: '',
-      order_number: '',
-      remarks: '',
-    })
+    const formCard = ref(null)
+    const formHeight = ref(0);
     let tableData = ref([])
     let endDate = ref('')
     let uniqueEquipments = ref([])
@@ -43,21 +39,39 @@ export default defineComponent({
       // 计算极限负荷
       const equipmentMap = new Map(); // 去重
       tableData.value.forEach(item => {
-        item.bom?.children?.forEach(child => {
-          const { equipment } = child;
-          if (equipment && equipment.id) {
-            const key = `${equipment.id}`;
-            if (!equipmentMap.has(key)) {
-              equipmentMap.set(key, true);
-              const cycleData = cycleMap.get(equipment.cycle.id);
-              if (cycleData) {
-                cycleData.maxLoad += Number(equipment.efficiency || 0);
+        // item.bom?.children?.forEach(child => {
+        //   const { equipment } = child;
+        //   if (equipment && equipment.id) {
+        //     const key = `${equipment.id}`;
+        //     if (!equipmentMap.has(key)) {
+        //       equipmentMap.set(key, true);
+        //       const cycleData = cycleMap.get(equipment.cycle.id);
+        //       if (cycleData) {
+        //         cycleData.maxLoad += Number(equipment.efficiency || 0);
+        //       }
+        //     }
+        //   }
+        // });
+        item.cycleChild?.forEach(cycleChild => {
+          if (cycleChild.cycle?.equipment?.length) {
+            // 遍历当前周期下的所有设备
+            cycleChild.cycle.equipment.forEach(equ => {
+              if (equ && equ.id) {
+                const key = `${equ.id}`;
+                // 只计算未统计过的设备
+                if (!equipmentMap.has(key)) {
+                  equipmentMap.set(key, true);
+                  // 找到对应的周期数据并累加效率
+                  const cycleData = cycleMap.get(cycleChild.cycle.id);
+                  if (cycleData) {
+                    cycleData.maxLoad += Number(equ.efficiency || 0);
+                  }
+                }
               }
-            }
+            });
           }
-        });
+        })
       });
-
       // 生成日期列表
       const today = dayjs().startOf('day');
       const end = dayjs(endDate.value).startOf('day');
@@ -128,6 +142,10 @@ export default defineComponent({
     });
     
     onMounted(async () => {
+      nextTick(async () => {
+        // 无效果，待以后优化本页面
+        formHeight.value = await getPageHeight([formCard.value]);
+      })
       await fetchSpecialDates();
       await fetchProductList();
     })
@@ -136,7 +154,8 @@ export default defineComponent({
     const fetchProductList = async () => {
       const res = await request.get('/api/production_progress');
       tableData.value = res.data;
-      endDate.value = tableData.value[0].delivery_time
+      if(!tableData.value.length) return
+      endDate.value = tableData.value[0].notice.delivery_time
       // 集合equipment并且去重
       uniqueEquipments.value = [...res.data
         .flatMap(item => item?.bom?.children ?? [])
@@ -213,7 +232,7 @@ export default defineComponent({
         closeOnPressEscape: false,
         distinguishCancelAndClose: true
       }).then(() => {
-        const table  = tableData.value.filter(e => e.notice_number == row.notice_number)
+        const table  = tableData.value.filter(e => e.notice.notice == row.notice.notice)
         let params = []
         table.forEach(e => {
           params.push({
@@ -256,7 +275,7 @@ export default defineComponent({
       }).then(() => {
         let arr = []
         tableData.value.forEach(e => {
-          if(e.notice_number == param.notice_number){
+          if(e.notice_id == param.notice_id){
             e.cycleChild.forEach(o => {
               if(o.cycle.id == row.cycle.id){
                 arr.push(o)
@@ -366,13 +385,24 @@ export default defineComponent({
         }
       }
     };
+    const houseBlur = async (row) => {
+      const res = await request.post('/api/set_out_number', {
+        id: row.id,
+        house_number: row.house_number,
+        order_number: row.notice.sale.order_number
+      })
+      if(res.code == 200){
+        fetchProductList()
+      }
+    }
+
     return() => (
       <>
         <ElCard>
           {{
             header: () => {
               if(loadStats.value?.dates?.length && loadStats.value?.stats?.length){
-                return <ElTable data={loadStats.value.stats} border style={{ width: "100%" }} size="small" cellStyle={ loadCellStyle }>
+                return <ElTable data={loadStats.value.stats} border ref={ formCard } style={{ width: "100%" }} size="small" cellStyle={ loadCellStyle }>
                   <ElTableColumn prop="name" label="制程" width="100" align="center" />
                   <ElTableColumn label="极限负荷" width="90" align="center" >
                     {{
@@ -396,48 +426,52 @@ export default defineComponent({
             },
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe style={{ width: "100%", height: '400px' }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle } class="production">
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%", height: '400px' }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle } class="production">
                   <ElTableColumn label="生产订单号" width="120">
-                    { ({row}) => <div class="myCell">{row.notice_number}</div> }
+                    { ({row}) => <div class="myCell">{row.notice.notice}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="客户名称" width="120">
                     { ({row}) => <div class="myCell">{row.customer_abbreviation}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="客户订单号" width="120">
-                    { ({row}) => <div class="myCell">{row.customer_order}</div> }
+                    { ({row}) => <div class="myCell">{row.notice.sale.customer_order}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="接单日期" width="110">
-                    { ({row}) => <div class="myCell">{row.rece_time}</div> }
+                    { ({row}) => <div class="myCell">{row.notice.sale.rece_time}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="产品编码" width="120">
-                    { ({row}) => <div class="myCell">{row.product_code}</div> }
+                    { ({row}) => <div class="myCell">{row.product.product_code}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="产品名称" width="100">
-                    { ({row}) => <div class="myCell">{row.product_name}</div> }
+                    { ({row}) => <div class="myCell">{row.product.product_name}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="工程图号" width="100">
-                    { ({row}) => <div class="myCell">{row.product_drawing}</div> }
+                    { ({row}) => <div class="myCell">{row.product.drawing}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="生产特别要求" width="170">
                     { ({row}) => <div class="myCell">{row.remarks}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="订单数量" width="100">
-                    { ({row}) => <div class="myCell">{row.out_number}</div> }
+                    { ({row}) => <div class="myCell">{row.notice.sale.order_number}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="委外/库存数量" width="100">
-                    { ({row}) => <div class="myCell"></div> }
+                    { ({row}) => (
+                      <div class="myCell">
+                        <ElInput v-model={ row.house_number } type="number" placeholder="请输入" onBlur={ () => houseBlur(row) } />
+                      </div>
+                    ) }
                   </ElTableColumn>
                   <ElTableColumn label="生产数量" width="100">
                     { ({row}) => <div class="myCell">{row.out_number}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="客户交期" width="110">
-                    { ({row}) => <div class="myCell">{row.delivery_time}</div> }
+                    { ({row}) => <div class="myCell">{row.notice.delivery_time}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="部件编码" width="110">
-                    { ({row}) => <div class="myCell">{row.part_code}</div> }
+                    { ({row}) => <div class="myCell">{row.part.part_code}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="部件名称" width="110">
-                    { ({row}) => <div class="myCell">{row.part_name}</div> }
+                    { ({row}) => <div class="myCell">{row.part.part_name}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="预计生产起始时间" width="170">
                     {({row}) => <div class="myCell"><ElDatePicker v-model={ row.start_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 140px" onBlur={ (value) => dateChange(value, row) }></ElDatePicker></div>}
