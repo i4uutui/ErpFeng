@@ -19,6 +19,9 @@ export default defineComponent({
       process_name: [
         { required: true, message: '请输入工艺名称', trigger: 'blur' },
       ],
+      equipment_id: [
+        { required: true, message: '请选择设备', trigger: 'blur' },
+      ]
     })
     let dialogVisible = ref(false)
     let form = ref({

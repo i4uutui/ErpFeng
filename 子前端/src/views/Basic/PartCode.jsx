@@ -18,12 +18,12 @@ export default defineComponent({
       part_name: [
         { required: true, message: '请输入部件名称', trigger: 'blur' },
       ],
-      model: [
-        { required: true, message: '请输入型号', trigger: 'blur' },
-      ],
-      specification: [
-        { required: true, message: '请输入规格', trigger: 'blur' },
-      ],
+      // model: [
+      //   { required: true, message: '请输入型号', trigger: 'blur' },
+      // ],
+      // specification: [
+      //   { required: true, message: '请输入规格', trigger: 'blur' },
+      // ],
       unit: [
         { required: true, message: '请输入单位', trigger: 'blur' },
       ],

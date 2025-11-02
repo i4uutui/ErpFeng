@@ -250,8 +250,8 @@ export default defineComponent({
                 <ElFormItem label="其它特性" prop="other_features">
                   <ElInput v-model={ form.value.other_features } placeholder="请输入其它特性" />
                 </ElFormItem>
-                <ElFormItem label="备注" prop="remarks">
-                  <ElInput v-model={ form.value.remarks } placeholder="请输入备注" />
+                <ElFormItem label="材料类别" prop="remarks">
+                  <ElInput v-model={ form.value.remarks } placeholder="请输入材料类别" />
                 </ElFormItem>
               </ElForm>
             ),

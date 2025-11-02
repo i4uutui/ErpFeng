@@ -42,6 +42,9 @@
 .el-menu{
   border-right: 0 !important;
 }
+.el-dialog__header.show-close{
+  padding-right: 0 !important;
+}
 :root{
   --el-fill-color-light: #e7e7e7;
 }

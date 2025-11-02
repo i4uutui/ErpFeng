@@ -86,7 +86,7 @@ router.get('/getCustomerInfo', authMiddleware, async (req, res) => {
 
   const config = {
     where: { is_deleted: 1, company_id, ...customerWhere },
-    order: [['created_at', 'DESC']],
+    order: [['customer_code', 'ASC']],
     distinct: true,
   }
   const { count, rows } = await SubCustomerInfo.findAndCountAll(config);
@@ -115,7 +115,7 @@ router.get('/getProductsCode', authMiddleware, async (req, res) => {
   if(id) productWhere.id = id
   const config = {
     where: { is_deleted: 1, company_id, ...productWhere },
-    order: [['created_at', 'DESC']],
+    order: [['product_code', 'ASC']],
     distinct: true,
   }
   const { count, rows } = await SubProductCode.findAndCountAll(config);
@@ -143,7 +143,7 @@ router.get('/getPartCode', authMiddleware, async (req, res) => {
   if(part_code) partWhere.part_code = { [Op.like]: `%${part_code}%` }
   const config = {
     where: { is_deleted: 1, company_id, ...partWhere },
-    order: [['created_at', 'DESC']],
+    order: [['part_code', 'ASC']],
     distinct: true,
   }
   const { count, rows } = await SubPartCode.findAndCountAll(config);
@@ -180,7 +180,7 @@ router.get('/getMaterialCode', authMiddleware, async (req, res) => {
   
   const config = {
     where: { is_deleted: 1, company_id, ...materialWhere },
-    order: [['created_at', 'DESC']],
+    order: [['material_code', 'ASC']],
     distinct: true,
   }
   const { count, rows } = await SubMaterialCode.findAndCountAll(config);
@@ -208,7 +208,7 @@ router.get('/getProcessCode', authMiddleware, async (req, res) => {
   if(process_code) processWhere.process_code = { [Op.like]: `%${process_code}%` }
   const config = {
     where: { is_deleted: 1, company_id, ...processWhere },
-    order: [['created_at', 'DESC']],
+    order: [['process_code', 'ASC']],
   }
   const rows = await SubProcessCode.findAll(config);
   const row = rows.map(e => e.toJSON())
@@ -238,7 +238,7 @@ router.get('/getEquipmentCode', authMiddleware, async (req, res) => {
   if(equipment_code) where.equipment_code = { [Op.like]: `%${equipment_code}%` }
   const config = {
     where,
-    order: [['created_at', 'DESC']],
+    order: [['equipment_code', 'ASC']],
     distinct: true,
   }
   const { count, rows } = await SubEquipmentCode.findAndCountAll(config);
@@ -270,7 +270,7 @@ router.get('/getSupplierInfo', authMiddleware, async (req, res) => {
   if(id) supplierWhere.id = id
   const config = {
     where: { is_deleted: 1, company_id, ...supplierWhere },
-    order: [['created_at', 'DESC']],
+    order: [['supplier_code', 'ASC']],
     distinct: true,
   }
   const { count, rows } = await SubSupplierInfo.findAndCountAll(config);

@@ -245,7 +245,7 @@ export default defineComponent({
                   <ElTableColumn prop="delivery" label="送货方式" width="100" />
                   <ElTableColumn prop="packaging" label="包装要求" width="100" />
                   <ElTableColumn prop="other_transaction_terms" label="其它交易条件" width="120" />
-                  <ElTableColumn prop="remarks" label="备注" width="170" />
+                  <ElTableColumn prop="remarks" label="税票要求" width="170" />
                   <ElTableColumn prop="created_at" label="创建时间" width="120" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
@@ -312,8 +312,8 @@ export default defineComponent({
                 <ElFormItem label="其它交易条件" prop="other_transaction_terms">
                   <ElInput v-model={ form.value.other_transaction_terms } placeholder="请输入其它交易条件" />
                 </ElFormItem>
-                <ElFormItem label="备注" prop="remarks">
-                  <ElInput v-model={ form.value.remarks } placeholder="请输入备注" />
+                <ElFormItem label="税票要求" prop="remarks">
+                  <ElInput v-model={ form.value.remarks } placeholder="请输入税票要求" />
                 </ElFormItem>
               </ElForm>
             ),

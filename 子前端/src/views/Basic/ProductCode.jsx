@@ -239,10 +239,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改产品编码' : '新增产品编码' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改产品编码' : '新增产品编码' } width='745' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="80px">
+              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="80px">
                 <ElFormItem label="产品编码" prop="product_code">
                   <ElInput v-model={ form.value.product_code } placeholder="请输入产品编码" disabled={ !(edit.value == 0 || user.type == 1) } />
                 </ElFormItem>
@@ -274,7 +274,7 @@ export default defineComponent({
             ),
             footer: () => (
               <span class="dialog-footer">
-                <ElButton onClick={ handleClose }>取消</ElButton>
+                <ElButton type="warning" onClick={ handleClose }>取消</ElButton>
                 <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
               </span>
             )

@@ -34,13 +34,7 @@ export default defineComponent({
         { required: true, message: '请输入单位', trigger: 'blur' },
       ],
       delivery_time: [
-        { required: true, message: '请输入交货日期', trigger: 'blur' },
-      ],
-      goods_time: [
-        { required: true, message: '请输入送货日期', trigger: 'blur' },
-      ],
-      goods_address: [
-        { required: true, message: '请输入送货地址', trigger: 'blur' },
+        { required: true, message: '请输入预拟交期', trigger: 'blur' },
       ],
     })
     let dialogVisible = ref(false)
@@ -56,6 +50,7 @@ export default defineComponent({
       goods_time: '',
       goods_address: '',
     })
+    let customerList = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(20);
@@ -74,6 +69,7 @@ export default defineComponent({
         formHeight.value = await getPageHeight([formCard.value, pagin.value]);
       })
       fetchProductList()
+      getCustomerInfo()
     })
 
     // 获取列表
@@ -88,6 +84,13 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    // 获取客户信息列表
+    const getCustomerInfo = async () => {
+      const res = await request.get('/api/getCustomerInfo')
+      if(res.code == 200){
+        customerList.value = res.data
+      }
+    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
@@ -159,8 +162,9 @@ export default defineComponent({
         goods_address: '',
       }
     }
-    const customerChange = (row) => {
-      form.value.goods_address = row.delivery_address
+    const customerChange = (value) => {
+      const item = customerList.value.find(o => o.id == value)
+      form.value.goods_address = item.delivery_address
     }
     const productChange = (row) => {
       form.value.product_req = row.production_requirements
@@ -232,9 +236,16 @@ export default defineComponent({
                   <ElTableColumn prop="product_req" label="产品要求" width="140" />
                   <ElTableColumn prop="order_number" label="订单数量" width="100" />
                   <ElTableColumn prop="unit" label="单位" width="80" />
-                  <ElTableColumn prop="delivery_time" label="交货日期" width="120" />
-                  <ElTableColumn prop="goods_time" label="送货日期" width="120" />
+                  <ElTableColumn prop="delivery_time" label="预拟交期" width="120" />
                   <ElTableColumn prop="goods_address" label="送货地点" width="120" />
+                  <ElTableColumn label="是否已生成通知单" width="140">
+                    {{
+                      default: ({row}) => {
+                        const dom = row.notice ? '已生成' : <span style={{ color: 'red' }}>未生成</span>
+                        return dom
+                      }
+                    }}
+                  </ElTableColumn>
                   <ElTableColumn prop="created_at" label="创建时间" width="120" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
@@ -254,10 +265,17 @@ export default defineComponent({
             default: () => (
               <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
                 <ElFormItem label="接单日期" prop="rece_time">
-                  <ElDatePicker v-model={ form.value.rece_time } clearable={ false } value-format="YYYY-MM-DD" type="datetime" placeholder="请选择接单日期" />
+                  <ElDatePicker v-model={ form.value.rece_time } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="请选择接单日期" />
+                </ElFormItem>
+                <ElFormItem label="客户编码" prop="customer_id">
+                  <ElSelect v-model={ form.value.customer_id } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择客户编码" onChange={ (value) => customerChange(value) }>
+                    {customerList.value.map((e, index) => <ElOption value={ e.id } label={ e.customer_code } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="客户名称" prop="customer_id">
-                  <MySelect v-model={ form.value.customer_id } apiUrl="/api/getCustomerInfo" query="customer_abbreviation" itemValue="customer_abbreviation" placeholder="请选择客户名称" onChange={ (value) => customerChange(value) } />
+                  <ElSelect v-model={ form.value.customer_id } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择客户编码" onChange={ (value) => customerChange(value) }>
+                    {customerList.value.map((e, index) => <ElOption value={ e.id } label={ e.customer_abbreviation } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="客户订单号" prop="customer_order">
                   <ElInput v-model={ form.value.customer_order } placeholder="请输入客户订单号" />
@@ -274,13 +292,10 @@ export default defineComponent({
                 <ElFormItem label="单位" prop="unit">
                   <ElInput v-model={ form.value.unit } placeholder="请输入单位" />
                 </ElFormItem>
-                <ElFormItem label="交货日期" prop="delivery_time">
-                  <ElDatePicker v-model={ form.value.delivery_time } clearable={ false } value-format="YYYY-MM-DD" type="datetime" placeholder="请选择交货日期" />
+                <ElFormItem label="预拟交期" prop="delivery_time">
+                  <ElDatePicker v-model={ form.value.delivery_time } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="请选择预拟交期" />
                 </ElFormItem>
-                <ElFormItem label="送货日期" prop="goods_time">
-                  <ElDatePicker v-model={ form.value.goods_time } clearable={ false } value-format="YYYY-MM-DD" type="datetime" placeholder="请选择送货日期" />
-                </ElFormItem>
-                <ElFormItem label="送货地点" prop="goods_address">
+                <ElFormItem label="交货地点" prop="goods_address">
                   <ElInput v-model={ form.value.goods_address } placeholder="请输入送货地点" />
                 </ElFormItem>
               </ElForm>

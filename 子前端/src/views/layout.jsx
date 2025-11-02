@@ -24,7 +24,7 @@ export default defineComponent({
             开发者： 东莞元方企业管理咨询有限公司 | 徐庆华：18666885858
             </div>
             <div class="flex-1 text-center">
-            粤ICP备2024266535号-2 | SQ01-V1.01
+            粤ICP备2024266535号-2 | SQ01-V2.001
             </div>
             <div class="flex-1 text-right">
               使用企业： { company.name } | 使用者： { user.username }

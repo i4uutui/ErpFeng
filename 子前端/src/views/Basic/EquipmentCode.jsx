@@ -98,7 +98,7 @@ export default defineComponent({
       const hoursNum = Number(newWorkingHours) || 0;
 
       // 若任一为空或非有效数字，清空效能
-      if (!newAvailable || !newWorkingHours || isNaN(availableNum) || isNaN(hoursNum)) {
+      if (newAvailable < 0 || newWorkingHours < 0) {
         form.value.efficiency = '';
       } else {
         // 两者都有值时，计算乘积并赋值给效能

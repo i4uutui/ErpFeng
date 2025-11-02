@@ -1,6 +1,7 @@
 import { defineComponent, ref, onMounted, nextTick } from 'vue'
 import request from '@/utils/request';
 import { getPageHeight } from '@/utils/tool';
+import HeadForm from '@/components/form/HeadForm';
 
 export default defineComponent({
   setup(){
@@ -47,30 +48,44 @@ export default defineComponent({
       currentPage.value = val;
       fetchProductList();
     }
+    const goBack = () => {
+      window.location.href = "/#/purchase/material-quote";
+    }
 
     return() => (
       <>
         <ElCard>
           {{
             header: () => (
-              <div class="flex" ref={ formCard }>
-                <ElForm inline={ true } class="cardHeaderFrom">
-                  <ElFormItem label="供应商编码:">
-                    <ElInput v-model={ search.value.supplier_code } style="width: 240px" placeholder="请输入产品编码" />
-                  </ElFormItem>
-                  <ElFormItem label="供应商名称:">
-                    <ElInput v-model={ search.value.supplier_abbreviation } style="width: 240px" placeholder="请输入产品名称" />
-                  </ElFormItem>
-                  <ElFormItem label="材料编码:">
-                    <ElInput v-model={ search.value.material_code } style="width: 240px" placeholder="请输入产品编码" />
-                  </ElFormItem>
-                  <ElFormItem label="材料名称:">
-                    <ElInput v-model={ search.value.material_name } style="width: 240px" placeholder="请输入材料名称" />
-                  </ElFormItem>
-                  <ElFormItem>
-                    <ElButton style="margin-top: -5px" type="primary" onClick={ () => fetchProductList() }>查询</ElButton>
-                  </ElFormItem>
-                </ElForm>
+              <div class="flex row-between" ref={ formCard }>
+                <div class="flex flex-1">
+                  <div class="flex pl10">
+                    <span>供应商编码：</span>
+                    <ElInput v-model={ search.value.supplier_code } style={{ width: '160px' }} placeholder="请输入产品编码" />
+                  </div>
+                  <div class="flex pl10">
+                    <span>供应商名称：</span>
+                    <ElInput v-model={ search.value.supplier_abbreviation } style={{ width: '160px' }} placeholder="请输入产品名称" />
+                  </div>
+                  <div class="flex pl10">
+                    <span>材料编码：</span>
+                    <ElInput v-model={ search.value.material_code } style={{ width: '160px' }} placeholder="请输入产品编码" />
+                  </div>
+                  <div class="flex pl10">
+                    <span>材料名称：</span>
+                    <ElInput v-model={ search.value.material_name } style={{ width: '160px' }} placeholder="请输入材料名称" />
+                  </div>
+                  <div class="pl10">
+                    <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList } >
+                      查询
+                    </ElButton>
+                  </div>
+                </div>
+                <div class="pl10">
+                  <ElButton style="margin-top: -5px" type="warning" onClick={ () => goBack() } >
+                    返回
+                  </ElButton>
+                </div>
               </div>
             ),
             default: () => (

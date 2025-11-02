@@ -12,7 +12,7 @@ export default defineComponent({
       <div class="flex" style={{ alignItems: 'flex-start' }}>
         {
           slots.left ? 
-          <ElForm inline={ true } class="cardHeaderFrom" style={{ width: prop.headerWidth }}>
+          <ElForm class="mt10" inline={ true } class="cardHeaderFrom" style={{ width: prop.headerWidth }}>
             { slots.left() }
           </ElForm> : <></>
         }

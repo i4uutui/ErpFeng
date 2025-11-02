@@ -361,9 +361,9 @@ export default defineComponent({
                   {
                     form.value.children.map((e, index) => (
                       <>
-                        <div class="pl20">{ index + 1 }.</div>
                         <div key={ index }>
                           <ElFormItem label="工艺编码" prop={ `children[${index}].process_id` } rules={ rules.process_id }>
+                            
                             <MySelect v-model={ e.process_id } apiUrl="/api/getProcessCode" query="process_code" itemValue="process_code" placeholder="请选择工艺编码" onChange={ (value) => processChange(value, index) } />
                           </ElFormItem>
                           <ElFormItem label="设备编码" prop={ `children[${index}].equipment_id` } rules={ rules.equipment_id }>
@@ -392,6 +392,7 @@ export default defineComponent({
                                     if(form.value.children.length > 1){
                                       dom.push(<ElIcon style={{ fontSize: '26px', color: 'red', cursor: "pointer" }} onClick={ () => handledeletedJson(index) }><RemoveFilled /></ElIcon>)
                                     }
+                                    dom.push(<div class="pl20">{ index + 1 }</div>)
                                     return dom
                                   }
                                 }}

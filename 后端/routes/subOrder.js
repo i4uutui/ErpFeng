@@ -20,7 +20,7 @@ router.get('/customer_info', authMiddleware, async (req, res) => {
       company_id,
     },
     attributes: ['id', "customer_code", "customer_abbreviation", "contact_person", "contact_information", "company_full_name", "company_address", "delivery_address", "tax_registration_number", "transaction_method", "transaction_currency", "other_transaction_terms"],
-    order: [['created_at', 'DESC']],
+    order: [['customer_code', 'ASC']],
     distinct: true,
     limit: parseInt(pageSize),
     offset
@@ -144,7 +144,8 @@ router.get('/sale_order', authMiddleware, async (req, res) => {
     attributes: ['id', 'rece_time', 'customer_order', 'product_req', 'order_number', 'unit', 'delivery_time', 'goods_time', 'goods_address', 'created_at'],
     include: [
       { model: SubCustomerInfo, as: 'customer', attributes: ['id', 'customer_code', 'customer_abbreviation'], where: whereCustomer},
-      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing', 'component_structure', 'model', 'specification', 'other_features'], where: whereProduct }
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing', 'component_structure', 'model', 'specification', 'other_features'], where: whereProduct },
+      { model: SubProductNotice, as: 'notice', attributes: ['id'] }
     ],
     order: [
       ['product', 'product_name', 'DESC'],

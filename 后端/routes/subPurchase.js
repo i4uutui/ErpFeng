@@ -50,7 +50,7 @@ router.get('/supplier_info', authMiddleware, async (req, res) => {
       is_deleted: 1,
       company_id,
     },
-    order: [['created_at', 'DESC']],
+    order: [['supplier_code', 'ASC']],
     distinct: true,
     limit: parseInt(pageSize),
     offset
