@@ -264,9 +264,26 @@ router.put('/process_bom', authMiddleware, async (req, res) => {
     }
     // 批量新增/更新保留的子项
     const childrens = children.map(e => ({ process_bom_id: process.id, ...e }));
-    await SubProcessBomChild.bulkCreate(childrens, {
+    const updatedChildren = await SubProcessBomChild.bulkCreate(childrens, {
       updateOnDuplicate: ['process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'points'], // 按需调整更新字段
+      returning: true, // 让数据库返回新增记录的完整数据（含自增ID）
     });
+    // 新增的子项需要生成二维码（判断是否有id，没有id的是新增的）
+    const newChildren = updatedChildren.filter(child => !childrens.some(c => c.id === child.id));
+    const updateData = [];
+    for (const e of newChildren) {
+      const data = e.toJSON();
+      const qr_code = await MainDataService.generateAndUploadQrcode( `${BaseConfig.bomQrCode_url}?id=${data.id}&company_id=${company_id}` );
+      updateData.push({
+        id: data.id,
+        qr_code
+      });
+    }
+    if (updateData.length > 0) {
+      await SubProcessBomChild.bulkCreate(updateData, {
+        updateOnDuplicate: ['qr_code']
+      });
+    }
   }
 
   res.json({ message: '修改成功', code: 200 });

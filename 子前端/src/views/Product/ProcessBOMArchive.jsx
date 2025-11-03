@@ -179,14 +179,23 @@ export default defineComponent({
         }
       })
     }
+    const columnLength = 5 // 表示前面不需要颜色的列数
     const headerCellStyle = ({ columnIndex, rowIndex, column }) => {
-      if(rowIndex >= 1 || columnIndex >= 5 && column.label != '操作'){
+      if(!tableData.value.length) return
+
+      if(rowIndex == 0 && columnIndex >= columnLength && Math.floor(columnIndex - columnLength) % 2 == 0 && column.label != '操作'){
+        return { backgroundColor: '#fbe1e5' }
+      }
+      if(rowIndex == 1 && Math.floor(columnIndex / 8) % 2 == 0){
         return { backgroundColor: '#fbe1e5' }
       }
     }
     const cellStyle = ({ columnIndex, rowIndex, column }) => {
-      if(columnIndex >= 5 && column.label != '操作'){
-        return { backgroundColor: '#fbe1e5' }
+      if (columnIndex >= columnLength && column.label != '操作') {
+        const offset = columnIndex - columnLength; 
+        if (Math.floor(offset / 8) % 2 === 0) {
+          return { backgroundColor: '#fbe1e5' };
+        }
       }
     }
     const handleUplate = ({ id, product_id, part_id, children }) => {
@@ -301,7 +310,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺BOM信息' : '新增工艺BOM信息' } width='800' center bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺BOM信息' : '新增工艺BOM信息' } width='800' center draggable bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="105px">

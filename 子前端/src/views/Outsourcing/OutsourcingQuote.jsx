@@ -292,7 +292,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改委外报价' : '新增委外报价' } width='775' center onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改委外报价' : '新增委外报价' } width='775' center draggable onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm class="ml20" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">

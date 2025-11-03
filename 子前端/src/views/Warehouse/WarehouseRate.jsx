@@ -181,10 +181,10 @@ export default defineComponent({
             </div>
           </div>
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title='修改物料' onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title='修改物料' width='745' center draggable onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+              <ElForm class="ml25" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="80">
                 <ElFormItem label="物料编码">
                   <ElInput v-model={ form.value.code } disabled={ true } />
                 </ElFormItem>

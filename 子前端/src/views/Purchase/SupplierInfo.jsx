@@ -49,7 +49,7 @@ export default defineComponent({
       contact_information: '',
       supplier_full_name: '',
       supplier_address: '',
-      supplier_category: '',
+      supplier_category: [],
       supply_method: '',
       transaction_method: '',
       transaction_currency: '',
@@ -57,6 +57,8 @@ export default defineComponent({
     })
     let method = ref([])
     let payTime = ref([])
+    let supplyMethod = ref([])
+    let supplierType = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(20);
@@ -79,15 +81,21 @@ export default defineComponent({
           pageSize: pageSize.value
         },
       });
-      tableData.value = res.data;
+      const data = res.data.map(e => {
+        e.supplier_category = e.supplier_category ? JSON.parse(e.supplier_category) : []
+        return e
+      })
+      tableData.value = data;
       total.value = res.total;
     };
     // 获取常量
     const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['payInfo', 'payTime'] })
+      const res = await request.post('/api/getConstType', { type: ['payInfo', 'payTime', 'supplyMethod', 'supplierType'] })
       if(res.code == 200){
         method.value = res.data.filter(o => o.type == 'payInfo')
         payTime.value = res.data.filter(o => o.type == 'payTime')
+        supplyMethod.value =  res.data.filter(o => o.type == 'supplyMethod')
+        supplierType.value = res.data.filter(o => o.type == 'supplierType')
       }
     }
     const handleSubmit = async (formEl) => {
@@ -96,6 +104,8 @@ export default defineComponent({
         if (valid){
           if(!edit.value){
             form.value.other_transaction_terms = form.value.other_transaction_terms ? form.value.other_transaction_terms : null
+            form.value.supply_method = form.value.supply_method ? form.value.supply_method : null
+            form.value.supplier_category = form.value.supplier_category.length ? JSON.stringify(form.value.supplier_category) : ''
             const res = await request.post('/api/supplier_info', form.value);
             if(res && res.code == 200){
               ElMessage.success('新增成功');
@@ -112,6 +122,8 @@ export default defineComponent({
           }else{
             // 修改
             form.value.other_transaction_terms = form.value.other_transaction_terms ? form.value.other_transaction_terms : null
+            form.value.supply_method = form.value.supply_method ? form.value.supply_method : null
+            form.value.supplier_category = form.value.supplier_category.length ? JSON.stringify(form.value.supplier_category) : ''
             const myForm = {
               id: edit.value,
               ...form.value
@@ -174,6 +186,22 @@ export default defineComponent({
       currentPage.value = val;
       fetchProductList();
     }
+    function getTableRow(value){
+      if(Array.isArray(value)){
+        const arr = supplierType.value.filter(e => value.includes(e.id))
+        return arr.map(o => o.name).join('，')
+      }else{
+        return ''
+      }
+      console.log(value);
+      const arr = supplierType.value.filter(e => e.id == value)
+      if(arr.length){
+        console.log(arr.map(o => o.name));
+        return arr.map(o => o.name)
+      }else{
+        return ''
+      }
+    }
 
     return() => (
       <>
@@ -189,18 +217,22 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
-                  <ElTableColumn prop="supplier_code" label="供应商编码" />
-                  <ElTableColumn prop="supplier_abbreviation" label="供应商简称" />
-                  <ElTableColumn prop="contact_person" label="联系人" />
+                  <ElTableColumn prop="supplier_code" label="供应商编码" width="100" />
+                  <ElTableColumn prop="supplier_abbreviation" label="供应商简称" width="100" />
+                  <ElTableColumn prop="contact_person" label="联系人" width="100" />
                   <ElTableColumn prop="contact_information" label="联系方式" width="130" />
                   <ElTableColumn prop="supplier_full_name" label="供应商全名" width="130" />
                   <ElTableColumn prop="supplier_address" label="供应商地址" width="130" />
-                  <ElTableColumn prop="supplier_category" label="供应商类别" />
-                  <ElTableColumn prop="supply_method" label="供货方式" />
-                  <ElTableColumn label="交易方式">
+                  <ElTableColumn label="供应商类别" width="120">
+                    {({row}) => <span>{ getTableRow(row.supplier_category) }</span>}
+                  </ElTableColumn>
+                  <ElTableColumn label="供货方式" width="100">
+                    {({row}) => <span>{ supplyMethod.value.find(e => e.id == row.supply_method)?.name }</span>}
+                  </ElTableColumn>
+                  <ElTableColumn label="交易方式" width="100">
                     {({row}) => <span>{ method.value.find(e => e.id == row.transaction_method)?.name }</span>}
                   </ElTableColumn>
-                  <ElTableColumn prop="transaction_currency" label="交易币别" />
+                  <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
                   <ElTableColumn prop="other_transaction_terms" label="其它交易条件" width="120">
                     {({row}) => <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>}
                   </ElTableColumn>
@@ -218,43 +250,47 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改供应商信息' : '新增供应商信息' } width='795' center onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改供应商信息' : '新增供应商信息' } width='825' center draggable onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm class="ml25" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="105">
-                <ElFormItem label="供应商编码" prop="supplier_code">
+              <ElForm class="ml25 multipleStyle" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="105">
+                <ElFormItem label="供应商编码" prop="supplier_code" style={{ width: '350px' }}>
                   <ElInput v-model={ form.value.supplier_code } placeholder="请输入供应商编码" />
                 </ElFormItem>
-                <ElFormItem label="供应商简称" prop="supplier_abbreviation">
+                <ElFormItem label="供应商简称" prop="supplier_abbreviation" style={{ width: '350px' }}>
                   <ElInput v-model={ form.value.supplier_abbreviation } placeholder="请输入供应商简称" />
                 </ElFormItem>
-                <ElFormItem label="联系人" prop="contact_person">
+                <ElFormItem label="联系人" prop="contact_person" style={{ width: '350px' }}>
                   <ElInput v-model={ form.value.contact_person } placeholder="请输入联系人" />
                 </ElFormItem>
-                <ElFormItem label="联系方式" prop="contact_information">
+                <ElFormItem label="联系方式" prop="contact_information" style={{ width: '350px' }}>
                   <ElInput v-model={ form.value.contact_information } placeholder="请输入联系方式" />
                 </ElFormItem>
-                <ElFormItem label="供应商全名" prop="supplier_full_name">
+                <ElFormItem label="供应商全名" prop="supplier_full_name" style={{ width: '350px' }}>
                   <ElInput v-model={ form.value.supplier_full_name } placeholder="请输入供应商全名" />
                 </ElFormItem>
-                <ElFormItem label="供应商地址" prop="supplier_address">
+                <ElFormItem label="供应商地址" prop="supplier_address" style={{ width: '350px' }}>
                   <ElInput v-model={ form.value.supplier_address } placeholder="请输入供应商地址" />
                 </ElFormItem>
-                <ElFormItem label="供应商类别" prop="supplier_category">
-                  <ElInput v-model={ form.value.supplier_category } placeholder="请输入供应商类别" />
+                <ElFormItem label="供应商类别" prop="supplier_category" style={{ width: '350px' }}>
+                  <ElSelect v-model={ form.value.supplier_category } multiple filterable remote remote-show-suffix clearable placeholder="请选择供应商类别">
+                    {supplierType.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="供货方式" prop="supply_method">
-                  <ElInput v-model={ form.value.supply_method } placeholder="请输入供货方式" />
+                <ElFormItem label="供货方式" prop="supply_method" style={{ width: '350px' }}>
+                  <ElSelect v-model={ form.value.supply_method } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择供应商类别">
+                    {supplyMethod.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="交易方式" prop="transaction_method">
+                <ElFormItem label="交易方式" prop="transaction_method" style={{ width: '350px' }}>
                   <ElSelect v-model={ form.value.transaction_method } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择交易方式">
                     {method.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="交易币别" prop="transaction_currency">
+                <ElFormItem label="交易币别" prop="transaction_currency" style={{ width: '350px' }}>
                   <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
                 </ElFormItem>
-                <ElFormItem label="其它交易条件" prop="other_transaction_terms">
+                <ElFormItem label="其它交易条件" prop="other_transaction_terms" style={{ width: '350px' }}>
                   <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择其它交易条件">
                     {payTime.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>

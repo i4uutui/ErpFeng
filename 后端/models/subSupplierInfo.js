@@ -55,7 +55,7 @@ const SubSupplierInfo = sequelize.define('SubSupplierInfo', {
     comment: '供应商类别'
   },
   supply_method: {
-    type: DataTypes.STRING(50),
+    type: DataTypes.INTEGER(),
     allowNull: true,
     comment: '供货方式'
   },

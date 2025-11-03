@@ -286,7 +286,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改用户' : '新增用户' } width='765' center onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改用户' : '新增用户' } width='765' center draggable onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm class="ml10" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">
