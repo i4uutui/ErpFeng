@@ -1,6 +1,6 @@
 const qrcode = require('qrcode');
 const qiniu = require('qiniu');
-const { getUploadToken, config, domain } = require('../config/qinniu');
+const { getUploadToken, deleteFile, config, domain } = require('../config/qinniu');
 const { v4: uuidv4 } = require('uuid');
 
 // 生成二维码并上传到七牛云
@@ -56,6 +56,51 @@ const bufferToStream = (buffer) => {
   return stream;
 };
 
+/**
+ * 七牛云空间单文件删除
+ * @param {string} key - 文件名（包含路径，如"qrcodes/xxx.png"）
+ */
+const removeQiniuFile = async (key) => {
+  try {
+    if (!key) {
+      throw new Error('文件key不能为空');
+    }
+    await deleteFile(key);
+    return { success: true, message: '文件删除成功' };
+  } catch (error) {
+    console.error('七牛云文件删除失败:', error);
+    throw new Error(`文件删除失败：${error.message}`);
+  }
+};
+
+/**
+ * 七牛云空间批量文件删除
+ * @param {string} keys - 文件名数组（包含路径，如["qrcodes/xxx.png"]）
+ */
+const batchRemoveQiniuFiles = async (keys) => {
+  try {
+    // 参数校验
+    if (!Array.isArray(keys)) throw new Error('文件key列表必须是数组格式');
+    if (keys.length === 0) throw new Error('文件key列表不能为空');
+    // 去重（避免重复删除无效key）
+    const uniqueKeys = [...new Set(keys)];
+    if (uniqueKeys.length > 1000) throw new Error('单次批量删除最多支持1000个文件');
+
+    // 调用批量删除核心函数
+    const result = await batchDeleteFiles(uniqueKeys);
+    return {
+      success: true,
+      message: `批量删除完成：总计${result.total}个文件，成功${result.successCount}个，失败${result.failCount}个`,
+      data: result // 包含成功/失败的key详情
+    };
+  } catch (error) {
+    console.error('七牛云批量文件删除失败:', error);
+    throw new Error(`批量删除失败：${error.message}`);
+  }
+};
+
 module.exports = {
-  generateAndUploadQrcode
+  generateAndUploadQrcode,
+  removeQiniuFile,
+  batchRemoveQiniuFiles
 };
