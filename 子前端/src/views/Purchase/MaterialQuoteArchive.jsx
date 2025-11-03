@@ -98,8 +98,7 @@ export default defineComponent({
                   </ElTableColumn> */}
                   <ElTableColumn prop="material.material_code" label="材料编码" width="100" />
                   <ElTableColumn prop="material.material_name" label="材料名称" width="100" />
-                  <ElTableColumn prop="material.model" label="型号" width="100" />
-                  <ElTableColumn prop="material.specification" label="规格" width="100" />
+                  <ElTableColumn prop="material.model" label="型号&规格" width="180" />
                   <ElTableColumn prop="material.other_features" label="其他特性" width="100" />
                   <ElTableColumn prop="price" label="采购单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />

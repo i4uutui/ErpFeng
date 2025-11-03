@@ -61,6 +61,7 @@ export default defineComponent({
     let total = ref(0);
     let edit = ref(0)
     let method = ref([])
+    let payTime = ref([])
     let search = ref({
       customer_code: '',
       customer_abbreviation: ''
@@ -88,9 +89,10 @@ export default defineComponent({
     };
     // 获取常量
     const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: 'payInfo' })
+      const res = await request.post('/api/getConstType', { type: ['payInfo', 'payTime'] })
       if(res.code == 200){
-        method.value = res.data
+        method.value = res.data.filter(o => o.type == 'payInfo')
+        payTime.value = res.data.filter(o => o.type == 'payTime')
       }
     }
     const handleSubmit = async (formEl) => {
@@ -98,6 +100,7 @@ export default defineComponent({
       await formEl.validate(async (valid, fields) => {
         if (valid){
           if(!edit.value){
+            form.value.other_transaction_terms = form.value.other_transaction_terms ? form.value.other_transaction_terms : null
             const res = await request.post('/api/customer_info', form.value);
             if(res && res.code == 200){
               ElMessage.success('新增成功');
@@ -113,6 +116,7 @@ export default defineComponent({
             
           }else{
             // 修改
+            form.value.other_transaction_terms = form.value.other_transaction_terms ? form.value.other_transaction_terms : null
             const myForm = {
               id: edit.value,
               ...form.value
@@ -211,10 +215,10 @@ export default defineComponent({
                   </ElFormItem>
                 </ElForm>
                 <ElForm inline={ true } class="cardHeaderFrom">
-                  <ElFormItem label="客户编码">
+                  <ElFormItem label="客户编码：">
                     <ElInput v-model={ search.value.customer_code } placeholder="请输入客户编码" />
                   </ElFormItem>
-                  <ElFormItem label="客户名称">
+                  <ElFormItem label="客户名称：">
                     <ElInput v-model={ search.value.customer_abbreviation } placeholder="请输入客户名称" />
                   </ElFormItem>
                   <ElFormItem>
@@ -234,11 +238,13 @@ export default defineComponent({
                   <ElTableColumn prop="company_address" label="公司地址" />
                   <ElTableColumn prop="delivery_address" label="交货地址" />
                   <ElTableColumn prop="tax_registration_number" label="税务登记号" />
-                  <ElTableColumn prop="transaction_method" label="交易方式">
+                  <ElTableColumn label="交易方式">
                     {({row}) => <span>{ method.value.find(e => e.id == row.transaction_method)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn prop="transaction_currency" label="交易币别" />
-                  <ElTableColumn prop="other_transaction_terms" label="其它交易条件" />
+                  <ElTableColumn label="其它交易条件">
+                    {({row}) => <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
@@ -253,10 +259,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改客户信息' : '新增客户信息' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改客户信息' : '新增客户信息' } width='790' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="100">
                 <ElFormItem label="客户编码" prop="customer_code">
                   <ElInput v-model={ form.value.customer_code } placeholder="请输入客户编码" />
                 </ElFormItem>
@@ -290,7 +296,9 @@ export default defineComponent({
                   <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
                 </ElFormItem>
                 <ElFormItem label="其它交易条件" prop="other_transaction_terms">
-                  <ElInput v-model={ form.value.other_transaction_terms } placeholder="请输入其它交易条件" />
+                  <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择其它交易条件">
+                    {payTime.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
               </ElForm>
             ),

@@ -49,9 +49,12 @@ export default defineComponent({
     let currentPage = ref(1);
     let pageSize = ref(20);
     let total = ref(0);
-    let product_code = ref('')
-    let product_name = ref('')
     let edit = ref('')
+    let search = ref({
+      product_code: '',
+      product_name: '',
+      drawing: ''
+    })
 
     const maxBomLength = computed(() => {
       if (tableData.value.length === 0) return 0;
@@ -99,8 +102,7 @@ export default defineComponent({
           page: currentPage.value,
           pageSize: pageSize.value,
           archive: 0,
-          product_code: product_code.value,
-          product_name: product_name.value,
+          ...search.value
         },
       });
       tableData.value = res.data;
@@ -240,11 +242,15 @@ export default defineComponent({
                 <div class='flex flex-1'>
                   <div class="flex pl10">
                     <span>产品编码：</span>
-                    <ElInput v-model={ product_code.value } style="width: 240px" placeholder="请输入产品编码" />
+                    <ElInput v-model={ search.value.product_code } style="width: 240px" placeholder="请输入产品编码" />
                   </div>
                   <div class="flex pl10">
                     <span>产品名称：</span>
-                    <ElInput v-model={ product_name.value } style="width: 240px" placeholder="请输入产品名称" />
+                    <ElInput v-model={ search.value.product_name } style="width: 240px" placeholder="请输入产品名称" />
+                  </div>
+                  <div class="flex pl10">
+                    <span>工程图号：</span>
+                    <ElInput v-model={ search.value.drawing } style="width: 240px" placeholder="请输入工程图号" />
                   </div>
                   <div class="pl10">
                     <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList } >
@@ -262,22 +268,22 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ processedTableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
-                  <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" />
-                  <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" />
-                  <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" />
-                  <ElTableColumn prop="part.part_code" label="部位编码" fixed="left" />
-                  <ElTableColumn prop="part.part_name" label="部位名称" fixed="left" />
+                  <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" minWidth="100" />
+                  <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" minWidth="100" />
+                  <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" minWidth="100" />
+                  <ElTableColumn prop="part.part_code" label="部位编码" fixed="left" minWidth="100" />
+                  <ElTableColumn prop="part.part_name" label="部位名称" fixed="left" minWidth="100" />
                   {
                     Array.from({ length: maxBomLength.value }).map((_, index) => (
                       <ElTableColumn label={`工序-${index + 1}`} key={index}>
-                        <ElTableColumn prop={`children[${index}].process.process_code`} label="工艺编码" />
-                        <ElTableColumn prop={`children[${index}].process.process_name`} label="工艺名称" />
-                        <ElTableColumn prop={`children[${index}].equipment.equipment_code`} label="设备编码" />
-                        <ElTableColumn prop={`children[${index}].equipment.equipment_name`} label="设备名称" />
-                        <ElTableColumn prop={`children[${index}].time`} label="单件工时" />
-                        <ElTableColumn prop={`children[${index}].price`} label="加工单价" />
+                        <ElTableColumn prop={`children[${index}].process.process_code`} label="工艺编码" minWidth="100" />
+                        <ElTableColumn prop={`children[${index}].process.process_name`} label="工艺名称" minWidth="100" />
+                        <ElTableColumn prop={`children[${index}].equipment.equipment_code`} label="设备编码" minWidth="100" />
+                        <ElTableColumn prop={`children[${index}].equipment.equipment_name`} label="设备名称" minWidth="100" />
+                        <ElTableColumn prop={`children[${index}].time`} label="单件工时" minWidth="100" />
+                        <ElTableColumn prop={`children[${index}].price`} label="加工单价" minWidth="100" />
                         <ElTableColumn prop={`children[${index}].points`} label="段数点数" />
-                        <ElTableColumn prop={`children[${index}].equipment.cycle.name`} label="生产制程" />
+                        <ElTableColumn prop={`children[${index}].equipment.cycle.name`} label="生产制程" minWidth="100" />
                       </ElTableColumn>
                     ))
                   }
@@ -295,10 +301,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺BOM信息' : '新增工艺BOM信息' } bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺BOM信息' : '新增工艺BOM信息' } width='800' center bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="105px">
                 <ElFormItem label="产品编码" prop="product_id">
                   <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_code" itemValue="product_code" placeholder="请选择产品编码" />
                 </ElFormItem>

@@ -123,7 +123,7 @@ router.delete('/customer_info/:id', authMiddleware, async (req, res) => {
 
 // 获取销售订单列表（分页）
 router.get('/sale_order', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10, customer_code, customer_abbreviation, customer_order, product_code, product_name } = req.query;
+  const { page = 1, pageSize = 10, customer_code, customer_abbreviation, customer_order, product_code, product_name, drawing } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
   
@@ -134,6 +134,7 @@ router.get('/sale_order', authMiddleware, async (req, res) => {
   if(customer_abbreviation) whereCustomer.customer_abbreviation = { [Op.like]: `%${customer_abbreviation}%` }
   if(product_code) whereProduct.product_code = { [Op.like]: `%${product_code}%` }
   if(product_name) whereProduct.product_name = { [Op.like]: `%${product_name}%` }
+  if(drawing) whereProduct.drawing = { [Op.like]: `%${drawing}%` }
   if(customer_order) whereSale.customer_order = { [Op.like]: `%${customer_order}%` }
   const { count, rows } = await SubSaleOrder.findAndCountAll({
     where: {
@@ -266,7 +267,7 @@ router.put('/sale_order', authMiddleware, async (req, res) => {
 
 // 获取产品报价列表（分页）
 router.get('/product_quotation', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10, customer_code, customer_abbreviation, notice, product_code, product_name } = req.query;
+  const { page = 1, pageSize = 10, customer_code, customer_abbreviation, notice, product_code, product_name, drawing } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
   
@@ -277,6 +278,7 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
   if(customer_abbreviation) whereCustomer.customer_abbreviation = { [Op.like]: `%${customer_abbreviation}%` }
   if(product_code) whereProduct.product_code = { [Op.like]: `%${product_code}%` }
   if(product_name) whereProduct.product_name = { [Op.like]: `%${product_name}%` }
+  if(drawing) whereProduct.drawing = { [Op.like]: `%${drawing}%` }
   if(notice) whereNotice.notice = { [Op.like]: `%${notice}%` }
   const { count, rows } = await SubProductQuotation.findAndCountAll({
     where: {
@@ -288,7 +290,7 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
     include: [
       { model: SubSaleOrder, as: 'sale', attributes: ['id', 'customer_order', 'order_number', 'unit'] },
       { model: SubCustomerInfo, as: 'customer', attributes: ['id', 'customer_code', 'customer_abbreviation'], where: whereCustomer },
-      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'model', 'specification', 'other_features'], where: whereProduct }
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'model', 'specification', 'other_features', 'drawing'], where: whereProduct }
     ],
     order: [
       ['product', 'product_name', 'DESC'],
@@ -373,7 +375,7 @@ router.put('/product_quotation', authMiddleware, async (req, res) => {
 
 // 生产通知单
 router.get('/product_notice', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10, notice, customer_code, customer_abbreviation, product_code, product_name, customer_order, goods_address, is_finish } = req.query;
+  const { page = 1, pageSize = 10, notice, customer_code, customer_abbreviation, product_code, product_name, drawing, customer_order, goods_address, is_finish } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
 
@@ -388,6 +390,7 @@ router.get('/product_notice', authMiddleware, async (req, res) => {
   if(notice) whereObj.notice = { [Op.like]: `%${notice}%` }
   if(product_code) whereProduct.product_code = { [Op.like]: `%${product_code}%` }
   if(product_name) whereProduct.product_name = { [Op.like]: `%${product_name}%` }
+  if(drawing) whereProduct.drawing = { [Op.like]: `%${drawing}%` }
   const { count, rows } = await SubProductNotice.findAndCountAll({
     where: {
       is_deleted: 1,

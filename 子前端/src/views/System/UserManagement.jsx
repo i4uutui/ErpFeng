@@ -286,10 +286,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改用户' : '新增用户' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改用户' : '新增用户' } width='765' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } rules={ rules } label-width="80px">
+              <ElForm class="ml10" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">
                 <ElFormItem label="用户名" prop="username">
                   <ElInput v-model={ form.value.username } placeholder="请输入用户名" />
                 </ElFormItem>

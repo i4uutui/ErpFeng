@@ -172,10 +172,10 @@ export default defineComponent({
                   </ElFormItem>
                 </ElForm>
                 <ElForm inline={ true } class="cardHeaderFrom">
-                  <ElFormItem label="工艺编码">
+                  <ElFormItem label="工艺编码：">
                     <ElInput v-model={ search.value.code } placeholder="请输入工艺编码" />
                   </ElFormItem>
-                  <ElFormItem label="工艺名称">
+                  <ElFormItem label="工艺名称：">
                     <ElInput v-model={ search.value.name } placeholder="请输入工艺名称" />
                   </ElFormItem>
                   <ElFormItem>
@@ -187,7 +187,7 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
-                  <ElTableColumn prop="process_code" label="工艺编码" />
+                  <ElTableColumn prop="process_code" label="工艺编码" width="120" />
                   <ElTableColumn prop="process_name" label="工艺名称" />
                   <ElTableColumn prop="equipment.equipment_code" label="设备编码" />
                   <ElTableColumn prop="equipment.equipment_name" label="设备名称" />
@@ -206,10 +206,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺编码' : '新增工艺编码' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺编码' : '新增工艺编码' } width='785' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95px">
                 <ElFormItem label="工艺编码" prop="process_code">
                   <ElInput v-model={ form.value.process_code } placeholder="请输入工艺编码" disabled={ !(edit.value == 0 || user.type == 1) } />
                 </ElFormItem>

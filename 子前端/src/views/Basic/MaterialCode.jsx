@@ -188,10 +188,10 @@ export default defineComponent({
                   </ElFormItem>
                 </ElForm>
                 <ElForm inline={ true } class="cardHeaderFrom">
-                  <ElFormItem label="材料编码">
+                  <ElFormItem label="材料编码：">
                     <ElInput v-model={ search.value.code } placeholder="请输入材料编码" />
                   </ElFormItem>
-                  <ElFormItem label="材料名称">
+                  <ElFormItem label="材料名称：">
                     <ElInput v-model={ search.value.name } placeholder="请输入材料名称" />
                   </ElFormItem>
                   <ElFormItem>
@@ -203,10 +203,10 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
-                  <ElTableColumn prop="material_code" label="材料编码" />
+                  <ElTableColumn prop="material_code" label="材料编码" width="120" />
                   <ElTableColumn prop="material_name" label="材料名称" />
-                  <ElTableColumn prop="model" label="型号" />
-                  <ElTableColumn prop="specification" label="规格" />
+                  <ElTableColumn prop="model" label="型号&规格" width="180" />
+                  {/* <ElTableColumn prop="specification" label="规格" /> */}
                   <ElTableColumn prop="other_features" label="其它特性" />
                   <ElTableColumn prop="usage_unit" label="使用单位" />
                   <ElTableColumn prop="purchase_unit" label="采购单位" />
@@ -225,22 +225,22 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改材料编码' : '新增材料编码' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改材料编码' : '新增材料编码' } width='785' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="80px">
+              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95px">
                 <ElFormItem label="材料编码" prop="material_code">
                   <ElInput v-model={ form.value.material_code } placeholder="请输入材料编码" disabled={ !(edit.value == 0 || user.type == 1) } />
                 </ElFormItem>
                 <ElFormItem label="材料名称" prop="material_name">
                   <ElInput v-model={ form.value.material_name } placeholder="请输入材料名称" />
                 </ElFormItem>
-                <ElFormItem label="型号" prop="model">
-                  <ElInput v-model={ form.value.model } placeholder="请输入型号" />
+                <ElFormItem label="型号&规格" prop="model">
+                  <ElInput v-model={ form.value.model } placeholder="请输入型号&规格" />
                 </ElFormItem>
-                <ElFormItem label="规格" prop="specification">
+                {/* <ElFormItem label="规格" prop="specification">
                   <ElInput v-model={ form.value.specification } placeholder="请输入规格" />
-                </ElFormItem>
+                </ElFormItem> */}
                 <ElFormItem label="使用单位" prop="usage_unit">
                   <ElInput v-model={ form.value.usage_unit } placeholder="请输入使用单位" />
                 </ElFormItem>

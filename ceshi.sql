@@ -291,6 +291,11 @@ INSERT INTO `sub_const_type` VALUES (20, 'employeeInfo', '月薪', '2025-10-22 1
 INSERT INTO `sub_const_type` VALUES (21, 'payInfo', '现金', '2025-10-22 13:12:54', '2025-10-22 13:12:54');
 INSERT INTO `sub_const_type` VALUES (22, 'payInfo', '支票', '2025-10-22 13:13:00', '2025-10-22 13:13:15');
 INSERT INTO `sub_const_type` VALUES (23, 'payInfo', '存兑', '2025-10-22 13:13:13', '2025-10-22 13:13:16');
+INSERT INTO `sub_const_type` VALUES (24, 'payTime', '货到付款', '2025-11-03 05:57:18', '2025-11-03 05:57:18');
+INSERT INTO `sub_const_type` VALUES (25, 'payTime', '月结30天', '2025-11-03 05:57:40', '2025-11-03 05:57:40');
+INSERT INTO `sub_const_type` VALUES (26, 'payTime', '月结60天', '2025-11-03 05:57:55', '2025-11-03 05:57:55');
+INSERT INTO `sub_const_type` VALUES (27, 'payTime', '月结90天', '2025-11-03 05:58:13', '2025-11-03 05:58:13');
+INSERT INTO `sub_const_type` VALUES (28, 'payTime', '其他', '2025-11-03 05:58:23', '2025-11-03 05:58:23');
 
 -- ----------------------------
 -- Table structure for sub_customer_info
@@ -310,7 +315,7 @@ CREATE TABLE `sub_customer_info`  (
   `tax_registration_number` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '税务登记号',
   `transaction_method` int(5) NULL DEFAULT NULL COMMENT '交易方式',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
-  `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '其它交易条件',
+  `other_transaction_terms` int(11) NULL DEFAULT NULL COMMENT '其它交易条件',
   `is_deleted` int(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -323,8 +328,8 @@ CREATE TABLE `sub_customer_info`  (
 INSERT INTO `sub_customer_info` VALUES (1, 1, 1, '123223', '石龙佳洁士', '1', '1', '1', '1', '1', '1', 22, '1', '1', 1, '2025-07-08 19:29:21', '2025-10-22 13:14:26');
 INSERT INTO `sub_customer_info` VALUES (2, 1, 1, '1234', '惠州饮料厂', '212', '121', '21', '121', '2121', '21', 21, '2121', '2121', 1, '2025-07-09 00:58:19', '2025-10-22 13:18:16');
 INSERT INTO `sub_customer_info` VALUES (3, 1, 1, '12311', '东莞鞋厂', '12', '1', '15', '155', '15', '15', 23, '55', '11', 1, '2025-07-09 15:04:51', '2025-10-22 13:18:08');
-INSERT INTO `sub_customer_info` VALUES (4, 6, 3, 'KA001', '旭欧', '潘总', '13812345678', '东莞市旭欧精密五金有限公司', '东莞市石碣镇单屋村', '公司材料仓', 'SJ123456', 21, '人民币', '月结60天', 1, '2025-10-18 11:09:32', '2025-10-30 15:52:38');
-INSERT INTO `sub_customer_info` VALUES (5, 6, 3, 'KA002', '鑫宇', '王总', '13712345678', '东莞市鑫宇五金制品厂', '东莞市万江区官桥窖村', '高埗镇合鑫喷漆厂', 'WJ123456', 21, '人民币', '月结90天', 1, '2025-10-30 15:52:21', '2025-10-30 15:52:21');
+INSERT INTO `sub_customer_info` VALUES (4, 6, 3, 'KA001', '旭欧', '潘总', '13812345678', '东莞市旭欧精密五金有限公司', '东莞市石碣镇单屋村', '公司材料仓', 'SJ123456', 21, '人民币', 26, 1, '2025-10-18 11:09:32', '2025-10-30 15:52:38');
+INSERT INTO `sub_customer_info` VALUES (5, 6, 3, 'KA002', '鑫宇', '王总', '13712345678', '东莞市鑫宇五金制品厂', '东莞市万江区官桥窖村', '高埗镇合鑫喷漆厂', 'WJ123456', 21, '人民币', 27, 1, '2025-10-30 15:52:21', '2025-10-30 15:52:21');
 
 -- ----------------------------
 -- Table structure for sub_date_info
@@ -1769,9 +1774,9 @@ CREATE TABLE `sub_supplier_info`  (
   `supplier_address` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '供应商地址',
   `supplier_category` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '供应商类别',
   `supply_method` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '供货方式',
-  `transaction_method` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易方式',
+  `transaction_method` int(11) NULL DEFAULT NULL COMMENT '交易方式',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
-  `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '其它交易条件',
+  `other_transaction_terms` int(11) NULL DEFAULT NULL COMMENT '其它交易条件',
   `is_deleted` int(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -1783,8 +1788,8 @@ CREATE TABLE `sub_supplier_info`  (
 -- ----------------------------
 INSERT INTO `sub_supplier_info` VALUES (1, 1, 1, '123', '2121', '13', '15', '1515', '212', '5151', '15', '15151', '1515', '15', 1, '2025-07-10 00:03:15', '2025-07-10 00:03:15');
 INSERT INTO `sub_supplier_info` VALUES (2, 1, 1, '1234', '151', '153333333', '1', '515', '155', '511', '515', '15', '1', '515', 1, '2025-07-10 00:03:27', '2025-07-10 00:03:37');
-INSERT INTO `sub_supplier_info` VALUES (3, 12, 3, 'GA001', '俊宏达', '小张', '136123456678', '东莞市俊宏达铝业科技有限公司', '东莞市常平镇常黄路38号', '材料供应', '送货上门', '现金', '人民币', '月结90天', 1, '2025-10-19 16:27:11', '2025-10-19 16:30:08');
-INSERT INTO `sub_supplier_info` VALUES (4, 6, 3, 'GA002', '城至', '吴总', '12345678901', '东莞市城至精密五金有限公司', '东莞市万江区尖沙咀', '委外加工', '送货上门', '现金', '人民币', '月结60天', 1, '2025-10-24 11:26:22', '2025-10-24 11:26:22');
+INSERT INTO `sub_supplier_info` VALUES (3, 12, 3, 'GA001', '俊宏达', '小张', '136123456678', '东莞市俊宏达铝业科技有限公司', '东莞市常平镇常黄路38号', '材料供应', '送货上门', 21, '人民币', 27, 1, '2025-10-19 16:27:11', '2025-10-19 16:30:08');
+INSERT INTO `sub_supplier_info` VALUES (4, 6, 3, 'GA002', '城至', '吴总', '12345678901', '东莞市城至精密五金有限公司', '东莞市万江区尖沙咀', '委外加工', '送货上门', 21, '人民币', 26, 1, '2025-10-24 11:26:22', '2025-10-24 11:26:22');
 
 -- ----------------------------
 -- Table structure for sub_warehouse_apply

@@ -8,18 +8,14 @@ const BaseConfig = require('../config/BaseConfig')
 
 // 获取材料BOM信息表
 router.get('/material_bom', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10, archive, product_code, product_name } = req.query;
+  const { page = 1, pageSize = 10, archive, product_code, product_name, drawing } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
   
-  const whereIncludeProduct = {
-    ...(product_code && {
-      product_code: { [Op.like]: `%${product_code}%` } 
-    }),
-    ...(product_name && { 
-      product_name: { [Op.like]: `%${product_name}%` } 
-    })
-  }
+  const whereObj = {}
+  if(product_code) whereObj.product_code = { [Op.like]: `%${product_code}%` }
+  if(product_name) whereObj.product_name = { [Op.like]: `%${product_name}%` }
+  if(drawing) whereObj.drawing = { [Op.like]: `%${drawing}%` }
   const { count, rows } = await SubMaterialBom.findAndCountAll({
     where: {
       is_deleted: 1,
@@ -28,7 +24,7 @@ router.get('/material_bom', authMiddleware, async (req, res) => {
     },
     attributes: ['id', 'product_id', 'part_id', 'archive'],
     include: [
-      { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'], where: whereIncludeProduct},
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'], where: whereObj},
       { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
       {
         model: SubMaterialBomChild,
@@ -147,18 +143,14 @@ router.delete('/material_bom', authMiddleware, async (req, res) => {
 
 // 获取工艺BOM信息表
 router.get('/process_bom', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10, archive, product_code, product_name } = req.query;
+  const { page = 1, pageSize = 10, archive, product_code, product_name, drawing } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
   
-  const whereIncludeProduct = {
-    ...(product_code && {
-      product_code: { [Op.like]: `%${product_code}%` } 
-    }),
-    ...(product_name && { 
-      product_name: { [Op.like]: `%${product_name}%` } 
-    })
-  }
+  const whereObj = {}
+  if(product_code) whereObj.product_code = { [Op.like]: `%${product_code}%` }
+  if(product_name) whereObj.product_name = { [Op.like]: `%${product_name}%` }
+  if(drawing) whereObj.drawing = { [Op.like]: `%${drawing}%` }
   const { count, rows } = await SubProcessBom.findAndCountAll({
     where: {
       is_deleted: 1,
@@ -167,7 +159,7 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
     },
     attributes: ['id', 'archive', 'product_id', 'part_id'],
     include: [
-      { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'], where: whereIncludeProduct },
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'], where: whereObj },
       { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
       {
         model: SubProcessBomChild,

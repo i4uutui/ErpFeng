@@ -157,7 +157,7 @@ export default defineComponent({
               <ElTable data={ tableData.value } border stripe height={`calc(100vh - 280px)`} style={{ width: "100%" }}>
                 <ElTableColumn prop="code" label="物料编码" width="90" />
                 <ElTableColumn prop="name" label="物料名称" width="90" />
-                <ElTableColumn prop="model_spec" label="规格型号" width="90" />
+                <ElTableColumn prop="model_spec" label="规格&型号" width="90" />
                 <ElTableColumn prop="other_features" label="其他特性" width="90" />
                 <ElTableColumn prop="inv_unit" label="库存单位" width="90" />
                 <ElTableColumn prop="initial" label="期初数量" width="90" />

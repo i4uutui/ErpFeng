@@ -62,6 +62,7 @@ export default defineComponent({
       customer_order: '',
       product_code: '',
       product_name: '',
+      drawing: ''
     })
 
     onMounted(() => {
@@ -185,7 +186,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <HeadForm headerWidth="150px" ref={ formCard }>
+              <HeadForm headerWidth="150px" labelWidth="100" ref={ formCard }>
                 {{
                   left: () => (
                     <ElFormItem v-permission={ 'SalesOrder:add' }>
@@ -194,20 +195,23 @@ export default defineComponent({
                   ),
                   center: () => (
                     <>
-                      <ElFormItem label="客户编码">
+                      <ElFormItem label="客户编码：">
                         <ElInput v-model={ search.value.customer_code } placeholder="请输入客户编码" style={{ width: '160px' }} />
                       </ElFormItem>
-                      <ElFormItem label="客户名称">
+                      <ElFormItem label="客户名称：">
                         <ElInput v-model={ search.value.customer_abbreviation } placeholder="请输入客户名称" style={{ width: '160px' }} />
                       </ElFormItem>
-                      <ElFormItem label="客户订单号">
+                      <ElFormItem label="客户订单号：">
                         <ElInput v-model={ search.value.customer_order } placeholder="请输入客户订单号" style={{ width: '160px' }} />
                       </ElFormItem>
-                      <ElFormItem label="产品编码">
+                      <ElFormItem label="产品编码：">
                         <ElInput v-model={ search.value.product_code } placeholder="请输入产品编码" style={{ width: '160px' }} />
                       </ElFormItem>
-                      <ElFormItem label="产品名称">
+                      <ElFormItem label="产品名称：">
                         <ElInput v-model={ search.value.product_name } placeholder="请输入产品名称" style={{ width: '160px' }} />
+                      </ElFormItem>
+                      <ElFormItem label="工程图号：">
+                        <ElInput v-model={ search.value.drawing } placeholder="请输入工程图号" style={{ width: '160px' }} />
                       </ElFormItem>
                     </>
                   ),
@@ -230,8 +234,8 @@ export default defineComponent({
                   <ElTableColumn prop="product.product_name" label="产品名称" width="100" />
                   <ElTableColumn prop="product.drawing" label="工程图号" width="100" />
                   <ElTableColumn prop="product.component_structure" label="产品结构" width="100" />
-                  <ElTableColumn prop="product.model" label="型号" width="100" />
-                  <ElTableColumn prop="product.specification" label="规格" width="100" />
+                  <ElTableColumn prop="product.model" label="型号&规格" width="180" />
+                  {/* <ElTableColumn prop="product.specification" label="规格" width="100" /> */}
                   <ElTableColumn prop="product.other_features" label="其他特性" width="100" />
                   <ElTableColumn prop="product_req" label="产品要求" width="140" />
                   <ElTableColumn prop="order_number" label="订单数量" width="100" />
@@ -260,10 +264,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改销售订单' : '新增销售订单' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改销售订单' : '新增销售订单' } width='785' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">
                 <ElFormItem label="接单日期" prop="rece_time">
                   <ElDatePicker v-model={ form.value.rece_time } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="请选择接单日期" />
                 </ElFormItem>

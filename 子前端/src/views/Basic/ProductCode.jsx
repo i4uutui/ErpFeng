@@ -59,7 +59,8 @@ export default defineComponent({
     let edit = ref(0)
     let search = ref({
       code: '',
-      name: ''
+      name: '',
+      drawing: ''
     })
 
     onMounted(() => {
@@ -201,11 +202,14 @@ export default defineComponent({
                   </ElFormItem>
                 </ElForm>
                 <ElForm inline={ true } class="cardHeaderFrom">
-                  <ElFormItem label="产品编码">
+                  <ElFormItem label="产品编码：">
                     <ElInput v-model={ search.value.code } placeholder="请输入产品编码" />
                   </ElFormItem>
-                  <ElFormItem label="产品名称">
+                  <ElFormItem label="产品名称：">
                     <ElInput v-model={ search.value.name } placeholder="请输入产品名称" />
+                  </ElFormItem>
+                  <ElFormItem label="工程图号：">
+                    <ElInput v-model={ search.value.drawing } placeholder="请输入工程图号" />
                   </ElFormItem>
                   <ElFormItem>
                     <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList }>查询</ElButton>
@@ -216,11 +220,11 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
-                  <ElTableColumn prop="product_code" label="产品编码" />
+                  <ElTableColumn prop="product_code" label="产品编码" width="120" />
                   <ElTableColumn prop="product_name" label="产品名称" />
                   <ElTableColumn prop="drawing" label="工程图号" />
-                  <ElTableColumn prop="model" label="型号" />
-                  <ElTableColumn prop="specification" label="规格" />
+                  <ElTableColumn prop="model" label="型号&规格" width="180" />
+                  {/* <ElTableColumn prop="specification" label="规格" /> */}
                   <ElTableColumn prop="other_features" label="其它特性" />
                   <ElTableColumn prop="component_structure" label="产品结构" />
                   <ElTableColumn prop="unit" label="单位" width="100" />
@@ -239,10 +243,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改产品编码' : '新增产品编码' } width='745' center onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改产品编码' : '新增产品编码' } width='785' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="80px">
+              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95px">
                 <ElFormItem label="产品编码" prop="product_code">
                   <ElInput v-model={ form.value.product_code } placeholder="请输入产品编码" disabled={ !(edit.value == 0 || user.type == 1) } />
                 </ElFormItem>
@@ -252,12 +256,12 @@ export default defineComponent({
                 <ElFormItem label="工程图号" prop="drawing">
                   <ElInput v-model={ form.value.drawing } placeholder="请输入工程图号" />
                 </ElFormItem>
-                <ElFormItem label="型号" prop="model">
-                  <ElInput v-model={ form.value.model } placeholder="请输入型号" />
+                <ElFormItem label="型号&规格" prop="model">
+                  <ElInput v-model={ form.value.model } placeholder="请输入型号&规格" />
                 </ElFormItem>
-                <ElFormItem label="规格" prop="specification">
+                {/* <ElFormItem label="规格" prop="specification">
                   <ElInput v-model={ form.value.specification } placeholder="请输入规格" />
-                </ElFormItem>
+                </ElFormItem> */}
                 <ElFormItem label="单位" prop="unit">
                   <ElInput v-model={ form.value.unit } placeholder="请输入单位" />
                 </ElFormItem>

@@ -138,10 +138,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改仓库' : '新增仓库' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改仓库' : '新增仓库' } width='745' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } rules={ rules } label-width="80px">
+              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="80">
                 <ElFormItem label="仓库类型" prop='ware_id' rules={ rules.process_id }>
                   <ElSelect v-model={ form.value.ware_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择仓库类型">
                     {{

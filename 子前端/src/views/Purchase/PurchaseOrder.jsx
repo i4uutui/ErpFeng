@@ -167,7 +167,7 @@ export default defineComponent({
                 form.value.material_id = item.id
                 form.value.material_code = item.material_code
                 form.value.material_name = item.material_name
-                form.value.model_spec = `${item.model}/${item.specification}`
+                form.value.model_spec = item.model
                 form.value.other_features = item.other_features
                 break;
               }
@@ -195,7 +195,6 @@ export default defineComponent({
           if(edit.value === -1){
             const obj = JSON.parse(JSON.stringify(form.value))
             obj.id = getRandomString() // 临时ID
-            console.log(obj);
             tableData.value = [obj, ...tableData.value]
             // 重置
             dialogVisible.value = false;
@@ -479,7 +478,7 @@ export default defineComponent({
       form.value.material_bom_children_id = material.material_bom_children_id
       form.value.material_code = material.material_code
       form.value.material_name = material.material_name
-      form.value.model_spec = `${material.model}/${material.specification}`
+      form.value.model_spec = material.model
       form.value.other_features = material.other_features
       form.value.unit = material.usage_unit
     }
@@ -599,7 +598,6 @@ export default defineComponent({
                   <ElTableColumn prop="other_features" label="其它特性" width='100' />
                   <ElTableColumn prop="unit" label="采购单位" width='100' />
                   <ElTableColumn prop="price" label="采购单价" width='100' />
-                  {/* <ElTableColumn prop="order_number" label="预计数量" width='100' /> */}
                   <ElTableColumn prop="number" label="采购数量" width='100' />
                   <ElTableColumn prop="delivery_time" label="交货时间" width='110' />
                   <ElTableColumn prop="apply_name" label="申请人" width="90" />
@@ -703,10 +701,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改采购单' : '新增采购单' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改采购单' : '新增采购单' } width='785' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">
                 <ElFormItem label="生产订单" prop="notice_id">
                   <ElSelect v-model={ form.value.notice_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单" onChange={ (row) => noticeChange(row) }>
                     {productNotice.value.map((e, index) => <ElOption value={ e.id } label={ e.notice } key={ index } />)}
@@ -723,7 +721,7 @@ export default defineComponent({
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="交货时间" prop="delivery_time">
-                  <ElDatePicker v-model={ form.value.delivery_time } value-format="YYYY-MM-DD" type="date" placeholder="请选择交货时间" clearable={ false } />
+                  <ElDatePicker v-model={ form.value.delivery_time } value-format="YYYY-MM-DD" type="date" placeholder="请选择交货时间" clearable={ false }  style={{ width: "100%" }} />
                 </ElFormItem>
                 <ElFormItem label="产品编码" prop="product_id">
                   <ElSelect v-model={ form.value.product_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择产品编码" onChange={ (row) => productChange(row) }>

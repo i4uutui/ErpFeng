@@ -21,24 +21,32 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
  *           type: int
  */
 router.get('/outsourcing_quote', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, supplier_code, supplier_abbreviation, product_code, product_name, drawing } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
   
+  let productWhere = {}
+  let supplierWhere = {}
+  if(product_code) productWhere.product_code = { [Op.like]: `%${product_code}%` }
+  if(product_name) productWhere.product_name = { [Op.like]: `%${product_name}%` }
+  if(drawing) productWhere.drawing = { [Op.like]: `%${drawing}%` }
+  if(supplier_code) supplierWhere.supplier_code = { [Op.like]: `%${supplier_code}%` }
+  if(supplier_abbreviation) supplierWhere.supplier_abbreviation = { [Op.like]: `%${supplier_abbreviation}%` }
   const { count, rows } = await SubOutsourcingQuote.findAndCountAll({
     where: {
       is_deleted: 1,
       company_id,
     },
     include: [
-      { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_abbreviation', 'supplier_code'] },
+      { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_abbreviation', 'supplier_code'], where: supplierWhere },
       { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice', 'sale_id'], include: [{ model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number', 'unit', 'delivery_time'] }] },
       {
         model: SubProcessBom,
         as: 'processBom',
         attributes: ['id', 'product_id', 'part_id', 'archive'],
+        required: true,
         include: [
-          { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing', 'model', 'specification'] },
+          { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing', 'model', 'specification'], where: productWhere, required: true },
           { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
         ]
       },

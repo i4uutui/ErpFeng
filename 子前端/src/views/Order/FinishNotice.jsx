@@ -18,6 +18,7 @@ export default defineComponent({
       customer_abbreviation: '',
       product_code: '',
       product_name: '',
+      drawing: ''
     })
     
     onMounted(() => {
@@ -60,20 +61,23 @@ export default defineComponent({
                 {{
                   center: () => (
                     <>
-                      <ElFormItem label="生产订单号">
+                      <ElFormItem label="生产订单号：">
                         <ElInput v-model={ search.value.notice } placeholder="请输入生产订单号" style={{ width: '160px' }} />
                       </ElFormItem>
-                      <ElFormItem label="客户编码">
+                      <ElFormItem label="客户编码：">
                         <ElInput v-model={ search.value.customer_code } placeholder="请输入客户编码" style={{ width: '160px' }} />
                       </ElFormItem>
-                      <ElFormItem label="客户名称">
+                      <ElFormItem label="客户名称：">
                         <ElInput v-model={ search.value.customer_abbreviation } placeholder="请输入客户名称" style={{ width: '160px' }} />
                       </ElFormItem>
-                      <ElFormItem label="产品编码">
+                      <ElFormItem label="产品编码：">
                         <ElInput v-model={ search.value.product_code } placeholder="请输入产品编码" style={{ width: '160px' }} />
                       </ElFormItem>
-                      <ElFormItem label="产品名称">
+                      <ElFormItem label="产品名称：">
                         <ElInput v-model={ search.value.product_name } placeholder="请输入产品名称" style={{ width: '160px' }} />
+                      </ElFormItem>
+                      <ElFormItem label="工程图号：">
+                        <ElInput v-model={ search.value.drawing } placeholder="请输入工程图号" style={{ width: '160px' }} />
                       </ElFormItem>
                     </>
                   ),
@@ -95,9 +99,9 @@ export default defineComponent({
                   <ElTableColumn prop="product.product_code" label="产品编码" width="120" />
                   <ElTableColumn prop="product.product_name" label="产品名称" width="100" />
                   <ElTableColumn prop="product.drawing" label="工程图号" width="120" />
+                  <ElTableColumn prop="product.model" label="型号&规格" width="120" />
+                  {/* <ElTableColumn prop="product.specification" label="规格" width="100" /> */}
                   <ElTableColumn prop="product.component_structure" label="产品结构" width="100" />
-                  <ElTableColumn prop="product.model" label="型号" width="120" />
-                  <ElTableColumn prop="product.specification" label="规格" width="100" />
                   <ElTableColumn prop="product.other_features" label="其它特性" width="100" />
                   <ElTableColumn prop="sale.product_req" label="产品要求" width="140" />
                   <ElTableColumn prop="sale.order_number" label="订单数量" width="100" />

@@ -319,18 +319,18 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ processedTableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
-                  <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" />
-                  <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" />
-                  <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" />
-                  <ElTableColumn prop="part.part_code" label="部位编码" fixed="left" />
-                  <ElTableColumn prop="part.part_name" label="部位名称" fixed="left" />
+                  <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" minWidth="100" />
+                  <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" minWidth="100" />
+                  <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" minWidth="100" />
+                  <ElTableColumn prop="part.part_code" label="部位编码" fixed="left" minWidth="100" />
+                  <ElTableColumn prop="part.part_name" label="部位名称" fixed="left" minWidth="100" />
                   {
                     Array.from({ length: maxBomLength.value }).map((_, index) => (
                       <ElTableColumn label={`材料BOM-${index + 1}`} key={index}>
-                        <ElTableColumn prop={`children[${index}].material.material_code`} label="材料编码" />
-                        <ElTableColumn prop={`children[${index}].material.material_name`} label="材料名称" />
-                        <ElTableColumn prop={`children[${index}].material.specification`} label="规格" />
-                        <ElTableColumn prop={`children[${index}].number`} label="数量" />
+                        <ElTableColumn prop={`children[${index}].material.material_code`} label="材料编码" minWidth="100" />
+                        <ElTableColumn prop={`children[${index}].material.material_name`} label="材料名称" minWidth="100" />
+                        <ElTableColumn prop={`children[${index}].material.specification`} label="规格" minWidth="100" />
+                        <ElTableColumn prop={`children[${index}].number`} label="数量" minWidth="80" />
                       </ElTableColumn>
                     ))
                   }
@@ -348,10 +348,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改材料BOM信息' : '新增材料BOM信息' } bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改材料BOM信息' : '新增材料BOM信息' } width='785' center bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+              <ElForm class="ml20" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">
                 <ElFormItem label="产品编码" prop="product_id">
                   <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_code" itemValue="product_code" placeholder="请选择产品编码" />
                 </ElFormItem>

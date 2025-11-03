@@ -60,7 +60,7 @@ const SubSupplierInfo = sequelize.define('SubSupplierInfo', {
     comment: '供货方式'
   },
   transaction_method: {
-    type: DataTypes.STRING(50),
+    type: DataTypes.INTEGER(),
     allowNull: true,
     comment: '交易方式'
   },
@@ -70,7 +70,7 @@ const SubSupplierInfo = sequelize.define('SubSupplierInfo', {
     comment: '交易币别'
   },
   other_transaction_terms: {
-    type: DataTypes.TEXT,
+    type: DataTypes.INTEGER(),
     allowNull: true,
     comment: '其它交易条件'
   },

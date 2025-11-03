@@ -236,8 +236,7 @@ export default defineComponent({
                   <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="100" />
                   <ElTableColumn prop="material.material_code" label="材料编码" width="100" />
                   <ElTableColumn prop="material.material_name" label="材料名称" width="100" />
-                  <ElTableColumn prop="material.model" label="型号" width="100" />
-                  <ElTableColumn prop="material.specification" label="规格" width="100" />
+                  <ElTableColumn prop="material.model" label="型号&规格" width="180" />
                   <ElTableColumn prop="material.other_features" label="其他特性" width="100" />
                   <ElTableColumn prop="price" label="采购单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
@@ -260,10 +259,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改材料报价' : '新增材料报价' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改材料报价' : '新增材料报价' } width='790' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="100">
                 {/* <ElFormItem label="生产订单号" prop="notice_id">
                   <ElSelect v-model={ form.value.notice_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单号" onChange={ (value) => noticeChange(value) }>
                     {noticeList.value.map((e, index) => {

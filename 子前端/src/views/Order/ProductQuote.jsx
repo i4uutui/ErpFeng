@@ -44,6 +44,7 @@ export default defineComponent({
       customer_abbreviation: '',
       product_code: '',
       product_name: '',
+      drawing: ''
     })
 
     onMounted(() => {
@@ -159,20 +160,23 @@ export default defineComponent({
                   ),
                   center: () => (
                     <>
-                      <ElFormItem label="报价单号">
+                      <ElFormItem label="报价单号：">
                         <ElInput v-model={ search.value.notice } placeholder="请输入报价单号" style={{ width: '160px' }} />
                       </ElFormItem>
-                      <ElFormItem label="客户编码">
+                      <ElFormItem label="客户编码：">
                         <ElInput v-model={ search.value.customer_code } placeholder="请输入客户编码" style={{ width: '160px' }} />
                       </ElFormItem>
-                      <ElFormItem label="客户名称">
+                      <ElFormItem label="客户名称：">
                         <ElInput v-model={ search.value.customer_abbreviation } placeholder="请输入客户名称" style={{ width: '160px' }} />
                       </ElFormItem>
-                      <ElFormItem label="产品编码">
+                      <ElFormItem label="产品编码：">
                         <ElInput v-model={ search.value.product_code } placeholder="请输入产品编码" style={{ width: '160px' }} />
                       </ElFormItem>
-                      <ElFormItem label="产品名称">
+                      <ElFormItem label="产品名称：">
                         <ElInput v-model={ search.value.product_name } placeholder="请输入产品名称" style={{ width: '160px' }} />
+                      </ElFormItem>
+                      <ElFormItem label="工程图号：">
+                        <ElInput v-model={ search.value.drawing } placeholder="请输入工程图号" style={{ width: '160px' }} />
                       </ElFormItem>
                     </>
                   ),
@@ -192,8 +196,9 @@ export default defineComponent({
                   <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" width="120" />
                   <ElTableColumn prop="product.product_code" label="产品编码" width="100" />
                   <ElTableColumn prop="product.product_name" label="产品名称" width="100" />
-                  <ElTableColumn prop="product.model" label="型号" width="120" />
-                  <ElTableColumn prop="product.specification" label="规格" width="100" />
+                  <ElTableColumn prop="product.drawing" label="工程图号" width="100" />
+                  <ElTableColumn prop="product.model" label="型号&规格" width="180" />
+                  {/* <ElTableColumn prop="product.specification" label="规格" width="100" /> */}
                   <ElTableColumn prop="product.other_features" label="其他特性" width="100" />
                   <ElTableColumn prop="sale.customer_order" label="客户订单号" width="120" />
                   <ElTableColumn prop="sale.order_number" label="订单数量" width="100" />
@@ -215,10 +220,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改产品报价' : '新增产品报价' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改产品报价' : '新增产品报价' } width='785' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">
                 <ElFormItem label="销售订单" prop="sale_id">
                   <MySelect v-model={ form.value.sale_id } arrValue={ ['customer_order', 'product.drawing'] } apiUrl="/api/getSaleOrder" query="customer_order" itemValue="customer_order" placeholder="请选择销售订单" onChange={ (value) => saleChange(value) } />
                 </ElFormItem>

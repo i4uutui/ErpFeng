@@ -394,7 +394,7 @@ export default defineComponent({
       const obj = productList.value.find(e => e.id == value)
       form.value.code = obj.product_code
       form.value.name = obj.product_name
-      form.value.model_spec = `${obj.model}/${obj.specification}`
+      form.value.model_spec = obj.model
       form.value.other_features = obj.other_features
     }
     const formOperateSelect = async (value) => {
@@ -596,7 +596,7 @@ export default defineComponent({
                   <ElTableColumn prop="quantity" label="数量">
                     {({row}) => <span>{ row.quantity ? row.quantity : 0 }</span>}
                   </ElTableColumn>
-                  <ElTableColumn prop="model_spec" label="规格型号" width="110" />
+                  <ElTableColumn prop="model_spec" label="规格&型号" width="110" />
                   <ElTableColumn prop="other_features" label="其他特性" width="110" />
                   <ElTableColumn prop="buy_price" label="单价(元)" width="110">
                     {({row}) => <span>{ row.buy_price ? row.buy_price : 0 }</span>}
@@ -710,10 +710,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ `${getTitleValue()}单` } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ `${getTitleValue()}单` } width='785' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+              <ElForm class="ml20" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">
                 <ElFormItem label="仓库名称" prop="house_id">
                   <ElSelect v-model={ form.value.house_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择仓库名称" onChange={ (row) => houseChange(row) }>
                     {houseList.value.map((e, index) => e && (

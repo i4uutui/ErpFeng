@@ -2,6 +2,7 @@ import { defineComponent, onMounted, ref, reactive, nextTick } from 'vue'
 import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
 import { getPageHeight } from '@/utils/tool';
+import HeadForm from '@/components/form/HeadForm';
 
 export default defineComponent({
   setup(){
@@ -50,6 +51,13 @@ export default defineComponent({
     let bomList = ref([]) // 工艺Bom列表
     let procedure = ref([]) // 工序列表
     let allSelect = ref([]) // 用户选择的列表
+    let search = ref({
+      supplier_code: '',
+      supplier_abbreviation: '',
+      product_code: '',
+      product_name: '',
+      drawing: '',
+    })
     
     onMounted(() => {
       nextTick(async () => {
@@ -66,7 +74,8 @@ export default defineComponent({
       const res = await request.get('/api/outsourcing_quote', {
         params: {
           page: currentPage.value,
-          pageSize: pageSize.value
+          pageSize: pageSize.value,
+          ...search.value
         }
       });
       tableData.value = res.data;
@@ -215,11 +224,41 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="clearfix" ref={ formCard }>
-                <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } v-permission={ 'OutsourcingQuote:add' }>
-                  新增委外报价
-                </ElButton>
-              </div>
+              <HeadForm headerWidth="180px" labelWidth="100" ref={ formCard }>
+                {{
+                  left: () => (
+                    <>
+                      <ElFormItem v-permission={ 'OutsourcingQuote:add' }>
+                        <ElButton type="primary" onClick={ () => handleAdd() } style={{ width: '100px' }}>新增委外报价</ElButton>
+                      </ElFormItem>
+                    </>
+                  ),
+                  center: () => (
+                    <>
+                      <ElFormItem label="供应商编码：">
+                        <ElInput v-model={ search.value.supplier_code } placeholder="请输入供应商编码" />
+                      </ElFormItem>
+                      <ElFormItem label="供应商名称：">
+                        <ElInput v-model={ search.value.supplier_abbreviation } placeholder="请输入供应商名称" />
+                      </ElFormItem>
+                      <ElFormItem label="产品编码：">
+                        <ElInput v-model={ search.value.product_code } placeholder="请输入产品编码" />
+                      </ElFormItem>
+                      <ElFormItem label="产品名称：">
+                        <ElInput v-model={ search.value.product_name } placeholder="请输入产品名称" />
+                      </ElFormItem>
+                      <ElFormItem label="工程图号：">
+                        <ElInput v-model={ search.value.drawing } placeholder="请输入工程图号" />
+                      </ElFormItem>
+                    </>
+                  ),
+                  right: () => (
+                    <ElFormItem>
+                      <ElButton type="primary" onClick={ () => fetchProductList() }>查询</ElButton>
+                    </ElFormItem>
+                  )
+                }}
+              </HeadForm>
             ),
             default: () => (
               <>
@@ -230,11 +269,7 @@ export default defineComponent({
                   <ElTableColumn prop="processBom.product.product_code" label="产品编码" width="90" />
                   <ElTableColumn prop="processBom.product.product_name" label="产品名称" width="90" />
                   <ElTableColumn prop="processBom.product.drawing" label="工程图号" width="100" />
-                  <ElTableColumn label="型号/规格" width="120">
-                    {({ row }) => (
-                      <span>{row.processBom.product.model}/{row.processBom.product.specification}</span>
-                    )}
-                  </ElTableColumn>
+                  <ElTableColumn prop="processBom.product.model" label="型号&规格" width="120" />
                   <ElTableColumn prop="processBom.part.part_code" label="部件编码" width="90" />
                   <ElTableColumn prop="processBom.part.part_name" label="部件名称" width="90" />
                   <ElTableColumn prop="processChildren.process.process_code" label="工艺编码" width="100" />
@@ -257,10 +292,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改委外报价' : '新增委外报价' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改委外报价' : '新增委外报价' } width='775' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+              <ElForm class="ml20" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">
                 <ElFormItem label="生产订单" prop="notice_id">
                   <MySelect v-model={ form.value.notice_id } apiUrl="/api/getProductNotice" query="notice" itemValue="notice" placeholder="请选择生产订单" onChange={ (value) => noticeChange(value) } />
                 </ElFormItem>

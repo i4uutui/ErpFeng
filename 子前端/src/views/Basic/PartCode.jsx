@@ -186,10 +186,10 @@ export default defineComponent({
                   </ElFormItem>
                 </ElForm>
                 <ElForm inline={ true } class="cardHeaderFrom">
-                  <ElFormItem label="部件编码">
+                  <ElFormItem label="部件编码：">
                     <ElInput v-model={ search.value.code } placeholder="请输入部件编码" />
                   </ElFormItem>
-                  <ElFormItem label="部件名称">
+                  <ElFormItem label="部件名称：">
                     <ElInput v-model={ search.value.name } placeholder="请输入部件名称" />
                   </ElFormItem>
                   <ElFormItem>
@@ -201,10 +201,10 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
-                  <ElTableColumn prop="part_code" label="部件编码" />
+                  <ElTableColumn prop="part_code" label="部件编码" width="120" />
                   <ElTableColumn prop="part_name" label="部件名称" />
-                  <ElTableColumn prop="model" label="型号" />
-                  <ElTableColumn prop="specification" label="规格" />
+                  <ElTableColumn prop="model" label="型号&规格" width="180" />
+                  {/* <ElTableColumn prop="specification" label="规格" /> */}
                   <ElTableColumn prop="other_features" label="其它特性" />
                   <ElTableColumn prop="unit" label="单位" width="100" />
                   <ElTableColumn prop="production_requirements" label="生产要求" />
@@ -223,22 +223,22 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改部件编码' : '新增部件编码' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改部件编码' : '新增部件编码' } width='785' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="80px">
+              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95px">
                 <ElFormItem label="部件编码" prop="part_code">
                   <ElInput v-model={ form.value.part_code } placeholder="请输入部件编码" disabled={ !(edit.value == 0 || user.type == 1) } />
                 </ElFormItem>
                 <ElFormItem label="部件名称" prop="part_name">
                   <ElInput v-model={ form.value.part_name } placeholder="请输入部件名称" />
                 </ElFormItem>
-                <ElFormItem label="型号" prop="model">
-                  <ElInput v-model={ form.value.model } placeholder="请输入型号" />
+                <ElFormItem label="型号&规格" prop="model">
+                  <ElInput v-model={ form.value.model } placeholder="请输入型号&规格" />
                 </ElFormItem>
-                <ElFormItem label="规格" prop="specification">
+                {/* <ElFormItem label="规格" prop="specification">
                   <ElInput v-model={ form.value.specification } placeholder="请输入规格" />
-                </ElFormItem>
+                </ElFormItem> */}
                 <ElFormItem label="单位" prop="unit">
                   <ElInput v-model={ form.value.unit } placeholder="请输入单位" />
                 </ElFormItem>

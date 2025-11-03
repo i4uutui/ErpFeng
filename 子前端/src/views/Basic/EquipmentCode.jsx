@@ -246,7 +246,7 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe rowStyle={ handleRowStyle } height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
-                  <ElTableColumn prop="equipment_code" label="设备编码" />
+                  <ElTableColumn prop="equipment_code" label="设备编码" width="120" />
                   <ElTableColumn prop="equipment_name" label="设备名称" />
                   <ElTableColumn prop="cycle.name" label="所属部门" />
                   <ElTableColumn prop="quantity" label="设备总数量" />
@@ -268,10 +268,10 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改设备信息' : '新增设备信息' } onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改设备信息' : '新增设备信息' } width='815' center onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="110px">
+              <ElForm class="ml20" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="115px">
                 <ElFormItem label="设备编码" prop="equipment_code">
                   <ElInput v-model={ form.value.equipment_code } placeholder="请输入设备编码" disabled={ !(edit.value == 0 || user.type == 1) } />
                 </ElFormItem>

@@ -9,13 +9,14 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
 
 // 获取产品编码列表（分页）
 router.get('/products_code', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10, name, code } = req.query;
+  const { page = 1, pageSize = 10, name, code, drawing } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
   
   const whereObj = {}
   if(code) whereObj.product_code = { [Op.like]: `%${code}%` }
   if(name) whereObj.product_name = { [Op.like]: `%${name}%` }
+  if(drawing) whereObj.drawing = { [Op.like]: `%${drawing}%` }
   const { count, rows } = await SubProductCode.findAndCountAll({
     where: {
       is_deleted: 1,
