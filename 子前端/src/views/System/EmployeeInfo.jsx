@@ -235,7 +235,7 @@ export default defineComponent({
                   <ElInput v-model={ form.value.name } placeholder="请输入姓名" />
                 </ElFormItem>
                 <ElFormItem label="密码" prop="password">
-                  <ElInput v-model={ form.value.password } placeholder="请输入姓名" />
+                  <ElInput v-model={ form.value.password } placeholder={ edit.value ? '不输入则默认旧密码' : '请输入密码' } />
                 </ElFormItem>
                 <ElFormItem label="所属部门" prop="cycle_id">
                   <ElSelect v-model={ form.value.cycle_id } multiple={false} filterable remote remote-show-suffix clearable placeholder="请选择所属部门">

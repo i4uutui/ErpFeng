@@ -245,7 +245,7 @@ router.get('/material_quote', authMiddleware, async (req, res) => {
       is_deleted: 1,
       company_id,
     },
-    attributes: ['id', 'price', 'transaction_currency', 'unit', 'delivery', 'packaging', 'other_transaction_terms', 'remarks', 'created_at'],
+    attributes: ['id', 'price', 'transaction_currency', 'unit', 'delivery', 'packaging', 'other_transaction_terms', 'invoice', 'created_at'],
     include: [
       { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name', 'model', 'specification', 'other_features'], where: materialWhere },
       { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_code', 'supplier_abbreviation'], where: supplierWhere },
@@ -317,7 +317,7 @@ router.post('/material_quote', authMiddleware, async (req, res) => {
   const updateData = data.map(e => ({ ...e, company_id, user_id: userId }))
   try {
     await SubMaterialQuote.bulkCreate(updateData, {
-      updateOnDuplicate: ['supplier_id', 'material_id', 'price', 'unit', 'delivery', 'packaging', 'transaction_currency', 'other_transaction_terms', 'remarks']
+      updateOnDuplicate: ['supplier_id', 'material_id', 'price', 'unit', 'delivery', 'packaging', 'transaction_currency', 'other_transaction_terms', 'invoice']
     })
 
     res.json({ message: "添加成功", code: 200 });
@@ -365,7 +365,7 @@ router.post('/material_quote', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.put('/material_quote', authMiddleware, async (req, res) => {
-  const { supplier_id, material_id, price, delivery, packaging, transaction_currency, unit, other_transaction_terms, remarks, id } = req.body;
+  const { supplier_id, material_id, price, delivery, packaging, transaction_currency, unit, other_transaction_terms, invoice, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -380,7 +380,7 @@ router.put('/material_quote', authMiddleware, async (req, res) => {
     return res.json({ code: 401, message: '数据出错，请联系管理员' })
   }
   const updateResult = await SubMaterialQuote.update({
-    supplier_id, material_id, price, delivery, packaging, transaction_currency, unit, other_transaction_terms, remarks, company_id,
+    supplier_id, material_id, price, delivery, packaging, transaction_currency, unit, other_transaction_terms, invoice, company_id,
     user_id: userId
   }, {
     where: { id }

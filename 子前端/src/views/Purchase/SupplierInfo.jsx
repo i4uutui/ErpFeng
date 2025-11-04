@@ -278,7 +278,7 @@ export default defineComponent({
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="供货方式" prop="supply_method" style={{ width: '350px' }}>
-                  <ElSelect v-model={ form.value.supply_method } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择供应商类别">
+                  <ElSelect v-model={ form.value.supply_method } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择供货方式">
                     {supplyMethod.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>

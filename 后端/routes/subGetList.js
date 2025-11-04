@@ -659,7 +659,7 @@ router.get('/getMaterialQuote', authMiddleware, async (req, res) => {
     where: {
       company_id,
     },
-    attributes: ['id', 'supplier_id', 'material_id', 'price', 'unit', 'delivery', 'packaging', 'transaction_currency', 'other_transaction_terms', 'remarks'],
+    attributes: ['id', 'supplier_id', 'material_id', 'price', 'unit', 'delivery', 'packaging', 'transaction_currency', 'other_transaction_terms', 'invoice'],
     include: [
       { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_code', 'supplier_abbreviation'] },
       { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name'] }

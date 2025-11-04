@@ -40,11 +40,12 @@ export default defineComponent({
       transaction_currency: '',
       unit: '',
       other_transaction_terms: '', 
-      remarks: ''
+      invoice: ''
     })
     let supplierList = ref([])
-    let noticeList = ref([])
-    let materialBomList = ref([])
+    let invoice = ref([])
+    let payTime = ref([])
+    let supplyMethod = ref([])
     let materialList = ref([])
     let tableData = ref([])
     let edit = ref(-1)
@@ -55,6 +56,7 @@ export default defineComponent({
       })
       getMaterialCode()
       getSupplierInfo()
+      getConstType()
     })
 
     const getSupplierInfo = async () => {
@@ -63,11 +65,13 @@ export default defineComponent({
         supplierList.value = res.data
       }
     }
-    const getProductNotice = async () => {
-      const res = await request.get('/api/getProductNotice')
+    // 获取常量
+    const getConstType = async () => {
+      const res = await request.post('/api/getConstType', { type: ['invoice', 'supplyMethod', 'payTime'] })
       if(res.code == 200){
-        const data = { id: 0, notice: '非管控材料' }
-        noticeList.value = [data, ...res.data]
+        invoice.value = res.data.filter(o => o.type == 'invoice')
+        payTime.value = res.data.filter(o => o.type == 'payTime')
+        supplyMethod.value =  res.data.filter(o => o.type == 'supplyMethod')
       }
     }
     const getMaterialCode = async () => {
@@ -93,7 +97,7 @@ export default defineComponent({
           transaction_currency: e.transaction_currency, 
           unit: e.unit,
           other_transaction_terms: e.other_transaction_terms, 
-          remarks: e.remarks
+          invoice: e.invoice ? e.invoice : null
         }))
         const res = await request.post('/api/material_quote', { data });
         if(res && res.code == 200){
@@ -141,9 +145,8 @@ export default defineComponent({
             transaction_currency: data.transaction_currency,
             unit: data.unit,
             other_transaction_terms: data.other_transaction_terms,
-            remarks: data.remarks,
+            invoice: data.invoice ? data.invoice : '',
           }
-          console.log(formData);
           dialogVisible.value = false;
           if(edit.value >= 0){
             tableData.value[edit.value] = formData
@@ -192,13 +195,14 @@ export default defineComponent({
         transaction_currency: '', 
         unit: '',
         other_transaction_terms: '', 
-        remarks: ''
+        invoice: ''
       }
     }
     const supplierChange = (row) => {
       form.value.supplier_abbreviation = row.supplier_abbreviation
       form.value.delivery = row.supply_method
       form.value.transaction_currency = row.transaction_currency
+      form.value.other_transaction_terms = row.other_transaction_terms
     }
     const materialChange = (value) => {
       const row = materialList.value.find(o => o.id == value)
@@ -241,10 +245,16 @@ export default defineComponent({
                   <ElTableColumn prop="price" label="采购单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
                   <ElTableColumn prop="unit" label="采购单位" width="100" />
-                  <ElTableColumn prop="delivery" label="送货方式" width="100" />
+                  <ElTableColumn label="送货方式" width="100">
+                    {({row}) => <span>{ supplyMethod.value.find(e => e.id == row.delivery)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="packaging" label="包装要求" width="100" />
-                  <ElTableColumn prop="other_transaction_terms" label="其它交易条件" width="120" />
-                  <ElTableColumn prop="remarks" label="税票要求" width="170" />
+                  <ElTableColumn label="其它交易条件" width="120">
+                    {({row}) => <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>}
+                  </ElTableColumn>
+                  <ElTableColumn label="税票要求" width="110">
+                    {({row}) => <span>{ invoice.value.find(e => e.id == row.invoice)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="created_at" label="创建时间" width="120" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
@@ -263,20 +273,6 @@ export default defineComponent({
           {{
             default: () => (
               <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="100">
-                {/* <ElFormItem label="生产订单号" prop="notice_id">
-                  <ElSelect v-model={ form.value.notice_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单号" onChange={ (value) => noticeChange(value) }>
-                    {noticeList.value.map((e, index) => {
-                      return <ElOption value={ e.id } label={ e.notice } key={ index } />
-                    })}
-                  </ElSelect>
-                </ElFormItem> */}
-                {/* <ElFormItem label="材料BOM" prop='material_bom_id'>
-                  <ElSelect v-model={ form.value.material_bom_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料BOM" onChange={ (value) => materialBomChange(value) }>
-                    {materialBomList.value.map((e, index) => {
-                      return <ElOption value={ e.id } label={ e.name } key={ index } />
-                    })}
-                  </ElSelect>
-                </ElFormItem> */}
                 <ElFormItem label="材料编码" prop="material_id">
                   <ElSelect v-model={ form.value.material_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料编码" onChange={ (value) => materialChange(value) }>
                     {materialList.value.map((e, index) => {
@@ -303,16 +299,22 @@ export default defineComponent({
                   <ElInput v-model={ form.value.unit } placeholder="请输入采购单位" />
                 </ElFormItem>
                 <ElFormItem label="送货方式" prop="delivery">
-                  <ElInput v-model={ form.value.delivery } placeholder="请输入送货方式" />
+                  <ElSelect v-model={ form.value.delivery } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择送货方式">
+                    {supplyMethod.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="包装要求" prop="packaging">
                   <ElInput v-model={ form.value.packaging } placeholder="请输入包装要求" />
                 </ElFormItem>
                 <ElFormItem label="其它交易条件" prop="other_transaction_terms">
-                  <ElInput v-model={ form.value.other_transaction_terms } placeholder="请输入其它交易条件" />
+                  <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择其它交易条件">
+                    {payTime.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="税票要求" prop="remarks">
-                  <ElInput v-model={ form.value.remarks } placeholder="请输入税票要求" />
+                <ElFormItem label="税票要求" prop="invoice">
+                  <ElSelect v-model={ form.value.invoice } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择税票要求">
+                    {invoice.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
               </ElForm>
             ),

@@ -1,6 +1,6 @@
 const qrcode = require('qrcode');
 const qiniu = require('qiniu');
-const { getUploadToken, deleteFile, config, domain } = require('../config/qinniu');
+const { getUploadToken, deleteFile, batchDeleteFiles, config, domain } = require('../config/qinniu');
 const { v4: uuidv4 } = require('uuid');
 
 // 生成二维码并上传到七牛云

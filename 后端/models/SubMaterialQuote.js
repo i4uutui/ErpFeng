@@ -59,10 +59,10 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
     allowNull: true,
     comment: ' 交易条件 '
   },
-  remarks: {
-    type: DataTypes.TEXT,
+  invoice: {
+    type: DataTypes.INTEGER(),
     allowNull: true,
-    comment: ' 备注 '
+    comment: ' 税票要求 '
   },
   is_deleted: {
     type: DataTypes.INTEGER(1),

@@ -14,6 +14,9 @@ export default defineComponent({
       material_code: '',
       material_name: '',
     })
+    let invoice = ref([])
+    let payTime = ref([])
+    let supplyMethod = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(20);
@@ -24,6 +27,7 @@ export default defineComponent({
         formHeight.value = await getPageHeight([formCard.value, pagin.value]);
       })
       fetchProductList()
+      getConstType()
     })
 
     // 获取列表
@@ -38,6 +42,15 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    // 获取常量
+    const getConstType = async () => {
+      const res = await request.post('/api/getConstType', { type: ['invoice', 'supplyMethod', 'payTime'] })
+      if(res.code == 200){
+        invoice.value = res.data.filter(o => o.type == 'invoice')
+        payTime.value = res.data.filter(o => o.type == 'payTime')
+        supplyMethod.value =  res.data.filter(o => o.type == 'supplyMethod')
+      }
+    }
     // 分页相关
     function pageSizeChange(val) {
       currentPage.value = 1;
@@ -93,9 +106,6 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
                   <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width="100" />
                   <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="100" />
-                  {/* <ElTableColumn label="生产订单号" width="100">
-                    {({row}) => row.notice_id == 0 ? '非管控材料' : row.notice.notice}
-                  </ElTableColumn> */}
                   <ElTableColumn prop="material.material_code" label="材料编码" width="100" />
                   <ElTableColumn prop="material.material_name" label="材料名称" width="100" />
                   <ElTableColumn prop="material.model" label="型号&规格" width="180" />
@@ -103,10 +113,16 @@ export default defineComponent({
                   <ElTableColumn prop="price" label="采购单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
                   <ElTableColumn prop="unit" label="采购单位" width="100" />
-                  <ElTableColumn prop="delivery" label="送货方式" width="100" />
+                  <ElTableColumn label="送货方式" width="100">
+                    {({row}) => <span>{ supplyMethod.value.find(e => e.id == row.delivery)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="packaging" label="包装要求" width="100" />
-                  <ElTableColumn prop="other_transaction_terms" label="其它交易条件" width="120" />
-                  <ElTableColumn prop="remarks" label="备注" width="170" />
+                  <ElTableColumn label="其它交易条件" width="120">
+                    {({row}) => <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>}
+                  </ElTableColumn>
+                  <ElTableColumn label="税票要求" width="110">
+                    {({row}) => <span>{ invoice.value.find(e => e.id == row.invoice)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="created_at" label="创建时间" width="120" />
                 </ElTable>
                 <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />

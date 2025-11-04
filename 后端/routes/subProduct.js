@@ -208,7 +208,12 @@ router.post('/process_bom', authMiddleware, async (req, res) => {
     product_id, part_id, archive, company_id,
     user_id: userId
   })
-  const childrens = children.map(e => ({ process_bom_id: process.id, ...e }))
+  const childrens = children.map(e => ({
+    company_id,
+    process_bom_id: process.id,
+    user_id: userId,
+    ...e
+  }))
   const bomChild = await SubProcessBomChild.bulkCreate(childrens);
 
   const updateData = [];
@@ -249,27 +254,62 @@ router.put('/process_bom', authMiddleware, async (req, res) => {
   // 查询当前所有旧子项
   const oldChildren = await SubProcessBomChild.findAll({
     where: { process_bom_id: process.id },
+    attributes: ['id', 'qr_code'],
   });
   const oldChildIds = oldChildren.map(child => child.id);
-  
+
   if(children && children.length){
     const newChildIds = children.filter(child => child.id).map(child => child.id);
     // 计算需要删除的子项ID：旧有但不在新子项中的ID
     const idsToDelete = oldChildIds.filter(id => !newChildIds.includes(id));
-    // 删除被前端移除的子项
-    if (idsToDelete.length > 0) {
+    // 获取已被前端删除的旧数据
+    if(idsToDelete.length > 0){
+      const oldQrCodeItem = await SubProcessBomChild.findAll({
+        where: { id: idsToDelete },
+        attributes: ['id', 'qr_code']
+      });
+      // 提取所有非空的二维码URL
+      const qrCodeUrls = oldQrCodeItem.filter(child => child.qr_code);
+      if (qrCodeUrls.length > 0){
+        // 从URL中提取七牛云文件key
+        const qiniuKeys = qrCodeUrls.map(item => {
+          const data = item.toJSON()
+          const urlObj = new URL(data.qr_code);
+          return urlObj.pathname.substring(1); // 去除开头的斜杠
+        })
+        try {
+          // 调用批量删除接口
+          await MainDataService.batchRemoveQiniuFiles(qiniuKeys);
+        } catch (error) {
+          // 这里可以根据业务需求决定是否中断操作或继续
+          return res.json({ message: '服务器出错，请联系管理员', code: 401 });
+        }
+      }
+      // 删除被前端移除的子项
       await SubProcessBomChild.destroy({
         where: { id: idsToDelete },
       });
     }
+    
+    const childrens = children.map(e => {
+      if(!e.process_bom_id){
+        e.process_bom_id = process.id,
+        e.company_id = company_id
+      }
+      return e
+    });
     // 批量新增/更新保留的子项
-    const childrens = children.map(e => ({ process_bom_id: process.id, ...e }));
-    const updatedChildren = await SubProcessBomChild.bulkCreate(childrens, {
-      updateOnDuplicate: ['process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'points'], // 按需调整更新字段
-      returning: true, // 让数据库返回新增记录的完整数据（含自增ID）
+    await SubProcessBomChild.bulkCreate(childrens, {
+      updateOnDuplicate: ['process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'points', 'company_id', 'notice_id', "user_id", 'notice'], // 按需调整更新字段
+    });
+    // 更新数据后重新获取数据
+    const newChildrenList = await SubProcessBomChild.findAll({
+      where: { process_bom_id: process.id },
+      attributes: ['id', 'qr_code']
     });
     // 新增的子项需要生成二维码（判断是否有id，没有id的是新增的）
-    const newChildren = updatedChildren.filter(child => !childrens.some(c => c.id === child.id));
+    const newChildren = newChildrenList.filter(child => !child.qr_code);
+    // 生成新子项的二维码
     const updateData = [];
     for (const e of newChildren) {
       const data = e.toJSON();
@@ -282,6 +322,13 @@ router.put('/process_bom', authMiddleware, async (req, res) => {
     if (updateData.length > 0) {
       await SubProcessBomChild.bulkCreate(updateData, {
         updateOnDuplicate: ['qr_code']
+      });
+    }
+  }else {
+    // 如果没有子项，删除所有旧子项
+    if (oldChildIds.length > 0) {
+      await SubProcessBomChild.destroy({
+        where: { id: oldChildIds },
       });
     }
   }

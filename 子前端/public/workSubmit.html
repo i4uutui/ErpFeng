@@ -175,8 +175,8 @@
     createApp({
       data() {
         return {
-          api: 'http://api.yuanfangzixun.com.cn',
-          // api: 'http://localhost:3000',
+          // api: 'https://api.yuanfangzixun.com.cn',
+          api: 'http://localhost:3000',
           headers: {
             "Content-Type": 'application/json',
             "Authorization": ''
@@ -238,7 +238,7 @@
           }
           if(data.code == 402){
             localStorage.clear()
-            const loginUrl = `${window.location.origin}/waiteLogin.html?id=${data.id}&company_id=${data.company_id}`
+            const loginUrl = `${window.location.origin}/waiteLogin.html?id=${this.id}&company_id=${this.urlData.company_id}`
             window.location.replace(loginUrl)
           }
         },
