@@ -299,7 +299,7 @@ export default defineComponent({
                   <ElInput v-model={ form.value.unit } placeholder="请输入采购单位" />
                 </ElFormItem>
                 <ElFormItem label="送货方式" prop="delivery">
-                  <ElSelect v-model={ form.value.delivery } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择送货方式">
+                  <ElSelect v-model={ form.value.delivery } multiple={ false } filterable remote remote-show-suffix placeholder="请选择送货方式">
                     {supplyMethod.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
@@ -307,12 +307,12 @@ export default defineComponent({
                   <ElInput v-model={ form.value.packaging } placeholder="请输入包装要求" />
                 </ElFormItem>
                 <ElFormItem label="其它交易条件" prop="other_transaction_terms">
-                  <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择其它交易条件">
+                  <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix placeholder="请选择其它交易条件">
                     {payTime.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="税票要求" prop="invoice">
-                  <ElSelect v-model={ form.value.invoice } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择税票要求">
+                  <ElSelect v-model={ form.value.invoice } multiple={ false } filterable remote remote-show-suffix placeholder="请选择税票要求">
                     {invoice.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>

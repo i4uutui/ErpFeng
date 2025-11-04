@@ -115,31 +115,31 @@
       <div class="data-item">
         <div class="flex item">
           <div class="label">产品编码</div>
-          <div class="value">{{ getContent(dataObj.product_code) }}</div>
+          <div class="value">{{ getContent(product.product_code) }}</div>
         </div>
         <div class="flex item">
           <div class="label">产品名称</div>
-          <div class="value">{{ getContent(dataObj.product_name) }}</div>
+          <div class="value">{{ getContent(product.product_name) }}</div>
         </div>
         <div class="flex item">
           <div class="label">工程图号</div>
-          <div class="value">{{ getContent(dataObj.product_drawing) }}</div>
+          <div class="value">{{ getContent(product.drawing) }}</div>
         </div>
         <div class="flex item">
           <div class="label">部件编码</div>
-          <div class="value">{{ getContent(dataObj.part_code) }}</div>
+          <div class="value">{{ getContent(part.part_code) }}</div>
         </div>
         <div class="flex item">
           <div class="label">部件名称</div>
-          <div class="value">{{ getContent(dataObj.part_name) }}</div>
+          <div class="value">{{ getContent(part.part_name) }}</div>
         </div>
         <div class="flex item">
           <div class="label">工艺编码</div>
-          <div class="value">{{ getContent(dataObj.process_code) }}</div>
+          <div class="value">{{ getContent(process.process_code) }}</div>
         </div>
         <div class="flex item">
           <div class="label">工艺名称</div>
-          <div class="value">{{ getContent(dataObj.process_name) }}</div>
+          <div class="value">{{ getContent(process.process_name) }}</div>
         </div>
         <div class="flex item">
           <div class="label">订单数量</div>
@@ -175,8 +175,8 @@
     createApp({
       data() {
         return {
-          // api: 'https://api.yuanfangzixun.com.cn',
-          api: 'http://localhost:3000',
+          api: 'https://api.yuanfangzixun.com.cn',
+          // api: 'http://localhost:3000',
           headers: {
             "Content-Type": 'application/json',
             "Authorization": ''
@@ -187,6 +187,9 @@
           id: '',
           quantity: '',
           dataObj: {},
+          process: {},
+          product: {},
+          part: {},
           order_number: 0,
           data: {}
         }
@@ -201,9 +204,11 @@
               const data = res.data.data
               that.data = data
               that.order_number = data.order_number
-              that.dataObj = data.parent.production
-              that.dataObj.process_code = data.process.process_code
-              that.dataObj.process_name = data.process.process_name
+              that.dataObj.out_number = data.parent.production.out_number
+              that.dataObj.delivery_time = data.parent.production.notice.delivery_time
+              that.process = data.process
+              that.product = data.parent.product
+              that.part = data.parent.part
             }else{
               that.setError(res.data)
             }
@@ -218,9 +223,9 @@
             id: this.id,
             number: this.quantity,
             company_id: this.urlData.company_id,
-            product_id: this.dataObj.product_id,
-            part_id: this.dataObj.part_id,
-            process_id: this.data.process_id
+            product_id: this.product.id,
+            part_id: this.part.id,
+            process_id: this.process.id
           }, {
             headers: this.headers
           }).then(res => {

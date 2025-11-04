@@ -487,6 +487,10 @@ export default defineComponent({
       form.value.supplier_code = supplier.supplier_code
       form.value.supplier_abbreviation = supplier.supplier_abbreviation
     }
+    // 删除
+    const handleDelete = (row, index) => {
+      tableData.value.splice(index, 1)
+    }
     // 执行打印
     const onPrint = async () => {
       const list = allSelect.value.length ? allSelect.value : tableData.value
@@ -602,9 +606,9 @@ export default defineComponent({
                   <ElTableColumn prop="delivery_time" label="交货时间" width='110' />
                   <ElTableColumn prop="apply_name" label="申请人" width="90" />
                   <ElTableColumn prop="apply_time" label="申请时间" width="110" />
-                  <ElTableColumn label="操作" width="150" fixed="right">
+                  <ElTableColumn label="操作" width="200" fixed="right">
                     {{
-                      default: ({ row }) => {
+                      default: ({ row, $index }) => {
                         let dom = []
                         if(row.status == undefined || row.status == 2){
                           dom.push(<>
@@ -622,6 +626,7 @@ export default defineComponent({
                             <ElButton size="small" type="primary" onClick={ () => handleBackApproval(row) }>反审批</ElButton>
                           </>)
                         }
+                        dom.push(<ElButton size="small" type="danger" onClick={ () => handleDelete(row, $index) }>删除</ElButton>)
                         return dom
                       }
                     }}

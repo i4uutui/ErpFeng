@@ -288,7 +288,7 @@ export default defineComponent({
                   <ElInput v-model={ form.value.tax_registration_number } placeholder="请输入税务登记号" />
                 </ElFormItem>
                 <ElFormItem label="交易方式" prop="transaction_method">
-                  <ElSelect v-model={ form.value.transaction_method } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择交易方式">
+                  <ElSelect v-model={ form.value.transaction_method } multiple={ false } filterable remote remote-show-suffix placeholder="请选择交易方式">
                     {method.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
@@ -296,7 +296,7 @@ export default defineComponent({
                   <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
                 </ElFormItem>
                 <ElFormItem label="其它交易条件" prop="other_transaction_terms">
-                  <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix clearable placeholder="请选择其它交易条件">
+                  <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix placeholder="请选择其它交易条件">
                     {payTime.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>

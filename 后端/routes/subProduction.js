@@ -394,16 +394,19 @@ router.post('/set_out_number', authMiddleware, async (req, res) => {
   const { id, house_number, order_number } = req.body
   const { id: userId, company_id } = req.user;
   
-  if(house_number <= 0) return res.json({ message: '委外/库存数量不能等于' + house_number, code: 401 })
+  const handleHouseNumber = house_number === undefined || house_number === null ? 0 : Number(house_number);
+  if(isNaN(handleHouseNumber) || handleHouseNumber < 0){
+    return res.json({ message: '委外/库存数量不能小于0', code: 401 });
+  }
   const result = await SubProductionProgress.findOne({
-    where: { id },
+    where: { id, company_id },
     attributes: ['id', 'company_id', 'user_id', 'out_number', 'notice_id', 'bom_id']
   })
   if(!result) return res.json({ message: '数据不存在，或已被删除', code: 401 })
   const row = result.toJSON()
   
-  row.out_number = PreciseMath.sub(order_number, house_number)
-  row.house_number = house_number
+  row.out_number = PreciseMath.sub(order_number, handleHouseNumber)
+  row.house_number = handleHouseNumber
   await SubProductionProgress.update(row, { where: { id } })
 
   const bomChild = await SubProcessBomChild.findAll({
@@ -418,7 +421,7 @@ router.post('/set_out_number', authMiddleware, async (req, res) => {
       const item = e.toJSON()
       if(row.bom_id == item.process_bom_id){
         const n = item.add_finish ? PreciseMath.sub(order_number, item.add_finish) : order_number
-        item.order_number = house_number ? PreciseMath.sub(n, house_number) : n
+        item.order_number = handleHouseNumber ? PreciseMath.sub(n, handleHouseNumber) : n
       }
       return item
     })
@@ -524,8 +527,17 @@ router.get('/mobile_process_bom', EmployeeAuth, async (req, res) => {
 
   const result = await SubProcessBomChild.findByPk(id, {
     include: [
-      { model: SubProcessBom, as: 'parent', include: [{ model: SubProductionProgress, as: 'production' }] },
-      { model: SubProcessCode, as: 'process' }
+      {
+        model: SubProcessBom,
+        as: 'parent',
+        attributes: ['id', 'product_id', 'part_id'],
+        include: [
+          { model: SubProductionProgress, as: 'production', attributes: ['id', 'out_number', 'notice_id'], include: [{ model: SubProductNotice, as: 'notice', attributes: ['id', 'delivery_time'] }] }, 
+          { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing'] },
+          { model: SubPartCode, as: 'part', attributes: ['id', 'part_code', 'part_name'] }
+        ]
+      },
+      { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] }
     ]
   })
   if(!result) return res.json({ message: '数据出错，请检查正确的地址或二维码', code: 401 })

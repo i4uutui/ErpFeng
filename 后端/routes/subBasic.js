@@ -592,46 +592,41 @@ router.delete('/employee_info/:id', authMiddleware, async (req, res) => {
 // 员工登录
 router.post('/employee_info_login', async (req, res) => {
   const { employee_id, password, company_id } = req.body;
-  try {
-    const result = await SubEmployeeInfo.findOne({
-      where: {
-        company_id,
-        employee_id,
-        is_deleted: 1
-      },
-      attributes: ['id', 'company_id', 'name', 'cycle_id', 'employee_id', 'password']
-    })
-    if(!result) return res.json({ message: '账号密码错误', code: 401 })
+  const result = await SubEmployeeInfo.findOne({
+    where: {
+      company_id,
+      employee_id,
+      is_deleted: 1
+    },
+    attributes: ['id', 'company_id', 'name', 'cycle_id', 'employee_id', 'password']
+  })
+  if(!result) return res.json({ message: '账号密码错误', code: 401 })
+
+  const data = result.toJSON()
   
-    const data = result.toJSON()
-    
-    const isPasswordValid = await bcrypt.compare(password, data.password);
-    
-    if (!isPasswordValid) {
-      return res.json({ message: '账号或密码错误', code: 401 });
-    }
-    console.log(data);
-    await SubOperationHistory.create({
-      user_id: data.id,
-      user_name: data.name,
-      company_id: company_id,
-      operation_type: 'login',
-      module: "移动端",
-      desc: `员工{ ${ data.name } }成功登录`,
-      data: { newData: { employee_id, password: '***' } },
-    });
-
-    const token = jwt.sign({ ...data }, process.env.JWT_SECRET, { expiresIn: '7d' });
-
-    const { password: _, ...newData } = data;
-    res.json({ 
-      token, 
-      data: newData,
-      code: 200 
-    });
-  } catch (error) {
-    console.log(error);
+  const isPasswordValid = await bcrypt.compare(password, data.password);
+  
+  if (!isPasswordValid) {
+    return res.json({ message: '账号或密码错误', code: 401 });
   }
+  await SubOperationHistory.create({
+    user_id: data.id,
+    user_name: data.name,
+    company_id: company_id,
+    operation_type: 'login',
+    module: "移动端",
+    desc: `员工{ ${ data.name } }成功登录`,
+    data: JSON.stringify({ newData: { employee_id, password: '***' } }),
+  });
+
+  const token = jwt.sign({ ...data }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+  const { password: _, ...newData } = data;
+  res.json({ 
+    token, 
+    data: newData,
+    code: 200 
+  });
 })
 
 module.exports = router;

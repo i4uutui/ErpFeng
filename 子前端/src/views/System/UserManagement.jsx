@@ -300,7 +300,7 @@ export default defineComponent({
                   <ElInput v-model={ form.value.name } placeholder="请输入姓名" />
                 </ElFormItem>
                 <ElFormItem label="所属部门" prop="cycle_id">
-                  <ElSelect v-model={ form.value.cycle_id } multiple={false} filterable remote remote-show-suffix clearable placeholder="请选择所属部门">
+                  <ElSelect v-model={ form.value.cycle_id } multiple={false} filterable remote remote-show-suffix placeholder="请选择所属部门">
                     {processCycle.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>

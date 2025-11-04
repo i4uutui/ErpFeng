@@ -102,7 +102,7 @@ SubProductionProgress.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 
 SubProductionProgress.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
 SubProductionProgress.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
 SubProductionProgress.belongsTo(SubProcessBom, { foreignKey: 'bom_id', as: 'bom' })
-// SubProcessBom.hasOne(SubProductionProgress, { foreignKey: 'bom_id', as: 'production' })
+SubProcessBom.hasOne(SubProductionProgress, { foreignKey: 'bom_id', as: 'production' })
 SubProductionProgress.hasMany(SubProcessCycleChild, { foreignKey: 'progress_id', as: 'cycleChild' })
 // SubProcessCycle.hasMany(SubProcessCycleChild, { foreignKey: 'cycle_id', as: 'cycleChild' })
 // SubProcessCycleChild.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })

@@ -51,6 +51,7 @@ export default defineComponent({
       goods_address: '',
     })
     let customerList = ref([])
+    let productList = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(20);
@@ -71,6 +72,7 @@ export default defineComponent({
       })
       fetchProductList()
       getCustomerInfo()
+      getProductCode()
     })
 
     // 获取列表
@@ -90,6 +92,12 @@ export default defineComponent({
       const res = await request.get('/api/getCustomerInfo')
       if(res.code == 200){
         customerList.value = res.data
+      }
+    }
+    const getProductCode = async () => {
+      const res = await request.get('/api/getProductsCode')
+      if(res.code == 200){
+        productList.value = res.data
       }
     }
     const handleSubmit = async (formEl) => {
@@ -135,6 +143,8 @@ export default defineComponent({
     const handleUplate = (row) => {
       edit.value = row.id;
       dialogVisible.value = true;
+      row.customer_id = row.customer.id
+      row.product_id = row.product.id
       form.value = { ...row };
     }
     // 新增
@@ -167,8 +177,9 @@ export default defineComponent({
       const item = customerList.value.find(o => o.id == value)
       form.value.goods_address = item.delivery_address
     }
-    const productChange = (row) => {
-      form.value.product_req = row.production_requirements
+    const productChange = (value) => {
+      const item = productList.value.find(o => o.id == value)
+      form.value.product_req = item.production_requirements
     }
     // 分页相关
     function pageSizeChange(val) {
@@ -271,21 +282,28 @@ export default defineComponent({
                 <ElFormItem label="接单日期" prop="rece_time">
                   <ElDatePicker v-model={ form.value.rece_time } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="请选择接单日期" />
                 </ElFormItem>
+                <ElFormItem label="客户订单号" prop="customer_order">
+                  <ElInput v-model={ form.value.customer_order } placeholder="请输入客户订单号" />
+                </ElFormItem>
                 <ElFormItem label="客户编码" prop="customer_id">
-                  <ElSelect v-model={ form.value.customer_id } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择客户编码" onChange={ (value) => customerChange(value) }>
+                  <ElSelect v-model={ form.value.customer_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择客户编码" onChange={ (value) => customerChange(value) }>
                     {customerList.value.map((e, index) => <ElOption value={ e.id } label={ e.customer_code } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="客户名称" prop="customer_id">
-                  <ElSelect v-model={ form.value.customer_id } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择客户编码" onChange={ (value) => customerChange(value) }>
+                  <ElSelect v-model={ form.value.customer_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择客户编码" onChange={ (value) => customerChange(value) }>
                     {customerList.value.map((e, index) => <ElOption value={ e.id } label={ e.customer_abbreviation } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="客户订单号" prop="customer_order">
-                  <ElInput v-model={ form.value.customer_order } placeholder="请输入客户订单号" />
-                </ElFormItem>
                 <ElFormItem label="产品编码" prop="product_id">
-                  <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_code" itemValue="product_code" placeholder="请选择产品编码" onChange={ (value) => productChange(value) } />
+                  <ElSelect v-model={ form.value.product_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择产品编码" onChange={ (value) => productChange(value) }>
+                    {productList.value.map((e, index) => <ElOption value={ e.id } label={ e.product_code } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="产品名称" prop="product_id">
+                  <ElSelect v-model={ form.value.product_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择产品编码" onChange={ (value) => productChange(value) }>
+                    {productList.value.map((e, index) => <ElOption value={ e.id } label={ e.product_name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="产品要求" prop="product_req">
                   <ElInput v-model={ form.value.product_req } placeholder="请输入产品要求" />
