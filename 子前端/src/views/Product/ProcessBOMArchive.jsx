@@ -37,8 +37,9 @@ export default defineComponent({
     let form = ref({
       product_id: '',
       part_id: '',
+      sort: 0,
       children: [
-        { process_id: '', equipment_id: '', time: '', price: '', points: '1' }
+        { process_id: '', equipment_id: '', time: '', price: '', points: '1', sort: 1 }
       ]
     })
     let tableData = ref([])
@@ -179,7 +180,7 @@ export default defineComponent({
         }
       })
     }
-    const columnLength = 5 // 表示前面不需要颜色的列数
+    const columnLength = 6 // 表示前面不需要颜色的列数
     const headerCellStyle = ({ columnIndex, rowIndex, column }) => {
       if(!tableData.value.length) return
 
@@ -198,14 +199,14 @@ export default defineComponent({
         }
       }
     }
-    const handleUplate = ({ id, product_id, part_id, children }) => {
+    const handleUplate = ({ id, product_id, part_id, children, sort }) => {
       edit.value = id;
       dialogVisible.value = true;
       let filtered = children.filter(item => {
         return !Object.values(item).every(isEmptyValue);
       });
       if(!filtered.length) filtered = [{ process_id: '', equipment_id: '', time: '', price: '', points: '1' }]
-      form.value = { children: filtered, id, product_id, part_id };
+      form.value = { children: filtered, id, product_id, part_id, sort };
     }
     const handledeletedJson = (index) => {
       form.value.children.splice(index, 1)
@@ -224,6 +225,7 @@ export default defineComponent({
       form.value = {
         product_id: '',
         part_id: '',
+        sort: 0,
         children: [
           { process_id: '', equipment_id: '', time: '', price: '', points: '1' }
         ]
@@ -280,6 +282,7 @@ export default defineComponent({
                   <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" minWidth="100" />
                   <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" minWidth="100" />
                   <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" minWidth="100" />
+                  <ElTableColumn prop="sort" label="排序" fixed="left" minWidth="100" />
                   <ElTableColumn prop="part.part_code" label="部位编码" fixed="left" minWidth="100" />
                   <ElTableColumn prop="part.part_name" label="部位名称" fixed="left" minWidth="100" />
                   {
@@ -310,7 +313,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺BOM信息' : '新增工艺BOM信息' } width='800' center draggable bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺BOM信息' : '新增工艺BOM信息' } width='810' center draggable bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="105px">
@@ -319,6 +322,9 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="部件编码" prop="part_id">
                   <MySelect v-model={ form.value.part_id } apiUrl="/api/getPartCode" query="part_code" itemValue="part_code" placeholder="请选择部件编码" />
+                </ElFormItem>
+                <ElFormItem label="排序" prop='sort'>
+                  <ElInput v-model={ form.value.sort } placeholder="请输入排序" />
                 </ElFormItem>
                 <div>
                   {

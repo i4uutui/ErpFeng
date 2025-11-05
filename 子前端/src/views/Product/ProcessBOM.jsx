@@ -275,7 +275,7 @@ export default defineComponent({
     const handledeletedJson = (index) => {
       form.value.children.splice(index, 1)
     }
-    const columnLength = 5 // 表示前面不需要颜色的列数
+    const columnLength = 6 // 表示前面不需要颜色的列数
     const headerCellStyle = ({ columnIndex, rowIndex, column }) => {
       if(!tableData.value.length) return
 
@@ -359,7 +359,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺BOM信息' : '新增工艺BOM信息' } width='800' center draggable bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改工艺BOM信息' : '新增工艺BOM信息' } width='810' center draggable bodyClass="dialogBodyStyle" onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="105">

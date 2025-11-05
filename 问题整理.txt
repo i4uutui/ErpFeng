@@ -14,6 +14,9 @@
 
 火花塞：双铱金
 
+-- sub_process_bom_child表要删除四个字段，分别为：all_time，all_load，add_finish，order_number
+-- sub_process_cycle_children改名为sub_production_cycle
+
 
 -- 1、客户资料——其他交易条件改成筛选：['货到付款', '月结30天', '月结60天', '月结90天', '其他']
 -- 2、已创建生产通知单的销售单不能出现在新建的生产通知单的选项中

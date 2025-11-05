@@ -9,7 +9,7 @@ const SubOperationHistory = require('./SubOperationHistory.js') // 用户操作�
 const SubApprovalStep = require('./SubApprovalStep.js') // 审批步骤配置表
 const SubApprovalUser = require('./SubApprovalUser.js') // 流程控制用户表
 const SubProcessCycle = require('./SubProcessCycle.js') // 生产制程表
-const SubProcessCycleChild = require('./SubProcessCycleChild.js') // 生产制程子表
+const SubProductionCycle = require('./SubProductionCycle.js') // 生产制程子表
 const SubConstType = require('./SubConstType.js') // 仓库类型
 const SubWarehouseCycle = require('./SubWarehouseCycle.js') // 仓库类型表
 const SubWarehouseContent = require('./SubWarehouseContent.js') // 仓库列表数据表
@@ -38,6 +38,8 @@ const SubRateWage = require('./SubRateWage.js') // 工资表
 const SubNoEncoding = require('./SubNoEncoding.js') // 打印的编码表
 const SubDateInfo = require('./SubDateInfo.js') // 日历记录的表
 const SubSaleCancel = require('./SubSaleCancel.js') // 销售订单取消订单储存的数据
+const SubProductionProcess = require('./SubProductionProcess.js') // 工艺BOM表工序下进度表的子表
+const SubProcessCycleChild = require('./SubProcessCycleChild.js')
 
 AdUser.belongsTo(AdCompanyInfo, { foreignKey: 'company_id', as: 'company' })
 AdUser.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
@@ -80,6 +82,8 @@ SubProcessBom.hasMany(SubProcessBomChild, { foreignKey: 'process_bom_id', as: 'c
 SubProcessBomChild.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as: 'parent' })
 SubProcessBomChild.belongsTo(SubProcessCode, { foreignKey: 'process_id', as: 'process' })
 SubProcessBomChild.belongsTo(SubEquipmentCode, { foreignKey: 'equipment_id', as: 'equipment' })
+SubProcessBomChild.hasOne(SubProductionProcess, { foreignKey: 'parent_id', as: 'gongxu' })
+SubProductionProcess.belongsTo(SubProcessBomChild, { foreignKey: 'parent_id', as: 'parent' })
 SubProcessCode.hasOne(SubProcessBomChild, { foreignKey: 'process_id' })
 SubEquipmentCode.hasOne(SubProcessBomChild, { foreignKey: 'equipment_id' })
 
@@ -104,9 +108,10 @@ SubProductionProgress.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale
 SubProductionProgress.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
 SubProductionProgress.belongsTo(SubProcessBom, { foreignKey: 'bom_id', as: 'bom' })
 SubProcessBom.hasOne(SubProductionProgress, { foreignKey: 'bom_id', as: 'production' })
-SubProductionProgress.hasMany(SubProcessCycleChild, { foreignKey: 'progress_id', as: 'cycleChild' })
+SubProductionProgress.hasMany(SubProductionCycle, { foreignKey: 'progress_id', as: 'cycleChild' })
 // SubProcessCycle.hasMany(SubProcessCycleChild, { foreignKey: 'cycle_id', as: 'cycleChild' })
-// SubProcessCycleChild.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
+SubProductionCycle.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
+SubProcessCycle.hasOne(SubProductionCycle, { foreignKey: 'cycle_id', as: 'production' })
 // SubProcessCycleChild.belongsTo(SubProductionProgress, { foreignKey: 'progress_id', as: 'progress' })
 
 SubWarehouseApply.hasMany(SubApprovalUser, { foreignKey: 'source_id', as: 'approval' })
@@ -139,7 +144,7 @@ module.exports = {
   SubApprovalStep,
   SubApprovalUser,
   SubProcessCycle,
-  SubProcessCycleChild,
+  SubProductionCycle,
   SubConstType,
   SubWarehouseCycle,
   SubWarehouseContent,
@@ -167,7 +172,9 @@ module.exports = {
   SubRateWage,
   SubNoEncoding,
   SubDateInfo,
-  SubSaleCancel
+  SubSaleCancel,
+  SubProductionProcess,
+  SubProcessCycleChild
 }
 
 

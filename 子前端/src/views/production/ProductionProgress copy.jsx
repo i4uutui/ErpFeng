@@ -39,19 +39,6 @@ export default defineComponent({
       // 计算极限负荷
       const equipmentMap = new Map(); // 去重
       tableData.value.forEach(item => {
-        // item.bom?.children?.forEach(child => {
-        //   const { equipment } = child;
-        //   if (equipment && equipment.id) {
-        //     const key = `${equipment.id}`;
-        //     if (!equipmentMap.has(key)) {
-        //       equipmentMap.set(key, true);
-        //       const cycleData = cycleMap.get(equipment.cycle.id);
-        //       if (cycleData) {
-        //         cycleData.maxLoad += Number(equipment.efficiency || 0);
-        //       }
-        //     }
-        //   }
-        // });
         item.cycleChild?.forEach(cycleChild => {
           if (cycleChild.cycle?.equipment?.length) {
             // 遍历当前周期下的所有设备
@@ -120,7 +107,6 @@ export default defineComponent({
             
             // 转换目标日期为dayjs对象
             const currentDate = dayjs(targetDate).startOf('day');
-            
             // 仅当目标日期在start_date和end_date之间（包含首尾）时才累加负荷
             if (currentDate.isSameOrAfter(startDate) && currentDate.isSameOrBefore(endDate) && !isSpecialDate(currentDate)) {
               cycleData.dateData[targetDate] = Number(cycleChild.load);
@@ -135,6 +121,10 @@ export default defineComponent({
           maxLoad: stat.maxLoad.toFixed(1) // 保留一位小数
         }
       })
+      console.log({
+        stats,
+        dates: dateList
+      });
       return {
         stats,
         dates: dateList

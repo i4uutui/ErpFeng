@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessCycleChild, Op, SubSaleCancel } = require('../models')
+const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCycle, Op, SubSaleCancel, SubProductionCycle, SubProductionProcess } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { PreciseMath, getSaleCancelIds } = require('../middleware/tool');
@@ -572,7 +572,7 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
     },
     attributes: ['id', 'archive', 'product_id', 'part_id'],
     include: [
-      { model: SubProcessBomChild, as: 'children', attributes: ['id', 'order_number', 'all_time', 'time'] },
+      { model: SubProcessBomChild, as: 'children', attributes: ['id', 'time'] },
       { model: SubPartCode, as: 'part', attributes: ['id', 'part_code', 'part_name'] }
     ],
     order: [
@@ -587,6 +587,7 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
 
   
   let progress = []
+  let childProgress = []
   bomResult.forEach(item => {
     // 这是进度表的基础数据
     const obj = {
@@ -603,8 +604,22 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
       remarks: ''
     }
     progress.push(obj)
+    item.children.forEach(child => {
+      const tk = {
+        notice_id: noticeRow.id,
+        parent_id: child.id,
+        progress_id: null,
+        order_number: noticeRow.sale.order_number,
+        // time: child.time,
+        // child_id: item.id,
+        all_work_time: (PreciseMath.mul(noticeRow.sale.order_number, child.time) / 60 / 60).toFixed(1),
+        company_id,
+      }
+      childProgress.push(tk)
+    })
   })
-  const progressArr = ['company_id', 'user_id', 'notice_id', 'product_id', 'sale_id', 'out_number', 'part_id', 'bom_id', 'start_date', 'house_number', 'remarks'] 
+  const progressArr = ['company_id', 'user_id', 'notice_id', 'product_id', 'sale_id', 'out_number', 'part_id', 'bom_id', 'start_date', 'house_number', 'remarks']
+  await SubProductionProcess.bulkCreate(childProgress, { updateOnDuplicate: ['notice_id', 'parent_id', 'progress_id', 'order_number', 'all_work_time', 'company_id'] }) 
   const progressResult = await SubProductionProgress.bulkCreate(progress, {updateOnDuplicate: progressArr})
   const progressRows = progressResult.map(e => e.toJSON())
 
@@ -620,7 +635,7 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
     cycleChildData.push(...cycleChildDataForProgress);
   })
   // 批量插入
-  await SubProcessCycleChild.bulkCreate(cycleChildData)
+  await SubProductionCycle.bulkCreate(cycleChildData)
 
   if(progress.length){
     // 设置此数据为已排产

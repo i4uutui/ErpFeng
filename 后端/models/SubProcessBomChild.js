@@ -61,26 +61,6 @@ const SubProcessBomChild = sequelize.define('SubProcessBomChild', {
     allowNull: false,
     comment: '段数点数'
   },
-  all_time: {
-    type: DataTypes.INTEGER(11),
-    allowNull: true,
-    comment: ' 全部工时-H '
-  },
-  all_load: {
-    type: DataTypes.INTEGER(11),
-    allowNull: true,
-    comment: ' 每日负荷-H '
-  },
-  add_finish: {
-    type: DataTypes.INTEGER(11),
-    allowNull: true,
-    comment: ' 累计完成 '
-  },
-  order_number: {
-    type: DataTypes.INTEGER(11),
-    allowNull: true,
-    comment: ' 订单尾数 '
-  },
   qr_code: {
     type: DataTypes.STRING(255),
     allowNull: true,

@@ -5,7 +5,7 @@ const isSameOrBefore = require('dayjs/plugin/isSameOrBefore');
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 const router = express.Router();
-const { SubProductionProgress, SubProductNotice, SubProductCode, SubCustomerInfo, SubSaleOrder, SubPartCode, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessBom, SubProcessCycleChild, SubOperationHistory, SubRateWage, Op, SubProductionNotice, SubDateInfo } = require('../models');
+const { SubProductionProgress, SubProductNotice, SubProductCode, SubSaleOrder, SubPartCode, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessBom, SubOperationHistory, SubRateWage, Op, SubProductionCycle, SubProductionProcess, SubProcessCycleChild, SubDateInfo, SubCustomerInfo } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const EmployeeAuth = require('../middleware/EmployeeAuth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
@@ -15,13 +15,16 @@ const { PreciseMath, getSaleCancelIds } = require('../middleware/tool');
 // router.get('/production_progress', authMiddleware, async (req, res) => {
 //   const { company_id } = req.user;
 //   const today = dayjs().startOf('day');
+
+//     const noticeIds = await getSaleCancelIds('notice_id')
   
 //   const [ rows, dates ] = await Promise.all([
 //     SubProductionProgress.findAll({
 //       where: {
-//         is_deleted: 1,
+//         notice_id: { [Op.notIn]: noticeIds },
 //         company_id,
-//         is_finish: 1
+//         is_finish: 1,
+//         is_deleted: 1,
 //       },
 //       attributes: ['id', 'notice_id', 'customer_abbreviation', 'product_id', 'part_id', 'bom_id', 'house_number', 'out_number', 'start_date', 'remarks', 'created_at'],
 //       include: [
@@ -50,14 +53,15 @@ const { PreciseMath, getSaleCancelIds } = require('../middleware/tool');
 //             {
 //               model: SubProcessBomChild,
 //               as: 'children',
-//               attributes: ['id', 'order_number', 'equipment_id', 'process_bom_id', 'process_id', 'time', 'all_time', 'all_load', 'add_finish'],
+//               attributes: ['id', 'equipment_id', 'process_bom_id', 'process_id', 'time', 'process_index'],
 //               include: [
+//                 { model: SubProductionProcess, as: 'gongxu', attributes: ['id', 'notice_id', 'parent_id', 'all_work_time', 'load', 'finish', 'order_number'] },
 //                 { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
 //                 {
 //                   model: SubEquipmentCode,
 //                   as: 'equipment',
 //                   attributes: ['id', 'equipment_name', 'equipment_code', 'working_hours', 'efficiency', 'quantity'],
-//                   include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort'], order: [['sort', 'ASC']] }]
+//                   include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort'] }]
 //                 },
 //               ]
 //             }
@@ -142,6 +146,8 @@ const { PreciseMath, getSaleCancelIds } = require('../middleware/tool');
 
 //   res.json({ data: formatArrayTime(fromData), code: 200 });
 // });
+
+// 获取生产进度表列表
 // router.get('/production_progress', authMiddleware, async (req, res) => {
 //   const { company_id } = req.user;
 //   const today = dayjs().startOf('day');
@@ -170,6 +176,7 @@ const { PreciseMath, getSaleCancelIds } = require('../middleware/tool');
 //           as: 'cycleChild',
 //           attributes: ['cycle_id', 'id', 'end_date', 'load', 'order_number', 'progress_id'],
 //           order: [['cycle', 'sort', 'ASC']],
+//           include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort_date', 'sort'], where: { sort: { [Op.gt]: 0 } } }]
 //         },
 //         {
 //           model: SubProcessBom,
@@ -182,6 +189,12 @@ const { PreciseMath, getSaleCancelIds } = require('../middleware/tool');
 //               attributes: ['id', 'order_number', 'equipment_id', 'process_bom_id', 'process_id', 'time', 'all_time', 'all_load', 'add_finish'],
 //               include: [
 //                 { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
+//                 {
+//                   model: SubEquipmentCode,
+//                   as: 'equipment',
+//                   attributes: ['id', 'equipment_name', 'equipment_code', 'working_hours', 'efficiency', 'quantity'],
+//                   include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort'], order: [['sort', 'ASC']] }]
+//                 },
 //               ]
 //             }
 //           ]
@@ -327,10 +340,11 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
           ]
         },
         {
-          model: SubProcessCycleChild,
+          model: SubProductionCycle,
           as: 'cycleChild',
           attributes: ['cycle_id', 'id', 'end_date', 'load', 'order_number', 'progress_id'],
           order: [['cycle', 'sort', 'ASC']],
+          // include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort_date', 'sort'] }] 
         },
         {
           model: SubProcessBom,
@@ -340,8 +354,9 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
             {
               model: SubProcessBomChild,
               as: 'children',
-              attributes: ['id', 'order_number', 'equipment_id', 'process_bom_id', 'process_id', 'time', 'all_time', 'all_load', 'add_finish'],
+              attributes: ['id', 'equipment_id', 'process_bom_id', 'process_id', 'time', 'process_index'],
               include: [
+                { model: SubProductionProcess, as: 'gongxu', attributes: ['id', 'notice_id', 'parent_id', 'all_work_time', 'load', 'finish', 'order_number'] },
                 { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
                 {
                   model: SubEquipmentCode,
@@ -353,7 +368,7 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
             }
           ]
         }
-      ]
+      ],
     }),
     SubProcessCycle.findAll({
       where: {
@@ -363,23 +378,13 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
       attributes: [ 'id', 'name', 'sort', 'sort_date' ],
       order: [['sort', 'ASC']],
       include: [
-        { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'efficiency'] }
+        { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'efficiency'] },
+        { model: SubProductionCycle, as: 'production', attributes: ['cycle_id', 'id', 'end_date'] }
       ]
-    })
+    }),
   ])
   if(!rows.length) return res.json({ code: 200, data: {process: [], cycle: []} })
-  // bom.children需要按制程的sort进行排序
-  const processResult = rows.map(e => {
-    const itemJson = e.toJSON()
-    if (itemJson.bom?.children && itemJson.bom.children.length > 0) {
-      itemJson.bom.children.sort((a, b) => {
-        const sortA = a.equipment?.cycle?.sort || 0;
-        const sortB = b.equipment?.cycle?.sort || 0;
-        return sortA - sortB; // 升序排列
-      });
-    }
-    return itemJson;
-  })
+
   // 返回制程的数据
   const cycleResult = cycles.map(e => {
     const item = e.toJSON()
@@ -388,12 +393,79 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
     return newItem
   })
 
+  // 今日
+  const startDate = dayjs().startOf('day');
+  // bom.children需要按制程的sort进行排序
+  const processResult = rows.map(e => {
+    const itemJson = e.toJSON()
+    if (itemJson.bom?.children && itemJson.bom.children.length > 0) {
+      itemJson.bom.children.sort((a, b) => {
+        const sortA = a.process_index || 0;
+        const sortB = b.process_index || 0;
+        return sortA - sortB; // 升序排列
+      });
+      itemJson.bom.children.forEach(o => {
+        // 全部工时
+        o.gongxu.all_work_time = (PreciseMath.mul(o.gongxu.order_number, o.time) / 60 / 60).toFixed(1)
+        
+        // 如果未填起始时间，跳过
+        if(!itemJson.start_date) return
+
+        // 当前行的起始生产日期
+        const rowDate = dayjs(itemJson.start_date).startOf('day')
+        // 获得起始时间，不是今天就是起始生产日期
+        const dayDiff = startDate.isSameOrBefore(dayjs(rowDate)) ? rowDate : startDate
+        let dayLeng = 0
+        let end_date = ''
+        cycleResult.some(cycle => {
+          if(cycle.production.cycle_id == o.equipment.cycle.id){
+            end_date = cycle.production.end_date ? dayjs(cycle.production.end_date) : ''
+            return true;
+          }
+          dayLeng = PreciseMath.add(dayLeng, Number(cycle.sort_date))
+        })
+        // 如果没有结束日期，就什么都不干了
+        if(!end_date) return
+        // 计算 dayDiff + dayLeng 后的起始日期
+        const targetDate = dayDiff.add(dayLeng, 'day');
+        // 计算起始日期到结束日期的天数差
+        const daysDiff = end_date.diff(targetDate, 'day');
+        // 每个工序的每日负荷 = 全部工时 / 起始日期到结束日期的天数差
+        o.gongxu.load = PreciseMath.div(o.gongxu.all_work_time, daysDiff).toFixed(1)
+      })
+    }
+    
+    // 计算制程日总负荷
+    itemJson.cycleChild.forEach(cycle => {
+      if(itemJson.bom?.children && itemJson.bom.children.length > 0){
+        const cycleLoadMap = {};
+        itemJson.bom.children.forEach(item => {
+          // 提取 cycle.id
+          const cycleId = item?.equipment?.cycle?.id;
+          const load = Number(item.gongxu.load);
+          if(!load) return
+          if (cycleId !== undefined && !isNaN(load)) {
+            // 累加对应 cycleId 的 load
+            cycleLoadMap[cycleId] = PreciseMath.add(cycleLoadMap[cycleId] || 0, load);
+          }
+        })
+        const total = cycleLoadMap[cycle.cycle_id]
+        cycle.load = total == undefined || total == null || total == 0 ? '' : total
+      }else{
+        cycle.load = 0
+      }
+    })
+
+    return itemJson;
+  })
+
   const data = {
     process: processResult,
     cycle: cycleResult
   }
   res.json({ code: 200, data })
 })
+
 router.post('/set_out_number', authMiddleware, async (req, res) => {
   const { id, house_number, order_number } = req.body
   const { id: userId, company_id } = req.user;
@@ -453,12 +525,14 @@ router.put('/set_production_date', authMiddleware, async (req, res) => {
   let row = null
   if(type == 'start_date'){
     row = await SubProductionProgress.findAll({
-      where: { id: ids }
+      where: { id: ids },
+      attributes: ['id']
     })
   }
   if(type == 'end_date'){
-    row = await SubProcessCycleChild.findAll({
-      where: { id: ids }
+    row = await SubProductionCycle.findAll({
+      where: { id: ids },
+      attributes: ['id']
     })
   }
   if(row.length != params.length){
@@ -473,7 +547,7 @@ router.put('/set_production_date', authMiddleware, async (req, res) => {
     await SubProductionProgress.bulkCreate(dataValue, setting)
   }
   if(type == 'end_date'){
-    await SubProcessCycleChild.bulkCreate(params, setting)
+    await SubProductionCycle.bulkCreate(params, setting)
   }
   
   res.json({ message: '修改成功', code: 200 });
