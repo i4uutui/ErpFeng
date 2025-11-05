@@ -11,12 +11,12 @@ const SubSaleOrder = sequelize.define('SubSaleOrder', {
   },
   company_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
     comment: ' 企业 id'
   },
   user_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
     comment: ' 发布的用户 id'
   },
   rece_time: {
@@ -26,7 +26,7 @@ const SubSaleOrder = sequelize.define('SubSaleOrder', {
   },
   customer_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
     comment: ' 客户 id'
   },
   customer_order: {
@@ -36,7 +36,7 @@ const SubSaleOrder = sequelize.define('SubSaleOrder', {
   },
   product_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
     comment: ' 产品编码 id'
   },
   product_req: {
@@ -73,6 +73,12 @@ const SubSaleOrder = sequelize.define('SubSaleOrder', {
     type: DataTypes.STRING(255),
     allowNull: true,
     comment: ' 送货地点 '
+  },
+  is_sale: {
+    type: DataTypes.INTEGER(1),
+    allowNull: true,
+    defaultValue: 1,
+    comment: ' 是否已创建生产订单：1-未创建，0-已创建 '
   },
   is_deleted: {
     type: DataTypes.INTEGER(1),

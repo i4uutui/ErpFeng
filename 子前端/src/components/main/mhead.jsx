@@ -1,7 +1,7 @@
 import { defineComponent, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { SwitchButton } from '@element-plus/icons-vue'
-import { getItem, setItem } from '@/assets/js/storage';
+import { clearStorage, getItem, setItem } from '@/assets/js/storage';
 import request from '@/utils/request';
 import imageError from '@/assets/images/0fc7d20532fdaf769a25683617711.png'
 import logo from '@/assets/images/logo.png'
@@ -31,7 +31,7 @@ export default defineComponent({
         cancelButtonText: '取消',
         type: 'warning',
       }).then(() => {
-        localStorage.clear()
+        clearStorage()
         router.push('/login');
       }).catch(() => {})
     }

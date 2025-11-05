@@ -9,7 +9,7 @@ const { SubProductionProgress, SubProductNotice, SubProductCode, SubCustomerInfo
 const authMiddleware = require('../middleware/auth');
 const EmployeeAuth = require('../middleware/EmployeeAuth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
-const { PreciseMath } = require('../middleware/tool');
+const { PreciseMath, getSaleCancelIds } = require('../middleware/tool');
 
 // 获取生产进度表列表
 // router.get('/production_progress', authMiddleware, async (req, res) => {
@@ -303,10 +303,13 @@ const { PreciseMath } = require('../middleware/tool');
 router.get('/production_progress', authMiddleware, async (req, res) => {
   const { company_id } = req.user;
 
+  const noticeIds = await getSaleCancelIds('notice_id')
+
   const [ rows, cycles ] = await Promise.all([
     SubProductionProgress.findAll({
       where: {
         company_id,
+        notice_id: { [Op.notIn]: noticeIds },
         is_finish: 1,
         is_deleted: 1
       },
@@ -364,6 +367,7 @@ router.get('/production_progress', authMiddleware, async (req, res) => {
       ]
     })
   ])
+  if(!rows.length) return res.json({ code: 200, data: {process: [], cycle: []} })
   // bom.children需要按制程的sort进行排序
   const processResult = rows.map(e => {
     const itemJson = e.toJSON()
@@ -478,18 +482,20 @@ router.put('/set_production_date', authMiddleware, async (req, res) => {
 router.get('/workOrder', authMiddleware, async (req, res) => {
   const { notice_number } = req.query;
   const { company_id } = req.user;
+
+  const noticeIds = await getSaleCancelIds('notice_id')
   
   let wheres = {}
   if(notice_number) wheres.notice_number = notice_number
   const rows = await SubProductionProgress.findAll({
     where: {
       is_deleted: 1,
+      notice_id: { [Op.notIn]: noticeIds },
       company_id,
       ...wheres
     },
-    attributes: ['id', 'notice_number', 'delivery_time', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'part_code', 'part_name', 'bom_id', 'out_number'],
+    attributes: ['id', 'notice_id', 'notice_number', 'delivery_time', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'part_code', 'part_name', 'bom_id', 'out_number'],
     include: [
-      // { model: SubProcessCycleChild, as: 'cycleChild', attributes: ['cycle_id', 'id', 'end_date'], include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }] },
       {
         model: SubProcessBom,
         as: 'bom',

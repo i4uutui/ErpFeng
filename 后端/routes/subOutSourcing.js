@@ -4,6 +4,7 @@ const dayjs = require('dayjs')
 const { SubOutsourcingQuote, SubSupplierInfo, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProductCode, SubPartCode, SubProductNotice, SubSaleOrder, SubOutsourcingOrder, SubApprovalUser, SubApprovalStep, Op } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
+const { getSaleCancelIds } = require('../middleware/tool');
 
 /**
  * @swagger
@@ -24,6 +25,8 @@ router.get('/outsourcing_quote', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10, supplier_code, supplier_abbreviation, product_code, product_name, drawing } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
+
+  const noticeIds = await getSaleCancelIds('notice_id')
   
   let productWhere = {}
   let supplierWhere = {}
@@ -35,6 +38,7 @@ router.get('/outsourcing_quote', authMiddleware, async (req, res) => {
   const { count, rows } = await SubOutsourcingQuote.findAndCountAll({
     where: {
       is_deleted: 1,
+      notice_id: { [Op.notIn]: noticeIds },
       company_id,
     },
     include: [
@@ -227,6 +231,8 @@ router.put('/outsourcing_quote', authMiddleware, async (req, res) => {
 router.get('/outsourcing_order', authMiddleware, async (req, res) => {
   const { notice, supplier_code, supplier_abbreviation, status } = req.query;
   const { company_id } = req.user;
+
+  const noticeIds = await getSaleCancelIds('notice_id')
   
   let whereOrder = {}
   let whereNotice = {}
@@ -250,6 +256,7 @@ router.get('/outsourcing_order', authMiddleware, async (req, res) => {
     where: {
       is_deleted: 1,
       company_id,
+      notice_id: { [Op.notIn]: noticeIds },
       ...whereOrder
     },
     attributes: ['id', 'notice_id', 'supplier_id', 'process_bom_id', 'process_bom_children_id', 'ment', 'unit', 'number', 'price', 'transaction_currency', 'other_transaction_terms', 'delivery_time', 'remarks', 'status', 'apply_id', 'apply_name', 'apply_time', 'step'],

@@ -203,7 +203,8 @@ export default defineComponent({
         remarks: ''
       }
     }
-    const noticeChange = (row) => {
+    const noticeChange = (value) => {
+      const row = noticeList.value.find(o => o.id == value)
       if(row && row.product_id){
         getProcessBomList(row.product_id)
       }
@@ -297,7 +298,11 @@ export default defineComponent({
             default: () => (
               <ElForm class="ml20" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">
                 <ElFormItem label="生产订单" prop="notice_id">
-                  <MySelect v-model={ form.value.notice_id } apiUrl="/api/getProductNotice" query="notice" itemValue="notice" placeholder="请选择生产订单" onChange={ (value) => noticeChange(value) } />
+                  <ElSelect v-model={ form.value.notice_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单" onChange={ (value) => noticeChange(value) }>
+                    {noticeList.value.map((e, index) => {
+                      return <ElOption value={ e.id } label={ e.notice } key={ index } />
+                    })}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="工艺BOM" prop="process_bom_id">
                   <ElSelect v-model={ form.value.process_bom_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择工艺BOM" onChange={ (value) => changeBomSelect(value) }>

@@ -34,6 +34,12 @@ export default defineComponent({
       ],
       material_bom_id: [
         { required: true, message: '请选择材料BOM', trigger: 'blur' }
+      ],
+      product_id: [
+        { required: true, message: '请选择产品编码', trigger: 'blur' }
+      ],
+      material_id: [
+        { required: true, message: '请选择材料编码', trigger: 'blur' }
       ]
     })
     const approval = getItem('approval').filter(e => e.type == 'material_warehouse')
@@ -101,7 +107,7 @@ export default defineComponent({
       getSupplierInfo() // 供应商编码列表
       getProductNotice() // 获取生产通知单列表
       getMaterialQuote() // 获取报价单列表
-      getMaterialBom() // 获取材料BOM
+      // getMaterialBom() // 获取材料BOM
     })
     
     // 获取打印机列表
@@ -142,8 +148,8 @@ export default defineComponent({
       }
     }
     // 获取材料BOM列表
-    const getMaterialBom = async () => {
-      const res = await request.get('/api/getMaterialBom')
+    const getMaterialBom = async (product_id) => {
+      const res = await request.get('/api/getMaterialBom', { params: { product_id } })
       if(res.code == 200){
         materialBomList.value = res.data
       }
@@ -153,10 +159,22 @@ export default defineComponent({
       const res = await request.get('/api/getMaterialBomChildren', { params: { id } })
       if(res.code == 200){
         if(res.data.length){
+          let materialKeyId = []
+          // 筛选出用户新增的临时数据
+          const list = tableData.value.filter(o => !o.status)
+          if(list.length){
+            list.forEach(e => {
+              // 查一下当前用户新增时选择的生产订单&材料BOM，之前新增的临时数据是否有
+              if(e.notice_id == form.value.notice_id && e.material_bom_id == form.value.material_bom_id){
+                materialKeyId.push(e.material_id)
+              }
+            })
+          }
+
           const data = res.data.flatMap(item => ({
             ...item.material,
             material_bom_children_id: item.id,
-            is_buy: item.is_buy
+            is_buy: (item.is_buy == 1 || materialKeyId.includes(item.material_id)) ? 1 : 0
           }))
           materialList.value = data.length ? data : []
           // 默认让系统选中第一个材料
@@ -388,6 +406,7 @@ export default defineComponent({
       form.value = { ...row };
       console.log(form.value);
       getProductsList(row.product_id !== 0 ? row.product_id : '')
+      getMaterialBom(row.product_id !== 0 ? row.product_id : '')
       getMaterialBomChildren(row.material_bom_id)
     }
     // 新增采购单
@@ -441,6 +460,7 @@ export default defineComponent({
     const noticeChange = (value) => {
       if(value === 0){
         getProductsList()
+        getMaterialBom()
         return
       }
       const notice = productNotice.value.find(e => e.id == value)
@@ -448,6 +468,7 @@ export default defineComponent({
       form.value.number = notice.sale.order_number
       form.value.delivery_time = notice.delivery_time
       getProductsList(notice.product_id)
+      getMaterialBom(notice.product_id)
     }
     // 材料BOM选中后返回的数据
     const materialBomChange = (value) => {

@@ -28,6 +28,7 @@ export default defineComponent({
       notice: '',
       delivery_time: '',
     })
+    let saleList = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(20);
@@ -62,6 +63,23 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    // 获取销售订单的数据
+    const getSaleOrder = async (is_sale, my_id) => {
+      let where = {}
+      if(is_sale){
+        const params = {
+          is_sale
+        }
+        if(my_id){
+          params.my_id = my_id
+        }
+        where = { params }
+      }
+      const res = await request.get('/api/getSaleOrder', where)
+      if(res.code == 200){
+        saleList.value = res.data
+      }
+    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
@@ -136,12 +154,14 @@ export default defineComponent({
       }).catch({})
     }
     const handleUplate = (row) => {
+      getSaleOrder(1, row.sale_id)
       edit.value = row.id;
       dialogVisible.value = true;
       form.value = { ...row };
     }
     // 新增
     const handleAdd = () => {
+      getSaleOrder(1)
       edit.value = 0;
       dialogVisible.value = true;
       resetForm()
@@ -159,8 +179,9 @@ export default defineComponent({
         delivery_time: '',
       }
     }
-    const noticeChange = (row) => {
-      form.value.delivery_time = row.goods_time
+    const noticeChange = (value) => {
+      const item = saleList.value.find(o => o.id == value)
+      form.value.delivery_time = item.goods_time
     }
     // 分页相关
     function pageSizeChange(val) {
@@ -178,7 +199,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <HeadForm headerWidth="170px" ref={ formCard }>
+              <HeadForm headerWidth="170px" labelWidth="100" ref={ formCard }>
                 {{
                   left: () => (
                     <ElFormItem v-permission={ 'ProductNotice:add' }>
@@ -255,7 +276,9 @@ export default defineComponent({
             default: () => (
               <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">
                 <ElFormItem label="客户订单号" prop="sale_id">
-                  <MySelect v-model={ form.value.sale_id } disabled={ edit.value != 0 } apiUrl="/api/getSaleOrder" query="customer_order" itemValue="customer_order" placeholder="请选择客户订单号" onChange={ (value) => noticeChange(value) } />
+                  <ElSelect v-model={ form.value.sale_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择客户订单号" onChange={ (row) => noticeChange(row) }>
+                    {saleList.value.map((e, index) => <ElOption value={ e.id } label={ e.customer_order } disabled={ !e.is_sale } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="生产订单号" prop="notice">
                   <ElInput v-model={ form.value.notice } placeholder="请输入生产订单号" />

@@ -57,7 +57,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <HeadForm headerWidth="170px" ref={ formCard }>
+              <HeadForm headerWidth="170px" labelWidth="100" ref={ formCard }>
                 {{
                   center: () => (
                     <>

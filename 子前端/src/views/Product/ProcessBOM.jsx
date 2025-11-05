@@ -37,6 +37,7 @@ export default defineComponent({
     let form = ref({
       product_id: '',
       part_id: '',
+      sort: 0,
       children: [
         { process_id: '', equipment_id: '', time: '', price: '', points: '1', sort: 1 }
       ]
@@ -236,14 +237,14 @@ export default defineComponent({
           }
         }).catch(() => {})
     }
-    const handleUplate = ({ id, product_id, part_id, children }) => {
+    const handleUplate = ({ id, product_id, part_id, children, sort }) => {
       edit.value = id;
       dialogVisible.value = true;
       let filtered = children.filter(item => {
         return !Object.values(item).every(isEmptyValue);
       });
       if(!filtered.length) filtered = [{ process_id: '', equipment_id: '', time: '', price: '', points: '1' }]
-      form.value = { children: filtered, id, product_id, part_id };
+      form.value = { children: filtered, id, product_id, part_id, sort };
     }
     // 新增
     const handleAdd = () => {
@@ -261,6 +262,7 @@ export default defineComponent({
       form.value = {
         product_id: '',
         part_id: '',
+        sort: 0,
         children: [
           { process_id: '', equipment_id: '', time: '', price: '', points: '1' }
         ]
@@ -327,6 +329,7 @@ export default defineComponent({
                   <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" minWidth="100" />
                   <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" minWidth="100" />
                   <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" minWidth="100" />
+                  <ElTableColumn prop="sort" label="排序" fixed="left" minWidth="100" />
                   <ElTableColumn prop="part.part_code" label="部位编码" fixed="left" minWidth="100" />
                   <ElTableColumn prop="part.part_name" label="部位名称" fixed="left" minWidth="100" />
                   {
@@ -365,6 +368,9 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="部件编码" prop="part_id">
                   <MySelect v-model={ form.value.part_id } apiUrl="/api/getPartCode" query="part_code" itemValue="part_code" placeholder="请选择部件编码" />
+                </ElFormItem>
+                <ElFormItem label="排序" prop='sort'>
+                  <ElInput v-model={ form.value.sort } placeholder="请输入排序" />
                 </ElFormItem>
                 <div>
                   {

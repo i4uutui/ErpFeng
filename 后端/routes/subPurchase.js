@@ -7,7 +7,8 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
 const { print, getPrinters, getDefaultPrinter } = require("pdf-to-printer");
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs')
+const fs = require('fs');
+const { getSaleCancelIds } = require('../middleware/tool');
 
 // 配置 multer
 const storage = multer.diskStorage({
@@ -421,6 +422,8 @@ router.put('/material_quote', authMiddleware, async (req, res) => {
 router.get('/material_ment', authMiddleware, async (req, res) => {
   const { notice, supplier_code, supplier_abbreviation, product_code, product_name, status } = req.query;
   const { company_id } = req.user;
+
+  const noticeIds = await getSaleCancelIds('notice_id')
   
   let whereMent = {};
   if (notice) whereMent.notice = { [Op.like]: `%${notice}%` };
@@ -444,6 +447,7 @@ router.get('/material_ment', authMiddleware, async (req, res) => {
     where: {
       is_deleted: 1,
       company_id,
+      notice_id: { [Op.notIn]: noticeIds },
       ...whereMent
     },
     include: [

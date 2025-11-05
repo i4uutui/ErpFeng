@@ -37,6 +37,7 @@ const SubProductionProgress = require('./SubProductionProgress.js') // 生产进
 const SubRateWage = require('./SubRateWage.js') // 工资表
 const SubNoEncoding = require('./SubNoEncoding.js') // 打印的编码表
 const SubDateInfo = require('./SubDateInfo.js') // 日历记录的表
+const SubSaleCancel = require('./SubSaleCancel.js') // 销售订单取消订单储存的数据
 
 AdUser.belongsTo(AdCompanyInfo, { foreignKey: 'company_id', as: 'company' })
 AdUser.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
@@ -125,6 +126,8 @@ SubWarehouseApply.belongsTo(SubMaterialMent, { foreignKey: 'buyPrint_id', as: 'b
 SubMaterialMent.belongsTo(SubNoEncoding, { foreignKey: 'print_id', as: 'print' })
 SubWarehouseApply.belongsTo(SubOutsourcingOrder, { foreignKey: 'buyPrint_id', targetKey: 'print_id', as: 'sourcing' })
 
+SubSaleOrder.hasOne(SubSaleCancel, { foreignKey: 'sale_id', as: 'saleCancel' })
+
 module.exports = {
   Op,
   sequelize,
@@ -163,7 +166,8 @@ module.exports = {
   SubProductionProgress,
   SubRateWage,
   SubNoEncoding,
-  SubDateInfo
+  SubDateInfo,
+  SubSaleCancel
 }
 
 

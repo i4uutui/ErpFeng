@@ -219,6 +219,7 @@ const routes = [
           buttons: [
             { code: 'SalesOrder:add', label: '新增' },
             { code: 'SalesOrder:edit', label: '修改' },
+            { code: 'SalesOrder:cancel', label: '取消订单' },
           ]
         }
       },

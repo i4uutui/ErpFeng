@@ -29,6 +29,11 @@ const SubProcessBom = sequelize.define('SubProcessBom', {
     allowNull: false,
     comment: '部件编码id'
   },
+  sort: {
+    type: DataTypes.INTEGER(20),
+    allowNull: false,
+    comment: '排序'
+  },
   archive: {
     type: DataTypes.INTEGER(11),
     allowNull: false,

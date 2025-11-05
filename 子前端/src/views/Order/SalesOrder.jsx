@@ -100,6 +100,49 @@ export default defineComponent({
         productList.value = res.data
       }
     }
+    // 取消订单接口
+    const setSaleCancel = async (id, notice_id) => {
+      const params = { id }
+      if(notice_id){
+        params.notice_id = notice_id
+      }
+      request.post('/api/sale_cancel', params).then(res => {
+        if(res.code == 200){
+          ElMessage.success('操作成功');
+          fetchProductList()
+        }
+      })
+    }
+    // 取消订单二次确认
+    const saleCancel = async (id, notice_id) => {
+      ElMessageBox.confirm('重要操作，二次确认是否取消订单？', '二次提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'danger',
+      }).then(res => {
+        setSaleCancel(id, notice_id)
+      })
+    }
+    // 取消订单
+    const handleCancel = async (row) => {
+      if(row.notice){
+        ElMessageBox.confirm('是否确认取消订单，取消订单后生产订单、采购单、进度表等等相关联的数据将同步删除，是否确认取消订单？', '提示', {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'danger',
+        }).then(res => {
+          saleCancel(row.id, row.notice.id)
+        })
+      }else{
+        ElMessageBox.confirm('是否确认取消订单？', '提示', {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'danger',
+        }).then(res => {
+          setSaleCancel(row.id)
+        })
+      }
+    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
@@ -237,6 +280,9 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
+                  <ElTableColumn label="接单日期" width="110">
+                    {({ row }) => row.saleCancel ? <span style={{ color: 'red' }}>已取消</span> : ''}
+                  </ElTableColumn>
                   <ElTableColumn prop="rece_time" label="接单日期" width="110" />
                   <ElTableColumn prop="customer.customer_code" label="客户编码" width="100" />
                   <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" width="100" />
@@ -262,12 +308,14 @@ export default defineComponent({
                     }}
                   </ElTableColumn>
                   <ElTableColumn prop="created_at" label="创建时间" width="120" />
-                  <ElTableColumn label="操作" width="140" fixed="right">
-                    {(scope) => (
+                  <ElTableColumn label="操作" width="180" fixed="right">
+                    {({ row }) => {
+                      return !row.saleCancel ? 
                       <>
-                        <ElButton size="small" type="default" v-permission={ 'SalesOrder:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                      </>
-                    )}
+                        <ElButton size="small" type="default" v-permission={ 'SalesOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
+                        <ElButton size="small" type="danger" v-permission={ 'SalesOrder:cancel' } onClick={ () => handleCancel(row) }>取消订单</ElButton>
+                      </> : ''
+                    }}
                   </ElTableColumn>
                 </ElTable>
                 <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />

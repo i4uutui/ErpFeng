@@ -3,6 +3,7 @@ const router = express.Router();
 const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, SubOutsourcingOrder, SubMaterialMent, Op, SubNoEncoding, SubMaterialBom, SubMaterialBomChild, SubMaterialQuote, SubOutsourcingQuote } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
+const { getSaleCancelIds } = require('../middleware/tool');
 
 /**
  * @swagger
@@ -17,14 +18,29 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
  *           type: string
  */
 router.get('/getSaleOrder', authMiddleware, async (req, res) => {
-  const { customer_order, id } = req.query;
+  const { customer_order, is_sale, my_id, id } = req.query;
   const { company_id } = req.user;
 
-  const whereObj = {}
+  const saleIds = await getSaleCancelIds('sale_id')
+
+  const whereObj = {
+    is_deleted: 1,
+    company_id,
+    id: { [Op.notIn]: saleIds }
+  }
   if(customer_order) whereObj.customer_order = { [Op.like]: `%${customer_order}%` }
   if(id) whereObj.id = id
+  if(is_sale != undefined && is_sale != null){
+    const orConditions = [];
+    // 支持 0/1 等合法值
+    orConditions.push({ is_sale: is_sale });
+    if(my_id !== undefined && my_id !== null){
+      orConditions.push({ id: my_id });
+    }
+    whereObj[Op.or] = orConditions;
+  }
   const config = {
-    where: { is_deleted: 1, company_id, ...whereObj },
+    where: whereObj,
     include: [
       { model: SubProductCode, as: 'product' },
       { model: SubCustomerInfo, as: 'customer'}
@@ -293,14 +309,20 @@ router.get('/getSupplierInfo', authMiddleware, async (req, res) => {
  */
 router.get('/getProductNotice', authMiddleware, async (req, res) => {
   const { notice, id } = req.query;
-  
   const { company_id } = req.user;
+
+  const saleIds = await getSaleCancelIds('sale_id')
   
   let noticeWhere = {}
   if(notice) noticeWhere.notice = { [Op.like]: `%${notice}%` }
   if(id) noticeWhere.id = id
   const config = {
-    where: { is_deleted: 1, company_id, ...noticeWhere },
+    where: {
+      is_deleted: 1,
+      company_id,
+      sale_id: { [Op.notIn]: saleIds },
+      ...noticeWhere
+    },
     order: [['created_at', 'DESC']],
     include: [
       { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name'] },

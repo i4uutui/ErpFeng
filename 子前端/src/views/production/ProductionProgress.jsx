@@ -226,7 +226,7 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => {
-              return <ElTable data={cycle.value} border ref={ formCard } style={{ width: "100%" }} size="small">
+              return cycle.value.length ? <ElTable data={cycle.value} border ref={ formCard } style={{ width: "100%" }} size="small">
                 <ElTableColumn prop="name" label="制程" width="100" align="center" />
                 <ElTableColumn prop="maxLoad" label="极限负荷" width="90" align="center" />
                 {/* {loadStats.value.dates.map(date => (
@@ -241,7 +241,7 @@ export default defineComponent({
                     }}
                   </ElTableColumn>
                 ))} */}
-              </ElTable>
+              </ElTable> : ''
             },
             default: () => (
               <>

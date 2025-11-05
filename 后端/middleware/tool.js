@@ -1,3 +1,5 @@
+const { SubSaleCancel } = require("../models");
+
 /**
  * 处理精确计算
  * @returns {string} 返回最后的计算结果
@@ -93,8 +95,20 @@ const processStockOut = (stockData, outQuantity) => {
   return newStock;
 }
 
+/**
+ * 获取所有销售取消记录的列表
+ * @returns {Promise<number[]>} 数组
+ */
+const getSaleCancelIds = async (value) => {
+  const saleCancel = await SubSaleCancel.findAll({ 
+    attributes: ['sale_id', 'notice_id'] 
+  });
+  return saleCancel.length ? saleCancel.map(e => e[value]) : [];
+};
+
 module.exports = {
   PreciseMath,
   isInteger,
-  processStockOut
+  processStockOut,
+  getSaleCancelIds
 };

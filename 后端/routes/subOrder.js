@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessCycleChild, Op } = require('../models')
+const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessCycleChild, Op, SubSaleCancel } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
-const { PreciseMath } = require('../middleware/tool');
+const { PreciseMath, getSaleCancelIds } = require('../middleware/tool');
 
 // 获取客户信息列表（分页）
 router.get('/customer_info', authMiddleware, async (req, res) => {
@@ -126,6 +126,8 @@ router.get('/sale_order', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10, customer_code, customer_abbreviation, customer_order, product_code, product_name, drawing } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
+
+  // const saleIds = await getSaleCancelIds('sale_id')
   
   let whereCustomer = {}
   let whereProduct = {}
@@ -140,13 +142,15 @@ router.get('/sale_order', authMiddleware, async (req, res) => {
     where: {
       is_deleted: 1,
       company_id,
+      // id: { [Op.notIn]: saleIds },
       ...whereSale
     },
-    attributes: ['id', 'rece_time', 'customer_order', 'product_req', 'order_number', 'unit', 'delivery_time', 'goods_time', 'goods_address', 'created_at'],
+    attributes: ['id', 'rece_time', 'customer_order', 'product_req', 'order_number', 'unit', 'delivery_time', 'goods_time', 'goods_address', 'is_sale', 'created_at'],
     include: [
       { model: SubCustomerInfo, as: 'customer', attributes: ['id', 'customer_code', 'customer_abbreviation'], where: whereCustomer},
       { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing', 'component_structure', 'model', 'specification', 'other_features'], where: whereProduct },
-      { model: SubProductNotice, as: 'notice', attributes: ['id'] }
+      { model: SubProductNotice, as: 'notice', attributes: ['id'] },
+      { model: SubSaleCancel, as: 'saleCancel', attributes: ['id', 'sale_id'] }
     ],
     order: [
       ['product', 'product_name', 'DESC'],
@@ -190,7 +194,6 @@ router.post('/sale_order', authMiddleware, async (req, res) => {
 // 更新销售订单
 router.put('/sale_order', authMiddleware, async (req, res) => {
   const { customer_id, product_id, rece_time, customer_order, product_req, order_number, unit, delivery_time, goods_time, goods_address, actual_number, id } = req.body;
-  
   const { id: userId, company_id } = req.user;
 
   const result = await SubSaleOrder.findByPk(id)
@@ -260,6 +263,24 @@ router.put('/sale_order', authMiddleware, async (req, res) => {
   
   res.json({ message: '修改成功', code: 200 });
 });
+// 取消销售订单
+router.post('/sale_cancel', authMiddleware, async (req, res) => {
+  const { id, notice_id } = req.body
+  const { id: userId, company_id } = req.user;
+
+  const result = await SubSaleOrder.findByPk(id)
+  if(!result) return res.json({ code: 401, message: '销售订单不存在' })
+  
+  const body = {
+    sale_id: id,
+    company_id,
+    user_id: userId
+  }
+  if(notice_id) body.notice_id = notice_id
+  await SubSaleCancel.create(body)
+
+  res.json({ code: 200, message: '取消成功' })
+})
 
 
 
@@ -270,6 +291,8 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
   const { page = 1, pageSize = 10, customer_code, customer_abbreviation, notice, product_code, product_name, drawing } = req.query;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
+
+  const saleIds = await getSaleCancelIds('sale_id')
   
   let whereCustomer = {}
   let whereProduct = {}
@@ -284,6 +307,7 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
     where: {
       is_deleted: 1,
       company_id,
+      sale_id: { [Op.notIn]: saleIds },
       ...whereNotice
     },
     attributes: ['id', 'notice', 'product_price', 'transaction_currency', 'other_transaction_terms', 'created_at'],
@@ -379,6 +403,8 @@ router.get('/product_notice', authMiddleware, async (req, res) => {
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
 
+  const saleIds = await getSaleCancelIds('sale_id')
+
   let saleOrderWhere = {}
   let customerInfoWhere = {}
   let whereObj = {}
@@ -395,6 +421,7 @@ router.get('/product_notice', authMiddleware, async (req, res) => {
     where: {
       is_deleted: 1,
       company_id,
+      sale_id: { [Op.notIn]: saleIds },
       is_finish,
       ...whereObj
     },
@@ -439,46 +466,59 @@ router.post('/finish_production_notice', authMiddleware, async (req, res) => {
 // 新增生产通知单
 router.post('/product_notice', authMiddleware, async (req, res) => {
   const { sale_id, notice, delivery_time } = req.body;
-  
   const { id: userId, company_id } = req.user;
 
   let customer_id = ''
   let product_id = ''
   const quote = await SubSaleOrder.findOne({
-    where: { id: sale_id },
+    where: { id: sale_id, company_id },
     raw: true
   })
   if(quote){
     customer_id = quote.customer_id
     product_id = quote.product_id
   }else{
-    return res.json({ code: 401, message: '数据出错，请联系管理员' })
+    return res.json({ code: 401, message: '销售订单不存在' })
   }
+
+  await SubSaleOrder.update({ is_sale: 0 }, { where: { id: sale_id } })
   
   await SubProductNotice.create({
     notice, customer_id, product_id, sale_id, delivery_time, company_id,
     user_id: userId
   })
-  
+  await SubSaleOrder.update({ is_sale: 0 }, { where: { id: sale_id } })
   res.json({ message: '添加成功', code: 200 });
 });
 // 修改生产通知单
 router.put('/product_notice', authMiddleware, async (req, res) => {
   const { notice, sale_id, delivery_time, id } = req.body;
-  
   const { id: userId, company_id } = req.user;
 
   let customer_id = ''
   let product_id = ''
   const quote = await SubSaleOrder.findOne({
-    where: { id: sale_id },
+    where: { id: sale_id, company_id },
     raw: true
   })
   if(quote){
     customer_id = quote.customer_id
     product_id = quote.product_id
   }else{
-    return res.json({ code: 401, message: '数据出错，请联系管理员' })
+    return res.json({ code: 401, message: '销售订单不存在' })
+  }
+
+  const noticeRow = await SubProductNotice.findByPk(id)
+  if(!noticeRow) return res.json({ code: 401, message: '生产订单不存在' })
+  const noticeResult = noticeRow.toJSON()
+  if(noticeResult.sale_id != sale_id){ // 如果修改生产订单后，销售订单更换了
+    const saleArr = [
+      { is_sale: 1, id: noticeResult.sale_id }, // 旧数据的销售订单变成未创建
+      { is_sale: 0, id: sale_id }, // 新绑定的数据变成已创建
+    ]
+    await SubSaleOrder.bulkCreate(saleArr, {
+      updateOnDuplicate: ['is_sale']
+    })
   }
   
   const updateResult = await SubProductNotice.update({
