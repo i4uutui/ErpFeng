@@ -423,7 +423,7 @@ router.get('/material_ment', authMiddleware, async (req, res) => {
   const { notice, supplier_code, supplier_abbreviation, product_code, product_name, status } = req.query;
   const { company_id } = req.user;
 
-  const noticeIds = await getSaleCancelIds('notice_id')
+  const noticeIds = await getSaleCancelIds('notice_id', { company_id })
   
   let whereMent = {};
   if (notice) whereMent.notice = { [Op.like]: `%${notice}%` };

@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize');
 
-const SubProductionProcess = sequelize.define('SubProductionProcess', {
+const SubProgressCycle = sequelize.define('SubProgressCycle', {
   id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
@@ -9,49 +9,50 @@ const SubProductionProcess = sequelize.define('SubProductionProcess', {
     autoIncrement: true,
     comment: ' 自增主键 ID'
   },
+  company_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    defaultValue: null,
+    comment: '企业ID'
+  },
   notice_id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
-    comment: ' 生产订单ID'
+    comment: ' 生产通知单ID'
+  },
+  cycle_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: ' 生产制程ID'
   },
   progress_id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
     comment: ' 进度表ID'
   },
-  parent_id: {
-    type: DataTypes.INTEGER(11),
+  end_date: {
+    type: DataTypes.STRING(20),
     allowNull: false,
-    comment: ' 工序ID '
-  },
-  all_work_time: {
-    type: DataTypes.STRING(10),
-    allowNull: false,
-    comment: ' 全部工时(H) '
+    comment: ' 预排交期 '
   },
   load: {
-    type: DataTypes.STRING(10),
-    allowNull: false,
-    comment: ' 每日负荷 '
-  },
-  finish: {
     type: DataTypes.STRING(20),
     allowNull: false,
-    comment: ' 累计完成 '
+    comment: ' 制程日总负荷 '
   },
   order_number: {
-    type: DataTypes.STRING(20),
+    type: DataTypes.INTEGER(20),
     allowNull: false,
-    comment: ' 订单尾数 '
+    comment: ' 完成数量 '
   }
 }, {
   sequelize,
-  modelName: 'sub_production_process',
-  tableName: 'sub_production_process',
+  modelName: 'sub_progress_cycle',
+  tableName: 'sub_progress_cycle',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
-  comment: '工艺BOM表工序下进度表的子表'
+  comment: '进度表的制程子表'
 })
 
-module.exports = SubProductionProcess;
+module.exports = SubProgressCycle;

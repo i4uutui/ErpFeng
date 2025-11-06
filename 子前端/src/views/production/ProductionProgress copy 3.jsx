@@ -8,14 +8,15 @@ export default defineComponent({
   setup(){
     const formCard = ref(null)
     const formHeight = ref(0);
+    let cycle = ref([])
     let tableData = ref([])
-    let cycleList = ref([])
+    let endDate = ref('')
+    let uniqueEquipments = ref([])
     let specialDates = ref(new Set());
-    // 查询tableData下的工序长度，确定表格中的工序显示的数量
+    // 查询tableData下的bom.children的长度，确定表格中的工序显示的数量
     const maxBomLength = computed(() => {
       if (tableData.value.length === 0) return 0;
-      const list = tableData.value.map(item => item.items?.length || 0)
-      return Math.max(...list);
+      return Math.max(...tableData.value.map(item => item.bom?.children?.length || 0));
     });
     
     onMounted(async () => {
@@ -23,51 +24,26 @@ export default defineComponent({
         // 无效果，待以后优化本页面
         formHeight.value = await getPageHeight([formCard.value]);
       })
-      await getProgressBase(); //// 获取进度表基础数据
+      await fetchProductList();
       await fetchSpecialDates();
     })
     
-    // 获取进度表基础数据
-    const getProgressBase = async () => {
-      const res = await request.get('/api/get_progress_base');
-      if(res.code == 200){
-        tableData.value = res.data
-        if(res.data.length){
-          const base = res.data.map(item => ({ id: item.id, start_date: item.start_date }))
-          getProgressCycle(base)
-        }
-      }
+    // 获取列表
+    const fetchProductList = async () => {
+      const res = await request.get('/api/production_progress');
+      tableData.value = res.data.process;
+      cycle.value = res.data.cycle
+      // if(!tableData.value.length) return
+      // endDate.value = tableData.value[0].notice.delivery_time
+      // // 集合equipment并且去重
+      // uniqueEquipments.value = [...res.data
+      //   .flatMap(item => item?.bom?.children ?? [])
+      //   .map(child => child.equipment)
+      //   .filter(Boolean)
+      //   .reduce((map, equip) => map.set(equip.id, equip), new Map())
+      //   .values()
+      // ];
     };
-    // 获取进度表进程的数据
-    const getProgressCycle = async (base) => {
-      const res = await request.post('/api/get_progress_cycle', { base })
-      if(res.code == 200){
-        // 制程的数据
-        const cycles = res.data.cycles
-        cycleList.value = cycles
-        // 工序的数据
-        const works = res.data.works
-        const groupedData = {};
-        works.forEach(item => {
-          const key = item.progress_id;
-          if (!groupedData[key]) {
-            groupedData[key] = [];
-          }
-          groupedData[key].push(item);
-        })
-        // 对每个分组按 process_index 排序（升序，确保顺序正确）
-        Object.keys(groupedData).forEach(key => {
-          groupedData[key].sort((a, b) => a.children.process_index - b.children.process_index);
-        });
-
-        // 遍历 tableData，匹配分组数据并合并
-        tableData.value = tableData.value.map(tableItem => ({
-          ...tableItem,
-          // 匹配 progress_id = tableItem.id 的分组，无匹配则设为空数组
-          items: groupedData[tableItem.id] || []
-        }));
-      }
-    }
     // 获取特殊日期
     const fetchSpecialDates = async () => {
       const res = await request.get('/api/special-dates');
@@ -81,6 +57,18 @@ export default defineComponent({
       if (!date) return false;
       return specialDates.value.has(dayjs(date).format('YYYY-MM-DD'));
     };
+    // 更新制程组的最短交货时间
+    const sortDateBlur = async ({ id, sort_date }) => {
+      if(isSpecialDate(sort_date)){
+        ElMessage.warning('请注意，你所选择的日期为节假日')
+      }
+      const params = {
+        id,
+        sort_date
+      }
+      await request.put('/api/process_cycle', params);
+      fetchProductList();
+    }
     // 修改：委外/库存数量
     const houseBlur = async (row) => {
       const res = await request.post('/api/set_out_number', {
@@ -89,24 +77,15 @@ export default defineComponent({
         order_number: row.sale.order_number
       })
       if(res.code == 200){
-        getProgressBase()
+        fetchProductList()
       }
-    }
-    // 更新制程组的最短交货时间
-    const sortDateBlur = async ({ id, sort_date }) => {
-      const params = {
-        id,
-        sort_date
-      }
-      await request.put('/api/process_cycle', params);
-      getProgressBase();
     }
     // 批量更新起始生产时间/预排交期
     const set_production_date = async (params, type) => {
       const res = await request.put('/api/set_production_date', { params, type });
       if(res && res.code == 200){
         ElMessage.success('修改成功');
-        getProgressBase();
+        fetchProductList();
       }
     }
     // 选择预排交期的时间
@@ -136,31 +115,27 @@ export default defineComponent({
         closeOnPressEscape: false,
         distinguishCancelAndClose: true
       }).then(() => {
+        let arr = []
+        tableData.value.forEach(e => {
+          if(e.notice_id == param.notice_id){
+            e.cycleChild.forEach(o => {
+              if(o.cycle_id == row.cycle_id){
+                arr.push(o)
+              }
+            })
+          }
+        })
         let params = []
-        const item = cycleList.value.find(o => o.id == row.cycle_id)?.cycle
-        if(item && item.length){
-          item.forEach(e => {
-            if(e.cycle_id == row.cycle_id && e.notice_id == param.notice_id){
-              params.push({
-                id: e.id,
-                end_date: time,
-                cycle_id: e.cycle_id,
-                notice_id: e.notice_id
-              })
-            }
+        arr.forEach(e => {
+          params.push({
+            id: e.id,
+            end_date: time
           })
-        }
-        if(params.length){
-          set_production_date(params, 'end_date')
-        }
+        })
+        set_production_date(params, 'end_date')
       }).catch((action) => {
         if(action == 'cancel'){
-          const params = [{
-            id: row.id,
-            end_date: time,
-            cycle_id: row.cycle_id,
-            notice_id: row.notice_id
-          }]
+          const params = [{ id: row.id, end_date: time }]
           set_production_date(params, 'end_date')
         }
       })
@@ -180,7 +155,7 @@ export default defineComponent({
         closeOnPressEscape: false,
         distinguishCancelAndClose: true
       }).then(() => {
-        const table  = tableData.value.filter(e => e.notice_id == row.notice_id)
+        const table  = tableData.value.filter(e => e.notice.notice == row.notice.notice)
         let params = []
         table.forEach(e => {
           params.push({
@@ -200,7 +175,7 @@ export default defineComponent({
     const columnLength = 15 // 表示前面不需要颜色的列数
     const headerCellStyle = ({ rowIndex, columnIndex, column, row }) => {
       if(!tableData.value.length) return
-      const cycleLength = cycleList.value.length * 3
+      const cycleLength = tableData.value[0].cycleChild.length * 3
       const start = columnLength + cycleLength;
       if(rowIndex == 1 && columnIndex >= 0 && columnIndex < cycleLength || rowIndex == 0 && columnIndex >= columnLength && columnIndex < start){
         if(rowIndex == 0){
@@ -222,7 +197,7 @@ export default defineComponent({
     // 表格中的格子颜色
     const cellStyle = ({ columnIndex, rowIndex, column, row }) => {
       if(!tableData.value.length) return
-      const cycleLength = cycleList.value.length * 3
+      const cycleLength = tableData.value[0].cycleChild.length * 3
       const start = columnLength + cycleLength;
       // 制程的背景色之一
       if(columnIndex >= columnLength && columnIndex < start){
@@ -252,14 +227,26 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => {
-              return cycleList.value.length ? <ElTable data={cycleList.value} border ref={ formCard } style={{ width: "100%" }} size="small">
+              return cycle.value.length ? <ElTable data={cycle.value} border ref={ formCard } style={{ width: "100%" }} size="small">
                 <ElTableColumn prop="name" label="制程" width="100" align="center" />
                 <ElTableColumn prop="maxLoad" label="极限负荷" width="90" align="center" />
+                {/* {loadStats.value.dates.map(date => (
+                  <ElTableColumn key={date} label={date} width="90" align="center" >
+                    {{
+                      default: ({ row }) => {
+                        const value = row.dateData[date];
+                        if(value == '休') return <span style={{ color: 'red' }}>{ value }</span>
+                        if(value == 0) return '-'
+                        return value.toFixed(1)
+                      }
+                    }}
+                  </ElTableColumn>
+                ))} */}
               </ElTable> : ''
             },
             default: () => (
               <>
-                <ElTable class="production" data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%", height: '400px' }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%", height: '400px' }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle } class="production">
                   <ElTableColumn label="生产订单号" width="120">
                     { ({row}) => <div class="myCell">{row.notice.notice}</div> }
                   </ElTableColumn>
@@ -273,13 +260,13 @@ export default defineComponent({
                     { ({row}) => <div class="myCell">{row.sale.rece_time}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="产品编码" width="120">
-                    { ({row}) => <div class="myCell">{row.product_code}</div> }
+                    { ({row}) => <div class="myCell">{row.product.product_code}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="产品名称" width="100">
-                    { ({row}) => <div class="myCell">{row.product_name}</div> }
+                    { ({row}) => <div class="myCell">{row.product.product_name}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="工程图号" width="100">
-                    { ({row}) => <div class="myCell">{row.drawing}</div> }
+                    { ({row}) => <div class="myCell">{row.product.drawing}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="生产特别要求" width="170">
                     { ({row}) => <div class="myCell">{row.remarks}</div> }
@@ -301,25 +288,26 @@ export default defineComponent({
                     { ({row}) => <div class="myCell">{row.notice.delivery_time}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="部件编码" width="110">
-                    { ({row}) => <div class="myCell">{row.part_code}</div> }
+                    { ({row}) => <div class="myCell">{row.part.part_code}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="部件名称" width="110">
-                    { ({row}) => <div class="myCell">{row.part_name}</div> }
+                    { ({row}) => <div class="myCell">{row.part.part_name}</div> }
                   </ElTableColumn>
                   <ElTableColumn label="预计生产起始时间" width="170">
                     {({row}) => <div class="myCell"><ElDatePicker v-model={ row.start_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 140px" onBlur={ (value) => dateChange(value, row) }></ElDatePicker></div>}
                   </ElTableColumn>
-                  { cycleList.value.map((e, index) => (
+                  { cycle.value.map((e, index) => (
                     <>
                       <ElTableColumn label={ e.name } width="90" align="center">
                         <ElTableColumn label="预排交期" width="130" align="center">
                           {{
-                            default: ({ row, $index }) => {
-                              const data = e.cycle[$index]
+                            default: ({ row }) => {
+                              const cycleData = row.cycleChild[index] || {};
+                              const isOverdue = cycleData.end_date && dayjs(cycleData.end_date).isBefore(dayjs().startOf('day')) && Number(cycleData.load || 0) > 0;
 
                               return (
-                                <div class="myCell">
-                                  <ElDatePicker v-model={ data.end_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 100px" onBlur={ (value) => paiChange(value, data, row) }></ElDatePicker>
+                                <div class="myCell" style={{ backgroundColor: isOverdue ? '#ff4d4f' : '', color: isOverdue ? '#fff' : '' }}>
+                                  <ElDatePicker v-model={ cycleData.end_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 100px" onBlur={ (value) => paiChange(value, cycleData, row) }></ElDatePicker>
                                 </div>
                               )
                             }
@@ -329,8 +317,9 @@ export default defineComponent({
                       <ElTableColumn label="最短周期" width="90" align="center">
                         <ElTableColumn label="制程日总负荷" width="90" align="center">
                           {{
-                            default: ({ row, $index }) => {
-                              return <div class='myCell'>{ e.cycle[$index].load }</div>
+                            default: ({ row }) => {
+                              const cycleData = row.cycleChild[index] || {};
+                              return <div class='myCell'>{ cycleData.load }</div>
                             }
                           }}
                         </ElTableColumn>
@@ -349,49 +338,49 @@ export default defineComponent({
                     <ElTableColumn label={`工序-${index + 1}`} key={index} align="center">
                       <ElTableColumn label="工艺编码">
                         {({row}) => {
-                          const data = row.items[index] ? row.items[index].children.process.process_code: ''
+                          const data = row.bom.children[index] ? row.bom.children[index].process.process_code: ''
                           return <div class="myCell">{ data }</div>
                         }}
                       </ElTableColumn>
                       <ElTableColumn label="工艺名称">
                         {({row}) => {
-                          const data = row.items[index] ? row.items[index].children.process.process_name: ''
+                          const data = row.bom.children[index] ? row.bom.children[index].process.process_name: ''
                           return <div class="myCell">{ data }</div>
                         }}
                       </ElTableColumn>
                       <ElTableColumn label="设备名称">
                         {({row}) => {
-                          const data = row.items[index] ? row.items[index].children.equipment.equipment_name: ''
+                          const data = row.bom.children[index] ? row.bom.children[index].equipment.equipment_name: ''
                           return <div class="myCell">{ data }</div>
                         }}
                       </ElTableColumn>
                       <ElTableColumn label="生产制程">
                         {({row}) => {
-                          const data = row.items[index] ? row.items[index].children.equipment.cycle.name: ''
+                          const data = row.bom.children[index] ? row.bom.children[index].equipment.cycle.name: ''
                           return <div class="myCell">{ data }</div>
                         }}
                       </ElTableColumn>
                       <ElTableColumn label="全部工时(H)">
                         {({row}) => {
-                          const data = row.items[index] ? row.items[index].all_work_time: ''
+                          const data = row.bom.children[index] ? row.bom.children[index].gongxu.all_work_time: ''
                           return <div class="myCell">{ data }</div>
                         }}
                       </ElTableColumn>
                       <ElTableColumn label="每日负荷(H)">
                         {({row}) => {
-                          const data = row.items[index] ? row.items[index].load: ''
+                          const data = row.bom.children[index] ? row.bom.children[index].gongxu.load: ''
                           return <div class="myCell">{ data }</div>
                         }}
                       </ElTableColumn>
                       <ElTableColumn label="累计完成">
                         {({row}) => {
-                          const data = row.items[index] ? row.items[index].finish: ''
+                          const data = row.bom.children[index] ? row.bom.children[index].gongxu.finish: ''
                           return <div class="myCell">{ data }</div>
                         }}
                       </ElTableColumn>
                       <ElTableColumn label="订单尾数">
                         {({row}) => {
-                          const data = row.items[index] ? row.items[index].order_number: ''
+                          const data = row.bom.children[index] ? row.bom.children[index].gongxu.order_number: ''
                           return <div class="myCell">{ data }</div>
                         }}
                       </ElTableColumn>

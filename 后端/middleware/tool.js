@@ -99,9 +99,11 @@ const processStockOut = (stockData, outQuantity) => {
  * 获取所有销售取消记录的列表
  * @returns {Promise<number[]>} 数组
  */
-const getSaleCancelIds = async (value) => {
+const getSaleCancelIds = async (value, params) => {
+  const { company_id } = params
   const saleCancel = await SubSaleCancel.findAll({ 
-    attributes: ['sale_id', 'notice_id'] 
+    attributes: ['sale_id', 'notice_id'],
+    where: { company_id }
   });
   return saleCancel.length ? saleCancel.map(e => e[value]) : [];
 };

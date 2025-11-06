@@ -422,8 +422,6 @@ router.delete('/organize', authMiddleware, async (req, res) => {
   res.json({ message: '删除成功', code: 200 });
 })
 
-
-
 /**
  * @swagger
  * /api/process_cycle:

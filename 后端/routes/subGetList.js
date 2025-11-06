@@ -21,7 +21,7 @@ router.get('/getSaleOrder', authMiddleware, async (req, res) => {
   const { customer_order, is_sale, my_id, id } = req.query;
   const { company_id } = req.user;
 
-  const saleIds = await getSaleCancelIds('sale_id')
+  const saleIds = await getSaleCancelIds('sale_id', { company_id })
 
   const whereObj = {
     is_deleted: 1,
@@ -311,7 +311,7 @@ router.get('/getProductNotice', authMiddleware, async (req, res) => {
   const { notice, id } = req.query;
   const { company_id } = req.user;
 
-  const saleIds = await getSaleCancelIds('sale_id')
+  const saleIds = await getSaleCancelIds('sale_id', { company_id })
   
   let noticeWhere = {}
   if(notice) noticeWhere.notice = { [Op.like]: `%${notice}%` }

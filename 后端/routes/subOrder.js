@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCycle, Op, SubSaleCancel, SubProductionCycle, SubProductionProcess } = require('../models')
+const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCycle, Op, SubSaleCancel, SubProgressBase, SubProgressCycle, SubProgressWork } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { PreciseMath, getSaleCancelIds } = require('../middleware/tool');
@@ -43,7 +43,6 @@ router.get('/customer_info', authMiddleware, async (req, res) => {
 // 添加客户信息
 router.post('/customer_info', authMiddleware, async (req, res) => {
   const { customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms } = req.body;
-  
   const { id: userId, company_id } = req.user;
   
   const rows = await SubCustomerInfo.findAll({
@@ -67,7 +66,6 @@ router.post('/customer_info', authMiddleware, async (req, res) => {
 // 更新客户信息接口
 router.put('/customer_info', authMiddleware, async (req, res) => {
   const { customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms, id } = req.body;
-  
   const { id: userId, company_id } = req.user;
   
   const rows = await SubCustomerInfo.findAll({
@@ -127,8 +125,6 @@ router.get('/sale_order', authMiddleware, async (req, res) => {
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
 
-  // const saleIds = await getSaleCancelIds('sale_id')
-  
   let whereCustomer = {}
   let whereProduct = {}
   let whereSale = {}
@@ -142,7 +138,6 @@ router.get('/sale_order', authMiddleware, async (req, res) => {
     where: {
       is_deleted: 1,
       company_id,
-      // id: { [Op.notIn]: saleIds },
       ...whereSale
     },
     attributes: ['id', 'rece_time', 'customer_order', 'product_req', 'order_number', 'unit', 'delivery_time', 'goods_time', 'goods_address', 'is_sale', 'created_at'],
@@ -200,55 +195,44 @@ router.put('/sale_order', authMiddleware, async (req, res) => {
   if(!result) return res.json({ message: '订单不存在，或已被删除', code: 401})
   
   if(order_number != result.order_number){
-    const notice = await SubProductNotice.findOne({
+    const progress = await SubProgressBase.findAll({
       where: {
         sale_id: id,
         company_id
       },
-      attributes: ['id']
+      attributes: ['id', 'out_number', 'house_number', 'bom_id', 'company_id', 'user_id']
     })
-    if(notice){
-      const [ progress, bomChild ] = await Promise.all([
-        SubProductionProgress.findAll({
-          where: {
-            notice_id: notice.id,
-            company_id
-          },
-          attributes: ['id', 'out_number', 'house_number', 'order_number', 'bom_id', 'company_id', 'user_id']
-        }),
-        SubProcessBomChild.findAll({
-          where: {
-            notice_id: notice.id,
-            company_id
-          },
-          attributes: ['id', 'order_number', 'add_finish', 'process_bom_id']
+    const progressResult = progress.map(e => {
+      const item = e.toJSON()
+      item.out_number = item.house_number ? PreciseMath.sub(order_number, item.house_number) : order_number
+      return item
+    })
+    const work = await SubProgressWork.findAll({
+      where: {
+        progress_id: progress.map(e => e.id),
+        company_id
+      },
+      attributes: ['id', 'order_number', 'finish', 'bom_id']
+    })
+    if(work && work.length){
+      const bomChildResult = work.map(e => {
+        const item = e.toJSON()
+        progressResult.forEach(o => {
+          if(o.bom_id == item.bom_id){
+            const n = item.finish ? PreciseMath.sub(order_number, item.finish) : order_number
+            item.order_number = o.house_number ? PreciseMath.sub(n, o.house_number) : n
+          }
         })
-      ])
+        return item
+      })
       if(progress && progress.length){
-        const progressResult = progress.map(e => {
-          const item = e.toJSON()
-          item.out_number = item.house_number ? PreciseMath.sub(order_number, item.house_number) : order_number
-          return item
-        })
-        await SubProductionProgress.bulkCreate(progressResult, {
+        await SubProgressBase.bulkCreate(progressResult, {
           updateOnDuplicate: ['out_number', 'company_id', 'user_id']
         })
       }
-      if(bomChild && bomChild.length && progress && progress.length){
-        const bomChildResult = bomChild.map(e => {
-          const item = e.toJSON()
-          progress.forEach(o => {
-            if(o.bom_id == item.process_bom_id){
-              const n = item.add_finish ? PreciseMath.sub(order_number, item.add_finish) : order_number
-              item.order_number = o.house_number ? PreciseMath.sub(n, o.house_number) : n
-            }
-          })
-          return item
-        })
-        await SubProcessBomChild.bulkCreate(bomChildResult, {
-          updateOnDuplicate: ['order_number']
-        })
-      }
+      await SubProgressWork.bulkCreate(bomChildResult, {
+        updateOnDuplicate: ['order_number']
+      })
     }
   }
 
@@ -292,7 +276,7 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
 
-  const saleIds = await getSaleCancelIds('sale_id')
+  const saleIds = await getSaleCancelIds('sale_id', { company_id })
   
   let whereCustomer = {}
   let whereProduct = {}
@@ -403,7 +387,7 @@ router.get('/product_notice', authMiddleware, async (req, res) => {
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
 
-  const saleIds = await getSaleCancelIds('sale_id')
+  const saleIds = await getSaleCancelIds('sale_id', { company_id })
 
   let saleOrderWhere = {}
   let customerInfoWhere = {}
@@ -544,9 +528,8 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
     where: { id },
     attributes: ['id', 'product_id', 'sale_id', 'customer_id', 'is_notice', 'notice', 'delivery_time'],
     include: [
-      { model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number', 'customer_order', 'rece_time'] },
-      { model: SubCustomerInfo, as: 'customer', attributes: ['id', 'customer_abbreviation'] },
       { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing'] },
+      { model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number'] }
     ]
   });
   if (!notice) return res.json({ message: '数据不存在，或已被删除', code: 401 });
@@ -560,9 +543,10 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
       sort: { [Op.gt]: 0 }
     },
     attributes: ['id'],
+    order: [['sort', 'ASC']]
   })
   if(allCycles.length == 0) return res.json({ message: '未配置制程组，请先配置生产制程组', code: 401 })
-  const cycle = allCycles.map(o => o.toJSON())
+  const cycles = allCycles.map(o => o.toJSON())
 
   // 通过产品id查找工艺BOM中相同的产品id数据
   const bom = await SubProcessBom.findAll({
@@ -570,20 +554,19 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
       product_id: noticeRow.product_id,
       archive: 0
     },
-    attributes: ['id', 'archive', 'product_id', 'part_id'],
+    attributes: ['id', 'archive', 'product_id', 'part_id', 'sort'],
     include: [
-      { model: SubProcessBomChild, as: 'children', attributes: ['id', 'time'] },
+      { model: SubProcessBomChild, as: 'children', attributes: ['id', 'time', 'process_index'] },
       { model: SubPartCode, as: 'part', attributes: ['id', 'part_code', 'part_name'] }
     ],
     order: [
-      ['id', 'DESC'],
+      ['sort', 'ASC'],
+      ['children', 'process_index', 'ASC']
     ],
   })
   const bomResult =  bom.map(e => e.toJSON())
   if(bomResult.length == 0) return res.json({ message: '该订单无工艺BOM，或工艺BOM未存档，暂时无法排产', code: 401 })
   
-
-
 
   
   let progress = []
@@ -594,9 +577,14 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
       company_id,
       user_id: userId,
       notice_id: noticeRow.id,
-      sale_id: noticeRow.sale.id,
+      sale_id: noticeRow.sale_id,
       product_id: noticeRow.product.id,
+      product_code: noticeRow.product.product_code,
+      product_name: noticeRow.product.product_name,
+      drawing: noticeRow.product.drawing,
       part_id: item.part.id,
+      part_code: item.part.part_code,
+      part_name: item.part.part_name,
       bom_id: item.id,
       out_number: noticeRow.sale.order_number,
       house_number: null,
@@ -604,132 +592,48 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
       remarks: ''
     }
     progress.push(obj)
+    // 工序
     item.children.forEach(child => {
       const tk = {
-        notice_id: noticeRow.id,
-        parent_id: child.id,
-        progress_id: null,
-        order_number: noticeRow.sale.order_number,
-        // time: child.time,
-        // child_id: item.id,
-        all_work_time: (PreciseMath.mul(noticeRow.sale.order_number, child.time) / 60 / 60).toFixed(1),
         company_id,
+        progress_id: null,
+        notice_id: noticeRow.id,
+        bom_id: item.id,
+        child_id: child.id,
+        process_index: child.process_index,
+        all_work_time: (PreciseMath.mul(noticeRow.sale.order_number, child.time) / 60 / 60).toFixed(1),
+        order_number: noticeRow.sale.order_number,
       }
       childProgress.push(tk)
     })
   })
-  const progressArr = ['company_id', 'user_id', 'notice_id', 'product_id', 'sale_id', 'out_number', 'part_id', 'bom_id', 'start_date', 'house_number', 'remarks']
-  await SubProductionProcess.bulkCreate(childProgress, { updateOnDuplicate: ['notice_id', 'parent_id', 'progress_id', 'order_number', 'all_work_time', 'company_id'] }) 
-  const progressResult = await SubProductionProgress.bulkCreate(progress, {updateOnDuplicate: progressArr})
-  const progressRows = progressResult.map(e => e.toJSON())
-
-  const cycleChildData = [];
+  const progressArr = ['company_id', 'user_id', 'notice_id', 'sale_id', 'product_id', 'product_code', 'product_name', 'drawing', 'part_id', 'part_code', 'part_name', 'bom_id', 'out_number', 'house_number', 'start_date', 'remarks']
+  const progressResult = await SubProgressBase.bulkCreate(progress, { updateOnDuplicate: progressArr })
   // 遍历每条新创建的进度
-  progressRows.forEach(progress => {
-    const cycleChildDataForProgress = cycle.map(cycle => ({
+  const cycleChildData = [];
+  progressResult.forEach(e => {
+    const item = e.toJSON()
+    // 处理制程的事务
+    const cycleChildDataForProgress = cycles.map(cycle => ({
+      notice_id: noticeRow.id,
       cycle_id: cycle.id,
-      progress_id: progress.id
-    }));
-
-    // 将当前进度的子周期数据合并到总列表
+      progress_id: item.id,
+      company_id
+    }))
     cycleChildData.push(...cycleChildDataForProgress);
+    // 处理工序，加上进度ID
+    childProgress.forEach(child => {
+      if(child.bom_id == item.bom_id){
+        child.progress_id = item.id
+      }
+    })
   })
-  // 批量插入
-  await SubProductionCycle.bulkCreate(cycleChildData)
+  // 制程子数据批量插入
+  await SubProgressCycle.bulkCreate(cycleChildData)
+  // 工序数据批量插入
+  await SubProgressWork.bulkCreate(childProgress, { updateOnDuplicate: ['company_id', 'progress_id', 'notice_id', 'bom_id', 'child_id', 'all_work_time', 'order_number'] }) 
 
   if(progress.length){
-    // 设置此数据为已排产
-    await SubProductNotice.update({
-      is_notice: 0
-    }, { where: { id } })
-  }
-  
-  res.json({ message: '操作成功', code: 200 });
-  return
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  let wait = []
-  const bomRows = bom.map(e => {
-    const data = e.toJSON()
-    data.children.forEach(o => {
-      const orders = Number(noticeRow.sale.order_number)
-      const obj = {
-        ...o,
-        order_number: orders,
-        notice_id: noticeRow.id,
-        notice: noticeRow.notice,
-        company_id,
-        all_time: (orders * o.time).toFixed(1)
-      }
-      o.order_number = orders
-      wait.push(obj)
-    })
-    return data
-  })
-  if(wait.length != 0){
-    SubProcessBomChild.bulkCreate(wait, {updateOnDuplicate:["order_number", 'all_time', 'notice_id', 'notice', 'company_id']})
-  }
-  noticeRow.bom = bomRows
-  
-  const objData = []
-  bomRows.forEach(item => {
-    const obj = {
-      company_id,
-      user_id: userId,
-      notice_id: noticeRow.id,
-      notice_number: noticeRow.notice,
-      delivery_time: noticeRow.delivery_time,
-      customer_abbreviation: noticeRow.customer.customer_abbreviation,
-      product_id: item.product_id,
-      product_code: noticeRow.product.product_code,
-      product_name: noticeRow.product.product_name,
-      product_drawing: noticeRow.product.drawing,
-      part_id: item.part_id,
-      part_code: item.part.part_code,
-      part_name: item.part.part_name,
-      bom_id: item.id,
-      order_number: noticeRow.sale.order_number,
-      customer_order: noticeRow.sale.customer_order,
-      rece_time: noticeRow.sale.rece_time,
-      out_number: noticeRow.sale.order_number,
-      start_date: null,
-      remarks: null
-    }
-    objData.push(obj)
-  })
-  const strArr = ['company_id', 'user_id', 'notice_id', 'notice_number', 'delivery_time', 'customer_abbreviation', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'part_name', 'part_code', 'bom_id', 'order_number', 'customer_order', 'rece_time', 'out_number', 'start_date', 'remarks'] 
-
-  const result = await SubProductionProgress.bulkCreate(objData, {updateOnDuplicate:strArr})
-  const dataValue = result.map(e => e.toJSON())
-
-  const allCycleChildData = [];
-  // 遍历每条新创建的进度
-  dataValue.forEach(progress => {
-    const progressId = progress.id;
-    const cycleChildDataForProgress = cycle.map(cycle => ({
-      cycle_id: cycle.id,
-      progress_id: progressId
-    }));
-
-    // 将当前进度的子周期数据合并到总列表
-    allCycleChildData.push(...cycleChildDataForProgress);
-  })
-  // 批量插入
-  await SubProcessCycleChild.bulkCreate(allCycleChildData)
-  
-  if(objData.length){
     // 设置此数据为已排产
     await SubProductNotice.update({
       is_notice: 0

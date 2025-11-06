@@ -11,7 +11,7 @@
  Target Server Version : 50722 (5.7.22)
  File Encoding         : 65001
 
- Date: 06/11/2025 01:21:10
+ Date: 07/11/2025 00:23:30
 */
 
 SET NAMES utf8mb4;
@@ -141,7 +141,7 @@ CREATE TABLE `sub_approval_step`  (
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '审批步骤配置表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '审批步骤配置表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_approval_step
@@ -770,23 +770,11 @@ CREATE TABLE `sub_operation_history`  (
   `data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '操作数据（JSON 格式，存储前后数据对比）',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户操作日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户操作日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_operation_history
 -- ----------------------------
-INSERT INTO `sub_operation_history` VALUES (1, 3, 6, '徐庆华', 'paichang', '生产通知单', '执行通知单排产，订单号：DD-A2510001', '{\"newData\":9}', '2025-11-05 08:39:47');
-INSERT INTO `sub_operation_history` VALUES (2, 3, 6, '徐庆华', 'paichang', '生产通知单', '执行通知单排产，订单号：DD-A2510001', '{\"newData\":9}', '2025-11-05 09:08:31');
-INSERT INTO `sub_operation_history` VALUES (3, 3, 6, '徐庆华', 'paichang', '生产通知单', '执行通知单排产，订单号：DD-A2510001', '{\"newData\":9}', '2025-11-05 09:18:37');
-INSERT INTO `sub_operation_history` VALUES (4, 3, 6, '徐庆华', 'paichang', '生产通知单', '执行通知单排产，订单号：DD-A2510001', '{\"newData\":9}', '2025-11-05 09:28:04');
-INSERT INTO `sub_operation_history` VALUES (5, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-11-05 12:29:27');
-INSERT INTO `sub_operation_history` VALUES (6, 1, 1, '我是名字', 'login', '登录', '用户{ 我是名字 }成功登录', '{\"newData\":{\"username\":\"admin1\",\"password\":\"***\"}}', '2025-11-05 12:42:07');
-INSERT INTO `sub_operation_history` VALUES (7, 1, 1, '我是名字', 'update', '生产制程', '修改生产制程：名称：备料组', '{\"newData\":{\"id\":1,\"name\":\"备料组\",\"sort\":\"1\"}}', '2025-11-05 12:42:50');
-INSERT INTO `sub_operation_history` VALUES (8, 1, 1, '我是名字', 'update', '生产制程', '修改生产制程：名称：生产组', '{\"newData\":{\"id\":3,\"name\":\"生产组\",\"sort\":\"2\"}}', '2025-11-05 12:42:53');
-INSERT INTO `sub_operation_history` VALUES (9, 1, 1, '我是名字', 'update', '生产制程', '修改生产制程：名称：其他组', '{\"newData\":{\"id\":4,\"name\":\"其他组\",\"sort\":\"3\"}}', '2025-11-05 12:42:57');
-INSERT INTO `sub_operation_history` VALUES (10, 1, 1, '我是名字', 'update', '生产制程', '修改生产制程：名称：设备组', '{\"newData\":{\"id\":2,\"name\":\"设备组\",\"sort\":\"4\"}}', '2025-11-05 12:43:00');
-INSERT INTO `sub_operation_history` VALUES (11, 1, 1, '我是名字', 'paichang', '生产通知单', '执行通知单排产，订单号：1122', '{\"newData\":8}', '2025-11-05 12:48:30');
-INSERT INTO `sub_operation_history` VALUES (12, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-11-05 13:02:09');
 
 -- ----------------------------
 -- Table structure for sub_outsourcing_order
@@ -1280,7 +1268,7 @@ INSERT INTO `sub_process_cycle` VALUES (4, 1, 1, '其他组', '3', NULL, 1, '202
 INSERT INTO `sub_process_cycle` VALUES (5, 1, 1, '不好组', '0', NULL, 1, '2025-10-16 19:15:43', '2025-10-26 18:10:53');
 INSERT INTO `sub_process_cycle` VALUES (6, 3, 6, '备料组', '1', '1', 1, '2025-10-18 10:10:27', '2025-10-28 13:40:09');
 INSERT INTO `sub_process_cycle` VALUES (7, 3, 6, '焊接组', '7', '1', 1, '2025-10-18 10:10:44', '2025-11-05 14:09:20');
-INSERT INTO `sub_process_cycle` VALUES (8, 3, 6, '热处理', '3', '1.5', 1, '2025-10-18 10:11:22', '2025-10-28 13:40:23');
+INSERT INTO `sub_process_cycle` VALUES (8, 3, 6, '热处理', '3', '2', 1, '2025-10-18 10:11:22', '2025-11-06 16:17:00');
 INSERT INTO `sub_process_cycle` VALUES (9, 3, 6, '研磨组', '4', '5', 1, '2025-10-18 10:11:37', '2025-10-28 13:44:10');
 INSERT INTO `sub_process_cycle` VALUES (10, 3, 6, '补土组', '5', '6', 1, '2025-10-18 10:11:55', '2025-10-28 13:44:35');
 INSERT INTO `sub_process_cycle` VALUES (11, 3, 6, '后段组', '6', '8', 1, '2025-10-18 10:12:08', '2025-10-28 13:44:44');
@@ -1594,7 +1582,7 @@ CREATE TABLE `sub_product_notice`  (
 -- Records of sub_product_notice
 -- ----------------------------
 INSERT INTO `sub_product_notice` VALUES (8, 1, 1, '1122', 2, 19, 2, '2025-10-15', 0, 1, 1, '2025-09-24 15:56:38', '2025-11-05 20:48:30');
-INSERT INTO `sub_product_notice` VALUES (9, 3, 6, 'DD-A2510001', 4, 20, 3, '2025-11-20', 1, 1, 1, '2025-10-18 14:17:30', '2025-11-06 01:06:37');
+INSERT INTO `sub_product_notice` VALUES (9, 3, 6, 'DD-A2510001', 4, 20, 3, '2025-11-20', 0, 1, 1, '2025-10-18 14:17:30', '2025-11-06 15:50:12');
 INSERT INTO `sub_product_notice` VALUES (10, 3, 6, 'DD-2510002', 5, 20, 4, '2025-11-07', 1, 1, 1, '2025-10-30 16:20:55', '2025-10-30 16:20:55');
 
 -- ----------------------------
@@ -1626,49 +1614,6 @@ INSERT INTO `sub_product_quotation` VALUES (12, 1, 1, 1, 3, 10, '222', '222', '2
 INSERT INTO `sub_product_quotation` VALUES (13, 3, 6, 3, 4, 20, 'BJD001', '580', 'RMB', '现金/月结60天', 1, '2025-10-18 12:51:58', '2025-10-18 12:51:58');
 
 -- ----------------------------
--- Table structure for sub_production_cycle
--- ----------------------------
-DROP TABLE IF EXISTS `sub_production_cycle`;
-CREATE TABLE `sub_production_cycle`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键 ID',
-  `cycle_id` int(11) NULL DEFAULT NULL COMMENT '生产制程ID',
-  `progress_id` int(11) NULL DEFAULT NULL COMMENT '进度表ID',
-  `end_date` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '预排交期',
-  `load` decimal(20, 1) NULL DEFAULT NULL COMMENT '制程日总负荷',
-  `order_number` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '完成数量',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of sub_production_cycle
--- ----------------------------
-
--- ----------------------------
--- Table structure for sub_production_process
--- ----------------------------
-DROP TABLE IF EXISTS `sub_production_process`;
-CREATE TABLE `sub_production_process`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-  `company_id` int(11) NULL DEFAULT NULL COMMENT '公司ID',
-  `notice_id` int(11) NULL DEFAULT NULL COMMENT '生产订单ID',
-  `progress_id` int(11) NULL DEFAULT NULL COMMENT '进度表ID',
-  `parent_id` int(11) NULL DEFAULT NULL COMMENT '工序ID',
-  `all_work_time` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '全部工时(H)',
-  `load` decimal(1, 0) NULL DEFAULT NULL COMMENT '每日负荷',
-  `finish` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '累计完成',
-  `order_number` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '订单尾数',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表工序下进度表的子表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of sub_production_process
--- ----------------------------
-
--- ----------------------------
 -- Table structure for sub_production_progress
 -- ----------------------------
 DROP TABLE IF EXISTS `sub_production_progress`;
@@ -1677,13 +1622,10 @@ CREATE TABLE `sub_production_progress`  (
   `company_id` int(11) NOT NULL COMMENT '企业id',
   `user_id` int(11) NOT NULL COMMENT '发布的用户id',
   `notice_id` int(11) NULL DEFAULT NULL COMMENT '生产通知单id',
-  `notice_number` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生产通知单',
-  `delivery_time` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '客户交期',
-  `customer_abbreviation` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '客户名称',
   `product_id` int(11) NULL DEFAULT NULL COMMENT '产品id',
   `product_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品编码',
   `product_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品名称',
-  `product_drawing` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品图号',
+  `drawing` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品图号',
   `part_id` int(11) NULL DEFAULT NULL COMMENT '部件id',
   `part_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '部件编码',
   `part_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '部件名称',
@@ -1704,6 +1646,86 @@ CREATE TABLE `sub_production_progress`  (
 
 -- ----------------------------
 -- Records of sub_production_progress
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for sub_progress_base
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_progress_base`;
+CREATE TABLE `sub_progress_base`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+  `company_id` int(11) NULL DEFAULT NULL COMMENT '企业ID',
+  `user_id` int(11) NULL DEFAULT NULL COMMENT '用户发布的ID',
+  `notice_id` int(11) NULL DEFAULT NULL COMMENT '生产订单ID',
+  `sale_id` int(11) NULL DEFAULT NULL COMMENT '销售订单ID',
+  `product_id` int(11) NULL DEFAULT NULL COMMENT '产品id',
+  `product_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品编码',
+  `product_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品名称',
+  `drawing` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品图号',
+  `part_id` int(11) NULL DEFAULT NULL COMMENT '部件id',
+  `part_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '部件编码',
+  `part_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '部件名称',
+  `bom_id` int(11) NULL DEFAULT NULL COMMENT 'bom表的id',
+  `house_number` int(11) NULL DEFAULT NULL COMMENT '委外/库存数量',
+  `out_number` int(11) NULL DEFAULT NULL COMMENT '生产数量',
+  `start_date` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '预计起始生产时间',
+  `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '生产特别要求',
+  `is_finish` int(1) NULL DEFAULT 1 COMMENT '生产订单是否已完结：1 - 未完结，0 - 已完结',
+  `is_deleted` int(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '进度表的基础数据表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sub_progress_base
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for sub_progress_cycle
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_progress_cycle`;
+CREATE TABLE `sub_progress_cycle`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键 ID',
+  `company_id` int(11) NULL DEFAULT NULL COMMENT '公司ID',
+  `notice_id` int(11) NULL DEFAULT NULL COMMENT '生产通知单ID',
+  `cycle_id` int(11) NULL DEFAULT NULL COMMENT '生产制程ID',
+  `progress_id` int(11) NULL DEFAULT NULL COMMENT '进度表ID',
+  `end_date` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '预排交期',
+  `load` decimal(20, 1) NULL DEFAULT NULL COMMENT '制程日总负荷',
+  `order_number` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '完成数量',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '进度表的制程子表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of sub_progress_cycle
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for sub_progress_work
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_progress_work`;
+CREATE TABLE `sub_progress_work`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+  `company_id` int(11) NULL DEFAULT NULL COMMENT '公司ID',
+  `progress_id` int(11) NULL DEFAULT NULL COMMENT '进度表ID',
+  `notice_id` int(11) NULL DEFAULT NULL COMMENT '生产订单ID',
+  `bom_id` int(11) NULL DEFAULT NULL COMMENT 'bom表的id',
+  `child_id` int(11) NULL DEFAULT NULL COMMENT 'bom表工序ID',
+  `process_index` int(11) NULL DEFAULT NULL COMMENT '排序',
+  `all_work_time` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '全部工时(H)',
+  `load` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '每日负荷',
+  `finish` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '累计完成',
+  `order_number` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '订单尾数',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表工序下进度表的子表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sub_progress_work
 -- ----------------------------
 
 -- ----------------------------
@@ -1742,7 +1764,7 @@ CREATE TABLE `sub_sale_cancel`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '销售订单取消订单储存的数据' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '销售订单取消订单储存的数据' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_sale_cancel
@@ -1779,7 +1801,7 @@ CREATE TABLE `sub_sales_order`  (
 -- ----------------------------
 INSERT INTO `sub_sales_order` VALUES (1, 1, 1, '2025-07-07', 3, 'G2222222', 10, '我的要求', '18000', 313, '个', '2025-07-07', '2025-07-27', '大朗镇', 1, 1, '2025-07-14 13:55:51', '2025-09-03 09:43:29');
 INSERT INTO `sub_sales_order` VALUES (2, 1, 1, '2025-07-10', 2, 'hui11111111', 19, '无要求', '12000', 2121, '件', '2025-10-31', '2025-07-14', '寮步镇', 1, 1, '2025-07-14 18:47:31', '2025-10-31 01:04:11');
-INSERT INTO `sub_sales_order` VALUES (3, 3, 6, '2025-10-10', 4, 'CG01-2510009', 20, '1.字码2510001-2510800；2.车架补土后烤漆', '18000', 800, '台', '2025-11-30', '2025-11-30', '公司材料仓', 1, 1, '2025-10-18 11:17:11', '2025-11-02 14:15:57');
+INSERT INTO `sub_sales_order` VALUES (3, 3, 6, '2025-10-10', 4, 'CG01-2510009', 20, '1.字码2510001-2510800；2.车架补土后烤漆', '17500', 800, '台', '2025-11-30', '2025-11-30', '公司材料仓', 1, 1, '2025-10-18 11:17:11', '2025-11-07 00:21:48');
 INSERT INTO `sub_sales_order` VALUES (4, 3, 6, '2025-10-30', 5, 'CG02-2510018', 20, '1.字码自2511001起；2.车架补土后送烤漆', '7500', 7500, '台', '2025-12-12', '2025-12-12', '高埗镇合鑫喷漆厂', 1, 1, '2025-10-30 16:04:11', '2025-10-30 16:22:00');
 
 -- ----------------------------

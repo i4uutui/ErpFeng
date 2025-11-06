@@ -276,7 +276,7 @@ export default defineComponent({
             default: () => (
               <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">
                 <ElFormItem label="客户订单号" prop="sale_id">
-                  <ElSelect v-model={ form.value.sale_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择客户订单号" onChange={ (row) => noticeChange(row) }>
+                  <ElSelect v-model={ form.value.sale_id } multiple={false} filterable remote remote-show-suffix valueKey="id" disabled={ edit.value != 0 } placeholder="请选择客户订单号" onChange={ (row) => noticeChange(row) }>
                     {saleList.value.map((e, index) => <ElOption value={ e.id } label={ e.customer_order } disabled={ !e.is_sale } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>

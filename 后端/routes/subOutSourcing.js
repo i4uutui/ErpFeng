@@ -26,7 +26,7 @@ router.get('/outsourcing_quote', authMiddleware, async (req, res) => {
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
 
-  const noticeIds = await getSaleCancelIds('notice_id')
+  const noticeIds = await getSaleCancelIds('notice_id', { company_id })
   
   let productWhere = {}
   let supplierWhere = {}
@@ -232,7 +232,7 @@ router.get('/outsourcing_order', authMiddleware, async (req, res) => {
   const { notice, supplier_code, supplier_abbreviation, status } = req.query;
   const { company_id } = req.user;
 
-  const noticeIds = await getSaleCancelIds('notice_id')
+  const noticeIds = await getSaleCancelIds('notice_id', { company_id })
   
   let whereOrder = {}
   let whereNotice = {}
