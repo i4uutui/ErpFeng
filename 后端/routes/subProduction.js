@@ -10,7 +10,7 @@ const authMiddleware = require('../middleware/auth');
 const EmployeeAuth = require('../middleware/EmployeeAuth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { PreciseMath, getSaleCancelIds } = require('../middleware/tool');
-const { setProgressLoad, setCycleLoad } = require('../middleware/fun');
+const { setProgressLoad, setCycleLoad, setDateMore } = require('../middleware/fun');
 
 // 获取进度表基础数据
 router.get('/get_progress_base', authMiddleware, async (req, res) => {
@@ -121,10 +121,11 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
   const cased = setProgressLoad(base, cycles, works, dateInfo)
   // 处理制程日总负荷
   const callLoad = setCycleLoad(cycles, cased)
-  // 处理页面头部的日期
-  const dateMore = setDateMore()
+  // 处理页面头部的日期(deliveryTimes先获取客户交期的数组)
+  const deliveryTimes = [...new Set(base.map(e => e.delivery_time))]
+  const { date_more, newCycles } = setDateMore(base, callLoad, dateInfo, deliveryTimes)
 
-  res.json({ code: 200, data: { cycles: callLoad, works: cased } })
+  res.json({ code: 200, data: { cycles: newCycles, works: cased, date_more } })
 })
 // 获取进度表工序数据
 router.post('/get_progress_work', authMiddleware, async (req, res) => {

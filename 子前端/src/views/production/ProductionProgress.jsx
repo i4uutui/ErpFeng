@@ -10,6 +10,7 @@ export default defineComponent({
     const formHeight = ref(0);
     let tableData = ref([])
     let cycleList = ref([])
+    let date_more = ref([])
     let specialDates = ref(new Set());
     // 查询tableData下的工序长度，确定表格中的工序显示的数量
     const maxBomLength = computed(() => {
@@ -33,7 +34,7 @@ export default defineComponent({
       if(res.code == 200){
         tableData.value = res.data
         if(res.data.length){
-          const base = res.data.map(item => ({ id: item.id, start_date: item.start_date }))
+          const base = res.data.map(item => ({ id: item.id, start_date: item.start_date, delivery_time: item.notice.delivery_time }))
           getProgressCycle(base)
         }
       }
@@ -44,6 +45,7 @@ export default defineComponent({
       if(res.code == 200){
         // 制程的数据
         const cycles = res.data.cycles
+        date_more.value = res.data.date_more
         cycleList.value = cycles
         // 工序的数据
         const works = res.data.works
@@ -246,15 +248,38 @@ export default defineComponent({
       const group = Math.floor(offset / number);
       return group % 2 === 0 ? '#C9E4B4' : '#A8EAE4';
     }
+    // 头部的警告背景色
+    const loadCellStyle = ({ row, column }) => {
+      if (column.label && date_more.value.includes(column.label)) {
+        const currentLoad = Number(row.dateData[column.label]);
+        const maxLoad = Number(row.maxLoad);
+        if (currentLoad > maxLoad) {
+          return { 
+            backgroundColor: '#ff4d4f', 
+            color: '#fff',
+            fontWeight: 'bold'
+          };
+        }
+      }
+    }
     
     return() => (
       <>
         <ElCard>
           {{
             header: () => {
-              return cycleList.value.length ? <ElTable data={cycleList.value} border ref={ formCard } style={{ width: "100%" }} size="small">
+              return cycleList.value.length ? <ElTable data={cycleList.value} border ref={ formCard } style={{ width: "100%" }} size="small" cellStyle={ loadCellStyle }>
                 <ElTableColumn prop="name" label="制程" width="100" align="center" />
                 <ElTableColumn prop="maxLoad" label="极限负荷" width="90" align="center" />
+                { date_more.value.map(date => (
+                  <ElTableColumn label={ date } width="90" align="center">
+                    {{
+                      default: ({ row }) => {
+                        return row.dateData[date]
+                      }
+                    }}
+                  </ElTableColumn>
+                )) }
               </ElTable> : ''
             },
             default: () => (
@@ -316,9 +341,10 @@ export default defineComponent({
                           {{
                             default: ({ row, $index }) => {
                               const data = e.cycle[$index]
+                              const isOverdue = data.end_date && dayjs(data.end_date).isBefore(dayjs().startOf('day')) && Number(data.load || 0) > 0;
 
                               return (
-                                <div class="myCell">
+                                <div class="myCell" style={{ backgroundColor: isOverdue ? '#ff4d4f' : '', color: isOverdue ? '#fff' : '' }}>
                                   <ElDatePicker v-model={ data.end_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 100px" onBlur={ (value) => paiChange(value, data, row) }></ElDatePicker>
                                 </div>
                               )

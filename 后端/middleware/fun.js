@@ -1,8 +1,10 @@
 const dayjs = require("dayjs");
+const isSameOrBefore = require('dayjs/plugin/isSameOrBefore');
+dayjs.extend(isSameOrBefore);
 const { PreciseMath } = require("./tool");
 
 const setProgressLoad = (base, cycles, works, dateInfo) => {
-  console.log(dateInfo);
+	// console.log(dateInfo);
 	// 转为Set，提高查询效率
 	const specialDateSet = new Set(dateInfo.map(date => dayjs(date).format("YYYY-MM-DD")));
 	// 步骤1：预处理数据 - 创建映射关系，提高查询效率
@@ -66,14 +68,14 @@ const setProgressLoad = (base, cycles, works, dateInfo) => {
 
 			// 2.3 计算最短周期之和（规则：循环cycles，累加之前的sort_date，end_date为空则跳过，首次不加）
 			let totalSortDate = 0;
-      for (let i = 0; i < cycles.length; i++) {
-        const currentCycleGroup = cycles[i];
-        if (currentCycleGroup.id === cycleId) break;
-        const hasValidEndDate = currentCycleGroup.cycle.some(item => item.end_date);
-        if (hasValidEndDate) {
-          totalSortDate += Number(currentCycleGroup.sort_date) || 0;
-        }
-      }
+			for (let i = 0; i < cycles.length; i++) {
+				const currentCycleGroup = cycles[i];
+				if (currentCycleGroup.id === cycleId) break;
+				const hasValidEndDate = currentCycleGroup.cycle.some(item => item.end_date);
+				if (hasValidEndDate) {
+					totalSortDate += Number(currentCycleGroup.sort_date) || 0;
+				}
+			}
 
 			// 2.4 检查cycle明细的end_date是否有效
 			if (!cycleItem.end_date) {
@@ -81,21 +83,24 @@ const setProgressLoad = (base, cycles, works, dateInfo) => {
 				return { ...work, load: null };
 			}
 
-			// 2.5 计算实际开始日期 = 起始时间 + 最短周期之和
-			const actualStartDate = startDate.add(totalSortDate, 'day');
-      const endDate = dayjs(cycleItem.end_date).startOf('day');
-      
-      // 计算有效天数（剔除特殊日期）
-      const validDays = getValidDays(actualStartDate, endDate) - 1;
-      console.log(actualStartDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'), validDays);
+			const endDate = dayjs(cycleItem.end_date).startOf('day');
+    	const allWorkTime = Number(work.all_work_time) || 0;
 
-			// 2.6 计算load（避免除以0）
+			// 判断end_date是否≤今天，是则直接赋值load=all_work_time
+			if (endDate.isSame(today) || endDate.isBefore(today)) {
+				console.log(`work.id=${work.id}：end_date=${endDate.format('YYYY-MM-DD')}≤今天，load直接等于all_work_time`);
+				return { ...work, load: allWorkTime.toString() };
+			}
+
+			// 不满足上述条件时，按原逻辑计算有效天数
+			const actualStartDate = startDate.add(totalSortDate, 'day');
+			const validDays = getValidDays(actualStartDate, endDate);
+			
 			if (validDays <= 0) {
-				// console.log(`work.id=${work.id}：有效天数${validDays}不合法，无法计算load`);
+				console.log(`work.id=${work.id}：有效天数${validDays}不合法，无法计算load`);
 				return { ...work, load: null };
 			}
 
-			const allWorkTime = Number(work.all_work_time) || 0;
 			const load = allWorkTime / validDays;
 
 			// 返回更新后的数据（保留原始结构，只更新load）
@@ -107,7 +112,6 @@ const setProgressLoad = (base, cycles, works, dateInfo) => {
 	});
 	return resultWorks;
 };
-
 
 const setCycleLoad = (cycles, works) => {
 	// 遍历每个大循环（备料组、热处理等）
@@ -124,7 +128,6 @@ const setCycleLoad = (cycles, works) => {
 				// 3. work.load 有值（非null/undefined）
 				if (work.progress_id === cycleItem.progress_id && work.children?.equipment?.cycle?.id === cycleItem.cycle_id && work.load !== null && work.load !== undefined) {
 					// 将 work.load 转为数字后累加（处理字符串格式的数字）
-					// totalLoad += parseFloat() || 0;
 					totalLoad = PreciseMath.add(totalLoad, Number(work.load));
 				}
 			});
@@ -136,12 +139,67 @@ const setCycleLoad = (cycles, works) => {
 
 	return cycles;
 };
-const setDateMore = () => {
-  
-}
+// dateInfo：特殊日期数组，endDates客户交期数组
+const setDateMore = (base, cycles, dateInfo, endDates) => {
+	// 获取最远的客户交期
+	const endDate = endDates.reduce((prev, curr) => {
+		return dayjs(curr).isAfter(dayjs(prev)) ? curr : prev;
+	}, endDates[0]);
+	// 步骤1：生成从今天到endDate的所有日期（date_more数组）
+	const today = dayjs();
+	const endDateObj = dayjs(endDate);
+	const date_more = [];
+
+	let currentDate = today;
+	while (currentDate.isSameOrBefore(endDateObj)) {
+		date_more.push(currentDate.format('YYYY-MM-DD'));
+		currentDate = currentDate.add(1, 'day');
+	}
+	date_more.push(endDate)
+
+	// 步骤2：为每个cycle添加dateData统计
+	const updatedCycles = cycles.map(cycleGroup => {
+		// 构建dateData对象，初始所有日期对应空值
+		const dateData = {};
+		date_more.forEach(date => {
+			// 特殊日期直接标记为'休'
+			if (dateInfo.includes(date)) {
+				dateData[date] = "休";
+				return;
+			}
+
+			// 非特殊日期：统计当前日期处于进度有效期内的load总和
+			let totalLoad = 0;
+			cycleGroup.cycle.forEach(cycleItem => {
+				// 找到对应的base数据
+				const baseItem = base.find(item => item.id === cycleItem.progress_id);
+				if (!baseItem) return;
+
+				const baseStartDate = dayjs(baseItem.start_date);
+				const cycleEndDate = cycleItem.end_date ? dayjs(cycleItem.end_date) : endDateObj;
+				const currentDateObj = dayjs(date);
+
+				// 条件：当前日期 >= 基准开始日期 且 <= 周期结束日期，且load有值
+				const isInRange = currentDateObj.isSameOrAfter(baseStartDate) && currentDateObj.isSameOrBefore(cycleEndDate);
+				const hasValidLoad = cycleItem.load && !isNaN(parseFloat(cycleItem.load));
+
+				if (isInRange && hasValidLoad) {
+					totalLoad += parseFloat(cycleItem.load);
+				}
+			});
+
+			// 保留2位小数（如果为0则显示0，避免空值）
+			dateData[date] = totalLoad > 0 ? totalLoad.toFixed(1) : "-";
+		});
+
+		// 将dateData添加到当前cycle组中
+		return { ...cycleGroup, dateData };
+	});
+	return { date_more, newCycles: updatedCycles }
+};
 
 module.exports = {
 	setProgressLoad,
 	setCycleLoad,
-  setDateMore
+	setDateMore,
 };
