@@ -10,39 +10,76 @@
   <script>
     const base = [ { "id": 1, "start_date": "2025-10-28" }, { "id": 2, "start_date": "2025-10-30" }, { "id": 3, "start_date": "2025-10-30" }, { "id": 4, "start_date": "2025-11-01" } ]
   const cycles = [
-    { "id": 6, "name": "备料组", "sort_date": "1", "cycle": [ { "id": 1, "notice_id": 9, "progress_id": 1, "cycle_id": 6, "end_date": "2025-11-08", "load": null, }, { "id": 7, "notice_id": 9, "progress_id": 2, "cycle_id": 6, "end_date": "2025-11-08", "load": null, }, { "id": 13, "notice_id": 9, "progress_id": 3, "cycle_id": 6, "end_date": "2025-11-08", "load": null, }, { "id": 19, "notice_id": 9, "progress_id": 4, "cycle_id": 6, "end_date": "2025-11-08", "load": null, } ], },
+    { "id": 6, "name": "备料组", "sort_date": "1", "cycle": [ { "id": 1, "notice_id": 9, "progress_id": 1, "cycle_id": 6, "end_date": "2025-11-08", "load": '9.6', }, { "id": 7, "notice_id": 9, "progress_id": 2, "cycle_id": 6, "end_date": "2025-11-08", "load": '8.4', }, { "id": 13, "notice_id": 9, "progress_id": 3, "cycle_id": 6, "end_date": "2025-11-08", "load": '15.9', }, { "id": 19, "notice_id": 9, "progress_id": 4, "cycle_id": 6, "end_date": "2025-11-08", "load": '17.1', } ], },
     { "id": 8, "name": "热处理", "sort": "3", "sort_date": "2", "cycle": [ { "id": 2, "notice_id": 9, "progress_id": 1, "cycle_id": 8, "end_date": null, "load": null, }, { "id": 8, "notice_id": 9, "progress_id": 2, "cycle_id": 8, "end_date": null, "load": null, }, { "id": 14, "notice_id": 9, "progress_id": 3, "cycle_id": 8, "end_date": null, "load": null, }, { "id": 20, "notice_id": 9, "progress_id": 4, "cycle_id": 8, "end_date": null, "load": null, } ], },
-    { "id": 9, "name": "研磨组", "sort": "4", "sort_date": "5", "cycle": [ { "id": 3, "notice_id": 9, "progress_id": 1, "cycle_id": 9, "end_date": null, "load": null, }, { "id": 9, "notice_id": 9, "progress_id": 2, "cycle_id": 9, "end_date": null, "load": null, }, { "id": 15, "notice_id": 9, "progress_id": 3, "cycle_id": 9, "end_date": null, "load": null, }, { "id": 21, "notice_id": 9, "progress_id": 4, "cycle_id": 9, "end_date": null, "load": null, } ], },
+    { "id": 9, "name": "研磨组", "sort": "4", "sort_date": "5", "cycle": [ { "id": 3, "notice_id": 9, "progress_id": 1, "cycle_id": 9, "end_date": "2025-11-19", "load": '9.4', }, { "id": 9, "notice_id": 9, "progress_id": 2, "cycle_id": 9, "end_date": "2025-11-12", "load": '14.6', }, { "id": 15, "notice_id": 9, "progress_id": 3, "cycle_id": 9, "end_date": "2025-11-15", "load": '12.5', }, { "id": 21, "notice_id": 9, "progress_id": 4, "cycle_id": 9, "end_date": "2025-11-16", "load": '18.5', } ], },
     { "id": 10, "name": "补土组", "sort": "5", "sort_date": "6", "cycle": [ { "id": 4, "notice_id": 9, "progress_id": 1, "cycle_id": 10, "end_date": null, "load": null, }, { "id": 10, "notice_id": 9, "progress_id": 2, "cycle_id": 10, "end_date": null, "load": null, }, { "id": 16, "notice_id": 9, "progress_id": 3, "cycle_id": 10, "end_date": null, "load": null, }, { "id": 22, "notice_id": 9, "progress_id": 4, "cycle_id": 10, "end_date": null, "load": null, } ], },
     { "id": 11, "name": "后段组", "sort": "6", "sort_date": "8", "cycle": [ { "id": 5, "notice_id": 9, "progress_id": 1, "cycle_id": 11, "end_date": null, "load": null, }, { "id": 11, "notice_id": 9, "progress_id": 2, "cycle_id": 11, "end_date": null, "load": null, }, { "id": 17, "notice_id": 9, "progress_id": 3, "cycle_id": 11, "end_date": null, "load": null, }, { "id": 23, "notice_id": 9, "progress_id": 4, "cycle_id": 11, "end_date": null, "load": null, } ], },
     { "id": 7, "name": "焊接组", "sort": "7", "sort_date": "1", "cycle": [ { "id": 6, "notice_id": 9, "progress_id": 1, "cycle_id": 7, "end_date": null, "load": null, }, { "id": 12, "notice_id": 9, "progress_id": 2, "cycle_id": 7, "end_date": null, "load": null, }, { "id": 18, "notice_id": 9, "progress_id": 3, "cycle_id": 7, "end_date": null, "load": null, }, { "id": 24, "notice_id": 9, "progress_id": 4, "cycle_id": 7, "end_date": null, "load": null, } ], }
   ]
-  const works = [
-    { "id": 1, "progress_id": 1, "notice_id": 9, "bom_id": 78, "child_id": 182, "all_work_time": "75.0", "load": null, "finish": null, "order_number": "18000", children:{ equipment: {cycle: {id: 7, name: "焊接组"} } } },
-    { "id": 2, "progress_id": 1, "notice_id": 9, "bom_id": 78, "child_id": 183, "all_work_time": "50.0", "load": null, "finish": null, "order_number": "18000", children:{ equipment: {cycle: {id: 7, name: "焊接组"} } } },
-    { "id": 3, "progress_id": 2, "notice_id": 9, "bom_id": 77, "child_id": 181, "all_work_time": "75.0", "load": null, "finish": null, "order_number": "18000", children:{ equipment: {cycle: {id: 7, name: "焊接组"} } }  },
-    { "id": 4, "progress_id": 3, "notice_id": 9, "bom_id": 64, "child_id": 105, "all_work_time": "75.0", "load": null, "finish": null, "order_number": "18000", children:{ equipment: {cycle: {id: 6, name: "备料组"} } } },
-    { "id": 5, "progress_id": 3, "notice_id": 9, "bom_id": 64, "child_id": 102, "all_work_time": "40.0", "load": null, "finish": null, "order_number": "18000", children:{ equipment: {cycle: {id: 6, name: "备料组"} } } },
-    { "id": 6, "progress_id": 3, "notice_id": 9, "bom_id": 64, "child_id": 106, "all_work_time": "25.0", "load": null, "finish": null, "order_number": "18000", children:{ equipment: {cycle: {id: 6, name: "备料组"} } } },
-    { "id": 7, "progress_id": 3, "notice_id": 9, "bom_id": 64, "child_id": 103, "all_work_time": "40.0", "load": null, "finish": null, "order_number": "18000", children:{ equipment: {cycle: {id: 6, name: "备料组"} } } },
-    { "id": 8, "progress_id": 3, "notice_id": 9, "bom_id": 64, "child_id": 104, "all_work_time": "40.0", "load": null, "finish": null, "order_number": "18000", children:{ equipment: {cycle: {id: 6, name: "备料组"} } } },
-    { "id": 9, "progress_id": 4, "notice_id": 9, "bom_id": 69, "child_id": 146, "all_work_time": "40.0", "load": null, "finish": null, "order_number": "18000", children:{ equipment: {cycle: {id: 6, name: "备料组"} } } },
-    { "id": 10, "progress_id": 4, "notice_id": 9, "bom_id": 69, "child_id": 143, "all_work_time": "50.0", "load": null, "finish": null, "order_number": "18000", children:{ equipment: {cycle: {id: 6, name: "备料组"} } } },
-    { "id": 11, "progress_id": 4, "notice_id": 9, "bom_id": 69, "child_id": 147, "all_work_time": "50.0", "load": null, "finish": null, "order_number": "18000", children:{ equipment: {cycle: {id: 6, name: "备料组"} } } },
-    { "id": 12, "progress_id": 4, "notice_id": 9, "bom_id": 69, "child_id": 144, "all_work_time": "40.0", "load": null, "finish": null, "order_number": "18000", children:{ equipment: {cycle: {id: 6, name: "备料组"} } } },
-    { "id": 13, "progress_id": 4, "notice_id": 9, "bom_id": 69, "child_id": 148, "all_work_time": "50.0", "load": null, "finish": null, "order_number": "18000", children:{ equipment: {cycle: {id: 6, name: "备料组"} } } },
-    { "id": 14, "progress_id": 4, "notice_id": 9, "bom_id": 69, "child_id": 145, "all_work_time": "25.0", "load": null, "finish": null, "order_number": "18000", children:{ equipment: {cycle: {id: 6, name: "备料组"} } } }
-  ]
+  const dateInfo = ['2025-11-13', '2025-11-16']
+  const endDate = '2025-11-30'
 
-/*
-上面分别有三个数据，现在要求如下：
-1、works.progress_id对应base.id，cycles.cycle.progress_id对应base.id，works.children.equipment.cycle.id对应cycles.id与cycles.cycle.id
-2、base.start_date为默认的起始时间，需要进行判断base.start_date是否在今天的之后，如果是则使用base.start_date，否则使用今天的日期，此为起始时间
-3、cycles.sort_date为最短周期，每次循环cycles时，都需要将之前的周期进行相加，首次不使用最短周期
-4、最终公式：works.load = works.all_work_time / (cycles.cycle.end_date - 起始时间 + 最短周期之和)
-5、如果cycles.cycle.end_date为空时，跳过
-5、如果在写代码的过程需要处理日期，请使用dayjs库
-*/
+
+// 步骤1：生成从今天到endDate的所有日期（date_more数组）
+const today = dayjs();
+const endDateObj = dayjs(endDate);
+const date_more = [];
+
+let currentDate = today;
+while (currentDate.isBefore(endDateObj) || currentDate.isSame(endDateObj)) {
+  date_more.push(currentDate.format('YYYY-MM-DD'));
+  currentDate = currentDate.add(1, 'day');
+}
+
+// 步骤2：为每个cycle添加dateData统计
+const updatedCycles = cycles.map(cycleGroup => {
+  // 构建dateData对象，初始所有日期对应空值
+  const dateData = {};
+  date_more.forEach(date => {
+    // 特殊日期直接标记为'休'
+    if (dateInfo.includes(date)) {
+      dateData[date] = '休';
+      return;
+    }
+
+    // 非特殊日期：统计当前日期处于进度有效期内的load总和
+    let totalLoad = 0;
+    cycleGroup.cycle.forEach(cycleItem => {
+      // 找到对应的base数据
+      const baseItem = base.find(item => item.id === cycleItem.progress_id);
+      if (!baseItem) return;
+
+      const baseStartDate = dayjs(baseItem.start_date);
+      const cycleEndDate = cycleItem.end_date ? dayjs(cycleItem.end_date) : endDateObj;
+      const currentDateObj = dayjs(date);
+
+      // 条件：当前日期 >= 基准开始日期 且 <= 周期结束日期，且load有值
+      const isInRange = currentDateObj.isAfter(baseStartDate) || currentDateObj.isSame(baseStartDate);
+      const isBeforeEnd = currentDateObj.isBefore(cycleEndDate) || currentDateObj.isSame(cycleEndDate);
+      const hasLoad = cycleItem.load !== null && cycleItem.load !== undefined && cycleItem.load !== '';
+
+      if (isInRange && isBeforeEnd && hasLoad) {
+        totalLoad += parseFloat(cycleItem.load);
+      }
+    });
+
+    // 保留2位小数（如果为0则显示0，避免空值）
+    dateData[date] = totalLoad > 0 ? totalLoad.toFixed(1) : '-';
+  });
+
+  // 将dateData添加到当前cycle组中
+  return { ...cycleGroup, dateData };
+});
+
+// 输出结果（可根据需要调整输出格式）
+console.log('生成的日期数组 date_more:', date_more);
+console.log('更新后的cycles数据:', updatedCycles);
+
+// 如需单独获取某个组的dateData（示例：备料组）
+const materialGroup = updatedCycles.find(group => group.name === '备料组');
+console.log('备料组的日期统计:', materialGroup?.dateData);
+
   </script>
 </body>
 </html>

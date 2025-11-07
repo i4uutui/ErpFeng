@@ -62,7 +62,7 @@ export default defineComponent({
             </ElCard>
             <ElCard shadow="always" bodyStyle={{ width: '100%' }}>
               <div class="flex" style={{ width: '100%', justifyContent: 'space-between' }}>
-                <div>延期警报：</div>
+                <div>延期预警：</div>
                 <div>
                   <span class="f26" style={{ color: '#409eff' }}>0</span>
                   <span>笔</span>

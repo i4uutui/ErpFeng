@@ -10,7 +10,7 @@ const authMiddleware = require('../middleware/auth');
 const EmployeeAuth = require('../middleware/EmployeeAuth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { PreciseMath, getSaleCancelIds } = require('../middleware/tool');
-const { setProgressLoad } = require('../middleware/fun');
+const { setProgressLoad, setCycleLoad } = require('../middleware/fun');
 
 // 获取进度表基础数据
 router.get('/get_progress_base', authMiddleware, async (req, res) => {
@@ -52,7 +52,7 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
   if(!base.length) return res.json({ code: 401, message: '数据出错' })
 
   const progress_id = base.map(e => e.id)
-  const [ cycle, work ] = await Promise.all([
+  const [ cycle, work, dates ] = await Promise.all([
     SubProcessCycle.findAll({
       where: {
         company_id,
@@ -93,8 +93,17 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
         ['progress_id', 'ASC'],
         ['children', 'process_index', 'ASC']
       ]
+    }),
+    // 用户设置的假期
+    SubDateInfo.findAll({
+      where: { company_id },
+      attributes: ['date']
     })
   ])
+  const dateInfo = dates.map(e => {
+    const item = e.toJSON()
+    return item.date
+  })
   const cycles = cycle.map(e => {
     const item = e.toJSON()
     item.maxLoad = e.equipment.reduce((total, current) => {
@@ -108,10 +117,14 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
   works.forEach(item => {
     item.all_work_time = (PreciseMath.mul(Number(item.order_number), Number(item.children.time)) / 60 / 60).toFixed(1)
   })
-  
-  const cased = setProgressLoad(base, cycles, works)
+  // 处理工序的每日负荷
+  const cased = setProgressLoad(base, cycles, works, dateInfo)
+  // 处理制程日总负荷
+  const callLoad = setCycleLoad(cycles, cased)
+  // 处理页面头部的日期
+  const dateMore = setDateMore()
 
-  res.json({ code: 200, data: { cycles, works: cased } })
+  res.json({ code: 200, data: { cycles: callLoad, works: cased } })
 })
 // 获取进度表工序数据
 router.post('/get_progress_work', authMiddleware, async (req, res) => {
