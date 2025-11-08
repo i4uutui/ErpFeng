@@ -232,7 +232,7 @@ export default defineComponent({
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" v-permission={ 'ProductCode:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="warning" v-permission={ 'ProductCode:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                         {/* <ElButton size="small" type="danger" v-permission={ 'ProductCode:delete' } onClick={ () => handleDelete(scope.row) }>删除</ElButton> */}
                       </>
                     )}

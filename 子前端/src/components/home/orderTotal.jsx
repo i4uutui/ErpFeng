@@ -47,7 +47,7 @@ export default defineComponent({
                 <div>在线订单：</div>
                 <div>
                   <span class="f26" style={{ color: '#409eff' }}>{ data.value.onlineOrder }</span>
-                  <span>张</span>
+                  <span>笔</span>
                 </div>
               </div>
             </ElCard>
@@ -56,15 +56,6 @@ export default defineComponent({
                 <div>完成订单：</div>
                 <div>
                   <span class="f26" style={{ color: '#409eff' }}>{ data.value.finishOrder }</span>
-                  <span>张</span>
-                </div>
-              </div>
-            </ElCard>
-            <ElCard shadow="always" bodyStyle={{ width: '100%' }}>
-              <div class="flex" style={{ width: '100%', justifyContent: 'space-between' }}>
-                <div>延期预警：</div>
-                <div>
-                  <span class="f26" style={{ color: '#409eff' }}>0</span>
                   <span>笔</span>
                 </div>
               </div>
@@ -75,6 +66,15 @@ export default defineComponent({
                 <div>
                   <span class="f26" style={{ color: '#409eff' }}>0</span>
                   <span>笔</span>
+                </div>
+              </div>
+            </ElCard>
+            <ElCard shadow="always" bodyStyle={{ width: '100%' }}>
+              <div class="flex" style={{ width: '100%', justifyContent: 'space-between' }}>
+                <div>延期预警：</div>
+                <div>
+                  <span class="f26" style={{ color: '#409eff' }}>0</span>
+                  <span>项</span>
                 </div>
               </div>
             </ElCard>

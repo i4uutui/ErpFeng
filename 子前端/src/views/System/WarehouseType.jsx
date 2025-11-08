@@ -129,7 +129,7 @@ export default defineComponent({
                   <ElTableColumn label="操作">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" v-permission={ 'Warehouse:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="warning" v-permission={ 'Warehouse:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                       </>
                     )}
                   </ElTableColumn>
@@ -156,7 +156,7 @@ export default defineComponent({
             ),
             footer: () => (
               <span class="dialog-footer">
-                <ElButton onClick={ handleClose }>取消</ElButton>
+                <ElButton onClick={ handleClose } type="warning">取消</ElButton>
                 <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
               </span>
             )

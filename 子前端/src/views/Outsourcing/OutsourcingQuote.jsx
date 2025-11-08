@@ -283,7 +283,7 @@ export default defineComponent({
                   <ElTableColumn label="操作" width="100" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope.row) } v-permission={ 'OutsourcingQuote:edit' }>修改</ElButton>
+                        <ElButton size="small" type="warning" onClick={ () => handleUplate(scope.row) } v-permission={ 'OutsourcingQuote:edit' }>修改</ElButton>
                       </>
                     )}
                   </ElTableColumn>
@@ -337,7 +337,7 @@ export default defineComponent({
             ),
             footer: () => (
               <span class="dialog-footer">
-                <ElButton onClick={ handleClose }>取消</ElButton>
+                <ElButton onClick={ handleClose } type="warning">取消</ElButton>
                 <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
               </span>
             )

@@ -249,7 +249,7 @@ export default defineComponent({
                     {({row}) => <span>{ supplyMethod.value.find(e => e.id == row.delivery)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn prop="packaging" label="包装要求" width="100" />
-                  <ElTableColumn label="其它交易条件" width="120">
+                  <ElTableColumn label="结算周期" width="120">
                     {({row}) => <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn label="税票要求" width="110">
@@ -259,7 +259,7 @@ export default defineComponent({
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" onClick={ () => handleUplate(scope) }>修改</ElButton>
+                        <ElButton size="small" type="warning" onClick={ () => handleUplate(scope) }>修改</ElButton>
                         <ElButton size="small" type="danger" onClick={ () => handleDelete(scope) }>删除</ElButton>
                       </>
                     )}
@@ -306,8 +306,8 @@ export default defineComponent({
                 <ElFormItem label="包装要求" prop="packaging">
                   <ElInput v-model={ form.value.packaging } placeholder="请输入包装要求" />
                 </ElFormItem>
-                <ElFormItem label="其它交易条件" prop="other_transaction_terms">
-                  <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix placeholder="请选择其它交易条件">
+                <ElFormItem label="结算周期" prop="other_transaction_terms">
+                  <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix placeholder="请选择结算周期">
                     {payTime.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
@@ -320,7 +320,7 @@ export default defineComponent({
             ),
             footer: () => (
               <span class="dialog-footer">
-                <ElButton onClick={ handleClose }>取消</ElButton>
+                <ElButton onClick={ handleClose } type="warning">取消</ElButton>
                 <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
               </span>
             )

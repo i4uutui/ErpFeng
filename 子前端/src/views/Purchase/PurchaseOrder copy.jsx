@@ -566,7 +566,7 @@ export default defineComponent({
                         let dom = []
                         if(row.status == undefined || row.status == 2){
                           dom.push(<>
-                            <ElButton size="small" type="default" v-permission={ 'PurchaseOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
+                            <ElButton size="small" type="warning" v-permission={ 'PurchaseOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
                             <ElButton size="small" type="primary" v-permission={ 'PurchaseOrder:set' } onClick={ () => handleStatusData(row) }>提交</ElButton>
                           </>)
                         }

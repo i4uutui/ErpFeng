@@ -79,22 +79,23 @@ export default defineComponent({
 
     return() => (
       <>
-        <ElCard bodyStyle={{ height: "calc(100vh - 144px )" }}>
+        <ElCard bodyStyle={{ height: "calc(100vh - 158px )" }}>
           {{
             default: () => (
-              <ElCard>
+              <ElCard bodyStyle={{ height: "calc(100vh - 198px)" }}>
                 <ElForm ref="formRef" model={ form.value } label-width="120px">
                   <ElFormItem label="业务类型" prop="source_type">
-                    <ElSelect v-model={ form.value.source_type } onChange={ (row) => sourceChange(row) }>
+                    <ElSelect v-model={ form.value.source_type } style={{ width: '150px' }} onChange={ (row) => sourceChange(row) }>
                       <ElOption label="采购单" value="purchase_order" />
                       <ElOption label="委外加工单" value="outsourcing_order" />
                       <ElOption label="材料出入库" value="material_warehouse" />
                       <ElOption label="成品出入库" value="product_warehouse" />
                     </ElSelect>
+                    <ElButton onClick={ addStep } type="primary" style={{ marginLeft: '10px' }}>新增步骤</ElButton>
+                    <ElButton type="primary" onClick={ () => submitForm() }>保存配置</ElButton>
                   </ElFormItem>
 
                   <ElFormItem label="审批步骤">
-                    <ElButton onClick={ addStep } type="primary" size="small">新增步骤</ElButton>
                     <ElTable data={ form.value.steps } border style={{ marginTop: "10px" }}>
                       <ElTableColumn prop="step" label="步骤" width="80" />
                       <ElTableColumn label="类型" width="120">
@@ -112,16 +113,16 @@ export default defineComponent({
                       <ElTableColumn label="操作">
                         {{
                           default: (scope) => (
-                            <ElButton onClick={ () => removeStep(scope.$index) } type="text" danger>删除</ElButton>
+                            <ElButton class="textButton" onClick={ () => removeStep(scope.$index) } type="text" danger>删除</ElButton>
                           )
                         }}
                       </ElTableColumn>
                     </ElTable>
                   </ElFormItem>
 
-                  <ElFormItem>
+                  {/* <ElFormItem>
                     <ElButton type="primary" onClick={ () => submitForm() }>保存配置</ElButton>
-                  </ElFormItem>
+                  </ElFormItem> */}
                 </ElForm>
               </ElCard>
             )

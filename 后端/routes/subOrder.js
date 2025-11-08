@@ -443,7 +443,7 @@ router.post('/finish_production_notice', authMiddleware, async (req, res) => {
   if(!notice) return res.json({ message: '数据不存在，或已被删除', code: 401 });
 
   await notice.update({ is_finish: 0 },{ where: { id } })
-  await SubProductionProgress.update({ is_finish: 0 }, { where: { notice_id: id } })
+  await SubProgressBase.update({ is_finish: 0 }, { where: { notice_id: id } })
 
   res.json({ message: '操作成功', code: 200 });
 })

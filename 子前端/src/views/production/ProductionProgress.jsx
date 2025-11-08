@@ -12,6 +12,7 @@ export default defineComponent({
     let cycleList = ref([])
     let date_more = ref([])
     let specialDates = ref(new Set());
+    let loading = ref(false)
     // 查询tableData下的工序长度，确定表格中的工序显示的数量
     const maxBomLength = computed(() => {
       if (tableData.value.length === 0) return 0;
@@ -30,6 +31,7 @@ export default defineComponent({
     
     // 获取进度表基础数据
     const getProgressBase = async () => {
+      loading.value = true
       const res = await request.get('/api/get_progress_base');
       if(res.code == 200){
         tableData.value = res.data
@@ -37,6 +39,8 @@ export default defineComponent({
           const base = res.data.map(item => ({ id: item.id, start_date: item.start_date, delivery_time: item.notice.delivery_time }))
           getProgressCycle(base)
         }
+      }else{
+        loading.value = false
       }
     };
     // 获取进度表进程的数据
@@ -68,6 +72,11 @@ export default defineComponent({
           // 匹配 progress_id = tableItem.id 的分组，无匹配则设为空数组
           items: groupedData[tableItem.id] || []
         }));
+        nextTick(() => {
+          loading.value = false
+        })
+      }else{
+        loading.value = false
       }
     }
     // 获取特殊日期
@@ -212,7 +221,7 @@ export default defineComponent({
         }
       }
       if(rowIndex == 0 && columnIndex == columnLength - 1){
-        return { backgroundColor: '#A8EAE4' }
+        return { backgroundColor: 'rgba(168, 234, 228, .3)' }
       }
       if(rowIndex == 0 && columnIndex >= start && Math.floor(columnIndex - start) % 2 == 0){
         return { backgroundColor: '#fbe1e5' }
@@ -232,7 +241,7 @@ export default defineComponent({
       }
       // 制程的背景色之一
       if(columnIndex == columnLength - 1){
-        return { backgroundColor: '#A8EAE4' }
+        return { backgroundColor: 'rgba(168, 234, 228, .3)' }
       }
       // 工序的背景色
       if (columnIndex >= start) {
@@ -246,7 +255,7 @@ export default defineComponent({
     const getColumnStyle = (columnNumber, startNumber, number) => {
       const offset = columnNumber - startNumber;
       const group = Math.floor(offset / number);
-      return group % 2 === 0 ? '#C9E4B4' : '#A8EAE4';
+      return group % 2 === 0 ? '' : 'rgba(168, 234, 228, .3)';
     }
     // 头部的警告背景色
     const loadCellStyle = ({ row, column }) => {
@@ -255,7 +264,7 @@ export default defineComponent({
         const maxLoad = Number(row.maxLoad);
         if (currentLoad > maxLoad) {
           return { 
-            backgroundColor: '#ff4d4f', 
+            backgroundColor: '#f1c40f', 
             color: '#fff',
             fontWeight: 'bold'
           };
@@ -265,7 +274,7 @@ export default defineComponent({
     
     return() => (
       <>
-        <ElCard>
+        <ElCard v-loading={ loading.value }>
           {{
             header: () => {
               return cycleList.value.length ? <ElTable data={cycleList.value} border ref={ formCard } style={{ width: "100%" }} size="small" cellStyle={ loadCellStyle }>
@@ -275,7 +284,10 @@ export default defineComponent({
                   <ElTableColumn label={ date } width="90" align="center">
                     {{
                       default: ({ row }) => {
-                        return row.dateData[date]
+                        const value = row.dateData[date];
+                        if(value == '休') return <span style={{ color: 'red' }}>{ value }</span>
+                        if(value == '-') return '-'
+                        return Number(value).toFixed(1)
                       }
                     }}
                   </ElTableColumn>

@@ -519,7 +519,7 @@ export default defineComponent({
                   <ElTableColumn prop="number" label="委外数量" width='100' />
                   <ElTableColumn prop="price" label="加工单价" width='90' />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width='90' />
-                  <ElTableColumn prop="other_transaction_terms" label="交易条件" width='100' />
+                  <ElTableColumn prop="other_transaction_terms" label="结算周期" width='100' />
                   <ElTableColumn prop="delivery_time" label="要求交期" width='120' />
                   <ElTableColumn prop="remarks" label="备注" width='100' />
                   <ElTableColumn label="操作" width="150" fixed="right">
@@ -528,7 +528,7 @@ export default defineComponent({
                         let dom = []
                         if(row.status == undefined || row.status == 2){
                           dom.push(<>
-                            <ElButton size="small" type="default" v-permission={ 'OutsourcingOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
+                            <ElButton size="small" type="warning" v-permission={ 'OutsourcingOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
                             <ElButton size="small" type="primary" v-permission={ 'OutsourcingOrder:set' } onClick={ () => handleStatusData(row) }>提交</ElButton>
                           </>)
                         }

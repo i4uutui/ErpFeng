@@ -312,7 +312,7 @@ export default defineComponent({
                     {({ row }) => {
                       return !row.saleCancel ? 
                       <>
-                        <ElButton size="small" type="default" v-permission={ 'SalesOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
+                        <ElButton size="small" type="warning" v-permission={ 'SalesOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
                         <ElButton size="small" type="danger" v-permission={ 'SalesOrder:cancel' } onClick={ () => handleCancel(row) }>取消订单</ElButton>
                       </> : ''
                     }}
@@ -372,7 +372,7 @@ export default defineComponent({
             ),
             footer: () => (
               <span class="dialog-footer">
-                <ElButton onClick={ handleClose }>取消</ElButton>
+                <ElButton onClick={ handleClose } type="warning">取消</ElButton>
                 <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
               </span>
             )

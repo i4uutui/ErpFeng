@@ -25,7 +25,7 @@ export default defineComponent({
     const formRef = ref(null);
     const formCard = ref(null)
     const formHeight = ref(0);
-    const rules = reactive({
+    const rules = ref({
       supplier_id: [
         { required: true, message: '请选择供应商编码', trigger: 'blur' }
       ],
@@ -154,6 +154,10 @@ export default defineComponent({
         materialBomList.value = res.data
       }
     }
+    // 获取材料列表
+    const getMaterialCode = async () => {
+      // const res = await request.get('/api/')
+    }
     // 获取材料BOM子数据列表
     const getMaterialBomChildren = async (id) => {
       const res = await request.get('/api/getMaterialBomChildren', { params: { id } })
@@ -201,6 +205,12 @@ export default defineComponent({
       proList.value = res.data
 
       if(id == 0) return
+      if(form.value.notice_id == 0){
+        form.value.product_id = ''
+        form.value.product_code = ''
+        form.value.product_name = ''
+        return
+      }
       form.value.product_id = id
       form.value.product_code = res.data[0].product_code
       form.value.product_name = res.data[0].product_name
@@ -459,10 +469,26 @@ export default defineComponent({
     // 生产订单选中后返回的数据
     const noticeChange = (value) => {
       if(value === 0){
+        if(rules.value.material_bom_id && rules.value.material_bom_id.length){
+          delete rules.value.material_bom_id
+        }
+        if(rules.value.product_id && rules.value.product_id.length){
+          delete rules.value.product_id
+        }
+        form.value.product_id = ''
+        form.value.product_code = ''
+        form.value.product_name = ''
         getProductsList()
         getMaterialBom()
+        getMaterialCode()
         return
       }
+      rules.value.material_bom_id = [
+        { required: true, message: '请选择材料BOM', trigger: 'blur' }
+      ]
+      rules.value.product_id = [
+        { required: true, message: '请选择产品编码', trigger: 'blur' }
+      ]
       const notice = productNotice.value.find(e => e.id == value)
       form.value.notice = notice.notice
       form.value.number = notice.sale.order_number
@@ -633,7 +659,7 @@ export default defineComponent({
                         let dom = []
                         if(row.status == undefined || row.status == 2){
                           dom.push(<>
-                            <ElButton size="small" type="default" v-permission={ 'PurchaseOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
+                            <ElButton size="small" type="warning" v-permission={ 'PurchaseOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
                             <ElButton size="small" type="primary" v-permission={ 'PurchaseOrder:set' } onClick={ () => handleStatusData(row) }>提交</ElButton>
                           </>)
                         }
@@ -730,7 +756,7 @@ export default defineComponent({
         <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改采购单' : '新增采购单' } width='785' center draggable onClose={ () => handleClose() }>
           {{
             default: () => (
-              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">
+              <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules.value } label-width="95">
                 <ElFormItem label="生产订单" prop="notice_id">
                   <ElSelect v-model={ form.value.notice_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产订单" onChange={ (row) => noticeChange(row) }>
                     {productNotice.value.map((e, index) => <ElOption value={ e.id } label={ e.notice } key={ index } />)}
@@ -799,7 +825,7 @@ export default defineComponent({
             ),
             footer: () => (
               <span class="dialog-footer">
-                <ElButton onClick={ handleClose }>取消</ElButton>
+                <ElButton onClick={ handleClose } type="warning">取消</ElButton>
                 <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
               </span>
             )

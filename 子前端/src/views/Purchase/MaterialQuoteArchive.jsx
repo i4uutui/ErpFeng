@@ -117,7 +117,7 @@ export default defineComponent({
                     {({row}) => <span>{ supplyMethod.value.find(e => e.id == row.delivery)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn prop="packaging" label="包装要求" width="100" />
-                  <ElTableColumn label="其它交易条件" width="120">
+                  <ElTableColumn label="结算周期" width="120">
                     {({row}) => <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn label="税票要求" width="110">

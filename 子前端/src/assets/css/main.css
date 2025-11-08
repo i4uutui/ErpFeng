@@ -51,6 +51,12 @@
 .multipleStyle .el-select__selection .el-tag .el-tag__content{
   width: 100%;
 }
+.textButton.el-button--text{
+  color: red;
+}
+.textButton.el-button--text:not(.is-disabled):hover{
+  color: #fd4545;
+}
 :root{
   --el-fill-color-light: #e7e7e7;
 }

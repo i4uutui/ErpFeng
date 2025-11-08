@@ -205,12 +205,12 @@ export default defineComponent({
                   <ElTableColumn prop="sale.unit" label="单位" width="100" />
                   <ElTableColumn prop="product_price" label="产品单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
-                  <ElTableColumn prop="other_transaction_terms" label="交易条件" width="120" />
+                  <ElTableColumn prop="other_transaction_terms" label="结算周期" width="120" />
                   <ElTableColumn prop="created_at" label="创建时间" width="120" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" v-permission={ 'ProductQuote:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="warning" v-permission={ 'ProductQuote:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                       </>
                     )}
                   </ElTableColumn>
@@ -236,14 +236,14 @@ export default defineComponent({
                 <ElFormItem label="交易币别" prop="transaction_currency">
                   <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
                 </ElFormItem>
-                <ElFormItem label="交易条件" prop="other_transaction_terms">
-                  <ElInput v-model={ form.value.other_transaction_terms } placeholder="请输入交易条件" />
+                <ElFormItem label="结算周期" prop="other_transaction_terms">
+                  <ElInput v-model={ form.value.other_transaction_terms } placeholder="请输入结算周期" />
                 </ElFormItem>
               </ElForm>
             ),
             footer: () => (
               <span class="dialog-footer">
-                <ElButton onClick={ handleClose }>取消</ElButton>
+                <ElButton onClick={ handleClose } type="warning">取消</ElButton>
                 <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
               </span>
             )

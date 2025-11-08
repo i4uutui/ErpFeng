@@ -259,7 +259,7 @@ export default defineComponent({
                   <ElTableColumn label="操作" width="200" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" v-permission={ 'ProductNotice:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="warning" v-permission={ 'ProductNotice:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                         <ElButton size="small" type="primary" v-permission={ 'ProductNotice:date' } onClick={ () => handleScheduling(scope.row) }>排产</ElButton>
                         <ElButton size="small" type="danger" v-permission={ 'ProductNotice:finish' } onClick={ () => handleFinish(scope.row) }>结案</ElButton>
                       </>
@@ -290,7 +290,7 @@ export default defineComponent({
             ),
             footer: () => (
               <span class="dialog-footer">
-                <ElButton onClick={ handleClose }>取消</ElButton>
+                <ElButton onClick={ handleClose } type="warning">取消</ElButton>
                 <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
               </span>
             )

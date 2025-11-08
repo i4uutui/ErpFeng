@@ -233,14 +233,14 @@ export default defineComponent({
                     {({row}) => <span>{ method.value.find(e => e.id == row.transaction_method)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
-                  <ElTableColumn prop="other_transaction_terms" label="其它交易条件" width="120">
+                  <ElTableColumn prop="other_transaction_terms" label="结算周期" width="120">
                     {({row}) => <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn prop="created_at" label="创建时间" width="110" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="default" v-permission={ 'SupplierInfo:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="warning" v-permission={ 'SupplierInfo:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                       </>
                     )}
                   </ElTableColumn>
@@ -290,8 +290,8 @@ export default defineComponent({
                 <ElFormItem label="交易币别" prop="transaction_currency" style={{ width: '350px' }}>
                   <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
                 </ElFormItem>
-                <ElFormItem label="其它交易条件" prop="other_transaction_terms" style={{ width: '350px' }}>
-                  <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix placeholder="请选择其它交易条件">
+                <ElFormItem label="结算周期" prop="other_transaction_terms" style={{ width: '350px' }}>
+                  <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix placeholder="请选择结算周期">
                     {payTime.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
@@ -299,7 +299,7 @@ export default defineComponent({
             ),
             footer: () => (
               <span class="dialog-footer">
-                <ElButton onClick={ handleClose }>取消</ElButton>
+                <ElButton onClick={ handleClose } type="warning">取消</ElButton>
                 <ElButton type="primary" onClick={ () => handleSubmit(formRef.value) }>确定</ElButton>
               </span>
             )
