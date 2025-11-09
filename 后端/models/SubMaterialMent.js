@@ -119,6 +119,12 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
     defaultValue: null,
     comment: '单位'
   },
+  usage_unit: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    defaultValue: null,
+    comment: '使用单位'
+  },
   price: {
     type: DataTypes.STRING(10),
     allowNull: true,

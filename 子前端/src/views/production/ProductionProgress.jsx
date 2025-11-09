@@ -38,6 +38,8 @@ export default defineComponent({
         if(res.data.length){
           const base = res.data.map(item => ({ id: item.id, start_date: item.start_date, delivery_time: item.notice.delivery_time }))
           getProgressCycle(base)
+        }else{
+          loading.value = false
         }
       }else{
         loading.value = false
@@ -47,6 +49,9 @@ export default defineComponent({
     const getProgressCycle = async (base) => {
       const res = await request.post('/api/get_progress_cycle', { base })
       if(res.code == 200){
+        nextTick(() => {
+          loading.value = false
+        })
         // 制程的数据
         const cycles = res.data.cycles
         date_more.value = res.data.date_more
@@ -72,9 +77,6 @@ export default defineComponent({
           // 匹配 progress_id = tableItem.id 的分组，无匹配则设为空数组
           items: groupedData[tableItem.id] || []
         }));
-        nextTick(() => {
-          loading.value = false
-        })
       }else{
         loading.value = false
       }

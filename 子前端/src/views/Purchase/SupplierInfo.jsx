@@ -54,6 +54,7 @@ export default defineComponent({
       transaction_method: '',
       transaction_currency: '',
       other_transaction_terms: '',
+      other_text: ''
     })
     let method = ref([])
     let payTime = ref([])
@@ -82,7 +83,7 @@ export default defineComponent({
         },
       });
       const data = res.data.map(e => {
-        e.supplier_category = e.supplier_category ? JSON.parse(e.supplier_category) : []
+        e.supplier_category = JSON.parse(e.supplier_category)
         return e
       })
       tableData.value = data;
@@ -174,6 +175,7 @@ export default defineComponent({
         transaction_method: '',
         transaction_currency: '',
         other_transaction_terms: '',
+        other_text: ''
       }
     }
     // 分页相关
@@ -190,14 +192,6 @@ export default defineComponent({
       if(Array.isArray(value)){
         const arr = supplierType.value.filter(e => value.includes(e.id))
         return arr.map(o => o.name).join('，')
-      }else{
-        return ''
-      }
-      console.log(value);
-      const arr = supplierType.value.filter(e => e.id == value)
-      if(arr.length){
-        console.log(arr.map(o => o.name));
-        return arr.map(o => o.name)
       }else{
         return ''
       }
@@ -234,7 +228,13 @@ export default defineComponent({
                   </ElTableColumn>
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
                   <ElTableColumn prop="other_transaction_terms" label="结算周期" width="120">
-                    {({row}) => <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>}
+                    {({row}) => {
+                      const rowId = row.other_transaction_terms
+                      if(rowId == 28){
+                        return <span>{ row.other_text }</span>
+                      }
+                      return <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>
+                    }}
                   </ElTableColumn>
                   <ElTableColumn prop="created_at" label="创建时间" width="110" />
                   <ElTableColumn label="操作" width="140" fixed="right">
@@ -295,6 +295,9 @@ export default defineComponent({
                     {payTime.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
+                { form.value.other_transaction_terms == 28 ? <ElFormItem label="其他" prop="other_text">
+                  <ElInput v-model={ form.value.other_text } placeholder="请输入结算周期" />
+                </ElFormItem> : '' }
               </ElForm>
             ),
             footer: () => (

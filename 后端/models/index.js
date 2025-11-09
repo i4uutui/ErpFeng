@@ -116,6 +116,8 @@ SubWarehouseApply.belongsTo(SubNoEncoding, { foreignKey: 'buyPrint_id', as: 'buy
 SubWarehouseApply.belongsTo(SubMaterialMent, { foreignKey: 'buyPrint_id', as: 'buy' })
 SubMaterialMent.belongsTo(SubNoEncoding, { foreignKey: 'print_id', as: 'print' })
 SubWarehouseApply.belongsTo(SubOutsourcingOrder, { foreignKey: 'buyPrint_id', targetKey: 'print_id', as: 'sourcing' })
+SubWarehouseApply.belongsTo(SubCustomerInfo, { foreignKey: 'plan_id', as: 'customer' })
+SubWarehouseApply.belongsTo(SubSupplierInfo, { foreignKey: 'plan_id', as: 'supplier' })
 
 SubSaleOrder.hasOne(SubSaleCancel, { foreignKey: 'sale_id', as: 'saleCancel' })
 
@@ -124,6 +126,7 @@ SubProgressBase.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
 SubProcessCycle.hasMany(SubProgressCycle, { foreignKey: 'cycle_id', as: 'cycle' })
 SubProcessBomChild.hasOne(SubProgressWork, { foreignKey: 'child_id', as: 'work' })
 SubProgressWork.belongsTo(SubProcessBomChild, { foreignKey: 'child_id', as: 'children' })
+SubProgressBase.belongsTo(SubProcessBom, { foreignKey: 'bom_id', as: 'bom' })
 
 module.exports = {
   Op,

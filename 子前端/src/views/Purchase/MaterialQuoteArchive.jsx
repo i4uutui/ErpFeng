@@ -70,36 +70,36 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="flex row-between" ref={ formCard }>
-                <div class="flex flex-1">
-                  <div class="flex pl10">
-                    <span>供应商编码：</span>
-                    <ElInput v-model={ search.value.supplier_code } style={{ width: '160px' }} placeholder="请输入产品编码" />
-                  </div>
-                  <div class="flex pl10">
-                    <span>供应商名称：</span>
-                    <ElInput v-model={ search.value.supplier_abbreviation } style={{ width: '160px' }} placeholder="请输入产品名称" />
-                  </div>
-                  <div class="flex pl10">
-                    <span>材料编码：</span>
-                    <ElInput v-model={ search.value.material_code } style={{ width: '160px' }} placeholder="请输入产品编码" />
-                  </div>
-                  <div class="flex pl10">
-                    <span>材料名称：</span>
-                    <ElInput v-model={ search.value.material_name } style={{ width: '160px' }} placeholder="请输入材料名称" />
-                  </div>
-                  <div class="pl10">
-                    <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList } >
-                      查询
-                    </ElButton>
-                  </div>
-                </div>
-                <div class="pl10">
-                  <ElButton style="margin-top: -5px" type="warning" onClick={ () => goBack() } >
-                    返回
-                  </ElButton>
-                </div>
-              </div>
+              <HeadForm headerWidth="150px" labelWidth="100" ref={ formCard }>
+                {{
+                  center: () => (
+                    <>
+                      <ElFormItem label="供应商编码：">
+                        <ElInput v-model={ search.value.supplier_code } placeholder="请输入供应商编码" />
+                      </ElFormItem>
+                      <ElFormItem label="供应商名称：">
+                        <ElInput v-model={ search.value.supplier_abbreviation } placeholder="请输入供应商名称" />
+                      </ElFormItem>
+                      <ElFormItem label="材料编码：">
+                        <ElInput v-model={ search.value.material_code } placeholder="请输入材料编码" />
+                      </ElFormItem>
+                      <ElFormItem label="材料名称：">
+                        <ElInput v-model={ search.value.material_name } placeholder="请输入材料名称" />
+                      </ElFormItem>
+                    </>
+                  ),
+                  right: () => (
+                    <>
+                      <ElFormItem>
+                        <ElButton type="primary" onClick={ fetchProductList }>查询</ElButton>
+                      </ElFormItem>
+                      <ElFormItem>
+                        <ElButton type="warning" onClick={ () => goBack() } >返回</ElButton>
+                      </ElFormItem>
+                    </>
+                  )
+                }}
+              </HeadForm>
             ),
             default: () => (
               <>
@@ -117,8 +117,15 @@ export default defineComponent({
                     {({row}) => <span>{ supplyMethod.value.find(e => e.id == row.delivery)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn prop="packaging" label="包装要求" width="100" />
+                  <ElTableColumn prop="condition" label="交易条件" width="120" />
                   <ElTableColumn label="结算周期" width="120">
-                    {({row}) => <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>}
+                    {({row}) => {
+                      const rowId = row.other_transaction_terms
+                      if(rowId == 28){
+                        return <span>{ row.other_text }</span>
+                      }
+                      return <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>
+                    }}
                   </ElTableColumn>
                   <ElTableColumn label="税票要求" width="110">
                     {({row}) => <span>{ invoice.value.find(e => e.id == row.invoice)?.name }</span>}

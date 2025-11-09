@@ -115,43 +115,43 @@
       <div class="data-item">
         <div class="flex item">
           <div class="label">产品编码</div>
-          <div class="value">{{ getContent(product.product_code) }}</div>
+          <div class="value">{{ progress.product_code }}</div>
         </div>
         <div class="flex item">
           <div class="label">产品名称</div>
-          <div class="value">{{ getContent(product.product_name) }}</div>
+          <div class="value">{{ progress.product_name }}</div>
         </div>
         <div class="flex item">
           <div class="label">工程图号</div>
-          <div class="value">{{ getContent(product.drawing) }}</div>
+          <div class="value">{{ progress.drawing }}</div>
         </div>
         <div class="flex item">
           <div class="label">部件编码</div>
-          <div class="value">{{ getContent(part.part_code) }}</div>
+          <div class="value">{{ progress.part_code }}</div>
         </div>
         <div class="flex item">
           <div class="label">部件名称</div>
-          <div class="value">{{ getContent(part.part_name) }}</div>
+          <div class="value">{{ progress.part_name }}</div>
         </div>
         <div class="flex item">
           <div class="label">工艺编码</div>
-          <div class="value">{{ getContent(process.process_code) }}</div>
+          <div class="value">{{ work.children?.process?.process_code }}</div>
         </div>
         <div class="flex item">
           <div class="label">工艺名称</div>
-          <div class="value">{{ getContent(process.process_name) }}</div>
+          <div class="value">{{ work.children?.process?.process_name }}</div>
         </div>
         <div class="flex item">
           <div class="label">订单数量</div>
-          <div class="value">{{ dataObj.out_number }}</div>
+          <div class="value">{{ progress.out_number }}</div>
         </div>
         <div class="flex item">
           <div class="label">订单尾数</div>
-          <div class="value">{{ order_number }}</div>
+          <div class="value">{{ work.order_number }}</div>
         </div>
         <div class="flex item">
           <div class="label">客户交期</div>
-          <div class="value">{{ dataObj.delivery_time ? dataObj.delivery_time.substring(0, 10) : '' }}</div>
+          <div class="value">{{ progress.notice?.delivery_time ? progress.notice.delivery_time.substring(0, 10) : '' }}</div>
         </div>
       </div>
       <div class="data-item">
@@ -186,12 +186,8 @@
           isMobile: false,
           id: '',
           quantity: '',
-          dataObj: {},
-          process: {},
-          product: {},
-          part: {},
-          order_number: 0,
-          data: {}
+          work: {},
+          progress: {},
         }
       },
       methods: {
@@ -202,13 +198,8 @@
           }).then(res => {
             if(res.data.code == 200){
               const data = res.data.data
-              that.data = data
-              that.order_number = data.order_number
-              that.dataObj.out_number = data.parent.production.out_number
-              that.dataObj.delivery_time = data.parent.production.notice.delivery_time
-              that.process = data.process
-              that.product = data.parent.product
-              that.part = data.parent.part
+              this.work = data.work
+              this.progress = data.progress
             }else{
               that.setError(res.data)
             }
@@ -220,12 +211,12 @@
             return;
           }
           axios.post(`${this.api}/api/mobile_work_order`, {
-            id: this.id,
+            id: this.work.id,
             number: this.quantity,
             company_id: this.urlData.company_id,
-            product_id: this.product.id,
-            part_id: this.part.id,
-            process_id: this.process.id
+            product_id: this.progress.product_id,
+            part_id: this.progress.part_id,
+            process_id: this.work.children.process_id
           }, {
             headers: this.headers
           }).then(res => {

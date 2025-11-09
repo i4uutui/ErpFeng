@@ -78,9 +78,14 @@ const SubCustomerInfo = sequelize.define('SubCustomerInfo', {
     comment: '交易币别'
   },
   other_transaction_terms: {
-    type: DataTypes.INTEGER(),
+    type: DataTypes.STRING(5),
     allowNull: true,
-    comment: '其它交易条件'
+    comment: '结算周期'
+  },
+  other_text: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    comment: '其它结算周期'
   },
   is_deleted: {
     type: DataTypes.INTEGER(1),

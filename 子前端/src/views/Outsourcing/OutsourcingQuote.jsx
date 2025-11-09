@@ -3,6 +3,7 @@ import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
 import { getPageHeight } from '@/utils/tool';
 import HeadForm from '@/components/form/HeadForm';
+import { reportOperationLog } from '@/utils/log';
 
 export default defineComponent({
   setup(){
@@ -26,9 +27,6 @@ export default defineComponent({
       transaction_currency: [
         { required: true, message: '请输入交易币别', trigger: 'blur' }
       ],
-      other_transaction_terms: [
-        { required: true, message: '请输入交易条件', trigger: 'blur' }
-      ],
     })
     let dialogVisible = ref(false)
     let form = ref({
@@ -38,8 +36,10 @@ export default defineComponent({
       process_index: '',
       price: '',
       transaction_currency: '',
+      condition: '',
       other_transaction_terms: '',
-      remarks: ''
+      remarks: '',
+      other_text: ''
     })
     let tableData = ref([])
     let currentPage = ref(1);
@@ -51,6 +51,7 @@ export default defineComponent({
     let bomList = ref([]) // 工艺Bom列表
     let procedure = ref([]) // 工序列表
     let allSelect = ref([]) // 用户选择的列表
+    let payTime = ref([])
     let search = ref({
       supplier_code: '',
       supplier_abbreviation: '',
@@ -66,6 +67,7 @@ export default defineComponent({
       fetchProductList()
       getSupplierInfo()
       getProductNotice()
+      getConstType()
       // getProcessBomList()
     })
     
@@ -81,6 +83,13 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    // 获取常量
+    const getConstType = async () => {
+      const res = await request.post('/api/getConstType', { type: ['payTime'] })
+      if(res.code == 200){
+        payTime.value = res.data
+      }
+    }
     const getSupplierInfo = async () => {
       const res = await request.get('/api/getSupplierInfo')
       if(res.code == 200){
@@ -134,8 +143,9 @@ export default defineComponent({
               process_index: form.value.process_index,
               price: form.value.price,
               transaction_currency: form.value.transaction_currency,
+              condition: form.value.condition,
               other_transaction_terms: form.value.other_transaction_terms,
-              remarks: form.value.remarks
+              other_text: form.value.other_text
             }
             const res = await request.put('/api/outsourcing_quote', myForm);
             if(res && res.code == 200){
@@ -171,6 +181,7 @@ export default defineComponent({
     const handleUplate = async (row) => {
       edit.value = row.id;
       row.process_bom_children_id = Number(row.process_bom_children_id)
+      row.other_transaction_terms = Number(row.other_transaction_terms)
       form.value = { ...row };
       const notice = noticeList.value.find(o => o.id == row.notice_id)
       await getProcessBomList(notice.product_id)
@@ -199,8 +210,9 @@ export default defineComponent({
         process_index: '',
         price: '',
         transaction_currency: '',
+        condition: '',
         other_transaction_terms: '',
-        remarks: ''
+        other_text: ''
       }
     }
     const noticeChange = (value) => {
@@ -208,6 +220,11 @@ export default defineComponent({
       if(row && row.product_id){
         getProcessBomList(row.product_id)
       }
+    }
+    const supplierChange = (row) => {
+      form.value.other_transaction_terms = Number(row.other_transaction_terms)
+      form.value.other_text = row.other_text
+      form.value.transaction_currency = row.transaction_currency
     }
     // 分页相关
     function pageSizeChange(val) {
@@ -277,9 +294,16 @@ export default defineComponent({
                   <ElTableColumn prop="processChildren.process.process_name" label="工艺名称" width="120" />
                   <ElTableColumn prop="price" label="加工单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
-                  <ElTableColumn prop="other_transaction_terms" label="交易条件" width="100" />
-                  <ElTableColumn prop="remarks" label="备注" width="170" />
-                  <ElTableColumn prop="created_at" label="创建时间" width="120" />
+                  <ElTableColumn prop="condition" label="交易条件" width="120" />
+                  <ElTableColumn label="结算周期" width="120">
+                    {({row}) => {
+                      const rowId = row.other_transaction_terms
+                      if(rowId == 28){
+                        return <span>{ row.other_text }</span>
+                      }
+                      return <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>
+                    }}
+                  </ElTableColumn>
                   <ElTableColumn label="操作" width="100" fixed="right">
                     {(scope) => (
                       <>
@@ -319,7 +343,7 @@ export default defineComponent({
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="供应商编码" prop="supplier_id">
-                  <MySelect v-model={ form.value.supplier_id } apiUrl="/api/getSupplierInfo" query="supplier_code" itemValue="supplier_code" placeholder="请选择供应商编码" />
+                  <MySelect v-model={ form.value.supplier_id } apiUrl="/api/getSupplierInfo" query="supplier_code" itemValue="supplier_code" placeholder="请选择供应商编码" onChange={ (value) => supplierChange(value) } />
                 </ElFormItem>
                 <ElFormItem label="加工单价" prop="price">
                   <ElInput v-model={ form.value.price } placeholder="请输入加工单价" />
@@ -327,12 +351,17 @@ export default defineComponent({
                 <ElFormItem label="交易币别" prop="transaction_currency">
                   <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
                 </ElFormItem>
-                <ElFormItem label="交易条件" prop="other_transaction_terms">
-                  <ElInput v-model={ form.value.other_transaction_terms } placeholder="请输入交易条件" />
+                <ElFormItem label="交易条件" prop="condition">
+                  <ElInput v-model={ form.value.condition } placeholder="请输入交易条件" />
                 </ElFormItem>
-                <ElFormItem label="备注" prop="remarks">
-                  <ElInput v-model={ form.value.remarks } placeholder="请输入备注" />
+                <ElFormItem label="结算周期" prop="other_transaction_terms">
+                  <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix placeholder="请选择结算周期">
+                    {payTime.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
+                { form.value.other_transaction_terms == 28 ? <ElFormItem label="其他" prop="other_text">
+                  <ElInput v-model={ form.value.other_text } placeholder="请输入结算周期" />
+                </ElFormItem> : '' }
               </ElForm>
             ),
             footer: () => (

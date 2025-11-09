@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubRateWage, Op, SubProductCode, SubPartCode, SubProcessCode, SubProcessBomChild, SubEmployeeInfo, SubWarehouseApply, SubNoEncoding, SubMaterialMent, SubSaleOrder, SubOutsourcingOrder, SubProductNotice, SubProcessBom } = require('../models')
+const { SubRateWage, Op, SubProductCode, SubPartCode, SubProcessCode, SubProcessBomChild, SubEmployeeInfo, SubWarehouseApply, SubNoEncoding, SubMaterialMent, SubSaleOrder, SubOutsourcingOrder, SubProductNotice, SubProcessBom, SubProcessCycle, SubSupplierInfo, SubCustomerInfo } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -24,25 +24,38 @@ const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime'
  *         schema:
  *           type: array
  */
-router.get('/rate_wage', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
+router.post('/rate_wage', authMiddleware, async (req, res) => {
+  const { page = 1, pageSize = 10, created_at, employee_id, name, cycle_id } = req.body;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
-  const created_at = req.query['created_at[]']
   
+  let where = {
+    company_id,
+    created_at: {
+      [Op.between]: [new Date(created_at[0]), new Date(created_at[1])] // 使用 between 筛选范围
+    }
+  }
+  let whereObj = {}
+  if(employee_id) where.employee_id = { [Op.like]: `%${employee_id}%` }
+  if(name) where.name = { [Op.like]: `%${name}%` }
+  if(cycle_id) whereObj.cycle_id = { [Op.like]: `%${cycle_id}%` }
   const { count, rows } = await SubRateWage.findAndCountAll({
-    where: {
-      company_id,
-      created_at: {
-        [Op.between]: [new Date(created_at[0]), new Date(created_at[1])] // 使用 between 筛选范围
-      }
-    },
+    where,
+    attributes: ['id', 'bom_child_id', 'product_id', 'part_id', 'process_id', 'number'],
     include: [
       { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing'] },
       { model: SubPartCode, as: 'part', attributes: ['id', 'part_code', 'part_name'] },
       { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
       { model: SubProcessBomChild, as: 'bomChildren', attributes: ['id', 'notice_id', 'notice', 'price'] },
-      { model: SubEmployeeInfo, as: 'menber', attributes: ['id', 'name', 'cycle_id', 'cycle_name', 'employee_id'] }
+      {
+        model: SubEmployeeInfo,
+        as: 'menber',
+        where: whereObj,
+        attributes: ['id', 'name', 'cycle_id', 'employee_id'],
+        include: [
+          { model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }
+        ]
+      }
     ],
     order: [['created_at', 'DESC']],
     distinct: true,
@@ -81,29 +94,40 @@ router.get('/rate_wage', authMiddleware, async (req, res) => {
  *         schema:
  *           type: array
  */
-router.get('/getReceivablePrice', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10, type } = req.query;
+router.post('/getReceivablePrice', authMiddleware, async (req, res) => {
+  const { page = 1, pageSize = 10, created_at, type, customer_code, customer_abbreviation, supplier_code, supplier_abbreviation } = req.body;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
-  const created_at = req.query['created_at[]']
 
-  let whereObj = {}
-  if(type) whereObj.type = type
-  const { count, rows } = await SubWarehouseApply.findAndCountAll({
-    where: {
-      company_id,
-      created_at: {
-        [Op.between]: [new Date(created_at[0]), new Date(created_at[1])] // 使用 between 筛选范围
-      },
-      ...whereObj
+  let where = {
+    company_id,
+    type: type,
+    created_at: {
+      [Op.between]: [new Date(created_at[0]), new Date(created_at[1])] // 使用 between 筛选范围
     },
+  }
+  let whereOjb = {}
+  if(customer_code) whereOjb.customer_code = { [Op.like]: `%${customer_code}%` }
+  if(customer_abbreviation) whereOjb.customer_abbreviation = { [Op.like]: `%${customer_abbreviation}%` }
+  if(supplier_code) whereOjb.supplier_code = { [Op.like]: `%${supplier_code}%` }
+  if(supplier_abbreviation) whereOjb.supplier_abbreviation = { [Op.like]: `%${supplier_abbreviation}%` }
+
+  let includeObj = [
+    { model: SubNoEncoding, as: 'print', attributes: ['id', 'no', 'print_type'] },
+    { model: SubNoEncoding, as: 'buyPrint', attributes: ['id', 'no', 'print_type'] },
+    { model: SubMaterialMent, as: 'buy', attributes: ['id', 'print_id'], include: [ { model: SubNoEncoding, as: 'print', attributes: ['id', 'no', 'print_type'] } ] },
+    { model: SubSaleOrder, as: 'sale', attributes: ['id', 'customer_order'] },
+  ]
+  if(type == 14){
+    includeObj.push({ model: SubCustomerInfo, as: 'customer', where: whereOjb, attributes: ['id', 'customer_code', 'customer_abbreviation'] })
+  }else{
+    includeObj.push({ model: SubSupplierInfo, as: 'supplier', where: whereOjb, attributes: ['id', 'supplier_code', 'supplier_abbreviation'] })
+  }
+
+  const { count, rows } = await SubWarehouseApply.findAndCountAll({
+    where,
     attributes: ['id', 'print_id', 'company_id', 'buyPrint_id', 'sale_id', 'ware_id', 'house_id', 'operate', 'type', 'house_name', 'plan_id', 'plan', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'quantity', 'buy_price', 'total_price', 'created_at'],
-    include: [
-      { model: SubNoEncoding, as: 'print', attributes: ['id', 'no', 'print_type'] },
-      { model: SubNoEncoding, as: 'buyPrint', attributes: ['id', 'no', 'print_type'] },
-      { model: SubMaterialMent, as: 'buy', attributes: ['id', 'print_id'], include: [ { model: SubNoEncoding, as: 'print', attributes: ['id', 'no', 'print_type'] } ] },
-      { model: SubSaleOrder, as: 'sale', attributes: ['id', 'customer_order'] }
-    ],
+    include: includeObj,
     order: [['created_at', 'DESC']],
     distinct: true,
     limit: parseInt(pageSize),
@@ -141,22 +165,24 @@ router.get('/getReceivablePrice', authMiddleware, async (req, res) => {
  *         schema:
  *           type: array
  */
-router.get('/getOutSourcingPrice', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10, type } = req.query;
+router.post('/getOutSourcingPrice', authMiddleware, async (req, res) => {
+  const { page = 1, pageSize = 10, created_at, type, supplier_code, supplier_abbreviation } = req.body;
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
-  const created_at = req.query['created_at[]']
 
-  let whereObj = {}
-  if(type) whereObj.type = type
-  const { count, rows } = await SubWarehouseApply.findAndCountAll({
-    where: {
-      company_id,
-      created_at: {
-        [Op.between]: [new Date(created_at[0]), new Date(created_at[1])] // 使用 between 筛选范围
-      },
-      ...whereObj
+  let where = {
+    company_id,
+    type: type,
+    created_at: {
+      [Op.between]: [new Date(created_at[0]), new Date(created_at[1])] // 使用 between 筛选范围
     },
+  }
+  let whereOjb = {}
+  if(supplier_code) whereOjb.supplier_code = { [Op.like]: `%${supplier_code}%` }
+  if(supplier_abbreviation) whereOjb.supplier_abbreviation = { [Op.like]: `%${supplier_abbreviation}%` }
+
+  const { count, rows } = await SubWarehouseApply.findAndCountAll({
+    where,
     attributes: ['id', 'print_id', 'company_id', 'buyPrint_id', 'sale_id', 'ware_id', 'house_id', 'operate', 'type', 'house_name', 'plan_id', 'plan', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'quantity', 'buy_price', 'total_price', 'created_at'],
     include: [
       { model: SubNoEncoding, as: 'print', attributes: ['id', 'no', 'print_type'] },
@@ -184,7 +210,8 @@ router.get('/getOutSourcingPrice', authMiddleware, async (req, res) => {
             ]
           }
         ]
-      }
+      },
+      { model: SubSupplierInfo, as: 'supplier', where: whereOjb, attributes: ['id', 'supplier_code', 'supplier_abbreviation'] }
     ],
     order: [['created_at', 'DESC']],
     distinct: true,

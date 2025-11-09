@@ -1,6 +1,6 @@
 import { defineComponent, onMounted, reactive, ref, computed, nextTick } from 'vue'
 import { useStore } from '@/stores';
-import { getRandomString, getNoLast, getPageHeight } from '@/utils/tool'
+import { getRandomString, getNoLast, getPageHeight, isEmptyValue } from '@/utils/tool'
 import { reportOperationLog } from '@/utils/log';
 import { getItem } from '@/assets/js/storage';
 import request from '@/utils/request';
@@ -35,11 +35,11 @@ export default defineComponent({
       material_bom_id: [
         { required: true, message: '请选择材料BOM', trigger: 'blur' }
       ],
-      product_id: [
-        { required: true, message: '请选择产品编码', trigger: 'blur' }
-      ],
       material_id: [
         { required: true, message: '请选择材料编码', trigger: 'blur' }
+      ],
+      number: [
+        { required: true, message: '请输入采购数量', trigger: 'blur' }
       ]
     })
     const approval = getItem('approval').filter(e => e.type == 'material_warehouse')
@@ -62,6 +62,7 @@ export default defineComponent({
       model_spec: '',
       other_features: '',
       unit: '',
+      usage_unit: '',
       price: '',
       order_number: '',
       number: '',
@@ -93,6 +94,7 @@ export default defineComponent({
     let productName = ref('')
     let productCode = ref('')
     let noticeNumber = ref('')
+    let mergedTable = ref([]) // 打印前合并后的数据
 
     const printNo = computed(() => store.printNo)
     
@@ -156,7 +158,10 @@ export default defineComponent({
     }
     // 获取材料列表
     const getMaterialCode = async () => {
-      // const res = await request.get('/api/')
+      const res = await request.get('/api/getMaterialCode')
+      if(res.code == 200){
+        materialList.value = res.data.map(item => ({ ...item, is_show: false }))
+      }
     }
     // 获取材料BOM子数据列表
     const getMaterialBomChildren = async (id) => {
@@ -371,11 +376,16 @@ export default defineComponent({
     }
     // 批量提交本地数据进行审批
     const setStatusAllData = () => {
-      const json = allSelect.value.length ? allSelect.value.filter(o => !o.approval || o.status == 2) : tableData.value.filter(o => !o.approval || o.status == 2)
+      const json = allSelect.value.filter(o => !o.approval || o.status == 2)
       if(json.length == 0){
-        ElMessage.error('暂无可提交的数据')
+        return ElMessage.error('暂无可提交的数据')
       }
       const data = json.map(e => {
+        for(let key in e){
+          if(isEmptyValue(e[key])){
+            e[key] = null
+          }
+        }
         return getFormData(e)
       })
       setApiData(data)
@@ -399,6 +409,7 @@ export default defineComponent({
         model_spec: e.model_spec,
         other_features: e.other_features,
         unit: e.unit,
+        usage_unit: e.usage_unit,
         price: e.price,
         order_number: e.order_number,
         number: e.number,
@@ -414,7 +425,7 @@ export default defineComponent({
       edit.value = row.id;
       dialogVisible.value = true;
       form.value = { ...row };
-      console.log(form.value);
+      setRules(form.value.notice_id)
       getProductsList(row.product_id !== 0 ? row.product_id : '')
       getMaterialBom(row.product_id !== 0 ? row.product_id : '')
       getMaterialBomChildren(row.material_bom_id)
@@ -450,6 +461,7 @@ export default defineComponent({
         model_spec: '',
         other_features: '',
         unit: '',
+        usage_unit: '',
         price: '',
         order_number: '',
         number: '',
@@ -468,33 +480,33 @@ export default defineComponent({
     }
     // 生产订单选中后返回的数据
     const noticeChange = (value) => {
+      setRules(value)
       if(value === 0){
-        if(rules.value.material_bom_id && rules.value.material_bom_id.length){
-          delete rules.value.material_bom_id
-        }
-        if(rules.value.product_id && rules.value.product_id.length){
-          delete rules.value.product_id
-        }
         form.value.product_id = ''
         form.value.product_code = ''
         form.value.product_name = ''
         getProductsList()
         getMaterialBom()
-        getMaterialCode()
         return
       }
-      rules.value.material_bom_id = [
-        { required: true, message: '请选择材料BOM', trigger: 'blur' }
-      ]
-      rules.value.product_id = [
-        { required: true, message: '请选择产品编码', trigger: 'blur' }
-      ]
       const notice = productNotice.value.find(e => e.id == value)
       form.value.notice = notice.notice
       form.value.number = notice.sale.order_number
       form.value.delivery_time = notice.delivery_time
       getProductsList(notice.product_id)
       getMaterialBom(notice.product_id)
+    }
+    const setRules = (value) => {
+      if(value == 0){
+        getMaterialCode()
+        if(rules.value.material_bom_id && rules.value.material_bom_id.length){
+          delete rules.value.material_bom_id
+        }
+      }else{
+        rules.value.material_bom_id = [
+          { required: true, message: '请选择材料BOM', trigger: 'blur' }
+        ]
+      }
     }
     // 材料BOM选中后返回的数据
     const materialBomChange = (value) => {
@@ -518,6 +530,7 @@ export default defineComponent({
       form.value.supplier_abbreviation = row.supplier.supplier_abbreviation
       form.value.price = row.price
       form.value.unit = row.unit
+      form.value.usage_unit = row.usage_unit
     }
     // 材料编码选择后返回的数据
     const materialChange = (value) => {
@@ -527,16 +540,46 @@ export default defineComponent({
       form.value.material_name = material.material_name
       form.value.model_spec = material.model
       form.value.other_features = material.other_features
-      form.value.unit = material.usage_unit
+      form.value.unit = material.purchase_unit
+      form.value.usage_unit = material.usage_unit
     }
     const supplierChange = (value) => {
       const supplier = supplierInfo.value.find(e => e.id == value)
       form.value.supplier_code = supplier.supplier_code
       form.value.supplier_abbreviation = supplier.supplier_abbreviation
     }
+    const productChange = (value) => {
+      const row = proList.value.find(o => o.id == value)
+      form.value.product_id = row.id
+      form.value.product_code = row.product_code
+      form.value.product_name = row.product_name
+    }
     // 删除
     const handleDelete = (row, index) => {
       tableData.value.splice(index, 1)
+    }
+    const setMerged = (arr) => {
+      const mergedMap = new Map();
+
+      // 遍历数组，合并重复项
+      arr.forEach(item => {
+        // 生成唯一键：用连字符连接两个关键字段，避免冲突
+        const key = `${item.supplier_id}-${item.material_id}`;
+        
+        if (mergedMap.has(key)) {
+          // 已存在重复项：累加 number
+          const existingItem = mergedMap.get(key);
+          mergedMap.set(key, {
+            ...existingItem,
+            number: Number(existingItem.number) + Number(item.number)
+          });
+        } else {
+          // 不存在：直接存入 Map
+          mergedMap.set(key, { ...item });
+        }
+      });
+      // 步骤3：将 Map 的值转换为最终数组（按插入顺序排列）
+      return Array.from(mergedMap.values());
     }
     // 执行打印
     const onPrint = async () => {
@@ -544,6 +587,8 @@ export default defineComponent({
       if(!list.length) return ElMessage.error('请选择需要打印的数据')
       const canPrintData = list.filter(o => o.status != undefined && o.status == 1)
       if(!canPrintData.length) return ElMessage.error('暂无可打印的数据或未审核通过')
+      // 相同的供应商相同的材料，需要合并
+      mergedTable.value = setMerged(canPrintData)
       
       await getNoLast('ES')
       const ids = canPrintData.map(e => e.id)
@@ -648,6 +693,7 @@ export default defineComponent({
                   <ElTableColumn prop="model_spec" label="型号&规格" width='100' />
                   <ElTableColumn prop="other_features" label="其它特性" width='100' />
                   <ElTableColumn prop="unit" label="采购单位" width='100' />
+                  <ElTableColumn prop="usage_unit" label="使用单位" width='100' />
                   <ElTableColumn prop="price" label="采购单价" width='100' />
                   <ElTableColumn prop="number" label="采购数量" width='100' />
                   <ElTableColumn prop="delivery_time" label="交货时间" width='110' />
@@ -673,7 +719,9 @@ export default defineComponent({
                             <ElButton size="small" type="primary" onClick={ () => handleBackApproval(row) }>反审批</ElButton>
                           </>)
                         }
-                        dom.push(<ElButton size="small" type="danger" onClick={ () => handleDelete(row, $index) }>删除</ElButton>)
+                        if(isEmptyValue(row.status)){
+                          dom.push(<ElButton size="small" type="danger" onClick={ () => handleDelete(row, $index) }>删除</ElButton>)
+                        }
                         return dom
                       }
                     }}
@@ -720,7 +768,7 @@ export default defineComponent({
                         </tr>
                       </thead>
                       <tbody>
-                        {(allSelect.value.length ? allSelect.value : tableData.value).map((e, index) => {
+                        {mergedTable.value.map((e, index) => {
                           const tr = <tr class="table-row">
                             <td>{ index + 1 }</td>
                             <td>{ statusType[e.status] }</td>
@@ -814,6 +862,9 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="采购单位" prop="unit">
                   <ElInput v-model={ form.value.unit } placeholder="请输入采购单位" />
+                </ElFormItem>
+                <ElFormItem label="使用单位" prop="usage_unit">
+                  <ElInput v-model={ form.value.usage_unit } placeholder="请输入使用单位" />
                 </ElFormItem>
                 {/* <ElFormItem label="预计数量" prop="order_number">
                   <ElInput v-model={ form.value.order_number } disabled placeholder="请输入预计数量" />

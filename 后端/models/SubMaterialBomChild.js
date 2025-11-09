@@ -9,19 +9,29 @@ const SubMaterialBomChild = sequelize.define('SubMaterialBomChild', {
     autoIncrement: true,
     comment: ' 自增主键 ID'
   },
+  company_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    comment: '企业id'
+  },
+  user_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    comment: '发布的用户id'
+  },
   material_bom_id: {
     type: DataTypes.INTEGER(11),
-    allowNull: false,
+    allowNull: true,
     comment: ' 材料 BOM 的父表 id'
   },
   material_id: {
     type: DataTypes.INTEGER(11),
-    allowNull: false,
+    allowNull: true,
     comment: ' 材料编码 ID，关联材料编码表 '
   },
   process_index: {
     type: DataTypes.INTEGER(5),
-    allowNull: false,
+    allowNull: true,
     comment: ' 工序下标 '
   },
   number: {

@@ -74,6 +74,11 @@ const SubSupplierInfo = sequelize.define('SubSupplierInfo', {
     allowNull: true,
     comment: '其它交易条件'
   },
+  other_text: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    comment: '其它结算周期'
+  },
   is_deleted: {
     type: DataTypes.INTEGER(1),
     allowNull: true,

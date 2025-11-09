@@ -280,8 +280,8 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
-                  <ElTableColumn label="接单日期" width="110">
-                    {({ row }) => row.saleCancel ? <span style={{ color: 'red' }}>已取消</span> : ''}
+                  <ElTableColumn label="状态" width="110">
+                    {({ row }) => row.saleCancel ? <span style={{ color: 'red' }}>已取消</span> : '正常'}
                   </ElTableColumn>
                   <ElTableColumn prop="rece_time" label="接单日期" width="110" />
                   <ElTableColumn prop="customer.customer_code" label="客户编码" width="100" />

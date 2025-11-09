@@ -66,7 +66,7 @@ router.post('/material_bom', authMiddleware, async (req, res) => {
     product_id, part_id, archive, company_id,
     user_id: userId
   })
-  const childrens = children.map(e => ({ material_bom_id: material.id, ...e }))
+  const childrens = children.map(e => ({ material_bom_id: material.id, company_id, user_id: userId, ...e }))
   await SubMaterialBomChild.bulkCreate(childrens);
   
   res.json({ message: '添加成功', code: 200 });

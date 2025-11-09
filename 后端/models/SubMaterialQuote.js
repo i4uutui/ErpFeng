@@ -54,10 +54,20 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
     allowNull: true,
     comment: ' 包装要求 '
   },
-  other_transaction_terms: {
-    type: DataTypes.TEXT,
+  condition: {
+    type: DataTypes.STRING(255),
     allowNull: true,
-    comment: ' 交易条件 '
+    comment: '交易条件'
+  },
+  other_transaction_terms: {
+    type: DataTypes.STRING(5),
+    allowNull: true,
+    comment: '结算周期'
+  },
+  other_text: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    comment: '其它结算周期'
   },
   invoice: {
     type: DataTypes.INTEGER(),

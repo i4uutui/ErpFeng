@@ -9,19 +9,26 @@
 
 .login-wrapper {
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   padding: 40px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-
-.login-logo {
+.login-logo{
+  width: 100px;
+  margin: 0 auto;
+}
+.login-logo img{
+  width: 100%;
+}
+.login-title {
   text-align: center;
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 40px;
-  color: #165DFF;
+  color: #409eff;
+  padding-top: 10px;
 }
 
 .login-form {

@@ -31,8 +31,11 @@ export default defineComponent({
       notice: '',
       product_price: '',
       transaction_currency: '',
-      other_transaction_terms: ''
+      condition: '',
+      other_transaction_terms: '',
+      other_text: ''
     })
+    let payTime = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(20);
@@ -52,6 +55,7 @@ export default defineComponent({
         formHeight.value = await getPageHeight([formCard.value, pagin.value]);
       })
       fetchProductList()
+      getConstType()
     })
 
     // 获取列表
@@ -66,6 +70,13 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    // 获取常量
+    const getConstType = async () => {
+      const res = await request.post('/api/getConstType', { type: ['payTime'] })
+      if(res.code == 200){
+        payTime.value = res.data
+      }
+    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {
@@ -109,6 +120,8 @@ export default defineComponent({
     const handleUplate = (row) => {
       edit.value = row.id;
       dialogVisible.value = true;
+      row.other_transaction_terms = Number(row.other_transaction_terms)
+      row.sale_id = row.sale.id
       form.value = { ...row };
     }
     // 新增
@@ -129,11 +142,13 @@ export default defineComponent({
         notice: '',
         product_price: '',
         transaction_currency: '',
+        condition: '',
         other_transaction_terms: '',
+        other_text: ''
       }
     }
     const saleChange = (row) => {
-      form.value.other_transaction_terms = row.customer.other_transaction_terms
+      form.value.other_transaction_terms = Number(row.customer.other_transaction_terms)
     }
     // 分页相关
     function pageSizeChange(val) {
@@ -205,7 +220,16 @@ export default defineComponent({
                   <ElTableColumn prop="sale.unit" label="单位" width="100" />
                   <ElTableColumn prop="product_price" label="产品单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
-                  <ElTableColumn prop="other_transaction_terms" label="结算周期" width="120" />
+                  <ElTableColumn prop="condition" label="交易条件" width="120" />
+                  <ElTableColumn label="结算周期" width="120">
+                    {({row}) => {
+                      const rowId = row.other_transaction_terms
+                      if(rowId == 28){
+                        return <span>{ row.other_text }</span>
+                      }
+                      return <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>
+                    }}
+                  </ElTableColumn>
                   <ElTableColumn prop="created_at" label="创建时间" width="120" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
@@ -236,9 +260,17 @@ export default defineComponent({
                 <ElFormItem label="交易币别" prop="transaction_currency">
                   <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
                 </ElFormItem>
-                <ElFormItem label="结算周期" prop="other_transaction_terms">
-                  <ElInput v-model={ form.value.other_transaction_terms } placeholder="请输入结算周期" />
+                <ElFormItem label="交易条件" prop="condition">
+                  <ElInput v-model={ form.value.condition } placeholder="请输入交易条件" />
                 </ElFormItem>
+                <ElFormItem label="结算周期" prop="other_transaction_terms">
+                  <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix placeholder="请选择结算周期">
+                    {payTime.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                { form.value.other_transaction_terms == 28 ? <ElFormItem label="其他" prop="other_text">
+                  <ElInput v-model={ form.value.other_text } placeholder="请输入结算周期" />
+                </ElFormItem> : '' }
               </ElForm>
             ),
             footer: () => (

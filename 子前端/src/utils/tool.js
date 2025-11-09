@@ -22,6 +22,8 @@ export const filterMenu = (data, excludeItems) => {
   
   return newData;
 }
+
+
 /**
  * 检查用户是否拥有指定权限
  * @param {string} permission 权限标识（如"user:add"）
@@ -33,6 +35,8 @@ export const hasPermission = (permission) => {
   if (!user || !user.power || !permission) return false;
   return user.power.includes(permission);
 };
+
+
 /**
  * 数字转中文大写
  * @param {Number} num 要转换的数字

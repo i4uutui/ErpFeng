@@ -3,6 +3,7 @@ import { CirclePlusFilled, RemoveFilled } from '@element-plus/icons-vue'
 import { getPageHeight, getRandomString, isEmptyValue } from '@/utils/tool';
 import request from '@/utils/request';
 import { reportOperationLog } from '@/utils/log';
+import HeadForm from '@/components/form/HeadForm';
 
 export default defineComponent({
   setup(){
@@ -250,32 +251,33 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="flex row-between" ref={ formCard }>
-                <div class="flex flex-1">
-                  <div class="flex pl10">
-                    <span>产品编码：</span>
-                    <ElInput v-model={ search.value.product_code } style="width: 240px" placeholder="请输入产品编码" />
-                  </div>
-                  <div class="flex pl10">
-                    <span>产品名称：</span>
-                    <ElInput v-model={ search.value.product_name } style="width: 240px" placeholder="请输入产品名称" />
-                  </div>
-                  <div class="flex pl10">
-                    <span>工程图号：</span>
-                    <ElInput v-model={ search.value.drawing } style="width: 240px" placeholder="请输入工程图号" />
-                  </div>
-                  <div class="pl10">
-                    <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList } >
-                      查询
-                    </ElButton>
-                  </div>
-                </div>
-                <div class="pl10">
-                  <ElButton style="margin-top: -5px" type="warning" onClick={ () => goBack() } >
-                    返回
-                  </ElButton>
-                </div>
-              </div>
+              <HeadForm headerWidth="150px" ref={ formCard }>
+                {{
+                  center: () => (
+                    <>
+                      <ElFormItem label="产品编码：">
+                        <ElInput v-model={ search.value.product_code } placeholder="请输入产品编码" />
+                      </ElFormItem>
+                      <ElFormItem label="产品名称：">
+                        <ElInput v-model={ search.value.product_name } placeholder="请输入产品名称" />
+                      </ElFormItem>
+                      <ElFormItem label="工程图号：">
+                        <ElInput v-model={ search.value.drawing } placeholder="请输入工程图号" />
+                      </ElFormItem>
+                    </>
+                  ),
+                  right: () => (
+                    <>
+                      <ElFormItem>
+                        <ElButton type="primary" onClick={ fetchProductList }>查询</ElButton>
+                      </ElFormItem>
+                      <ElFormItem>
+                        <ElButton type="warning" onClick={ () => goBack() } >返回</ElButton>
+                      </ElFormItem>
+                    </>
+                  )
+                }}
+              </HeadForm>
             ),
             default: () => (
               <>

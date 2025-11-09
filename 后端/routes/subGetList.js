@@ -668,7 +668,7 @@ router.get('/getMaterialBomChildren', authMiddleware, async (req, res) => {
 })
 /**
  * @swagger
- * /api/getMaterialBomChildren:
+ * /api/getMaterialQuote:
  *   get:
  *     summary: 获取报价单列表
  *     tags:

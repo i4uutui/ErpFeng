@@ -605,7 +605,7 @@ router.post('/employee_info_login', async (req, res) => {
   const data = result.toJSON()
   
   const isPasswordValid = await bcrypt.compare(password, data.password);
-  
+  console.log(isPasswordValid);
   if (!isPasswordValid) {
     return res.json({ message: '账号或密码错误', code: 401 });
   }

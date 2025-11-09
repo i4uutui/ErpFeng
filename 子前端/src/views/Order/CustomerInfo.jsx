@@ -2,6 +2,7 @@ import { defineComponent, ref, onMounted, reactive, nextTick } from 'vue'
 import request from '@/utils/request';
 import { reportOperationLog } from '@/utils/log';
 import { getPageHeight } from '@/utils/tool';
+import HeadForm from '@/components/form/HeadForm';
 
 export default defineComponent({
   setup(){
@@ -54,6 +55,7 @@ export default defineComponent({
       transaction_method: '',
       transaction_currency: '',
       other_transaction_terms: '',
+      other_text: ''
     })
     let tableData = ref([])
     let currentPage = ref(1);
@@ -163,6 +165,7 @@ export default defineComponent({
     const handleUplate = (row) => {
       edit.value = row.id;
       dialogVisible.value = true;
+      row.other_transaction_terms = Number(row.other_transaction_terms)
       form.value = { ...row };
     }
     // 新增
@@ -190,6 +193,7 @@ export default defineComponent({
         transaction_method: '',
         transaction_currency: '',
         other_transaction_terms: '',
+        other_text: ''
       }
     }
     // 分页相关
@@ -208,24 +212,30 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="flex" ref={ formCard }>
-                <ElForm inline={ true } class="cardHeaderFrom">
-                  <ElFormItem v-permission={ 'CustomerInfo:add' }>
-                    <ElButton type="primary" onClick={ handleAdd } style={{ width: '100px' }}>新增客户</ElButton>
-                  </ElFormItem>
-                </ElForm>
-                <ElForm inline={ true } class="cardHeaderFrom">
-                  <ElFormItem label="客户编码：">
-                    <ElInput v-model={ search.value.customer_code } placeholder="请输入客户编码" />
-                  </ElFormItem>
-                  <ElFormItem label="客户名称：">
-                    <ElInput v-model={ search.value.customer_abbreviation } placeholder="请输入客户名称" />
-                  </ElFormItem>
-                  <ElFormItem>
-                    <ElButton type="primary" onClick={ fetchProductList }>查询</ElButton>
-                  </ElFormItem>
-                </ElForm>
-              </div>
+              <HeadForm headerWidth="150px" ref={ formCard }>
+                {{
+                  left: () => (
+                    <ElFormItem v-permission={ 'CustomerInfo:add' }>
+                      <ElButton type="primary" onClick={ handleAdd }>新增客户</ElButton>
+                    </ElFormItem>
+                  ),
+                  center: () => (
+                    <>
+                      <ElFormItem label="客户编码：">
+                        <ElInput v-model={ search.value.customer_code } placeholder="请输入客户编码" />
+                      </ElFormItem>
+                      <ElFormItem label="客户名称：">
+                        <ElInput v-model={ search.value.customer_abbreviation } placeholder="请输入客户名称" />
+                      </ElFormItem>
+                    </>
+                  ),
+                  right: () => (
+                    <ElFormItem>
+                      <ElButton type="primary" onClick={ fetchProductList }>查询</ElButton>
+                    </ElFormItem>
+                  )
+                }}
+              </HeadForm>
             ),
             default: () => (
               <>
@@ -243,7 +253,13 @@ export default defineComponent({
                   </ElTableColumn>
                   <ElTableColumn prop="transaction_currency" label="交易币别" />
                   <ElTableColumn label="结算周期">
-                    {({row}) => <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>}
+                    {({row}) => {
+                      const rowId = row.other_transaction_terms
+                      if(rowId == 28){
+                        return <span>{ row.other_text }</span>
+                      }
+                      return <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>
+                    }}
                   </ElTableColumn>
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
@@ -300,6 +316,9 @@ export default defineComponent({
                     {payTime.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
+                { form.value.other_transaction_terms == 28 ? <ElFormItem label="其他" prop="other_text">
+                  <ElInput v-model={ form.value.other_text } placeholder="请输入结算周期" />
+                </ElFormItem> : '' }
               </ElForm>
             ),
             footer: () => (

@@ -367,9 +367,9 @@ export default defineComponent({
     }
     // 批量提交本地数据进行审批
     const setStatusAllData = () => {
-      const json = allSelect.value.length ? allSelect.value.filter(o => !o.approval || o.status == 2) : tableData.value.filter(o => !o.approval || o.status == 2)
+      const json = allSelect.value.filter(o => !o.approval || o.status == 2)
       if(json.length == 0){
-        ElMessage.error('暂无可提交的数据')
+        return ElMessage.error('暂无可提交的数据')
       }
       const data = json.map(e => {
         return getFormData(e)

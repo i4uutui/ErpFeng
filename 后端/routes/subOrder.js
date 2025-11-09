@@ -19,7 +19,7 @@ router.get('/customer_info', authMiddleware, async (req, res) => {
       is_deleted: 1,
       company_id,
     },
-    attributes: ['id', "customer_code", "customer_abbreviation", "contact_person", "contact_information", "company_full_name", "company_address", "delivery_address", "tax_registration_number", "transaction_method", "transaction_currency", "other_transaction_terms"],
+    attributes: ['id', "customer_code", "customer_abbreviation", "contact_person", "contact_information", "company_full_name", "company_address", "delivery_address", "tax_registration_number", "transaction_method", "transaction_currency", "other_transaction_terms", 'other_text'],
     order: [['customer_code', 'ASC']],
     distinct: true,
     limit: parseInt(pageSize),
@@ -42,7 +42,7 @@ router.get('/customer_info', authMiddleware, async (req, res) => {
 
 // 添加客户信息
 router.post('/customer_info', authMiddleware, async (req, res) => {
-  const { customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms } = req.body;
+  const { customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms, other_text } = req.body;
   const { id: userId, company_id } = req.user;
   
   const rows = await SubCustomerInfo.findAll({
@@ -56,7 +56,7 @@ router.post('/customer_info', authMiddleware, async (req, res) => {
   }
   
   const result = await SubCustomerInfo.create({
-    customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms, company_id,
+    customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms, other_text, company_id,
     user_id: userId
   })
 
@@ -65,7 +65,7 @@ router.post('/customer_info', authMiddleware, async (req, res) => {
 
 // 更新客户信息接口
 router.put('/customer_info', authMiddleware, async (req, res) => {
-  const { customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms, id } = req.body;
+  const { customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms, other_text, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   const rows = await SubCustomerInfo.findAll({
@@ -83,7 +83,7 @@ router.put('/customer_info', authMiddleware, async (req, res) => {
   
   // 更新客户信息
   const updateResult = await SubCustomerInfo.update({
-    customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms, company_id,
+    customer_code, customer_abbreviation, contact_person, contact_information, company_full_name, company_address, delivery_address, tax_registration_number, transaction_method, transaction_currency, other_transaction_terms, other_text, company_id,
     user_id: userId
   }, {
     where: { id }
@@ -294,7 +294,7 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
       sale_id: { [Op.notIn]: saleIds },
       ...whereNotice
     },
-    attributes: ['id', 'notice', 'product_price', 'transaction_currency', 'other_transaction_terms', 'created_at'],
+    attributes: ['id', 'notice', 'product_price', 'transaction_currency', 'condition', 'other_transaction_terms', 'other_text', 'created_at'],
     include: [
       { model: SubSaleOrder, as: 'sale', attributes: ['id', 'customer_order', 'order_number', 'unit'] },
       { model: SubCustomerInfo, as: 'customer', attributes: ['id', 'customer_code', 'customer_abbreviation'], where: whereCustomer },
@@ -325,7 +325,7 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
 });
 // 添加产品报价
 router.post('/product_quotation', authMiddleware, async (req, res) => {
-  const { sale_id, notice, product_price, transaction_currency, other_transaction_terms } = req.body;
+  const { sale_id, notice, product_price, transaction_currency, condition, other_transaction_terms, other_text } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -342,7 +342,7 @@ router.post('/product_quotation', authMiddleware, async (req, res) => {
     return res.json({ code: 401, message: '数据出错，请联系管理员' })
   }
   const create = {
-    sale_id, customer_id, product_id, notice, product_price, transaction_currency, other_transaction_terms, company_id,
+    sale_id, customer_id, product_id, notice, product_price, transaction_currency, condition, other_transaction_terms, other_text, company_id,
     user_id: userId
   }
   await SubProductQuotation.create(create)
@@ -351,7 +351,7 @@ router.post('/product_quotation', authMiddleware, async (req, res) => {
 });
 // 更新产品报价
 router.put('/product_quotation', authMiddleware, async (req, res) => {
-  const { sale_id, notice, product_price, transaction_currency, other_transaction_terms, id } = req.body;
+  const { sale_id, notice, product_price, transaction_currency, condition, other_transaction_terms, other_text, id } = req.body;
   
   const { id: userId, company_id } = req.user;
 
@@ -369,7 +369,7 @@ router.put('/product_quotation', authMiddleware, async (req, res) => {
   }
   
   const updateResult = await SubProductQuotation.update({
-    sale_id, customer_id, product_id, notice, product_price, transaction_currency, other_transaction_terms, company_id,
+    sale_id, customer_id, product_id, notice, product_price, transaction_currency, condition, other_transaction_terms, other_text, company_id,
     user_id: userId
   }, {
     where: { id }

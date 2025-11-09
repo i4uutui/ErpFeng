@@ -20,4 +20,14 @@
       width: 100%;
     }
   }
+  .home-calendar{
+    .el-calendar__header{
+      padding: 0;
+      border-bottom: none
+    }
+    .el-calendar__body{
+      padding: 0;
+      padding-top: 30px;
+    }
+  }
 }

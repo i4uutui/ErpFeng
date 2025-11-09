@@ -246,22 +246,42 @@ router.put('/set_production_date', authMiddleware, async (req, res) => {
 })
 
 router.get('/workOrder', authMiddleware, async (req, res) => {
-  const { notice_number } = req.query;
   const { company_id } = req.user;
 
   const noticeIds = await getSaleCancelIds('notice_id', { company_id })
   
-  let wheres = {}
-  if(notice_number) wheres.notice_number = notice_number
-  const rows = await SubProductionProgress.findAll({
+  let where = {
+    is_deleted: 1,
+    notice_id: { [Op.notIn]: noticeIds },
+    is_notice: 0,
+    is_finish: 1,
+    company_id,
+  }
+  const rows = await SubProductNotice.findAll({
+    where,
+    attributes: ['id', 'notice'],
+    order: [['id', 'ASC']]
+  })
+  const fromData = rows.map(e => e.toJSON())
+
+  res.json({ data: formatArrayTime(fromData), code: 200 });
+})
+router.get('/workQrCode', authMiddleware, async (req, res) => {
+  const { notice_id } = req.query;
+  const { company_id } = req.user;
+
+  const notice = await SubProductNotice.findByPk(notice_id)
+  if(!notice) return res.json({ code: 401, message: '订单完结或其他未知情况，请检查！' })
+
+  const rows = await SubProgressBase.findAll({
     where: {
       is_deleted: 1,
-      notice_id: { [Op.notIn]: noticeIds },
+      notice_id,
       company_id,
-      ...wheres
     },
-    attributes: ['id', 'notice_id', 'notice_number', 'delivery_time', 'product_id', 'product_code', 'product_name', 'product_drawing', 'part_id', 'part_code', 'part_name', 'bom_id', 'out_number'],
+    attributes: ['id', 'notice_id', 'out_number', 'product_id', 'product_code', 'product_name', 'drawing', 'part_id', 'part_code', 'part_name', 'bom_id'],
     include: [
+      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice', 'delivery_time'] },
       {
         model: SubProcessBom,
         as: 'bom',
@@ -288,7 +308,7 @@ router.get('/workOrder', authMiddleware, async (req, res) => {
   })
   const fromData = rows.map(e => e.toJSON())
 
-  res.json({ data: formatArrayTime(fromData), code: 200 });
+  res.json({ code: 200, data: fromData })
 })
 
 // 移动端移动端报工单获取数据
@@ -297,25 +317,38 @@ router.get('/mobile_process_bom', EmployeeAuth, async (req, res) => {
   const { company_id: companyId } = req.user
   if(company_id != companyId) return res.json({ message: '数据出错，请检查正确的地址或二维码', code: 401 })
 
-  const result = await SubProcessBomChild.findByPk(id, {
+  const work = await SubProgressWork.findOne({
+    where: {
+      child_id: id,
+      company_id
+    },
+    attributes: ['id', 'progress_id', 'notice_id', 'bom_id', 'child_id', 'all_work_time', 'load', 'finish', 'order_number'],
     include: [
       {
-        model: SubProcessBom,
-        as: 'parent',
-        attributes: ['id', 'product_id', 'part_id'],
+        model: SubProcessBomChild,
+        as: 'children',
+        attributes: ['id', 'process_id', 'time', 'price', 'points'],
         include: [
-          { model: SubProductionProgress, as: 'production', attributes: ['id', 'out_number', 'notice_id'], include: [{ model: SubProductNotice, as: 'notice', attributes: ['id', 'delivery_time'] }] }, 
-          { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing'] },
-          { model: SubPartCode, as: 'part', attributes: ['id', 'part_code', 'part_name'] }
+          { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
         ]
       },
-      { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] }
     ]
   })
-  if(!result) return res.json({ message: '数据出错，请检查正确的地址或二维码', code: 401 })
-  const dataValue = result.toJSON()
+  if(!work) return res.json({ code: 401, message: '数据出错，请联系管理员' })
+  const workResult = work.toJSON()
 
-  res.json({ data: formatObjectTime(dataValue), code: 200 });
+  const progress = await SubProgressBase.findOne({
+    where: {
+      id: workResult.progress_id
+    },
+    attributes: ['id', 'product_id', 'product_code', 'product_name', 'drawing', 'notice_id', 'sale_id', 'part_id', 'part_code', 'part_name', 'bom_id', 'out_number'],
+    include: [
+      { model: SubProductNotice, as: 'notice', attributes: ['id', 'delivery_time'] }
+    ]
+  })
+  const progressResult = progress.toJSON()
+
+  res.json({ code: 200, data: { work: workResult, progress: progressResult } })
 })
 // 移动端报工单
 router.post('/mobile_work_order', EmployeeAuth, async (req, res) => {
@@ -327,12 +360,11 @@ router.post('/mobile_work_order', EmployeeAuth, async (req, res) => {
 
   if(!quantity || quantity <= 0) return res.json({ message: '数量输入错误，请重新输入', code: 401 })
 
-  const result = await SubProcessBomChild.findByPk(id)
-  const dataValue = result.toJSON()
+  const dataValue = await SubProgressWork.findByPk(id)
 
-  dataValue.add_finish = dataValue.add_finish ? PreciseMath.add(dataValue.add_finish, quantity) : quantity
+  dataValue.finish = dataValue.finish ? PreciseMath.add(dataValue.finish, quantity) : quantity
   dataValue.order_number = PreciseMath.sub(dataValue.order_number, quantity)
-  dataValue.all_time = (dataValue.order_number * dataValue.time).toFixed(1)
+  dataValue.all_work_time = (dataValue.order_number * dataValue.time).toFixed(1)
 
   await SubRateWage.create({ 
     company_id: companyId,
@@ -344,10 +376,10 @@ router.post('/mobile_work_order', EmployeeAuth, async (req, res) => {
     process_id 
   })
 
-  const resData = await SubProcessBomChild.update({
-    add_finish: dataValue.add_finish,
+  const resData = await SubProgressWork.update({
+    finish: dataValue.finish,
     order_number: dataValue.order_number,
-    all_time: dataValue.all_time
+    all_work_time: dataValue.all_work_time
   }, { where: { id } })
 
   await SubOperationHistory.create({

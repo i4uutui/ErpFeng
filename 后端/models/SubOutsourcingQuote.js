@@ -62,20 +62,25 @@ const SubOutsourcingQuote = sequelize.define('SubOutsourcingQuote', {
     allowNull: true,
     comment: ' 交易币别 '
   },
-  other_transaction_terms: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    comment: ' 交易条件 '
-  },
-  ment: {
+  condition: {
     type: DataTypes.STRING(255),
     allowNull: true,
-    comment: ' 加工要求 '
+    comment: '交易条件'
   },
-  remarks: {
-    type: DataTypes.TEXT,
+  other_transaction_terms: {
+    type: DataTypes.STRING(5),
     allowNull: true,
-    comment: ' 备注 '
+    comment: '结算周期'
+  },
+  // ment: {
+  //   type: DataTypes.STRING(255),
+  //   allowNull: true,
+  //   comment: ' 加工要求 '
+  // },
+  other_text: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    comment: '其它结算周期'
   },
   is_deleted: {
     type: DataTypes.INTEGER(1),

@@ -4,6 +4,7 @@ import request from '@/utils/request';
 import { reportOperationLog } from '@/utils/log';
 import { getItem } from '@/assets/js/storage';
 import { getPageHeight } from '@/utils/tool';
+import HeadForm from '@/components/form/HeadForm';
 
 export default defineComponent({
   setup(){
@@ -163,26 +164,30 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="flex" ref={ formCard }>
-                <ElForm inline={ true } class="cardHeaderFrom">
-                  <ElFormItem v-permission={ 'ProcessCode:add' }>
-                    <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-                      新增工艺编码
-                    </ElButton>
-                  </ElFormItem>
-                </ElForm>
-                <ElForm inline={ true } class="cardHeaderFrom">
-                  <ElFormItem label="工艺编码：">
-                    <ElInput v-model={ search.value.code } placeholder="请输入工艺编码" />
-                  </ElFormItem>
-                  <ElFormItem label="工艺名称：">
-                    <ElInput v-model={ search.value.name } placeholder="请输入工艺名称" />
-                  </ElFormItem>
-                  <ElFormItem>
-                    <ElButton style="margin-top: -5px" type="primary" onClick={ fetchProductList }>查询</ElButton>
-                  </ElFormItem>
-                </ElForm>
-              </div>
+              <HeadForm headerWidth="150px" ref={ formCard }>
+                {{
+                  left: () => (
+                    <ElFormItem v-permission={ 'ProcessCode:add' }>
+                      <ElButton type="primary" onClick={ handleAdd }>新增工艺编码</ElButton>
+                    </ElFormItem>
+                  ),
+                  center: () => (
+                    <>
+                      <ElFormItem label="工艺编码：">
+                        <ElInput v-model={ search.value.code } placeholder="请输入工艺编码" />
+                      </ElFormItem>
+                      <ElFormItem label="工艺名称：">
+                        <ElInput v-model={ search.value.name } placeholder="请输入工艺名称" />
+                      </ElFormItem>
+                    </>
+                  ),
+                  right: () => (
+                    <ElFormItem>
+                      <ElButton type="primary" onClick={ fetchProductList }>查询</ElButton>
+                    </ElFormItem>
+                  )
+                }}
+              </HeadForm>
             ),
             default: () => (
               <>

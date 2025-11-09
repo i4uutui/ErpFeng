@@ -114,7 +114,7 @@ router.get('/supplier_info', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.post('/supplier_info', authMiddleware, async (req, res) => {
-  const { supplier_code, supplier_abbreviation, contact_person, contact_information, supplier_full_name, supplier_address, supplier_category, supply_method, transaction_method, transaction_currency, other_transaction_terms } = req.body;
+  const { supplier_code, supplier_abbreviation, contact_person, contact_information, supplier_full_name, supplier_address, supplier_category, supply_method, transaction_method, transaction_currency, other_transaction_terms, other_text } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -129,7 +129,7 @@ router.post('/supplier_info', authMiddleware, async (req, res) => {
   }
   
   const result = await SubSupplierInfo.create({
-    supplier_code, supplier_abbreviation, contact_person, contact_information, supplier_full_name, supplier_address, supplier_category, supply_method, transaction_method, transaction_currency, other_transaction_terms, company_id,
+    supplier_code, supplier_abbreviation, contact_person, contact_information, supplier_full_name, supplier_address, supplier_category, supply_method, transaction_method, transaction_currency, other_transaction_terms, other_text, company_id,
     user_id: userId
   })
 
@@ -182,7 +182,7 @@ router.post('/supplier_info', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.put('/supplier_info', authMiddleware, async (req, res) => {
-  const { supplier_code, supplier_abbreviation, contact_person, contact_information, supplier_full_name, supplier_address, supplier_category, supply_method, transaction_method, transaction_currency, other_transaction_terms, id } = req.body;
+  const { supplier_code, supplier_abbreviation, contact_person, contact_information, supplier_full_name, supplier_address, supplier_category, supply_method, transaction_method, transaction_currency, other_transaction_terms, other_text, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -200,7 +200,7 @@ router.put('/supplier_info', authMiddleware, async (req, res) => {
   }
   
   const updateResult = await SubSupplierInfo.update({
-    supplier_code, supplier_abbreviation, contact_person, contact_information, supplier_full_name, supplier_address, supplier_category, supply_method, transaction_method, transaction_currency, other_transaction_terms, company_id,
+    supplier_code, supplier_abbreviation, contact_person, contact_information, supplier_full_name, supplier_address, supplier_category, supply_method, transaction_method, transaction_currency, other_transaction_terms, other_text, company_id,
     user_id: userId
   }, {
     where: { id }
@@ -246,7 +246,7 @@ router.get('/material_quote', authMiddleware, async (req, res) => {
       is_deleted: 1,
       company_id,
     },
-    attributes: ['id', 'price', 'transaction_currency', 'unit', 'delivery', 'packaging', 'other_transaction_terms', 'invoice', 'created_at'],
+    attributes: ['id', 'price', 'transaction_currency', 'unit', 'delivery', 'packaging', 'condition', 'other_transaction_terms', 'other_text', 'invoice', 'created_at'],
     include: [
       { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name', 'model', 'specification', 'other_features'], where: materialWhere },
       { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_code', 'supplier_abbreviation'], where: supplierWhere },
@@ -318,7 +318,7 @@ router.post('/material_quote', authMiddleware, async (req, res) => {
   const updateData = data.map(e => ({ ...e, company_id, user_id: userId }))
   try {
     await SubMaterialQuote.bulkCreate(updateData, {
-      updateOnDuplicate: ['supplier_id', 'material_id', 'price', 'unit', 'delivery', 'packaging', 'transaction_currency', 'other_transaction_terms', 'invoice']
+      updateOnDuplicate: ['supplier_id', 'material_id', 'price', 'unit', 'delivery', 'packaging', 'transaction_currency', 'condition', 'other_transaction_terms', 'other_text', 'invoice']
     })
 
     res.json({ message: "添加成功", code: 200 });
@@ -366,7 +366,7 @@ router.post('/material_quote', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.put('/material_quote', authMiddleware, async (req, res) => {
-  const { supplier_id, material_id, price, delivery, packaging, transaction_currency, unit, other_transaction_terms, invoice, id } = req.body;
+  const { supplier_id, material_id, price, delivery, packaging, transaction_currency, unit, other_transaction_terms, other_text, invoice, id } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -381,7 +381,7 @@ router.put('/material_quote', authMiddleware, async (req, res) => {
     return res.json({ code: 401, message: '数据出错，请联系管理员' })
   }
   const updateResult = await SubMaterialQuote.update({
-    supplier_id, material_id, price, delivery, packaging, transaction_currency, unit, other_transaction_terms, invoice, company_id,
+    supplier_id, material_id, price, delivery, packaging, transaction_currency, unit, condition, other_transaction_terms, other_text, invoice, company_id,
     user_id: userId
   }, {
     where: { id }
@@ -503,37 +503,41 @@ router.post('/add_material_ment', authMiddleware, async (req, res) => {
     e.status = 0
     return e
   })
-  const result = await SubMaterialMent.bulkCreate(dataValue, {
-    updateOnDuplicate: ['company_id', 'user_id', 'apply_id', 'apply_name', 'apply_time', 'status', 'quote_id', 'material_bom_id', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'price', 'order_number', 'number', 'delivery_time']
-  })
-  const childValue = data.map(e => ({
-    material_bom_id: e.material_bom_id,
-    material_id: e.material_id,
-    is_buy: 1,
-    id: e.material_bom_children_id
-  }))
-  SubMaterialBomChild.bulkCreate(childValue, {
-    updateOnDuplicate: ['is_buy']
-  })
-
-  // 创建审批流程
-  const resData = result.flatMap(e => {
-    const item = e.toJSON()
-    return steps.map(o => {
-      const { id, ...newData } = o;
-      return {
-        ...newData,
-        source_id: item.id, 
-        user_time: null,
-        status: 0,
-      };
+  try {
+    const result = await SubMaterialMent.bulkCreate(dataValue, {
+      updateOnDuplicate: ['company_id', 'user_id', 'apply_id', 'apply_name', 'apply_time', 'status', 'quote_id', 'material_bom_id', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'price', 'order_number', 'number', 'delivery_time']
     })
-  })
-  await SubApprovalUser.bulkCreate(resData, {
-    updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status']
-  })
+    const childValue = data.map(e => ({
+      material_bom_id: e.material_bom_id,
+      material_id: e.material_id,
+      is_buy: 1,
+      id: e.material_bom_children_id
+    }))
+    SubMaterialBomChild.bulkCreate(childValue, {
+      updateOnDuplicate: ['is_buy']
+    })
 
-  res.json({ message: '提交成功', code: 200 });
+    // 创建审批流程
+    const resData = result.flatMap(e => {
+      const item = e.toJSON()
+      return steps.map(o => {
+        const { id, ...newData } = o;
+        return {
+          ...newData,
+          source_id: item.id, 
+          user_time: null,
+          status: 0,
+        };
+      })
+    })
+    await SubApprovalUser.bulkCreate(resData, {
+      updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status']
+    })
+
+    res.json({ message: '提交成功', code: 200 });
+  } catch (error) {
+    console.log(error);
+  }
 })
 /**
  * @swagger

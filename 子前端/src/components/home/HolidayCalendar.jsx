@@ -94,28 +94,30 @@ export default defineComponent({
     };
     // 头部渲染函数
     const renderHeader = () => (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 16px' }}>
-        <div>年份：</div>
-        <ElSelect v-model={selectedYear.value} placeholder="选择年份" style={{ width: '120px' }} >
-          {years.map(year => ( <ElOption key={year} label={`${year}年`} value={year} /> ))}
-        </ElSelect>
-        <div style={{ paddingLeft: '10px' }}>月份：</div>
-        <ElSelect v-model={selectedMonth.value} placeholder="选择月份" style={{ width: '100px' }} >
-          {months.map(month => ( <ElOption key={month} label={`${month}月`} value={month} /> ))}
-        </ElSelect>
-        {hasPermission ? 
-          <ElButton type="primary" style={{ marginLeft: '10px' }} loading={loading.value} onClick={() => onHandleForm()}>
-            提交
-          </ElButton> : ''
-        }
-        
+      <div class="flex row-between w100">
+        <div class="f16">假期预排</div>
+        <div class="flex">
+          <div>年份：</div>
+          <ElSelect v-model={selectedYear.value} placeholder="选择年份" style={{ width: '120px' }} >
+            {years.map(year => ( <ElOption key={year} label={`${year}年`} value={year} /> ))}
+          </ElSelect>
+          <div style={{ paddingLeft: '10px' }}>月份：</div>
+          <ElSelect v-model={selectedMonth.value} placeholder="选择月份" style={{ width: '100px' }} >
+            {months.map(month => ( <ElOption key={month} label={`${month}月`} value={month} /> ))}
+          </ElSelect>
+          {hasPermission ? 
+            <ElButton type="primary" style={{ marginLeft: '10px' }} loading={loading.value} onClick={() => onHandleForm()}>
+              提交
+            </ElButton> : ''
+          }
+          
+        </div>
       </div>
     );
     
     return () => (
-      // 假期预排
       <ElCard shadow="always" bodyStyle={{ width: '100%', height: '500px' }}>
-        <ElCalendar v-model={selectedDate.value}>
+        <ElCalendar v-model={selectedDate.value} class="home-calendar">
           {{
             header: () => renderHeader(),
             'date-cell': ({ data }) => {

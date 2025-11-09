@@ -2,6 +2,7 @@ import { defineComponent, ref, onMounted, reactive, nextTick } from 'vue'
 import request from '@/utils/request';
 import router from '@/router';
 import { filterMenu, getPageHeight } from '@/utils/tool';
+import HeadForm from '@/components/form/HeadForm';
 
 export default defineComponent({
   setup(){
@@ -109,24 +110,32 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <ElForm inline={ true } ref={ formCard }>
-                <ElFormItem label="操作人名称">
-                  <ElSelect v-model={ user_id.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择操作类型">
-                    {userList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
-                  </ElSelect>
-                </ElFormItem>
-                <ElFormItem label="操作类型">
-                  <ElSelect v-model={ type.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择操作类型">
-                    {Object.entries(typeValue).map(([key, value]) => <ElOption value={ key } label={ value } key={ key } />)}
-                  </ElSelect>
-                </ElFormItem>
-                <ElFormItem label="操作模块">
-                  <ElCascader v-model={ module.value } options={ options.value } props={ props } placeholder="请选择操作类型" clearable show-all-levels={ false } filterable onChange={ (value) => changeCascader(value) }></ElCascader>
-                </ElFormItem>
-                <ElFormItem>
-                  <ElButton type="primary" onClick={ () => fetchAdminList() }>查询</ElButton>
-                </ElFormItem>
-              </ElForm>
+              <HeadForm headerWidth="270px" ref={ formCard }>
+                {{
+                  center: () => (
+                    <>
+                      <ElFormItem label="操作人名称">
+                        <ElSelect v-model={ user_id.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择操作类型">
+                          {userList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                        </ElSelect>
+                      </ElFormItem>
+                      <ElFormItem label="操作类型">
+                        <ElSelect v-model={ type.value } multiple={false} filterable remote remote-show-suffix clearable valueKey="id" placeholder="请选择操作类型">
+                          {Object.entries(typeValue).map(([key, value]) => <ElOption value={ key } label={ value } key={ key } />)}
+                        </ElSelect>
+                      </ElFormItem>
+                      <ElFormItem label="操作模块">
+                        <ElCascader v-model={ module.value } options={ options.value } props={ props } placeholder="请选择操作类型" clearable show-all-levels={ false } filterable onChange={ (value) => changeCascader(value) }></ElCascader>
+                      </ElFormItem>
+                    </>
+                  ),
+                  right: () => (
+                    <ElFormItem>
+                      <ElButton type="primary" onClick={ () => fetchAdminList() }>查询</ElButton>
+                    </ElFormItem>
+                  )
+                }}
+              </HeadForm>
             ),
             default: () => (
               <>

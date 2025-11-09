@@ -122,7 +122,7 @@ router.get('/outsourcing_quote', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.post('/add_outsourcing_quote', authMiddleware, async (req, res) => {
-  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, other_transaction_terms, ment, remarks } = req.body;
+  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, condition, other_transaction_terms, other_text } = req.body;
   const { id: userId, company_id } = req.user;
   
   const notice = await SubProductNotice.findOne({
@@ -140,7 +140,7 @@ router.post('/add_outsourcing_quote', authMiddleware, async (req, res) => {
   
   try {
     await SubOutsourcingQuote.create({
-      notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, number, transaction_currency, other_transaction_terms, ment, remarks, company_id,
+      notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, number, transaction_currency, condition, other_transaction_terms, other_text, company_id,
       user_id: userId,
       now_price: price,
     })
@@ -193,11 +193,11 @@ router.post('/add_outsourcing_quote', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.put('/outsourcing_quote', authMiddleware, async (req, res) => {
-  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, other_transaction_terms, ment, remarks, status, now_price, id } = req.body;
+  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, condition, other_transaction_terms, other_text, status, now_price, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   const updateResult = await SubOutsourcingQuote.update({
-    notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, other_transaction_terms, ment, remarks, status, now_price, company_id,
+    notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, condition, other_transaction_terms, other_text, status, now_price, company_id,
     user_id: userId
   }, {
     where: {

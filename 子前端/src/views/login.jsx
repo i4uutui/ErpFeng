@@ -5,6 +5,7 @@ import { setItem } from '@/assets/js/storage';
 import request from '@/utils/request';
 import "@/assets/css/login.css"
 import { reportOperationLog } from '@/utils/log';
+import logoImg from '@/assets/images/logo.png'
 
 export default defineComponent({
   setup(){
@@ -47,7 +48,8 @@ export default defineComponent({
     return() => (
       <div class="login-container">
         <div class="login-wrapper">
-          <div class="login-logo">管理系统</div>
+          <div class="login-logo"><img src={ logoImg } alt="" /></div>
+          <div class="login-title">元方易捷 - 全栈式企业数字化管理平台</div>
           <ElForm ref={ loginFormRef } model={ loginForm } rules={ loginRules } label-width="0" class="login-form">
             <ElFormItem prop="username">
               <ElInput v-model={ loginForm.username } prefix-icon={ UserFilled } placeholder="用户名" />

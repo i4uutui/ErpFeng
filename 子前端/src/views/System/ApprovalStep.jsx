@@ -83,7 +83,7 @@ export default defineComponent({
           {{
             default: () => (
               <ElCard bodyStyle={{ height: "calc(100vh - 198px)" }}>
-                <ElForm ref="formRef" model={ form.value } label-width="120px">
+                <ElForm ref="formRef" model={ form.value } label-width="120px" style={{ height: '100%' }}>
                   <ElFormItem label="业务类型" prop="source_type">
                     <ElSelect v-model={ form.value.source_type } style={{ width: '150px' }} onChange={ (row) => sourceChange(row) }>
                       <ElOption label="采购单" value="purchase_order" />
@@ -95,8 +95,8 @@ export default defineComponent({
                     <ElButton type="primary" onClick={ () => submitForm() }>保存配置</ElButton>
                   </ElFormItem>
 
-                  <ElFormItem label="审批步骤">
-                    <ElTable data={ form.value.steps } border style={{ marginTop: "10px" }}>
+                  <ElFormItem label="审批步骤" style={{ height: 'calc(100% - 50px)' }}>
+                    <ElTable data={ form.value.steps } border height="100%" style={{ marginTop: "10px" }}>
                       <ElTableColumn prop="step" label="步骤" width="80" />
                       <ElTableColumn label="类型" width="120">
                         {({row}) => <span>{ typeValue[row.type] }</span>}
