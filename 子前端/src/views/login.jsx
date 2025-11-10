@@ -52,10 +52,10 @@ export default defineComponent({
           <div class="login-title">元方易捷 - 全栈式企业数字化管理平台</div>
           <ElForm ref={ loginFormRef } model={ loginForm } rules={ loginRules } label-width="0" class="login-form">
             <ElFormItem prop="username">
-              <ElInput v-model={ loginForm.username } prefix-icon={ UserFilled } placeholder="用户名" />
+              <ElInput v-model={ loginForm.username } prefix-icon={ UserFilled } placeholder="用户名" onKeydown={(e) => e.key === 'Enter' && handleLogin()} />
             </ElFormItem>
             <ElFormItem prop="password">
-              <ElInput v-model={ loginForm.password } prefixIcon={ Key } type="password" placeholder="密码" />
+              <ElInput v-model={ loginForm.password } prefixIcon={ Key } type="password" placeholder="密码" onKeydown={(e) => e.key === 'Enter' && handleLogin()} />
             </ElFormItem>
             <ElFormItem>
               <ElButton type="primary" onClick={ handleLogin } class="w-full" style={{ width: "100%" }}>

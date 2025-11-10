@@ -5,6 +5,12 @@ import "@/assets/css/landscape.scss"
 import { getPageHeight } from '@/utils/tool';
 import html2pdf from 'html2pdf.js';
 import WinPrint from '@/components/print/winPrint';
+// import { exportPDF } from '@/utils/exportPDF';
+
+// import { jsPDF } from "jspdf";
+// import  { applyPlugin } from 'jspdf-autotable'
+// applyPlugin ( jsPDF )
+// import { arial } from '@/utils/font/arial.js';
 
 export default defineComponent({
   setup(){
@@ -22,27 +28,6 @@ export default defineComponent({
     let printers = ref([]) //打印机列表
     let printVisible = ref(false)
     let printDataIds = ref([]) // 需要打印的数据的id
-
-    // const printObj = ref({
-    //   id: "printTable", // 这里是要打印元素的ID
-    //   popTitle: "派工单", // 打印的标题
-    //   // preview: true, // 是否启动预览模式，默认是false
-    //   zIndex: 20003, // 预览窗口的z-index，默认是20002，最好比默认值更高
-    //   previewBeforeOpenCallback() { console.log('正在加载预览窗口！'); }, // 预览窗口打开之前的callback
-    //   previewOpenCallback() { console.log('已经加载完预览窗口，预览打开了！') }, // 预览窗口打开时的callback
-    //   beforeOpenCallback(vue) {
-    //     console.log('开始打印之前！')
-    //     isPrint.value = true
-    //   }, // 开始打印之前的callback
-    //   openCallback(vue) {
-    //     console.log('监听到了打印窗户弹起了！')
-    //   }, // 调用打印时的callback
-    //   closeCallback() {
-    //     console.log('关闭了打印工具！')
-    //     isPrint.value = false
-    //   }, // 关闭打印的callback(点击弹窗的取消和打印按钮都会触发)
-    //   clickMounted() { console.log('点击v-print绑定的按钮了！') },
-    // })
 
     onMounted(() => {
       nextTick(async () => {
@@ -69,10 +54,22 @@ export default defineComponent({
       if(!list.length) return ElMessage.error('请选择需要打印的数据')
 
       const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
+
+      // const doc = new jsPDF()
+      // doc.addFileToVFS("../../utils/font/arial.ttf", arial);
+      // doc.addFont("../../utils/font/arial.ttf", "arial", "normal");
+      // doc.setFont('arial');
+      // doc.autoTable( { html : '#print-table' } ) 
+      // doc.save ( 'table.pdf' )
+
+
+
       // const dataUrl = await exportPDF(printTable.innerHTML)
       // setPdfBlobUrl.value = dataUrl
       // printVisible.value = true
       // return
+
+
       const opt = {
         margin: 10,
         filename: 'workOrder.pdf',

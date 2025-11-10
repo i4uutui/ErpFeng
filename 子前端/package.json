@@ -17,6 +17,8 @@
     "element-plus": "^2.11.5",
     "html-to-pdfmake": "^2.5.32",
     "html2pdf.js": "^0.12.1",
+    "jspdf": "^3.0.3",
+    "jspdf-autotable": "^5.0.2",
     "pdfmake": "^0.2.20",
     "pinia": "^3.0.1",
     "sass": "^1.89.1",

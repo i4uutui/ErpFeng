@@ -1,18 +1,9 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import htmlToPdfmake from "html-to-pdfmake";
-// import arial from './font/arial.ttf'
 
 // 初始化 pdfmake 字体（必须）
 pdfMake.vfs = pdfFonts.default;
-pdfMake.fonts = {
-  arial: {
-    normal: 'https://admin.yuanfangzixun.com.cn/font/arial.ttf',
-    bold: 'https://admin.yuanfangzixun.com.cn/font/arial.ttf',
-    italics: 'https://admin.yuanfangzixun.com.cn/font/arial.ttf',
-    bolditalics: 'https://admin.yuanfangzixun.com.cn/font/arial.ttf',
-  }
-}
 const exportPDF = async tableDom => {
 	if (!tableDom) {
 		alert("未找到表格DOM，请检查id是否正确");
