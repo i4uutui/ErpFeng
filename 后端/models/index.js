@@ -109,6 +109,7 @@ SubRateWage.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
 SubRateWage.belongsTo(SubProcessCode, { foreignKey: 'process_id', as: 'process' })
 SubRateWage.belongsTo(SubProcessBomChild, { foreignKey: 'bom_child_id', as: 'bomChildren' })
 SubRateWage.belongsTo(SubEmployeeInfo, { foreignKey: 'user_id', as: 'menber' })
+SubRateWage.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
 
 SubWarehouseApply.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
 SubWarehouseApply.belongsTo(SubNoEncoding, { foreignKey: 'print_id', as: 'print' })

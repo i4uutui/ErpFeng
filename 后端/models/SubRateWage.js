@@ -39,6 +39,11 @@ const SubRateWage = sequelize.define('SubRateWage', {
     allowNull: false,
     comment: '工艺id'
   },
+  notice_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: '生产订单id'
+  },
   number: {
     type: DataTypes.INTEGER(11),
     allowNull: false,

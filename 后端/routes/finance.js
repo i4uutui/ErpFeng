@@ -41,8 +41,9 @@ router.post('/rate_wage', authMiddleware, async (req, res) => {
   if(cycle_id) whereObj.cycle_id = { [Op.like]: `%${cycle_id}%` }
   const { count, rows } = await SubRateWage.findAndCountAll({
     where,
-    attributes: ['id', 'bom_child_id', 'product_id', 'part_id', 'process_id', 'number'],
+    attributes: ['id', 'bom_child_id', 'product_id', 'part_id', 'process_id', 'number', 'created_at', 'notice_id'],
     include: [
+      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice'] },
       { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing'] },
       { model: SubPartCode, as: 'part', attributes: ['id', 'part_code', 'part_name'] },
       { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },

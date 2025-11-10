@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>报工单</title>
+  <title>派(报)工单</title>
   <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script src="https://unpkg.com/axios@1.9.0/dist/axios.min.js"></script>
@@ -111,7 +111,7 @@
 
     <!-- 移动端内容 -->
     <div class="mobile-container" v-else>
-      <div class="title">报工单</div>
+      <div class="title">派(报)工单</div>
       <div class="data-item">
         <div class="flex item">
           <div class="label">产品编码</div>
@@ -216,7 +216,9 @@
             company_id: this.urlData.company_id,
             product_id: this.progress.product_id,
             part_id: this.progress.part_id,
-            process_id: this.work.children.process_id
+            process_id: this.work.children.process_id,
+            bom_child_id: this.work.child_id,
+            notice_id: this.progress.notice_id
           }, {
             headers: this.headers
           }).then(res => {

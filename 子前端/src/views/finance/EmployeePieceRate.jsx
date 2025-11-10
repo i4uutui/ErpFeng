@@ -107,7 +107,7 @@ export default defineComponent({
                   <ElTableColumn prop="menber.name" label="员工姓名" />
                   <ElTableColumn prop="menber.cycle.name" label="所属部门" />
                   <ElTableColumn prop="created_at" label="生产日期" width="120" />
-                  <ElTableColumn prop="bomChildren.notice" label="生产单号" />
+                  <ElTableColumn prop="notice.notice" label="生产单号" />
                   <ElTableColumn prop="product.product_code" label="产品编码" />
                   <ElTableColumn prop="product.product_name" label="产品名称" />
                   <ElTableColumn prop="part.part_code" label="部件编码" />

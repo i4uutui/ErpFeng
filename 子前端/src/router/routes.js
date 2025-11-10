@@ -426,7 +426,7 @@ const routes = [
         name: 'WorkOrder',
         component: () => import('@/views/Production/WorkOrder.jsx'),
         meta: {
-          title: '派工单',
+          title: '派(报)工单',
           parent: '生产管理',
           menu: true,
           buttons: [

@@ -10,10 +10,10 @@ export default defineComponent({
 
     onMounted(async () => {
       // 获取最近一年的日期
-      const today = dayjs()
-      const lastYearStart = today.subtract(1, 'year').startOf('day').format('YYYY-MM-DD HH:mm:ss')
-      const lastYearEnd = today.endOf('day').format('YYYY-MM-DD HH:mm:ss')
-      dateTime.value = [lastYearStart, lastYearEnd]
+      const currentDate = dayjs()
+      const firstDay = currentDate.startOf('month').format('YYYY-MM-DD HH:mm:ss');
+      const lastDay = currentDate.endOf('month').format('YYYY-MM-DD HH:mm:ss');
+      dateTime.value = [firstDay, lastDay]
       
       getOrderTotal()
     });

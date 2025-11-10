@@ -285,7 +285,7 @@ router.get('/workQrCode', authMiddleware, async (req, res) => {
       {
         model: SubProcessBom,
         as: 'bom',
-        attributes: ['id'],
+        attributes: ['id', 'sort'],
         include: [
           {
             model: SubProcessBomChild,
@@ -304,7 +304,7 @@ router.get('/workQrCode', authMiddleware, async (req, res) => {
         ]
       },
     ],
-    order: [['created_at', 'DESC']],
+    order: [['bom', 'sort', 'ASC']],
   })
   const fromData = rows.map(e => e.toJSON())
 
@@ -352,7 +352,7 @@ router.get('/mobile_process_bom', EmployeeAuth, async (req, res) => {
 })
 // 移动端报工单
 router.post('/mobile_work_order', EmployeeAuth, async (req, res) => {
-  const { number, id, company_id, product_id, part_id, process_id } = req.body
+  const { number, id, company_id, product_id, part_id, process_id, bom_child_id, notice_id } = req.body
   const { company_id: companyId, id: userId, name } = req.user
   if(company_id != companyId) return res.json({ message: '数据出错，请检查正确的地址或二维码', code: 401 })
 
@@ -370,10 +370,11 @@ router.post('/mobile_work_order', EmployeeAuth, async (req, res) => {
     company_id: companyId,
     user_id: userId, 
     number, 
-    bom_child_id: id, 
+    bom_child_id: bom_child_id, 
     product_id, 
     part_id, 
-    process_id 
+    process_id,
+    notice_id
   })
 
   const resData = await SubProgressWork.update({
