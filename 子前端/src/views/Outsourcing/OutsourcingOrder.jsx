@@ -20,7 +20,7 @@ export default defineComponent({
       2: '已拒绝'
     })
     const statusList = ref([{ id: 0, name: '待审批' }, { id: 1, name: '已通过' }, { id: 2, name: '已拒绝' }])
-    const approval = getItem('approval').filter(e => e.type == 'material_warehouse')
+    const approval = getItem('approval').filter(e => e.type == 'outsourcing_order')
     const user = getItem('user')
     const nowDate = ref()
     const formRef = ref(null);

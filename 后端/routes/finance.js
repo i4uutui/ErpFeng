@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { SubRateWage, Op, SubProductCode, SubPartCode, SubProcessCode, SubProcessBomChild, SubEmployeeInfo, SubWarehouseApply, SubNoEncoding, SubMaterialMent, SubSaleOrder, SubOutsourcingOrder, SubProductNotice, SubProcessBom, SubProcessCycle, SubSupplierInfo, SubCustomerInfo } = require('../models')
+const { SubRateWage, Op, SubProductCode, SubPartCode, SubProcessCode, SubProcessBomChild, SubEmployeeInfo, SubWarehouseApply, SubNoEncoding, SubMaterialMent, SubSaleOrder, SubOutsourcingOrder, SubProductNotice, SubProcessBom, SubProcessCycle, SubSupplierInfo, SubCustomerInfo, SubProgressBase, SubProgressWork } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
+const { PreciseMath } = require('../middleware/tool')
 
 /**
  * @swagger
@@ -41,7 +42,7 @@ router.post('/rate_wage', authMiddleware, async (req, res) => {
   if(cycle_id) whereObj.cycle_id = { [Op.like]: `%${cycle_id}%` }
   const { count, rows } = await SubRateWage.findAndCountAll({
     where,
-    attributes: ['id', 'bom_child_id', 'product_id', 'part_id', 'process_id', 'number', 'created_at', 'notice_id'],
+    attributes: ['id', 'bom_child_id', 'product_id', 'part_id', 'process_id', 'number', 'created_at', 'notice_id', 'status', 'progress_id'],
     include: [
       { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice'] },
       { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing'] },
@@ -76,6 +77,65 @@ router.post('/rate_wage', authMiddleware, async (req, res) => {
     code: 200 
   });
 });
+
+/**
+ * @swagger
+ * /api/rateWageConfirm:
+ *   post:
+ *     summary: 员工工资确认按钮
+ *     tags:
+ *       - 财务管理(Finance)
+ *     parameters:
+ *       - name: status
+ *         schema:
+ *           type: int
+ */
+router.post('/rateWageConfirm', authMiddleware, async (req, res) => {
+  const { status, id } = req.body
+  const { company_id } = req.user
+
+  const result = await SubRateWage.update({ status }, { where: { id, company_id } })
+
+  res.json({ code: 200, message: '操作成功' })
+})
+/**
+ * @swagger
+ * /api/decreaseNumber:
+ *   post:
+ *     summary: 修改员工递减数量
+ *     tags:
+ *       - 财务管理(Finance)
+ *     parameters:
+ *       - name: status
+ *         schema:
+ *           type: int
+ */
+router.post('/decreaseNumber', authMiddleware, async (req, res) => {
+  const { id, progress_id, bom_child_id, sub_number } = req.body
+
+  if(!sub_number) return res.json({ code: 401, message: '数量不能为空' })
+
+  const rateWage = await SubRateWage.findByPk(id)
+  const progress = await SubProgressWork.findOne({
+    where: {
+      progress_id,
+      child_id: bom_child_id
+    }
+  })
+  const rateWageData = rateWage.toJSON()
+  const progressData = progress.toJSON()
+  
+  const subNumber = Number(sub_number)
+
+  const remain = PreciseMath.sub(Number(rateWageData.number), subNumber)
+  rateWage.update({ number: remain }, { where: { id } })
+
+  const finish = PreciseMath.sub(progressData.finish, subNumber)
+  const order_number = PreciseMath.add(progressData.order_number, subNumber)
+  SubProgressWork.update({ finish, order_number }, { where: { progress_id, child_id: bom_child_id } })
+
+  res.json({ code: 200, message: '修改成功' })
+})
 
 /**
  * @swagger

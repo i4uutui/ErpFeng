@@ -97,8 +97,8 @@
           axios.post(`${this.api}/api/employee_info_login`, this.form).then(res => {
             if(res.data.code == 200){
               const data = res.data
-              localStorage.setItem('token', data.token)
-              localStorage.setItem('workUser', JSON.stringify(data.data))
+              sessionStorage.setItem('token', data.token)
+              sessionStorage.setItem('workUser', JSON.stringify(data.data))
               const loginUrl = `${window.location.origin}/workSubmit.html?id=${that.urlData.id}&company_id=${that.urlData.company_id}`
               window.location.replace(loginUrl)
             }else{

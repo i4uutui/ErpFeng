@@ -343,7 +343,7 @@ router.get('/mobile_process_bom', EmployeeAuth, async (req, res) => {
     },
     attributes: ['id', 'product_id', 'product_code', 'product_name', 'drawing', 'notice_id', 'sale_id', 'part_id', 'part_code', 'part_name', 'bom_id', 'out_number'],
     include: [
-      { model: SubProductNotice, as: 'notice', attributes: ['id', 'delivery_time'] }
+      { model: SubProductNotice, as: 'notice', attributes: ['id', 'delivery_time', 'notice'] }
     ]
   })
   const progressResult = progress.toJSON()
@@ -352,7 +352,7 @@ router.get('/mobile_process_bom', EmployeeAuth, async (req, res) => {
 })
 // 移动端报工单
 router.post('/mobile_work_order', EmployeeAuth, async (req, res) => {
-  const { number, id, company_id, product_id, part_id, process_id, bom_child_id, notice_id } = req.body
+  const { number, id, company_id, product_id, part_id, process_id, bom_child_id, notice_id, progress_id } = req.body
   const { company_id: companyId, id: userId, name } = req.user
   if(company_id != companyId) return res.json({ message: '数据出错，请检查正确的地址或二维码', code: 401 })
 
@@ -374,7 +374,8 @@ router.post('/mobile_work_order', EmployeeAuth, async (req, res) => {
     product_id, 
     part_id, 
     process_id,
-    notice_id
+    notice_id,
+    progress_id
   })
 
   const resData = await SubProgressWork.update({

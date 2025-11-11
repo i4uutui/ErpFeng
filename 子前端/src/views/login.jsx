@@ -5,7 +5,8 @@ import { setItem } from '@/assets/js/storage';
 import request from '@/utils/request';
 import "@/assets/css/login.css"
 import { reportOperationLog } from '@/utils/log';
-import logoImg from '@/assets/images/logo.png'
+import logo from '@/assets/images/logo.png'
+import yun from '@/assets/images/yun.png'
 
 export default defineComponent({
   setup(){
@@ -48,8 +49,11 @@ export default defineComponent({
     return() => (
       <div class="login-container">
         <div class="login-wrapper">
-          <div class="login-logo"><img src={ logoImg } alt="" /></div>
-          <div class="login-title">元方易捷 - 全栈式企业数字化管理平台</div>
+          <div class="flex row-center mb50">
+            <img src={ logo } style={{ height: "60px", width: 'auto' }} />
+            <img class="ml20" src={ yun } style={{ height: "60px", width: 'auto' }} />
+          </div>
+          {/* <div class="login-title">企业数字化管理平台</div> */}
           <ElForm ref={ loginFormRef } model={ loginForm } rules={ loginRules } label-width="0" class="login-form">
             <ElFormItem prop="username">
               <ElInput v-model={ loginForm.username } prefix-icon={ UserFilled } placeholder="用户名" onKeydown={(e) => e.key === 'Enter' && handleLogin()} />
@@ -58,8 +62,8 @@ export default defineComponent({
               <ElInput v-model={ loginForm.password } prefixIcon={ Key } type="password" placeholder="密码" onKeydown={(e) => e.key === 'Enter' && handleLogin()} />
             </ElFormItem>
             <ElFormItem>
-              <ElButton type="primary" onClick={ handleLogin } class="w-full" style={{ width: "100%" }}>
-                登录
+              <ElButton type="primary" onClick={ handleLogin } class="w-full" style={{ width: "100%", marginTop: '15px' }}>
+                登　录
               </ElButton>
             </ElFormItem>
           </ElForm>

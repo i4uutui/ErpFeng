@@ -114,6 +114,10 @@
       <div class="title">派(报)工单</div>
       <div class="data-item">
         <div class="flex item">
+          <div class="label">生产单号</div>
+          <div class="value">{{ progress.notice.notice }}</div>
+        </div>
+        <div class="flex item">
           <div class="label">产品编码</div>
           <div class="value">{{ progress.product_code }}</div>
         </div>
@@ -218,7 +222,8 @@
             part_id: this.progress.part_id,
             process_id: this.work.children.process_id,
             bom_child_id: this.work.child_id,
-            notice_id: this.progress.notice_id
+            notice_id: this.progress.notice_id,
+            progress_id: this.progress.id
           }, {
             headers: this.headers
           }).then(res => {
@@ -235,7 +240,7 @@
             ElMessage.error(res.data.message)
           }
           if(data.code == 402){
-            localStorage.clear()
+            sessionStorage.clear()
             const loginUrl = `${window.location.origin}/waiteLogin.html?id=${this.id}&company_id=${this.urlData.company_id}`
             window.location.replace(loginUrl)
           }
@@ -266,14 +271,14 @@
 
         const data = this.getParams(window.location.href);
 
-        const token = localStorage.getItem('token')
+        const token = sessionStorage.getItem('token')
         if(!token){
           const loginUrl = `${window.location.origin}/waiteLogin.html?id=${data.id}&company_id=${data.company_id}`
           window.location.replace(loginUrl)
           return
         }
         this.headers.Authorization = token
-        this.user = JSON.parse(localStorage.getItem('workUser'))
+        this.user = JSON.parse(sessionStorage.getItem('workUser'))
         this.urlData = data
         if(!data.id) return
         this.id = data.id

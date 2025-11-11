@@ -508,7 +508,11 @@ const routes = [
         meta: {
           title: '员工计件工资',
           parent: '财务管理',
-          menu: true
+          menu: true,
+          buttons: [
+            { code: 'pieceRate:confirm', label: '确认' },
+            { code: 'pieceRate:edit', label: '修改' },
+          ]
         }
       },
       {

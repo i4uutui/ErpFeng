@@ -42,7 +42,7 @@ export default defineComponent({
         { required: true, message: '请输入采购数量', trigger: 'blur' }
       ]
     })
-    const approval = getItem('approval').filter(e => e.type == 'material_warehouse')
+    const approval = getItem('approval').filter(e => e.type == 'purchase_order')
     let dialogVisible = ref(false)
     let form = ref({
       quote_id: '',
@@ -268,8 +268,8 @@ export default defineComponent({
     // 权限用户处理反审批接口
     const handleBackApproval = (row) => {
       ElMessageBox.confirm('是否确认反审批？', '提示', {
-        confirmButtonText: '通过',
-        cancelButtonText: '拒绝',
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
         type: 'warning',
         distinguishCancelAndClose: true,
       }).then(async () => {

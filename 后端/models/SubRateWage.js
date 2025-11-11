@@ -44,10 +44,21 @@ const SubRateWage = sequelize.define('SubRateWage', {
     allowNull: false,
     comment: '生产订单id'
   },
+  progress_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
+    comment: '进度表id'
+  },
   number: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
     comment: '完成数量'
+  },
+  status: {
+    type: DataTypes.INTEGER(2),
+    allowNull: false,
+    defaultValue: 0,
+    comment: '状态，0未确认，1已确认'
   },
 }, {
   sequelize,

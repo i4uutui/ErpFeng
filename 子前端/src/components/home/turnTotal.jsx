@@ -5,14 +5,12 @@ import dayjs from 'dayjs';
 
 export default defineComponent({
   setup() {
-    let dateTime = ref([])
+    let dateTime = ref('')
 
     onMounted(async () => {
       // 获取最近一年的日期
-      const currentDate = dayjs()
-      const firstDay = currentDate.startOf('month').format('YYYY-MM-DD HH:mm:ss');
-      const lastDay = currentDate.endOf('month').format('YYYY-MM-DD HH:mm:ss');
-      dateTime.value = [firstDay, lastDay]
+      const currentDate = dayjs().format('YYYY-MM-DD HH:mm:ss')
+      dateTime.value = currentDate
 
     });
 
@@ -26,8 +24,9 @@ export default defineComponent({
       <ElCard shadow="always" bodyStyle={{ width: '100%', height: '500px', display: 'flex', flexDirection: 'column' }}>
         <div class="flex row-between w100">
           <div class="f16">出勤统计</div>
-          <div style={{ width: '70%', marginRight: '0' }}>
-            <ElDatePicker v-model={ dateTime.value } type="daterange" clearable={ false } range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="YYYY-MM-DD" onChange={ (row) => dateChange(row) } style={{ width: '100%' }} />
+          <div class="flex" style={{ marginRight: '0' }}>
+            <div>日期：</div>
+            <ElDatePicker v-model={ dateTime.value } type="date" clearable={ false } value-format="YYYY-MM-DD" onChange={ (row) => dateChange(row) } style={{ width: '130px' }} />
           </div>
         </div>
         <div class="w100 flex-1">
