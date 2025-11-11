@@ -165,19 +165,27 @@ export default defineComponent({
     }
     // 反审批
     const handleBackApproval = async (row) => {
-      const res = await request.post('/api/approval_backFlow', { id: row.id })
-      if(res.code == 200){
-        ElMessage.success('反审批成功')
-        filterQuery()
+      ElMessageBox.confirm('是否确认反审批？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        cancelButtonClass: 'el-button--warning',
+        type: 'warning',
+        distinguishCancelAndClose: true,
+      }).then(async () => {
+        const res = await request.post('/api/approval_backFlow', { id: row.id })
+        if(res.code == 200){
+          ElMessage.success('反审批成功')
+          filterQuery()
 
-        const str = `{ 仓库：${row.house_name}，${operateValue[row.operate]}方式：${constObj.value[row.type]}，物料编码：${row.code} }`
-        reportOperationLog({
-          operationType: 'backApproval',
-          module: '材料出入库',
-          desc: `反审批了出/入库单：${str}`,
-          data: { newData: row.id }
-        })
-      }
+          const str = `{ 仓库：${row.house_name}，${operateValue[row.operate]}方式：${constObj.value[row.type]}，物料编码：${row.code} }`
+          reportOperationLog({
+            operationType: 'backApproval',
+            module: '材料出入库',
+            desc: `反审批了出/入库单：${str}`,
+            data: { newData: row.id }
+          })
+        }
+      }).catch(() => {})
     }
     // 处理审批
     const approvalApi = async (action, data) => {
@@ -225,8 +233,9 @@ export default defineComponent({
     }
     const handleApprovalDialog = (data) => {
       ElMessageBox.confirm('是否确认审批？', '提示', {
-        confirmButtonText: '同意',
-        cancelButtonText: '拒绝',
+        confirmButtonText: '通过',
+        cancelButtonText: '否绝',
+        cancelButtonClass: 'el-button--warning',
         type: 'warning',
         distinguishCancelAndClose: true,
       }).then(() => {
@@ -281,6 +290,7 @@ export default defineComponent({
       ElMessageBox.confirm('是否确认提交？审批期间不可修改。', '提示', {
         confirmButtonText: '提交',
         cancelButtonText: '取消',
+        cancelButtonClass: 'el-button--warning',
         type: 'warning',
       }).then(() => {
         setApiData(data)

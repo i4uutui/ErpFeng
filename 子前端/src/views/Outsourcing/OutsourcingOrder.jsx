@@ -268,8 +268,9 @@ export default defineComponent({
     // 权限用户处理反审批接口
     const handleBackApproval = async (row) => {
       ElMessageBox.confirm('是否确认反审批？', '提示', {
-        confirmButtonText: '通过',
-        cancelButtonText: '拒绝',
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        cancelButtonClass: 'el-button--warning',
         type: 'warning',
         distinguishCancelAndClose: true,
       }).then(async () => {
@@ -354,7 +355,8 @@ export default defineComponent({
     const handleApprovalDialog = (data) => {
       ElMessageBox.confirm('是否确认审批？', '提示', {
         confirmButtonText: '通过',
-        cancelButtonText: '拒绝',
+        cancelButtonText: '否绝',
+        cancelButtonClass: 'el-button--warning',
         type: 'warning',
         distinguishCancelAndClose: true,
       }).then(() => {

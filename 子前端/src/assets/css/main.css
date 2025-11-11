@@ -57,6 +57,28 @@
 .textButton.el-button--text:not(.is-disabled):hover{
   color: #fd4545;
 }
+/* el-table滚动条样式 */
+.el-scrollbar .el-scrollbar__bar.is-horizontal {
+  height: 6px; /* 添加横向高度 */
+}
+.el-scrollbar .el-scrollbar__bar.is-vertical {
+  width: 6px; /* 添加纵向宽度 */
+}
+/* 横向滚动条 */
+.el-scrollbar .el-scrollbar__bar.is-horizontal .el-scrollbar__thumb {
+  opacity: 1; /* 默认滚动条自带透明度 */
+  height: 6px; /* 横向滑块的宽度 */
+  border-radius: 6px; /* 圆角度数 */
+  background-color: rgba(82, 196, 26, 1); /* 滑块背景色 */
+}
+/* 纵向滚动条 */
+.el-scrollbar .el-scrollbar__bar.is-vertical .el-scrollbar__thumb {
+  opacity: 1;
+  width: 6px; /* 纵向滑块的宽度 */
+  border-radius: 6px;
+  background-color: rgba(82, 196, 26, 1);
+}
+	
 :root{
   --el-fill-color-light: #e7e7e7;
 }
