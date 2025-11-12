@@ -17,6 +17,7 @@ export default defineComponent({
     let invoice = ref([])
     let payTime = ref([])
     let supplyMethod = ref([])
+    let method = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(20);
@@ -44,11 +45,12 @@ export default defineComponent({
     };
     // 获取常量
     const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['invoice', 'supplyMethod', 'payTime'] })
+      const res = await request.post('/api/getConstType', { type: ['invoice', 'supplyMethod', 'payTime', 'payInfo'] })
       if(res.code == 200){
         invoice.value = res.data.filter(o => o.type == 'invoice')
         payTime.value = res.data.filter(o => o.type == 'payTime')
         supplyMethod.value =  res.data.filter(o => o.type == 'supplyMethod')
+        method.value = res.data.filter(o => o.type == 'payInfo')
       }
     }
     // 分页相关
@@ -117,7 +119,9 @@ export default defineComponent({
                     {({row}) => <span>{ supplyMethod.value.find(e => e.id == row.delivery)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn prop="packaging" label="包装要求" width="100" />
-                  <ElTableColumn prop="condition" label="交易条件" width="120" />
+                  <ElTableColumn label="交易方式" width="100">
+                    {({row}) => <span>{ method.value.find(e => e.id == row.transaction_method)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn label="结算周期" width="120">
                     {({row}) => {
                       const rowId = row.other_transaction_terms

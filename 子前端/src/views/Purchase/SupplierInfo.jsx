@@ -223,10 +223,10 @@ export default defineComponent({
                   <ElTableColumn label="供货方式" width="100">
                     {({row}) => <span>{ supplyMethod.value.find(e => e.id == row.supply_method)?.name }</span>}
                   </ElTableColumn>
+                  <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
                   <ElTableColumn label="交易方式" width="100">
                     {({row}) => <span>{ method.value.find(e => e.id == row.transaction_method)?.name }</span>}
                   </ElTableColumn>
-                  <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
                   <ElTableColumn prop="other_transaction_terms" label="结算周期" width="120">
                     {({row}) => {
                       const rowId = row.other_transaction_terms
@@ -282,13 +282,13 @@ export default defineComponent({
                     {supplyMethod.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
+                <ElFormItem label="交易币别" prop="transaction_currency" style={{ width: '350px' }}>
+                  <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
+                </ElFormItem>
                 <ElFormItem label="交易方式" prop="transaction_method" style={{ width: '350px' }}>
                   <ElSelect v-model={ form.value.transaction_method } multiple={ false } filterable remote remote-show-suffix placeholder="请选择交易方式">
                     {method.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
-                </ElFormItem>
-                <ElFormItem label="交易币别" prop="transaction_currency" style={{ width: '350px' }}>
-                  <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
                 </ElFormItem>
                 <ElFormItem label="结算周期" prop="other_transaction_terms" style={{ width: '350px' }}>
                   <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix placeholder="请选择结算周期">

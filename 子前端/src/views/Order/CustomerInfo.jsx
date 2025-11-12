@@ -248,10 +248,10 @@ export default defineComponent({
                   <ElTableColumn prop="company_address" label="公司地址" />
                   <ElTableColumn prop="delivery_address" label="交货地址" />
                   <ElTableColumn prop="tax_registration_number" label="税务登记号" />
+                  <ElTableColumn prop="transaction_currency" label="交易币别" />
                   <ElTableColumn label="交易方式">
                     {({row}) => <span>{ method.value.find(e => e.id == row.transaction_method)?.name }</span>}
                   </ElTableColumn>
-                  <ElTableColumn prop="transaction_currency" label="交易币别" />
                   <ElTableColumn label="结算周期">
                     {({row}) => {
                       const rowId = row.other_transaction_terms
@@ -303,13 +303,13 @@ export default defineComponent({
                 <ElFormItem label="税务登记号" prop="tax_registration_number">
                   <ElInput v-model={ form.value.tax_registration_number } placeholder="请输入税务登记号" />
                 </ElFormItem>
+                <ElFormItem label="交易币别" prop="transaction_currency">
+                  <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
+                </ElFormItem>
                 <ElFormItem label="交易方式" prop="transaction_method">
                   <ElSelect v-model={ form.value.transaction_method } multiple={ false } filterable remote remote-show-suffix placeholder="请选择交易方式">
                     {method.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
-                </ElFormItem>
-                <ElFormItem label="交易币别" prop="transaction_currency">
-                  <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
                 </ElFormItem>
                 <ElFormItem label="结算周期" prop="other_transaction_terms">
                   <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix placeholder="请选择结算周期">

@@ -36,7 +36,7 @@ export default defineComponent({
       process_index: '',
       price: '',
       transaction_currency: '',
-      condition: '',
+      transaction_method: '',
       other_transaction_terms: '',
       remarks: '',
       other_text: ''
@@ -51,6 +51,7 @@ export default defineComponent({
     let bomList = ref([]) // 工艺Bom列表
     let procedure = ref([]) // 工序列表
     let allSelect = ref([]) // 用户选择的列表
+    let method = ref([])
     let payTime = ref([])
     let search = ref({
       supplier_code: '',
@@ -85,9 +86,10 @@ export default defineComponent({
     };
     // 获取常量
     const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['payTime'] })
+      const res = await request.post('/api/getConstType', { type: ['payInfo', 'payTime'] })
       if(res.code == 200){
-        payTime.value = res.data
+        method.value = res.data.filter(o => o.type == 'payInfo')
+        payTime.value = res.data.filter(o => o.type == 'payTime')
       }
     }
     const getSupplierInfo = async () => {
@@ -143,7 +145,7 @@ export default defineComponent({
               process_index: form.value.process_index,
               price: form.value.price,
               transaction_currency: form.value.transaction_currency,
-              condition: form.value.condition,
+              transaction_method: form.value.transaction_method,
               other_transaction_terms: form.value.other_transaction_terms,
               other_text: form.value.other_text
             }
@@ -210,7 +212,7 @@ export default defineComponent({
         process_index: '',
         price: '',
         transaction_currency: '',
-        condition: '',
+        transaction_method: '',
         other_transaction_terms: '',
         other_text: ''
       }
@@ -225,6 +227,7 @@ export default defineComponent({
       form.value.other_transaction_terms = Number(row.other_transaction_terms)
       form.value.other_text = row.other_text
       form.value.transaction_currency = row.transaction_currency
+      form.value.transaction_method = row.transaction_method
     }
     // 分页相关
     function pageSizeChange(val) {
@@ -294,7 +297,9 @@ export default defineComponent({
                   <ElTableColumn prop="processChildren.process.process_name" label="工艺名称" width="120" />
                   <ElTableColumn prop="price" label="加工单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
-                  <ElTableColumn prop="condition" label="交易条件" width="120" />
+                  <ElTableColumn label="交易方式">
+                    {({row}) => <span>{ method.value.find(e => e.id == row.transaction_method)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn label="结算周期" width="120">
                     {({row}) => {
                       const rowId = row.other_transaction_terms
@@ -351,8 +356,10 @@ export default defineComponent({
                 <ElFormItem label="交易币别" prop="transaction_currency">
                   <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
                 </ElFormItem>
-                <ElFormItem label="交易条件" prop="condition">
-                  <ElInput v-model={ form.value.condition } placeholder="请输入交易条件" />
+                <ElFormItem label="交易方式" prop="transaction_method">
+                  <ElSelect v-model={ form.value.transaction_method } multiple={ false } filterable remote remote-show-suffix placeholder="请选择交易方式">
+                    {method.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="结算周期" prop="other_transaction_terms">
                   <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix placeholder="请选择结算周期">

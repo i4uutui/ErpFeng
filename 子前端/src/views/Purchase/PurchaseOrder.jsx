@@ -43,6 +43,8 @@ export default defineComponent({
       ]
     })
     const approval = getItem('approval').filter(e => e.type == 'purchase_order')
+    // 找到当前这个用户在这个页面中是否有审批权限
+    const approvalUser = approval.find(e => e.user_id == user.id)
     let dialogVisible = ref(false)
     let form = ref({
       quote_id: '',
@@ -679,8 +681,21 @@ export default defineComponent({
                   <ElTableColumn type="selection" width="55" />
                   <ElTableColumn label="状态" width='80'>
                     {({row}) => {
-                      const spanDom = <span>{ statusType[row.status] }</span>
-                      return spanDom
+                      if(!isEmptyValue(row)){
+                        if(row.status == 1) return <span>{ statusType[row.status] }</span>
+                        
+                        // 判断当前用户是否有权限和审批记录，否则直接返回默认状态文案
+                        const hasApprovalPerm = !!approvalUser && !!row.approval
+                        if(hasApprovalPerm){
+                          // 如果有权限，获取当前这条数据中，该用户的审批步骤
+                          const rowApproval = row.approval?.find(o => o.user_id == approvalUser.user_id)
+                          // 存在该用户的审批记录，且当前步骤>=审批步骤 = 已审批
+                          if(rowApproval && row.step >= rowApproval.step){
+                            return <span>已审批</span>
+                          }
+                        }
+                        return <span>{statusType[row.status]}</span>;
+                      }
                     }}
                   </ElTableColumn>
                   <ElTableColumn prop="notice" label="生产订单号" width='100'>
@@ -704,27 +719,44 @@ export default defineComponent({
                   <ElTableColumn label="操作" width="200" fixed="right">
                     {{
                       default: ({ row, $index }) => {
-                        let dom = []
-                        if(row.status == undefined || row.status == 2){
-                          dom.push(<>
-                            <ElButton size="small" type="warning" v-permission={ 'PurchaseOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
-                            <ElButton size="small" type="primary" v-permission={ 'PurchaseOrder:set' } onClick={ () => handleStatusData(row) }>提交</ElButton>
-                          </>)
+                        if(!isEmptyValue(row)){
+                          let dom = []
+                          const isRowStatus = row.status === undefined || (row.status == 2 && row.user_id == user.id);
+                          // 查询当前用户是否有审批权限
+                          const isApproval = !!approvalUser && !!row.approval;
+                          // 如果有审批权限，获取当前这条数据中，该用户的审批步骤
+                          const rowApproval = isApproval ? row.approval.find(o => o.user_id === approvalUser.user_id) : null;
+
+                          // 当前这条数据状态为undefined或2：显示修改、提交按钮
+                          if(isRowStatus){
+                            dom.push(<>
+                              <ElButton size="small" type="warning" v-permission={ 'PurchaseOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
+                              <ElButton size="small" type="primary" v-permission={ 'PurchaseOrder:set' } onClick={ () => handleStatusData(row) }>提交</ElButton>
+                            </>)
+                          }
+                          // 有权限且有审批记录,处理审批相关按钮
+                          if(isApproval){
+                            const renderApprovalButton = () => {
+                              // 判断当前这条数据的步骤是否与用户的步骤相对应，true则有审批按钮
+                              if (rowApproval && row.status === 0 && row.step + 1 === rowApproval.step && rowApproval.status === 0) {
+                                return <ElButton size="small" type="primary" onClick={() => handleApproval(row)}>审批</ElButton>;
+                              }
+
+                              return <ElButton size="small" type="primary" disabled>{rowApproval?.status === 1 ? '已审批' : '待审批'}</ElButton>
+                            }
+                            dom.push(renderApprovalButton());
+
+                            if(row.status === 1){
+                              dom.push(
+                                <ElButton size="small" type="primary" onClick={() => handleBackApproval(row)}>反审批</ElButton>
+                              );
+                            }
+                          }
+                          if(isEmptyValue(row.status)){
+                            dom.push(<ElButton size="small" type="danger" onClick={ () => handleDelete(row, $index) }>删除</ElButton>)
+                          }
+                          return dom
                         }
-                        if(row.status == 0 && approval.findIndex(e => e.user_id == user.id) >= 0){
-                          dom.push(<>
-                            <ElButton size="small" type="primary" onClick={ () => handleApproval(row) }>审批</ElButton>
-                          </>)
-                        }
-                        if(row.status == 1 && approval.findIndex(e => e.user_id == user.id) >= 0){
-                          dom.push(<>
-                            <ElButton size="small" type="primary" onClick={ () => handleBackApproval(row) }>反审批</ElButton>
-                          </>)
-                        }
-                        if(isEmptyValue(row.status)){
-                          dom.push(<ElButton size="small" type="danger" onClick={ () => handleDelete(row, $index) }>删除</ElButton>)
-                        }
-                        return dom
                       }
                     }}
                   </ElTableColumn>

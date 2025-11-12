@@ -2,7 +2,8 @@ import { defineComponent, onMounted, ref, reactive, computed, nextTick } from 'v
 import dayjs from 'dayjs';
 import request from '@/utils/request';
 import "@/assets/css/production.scss"
-import { getPageHeight } from '@/utils/tool';
+import { getPageHeight, isEmptyValue } from '@/utils/tool';
+import deepClone from '@/utils/deepClone';
 
 export default defineComponent({
   setup(){
@@ -11,6 +12,7 @@ export default defineComponent({
     let tableData = ref([])
     let cycleList = ref([])
     let date_more = ref([])
+    let temCycleList = ref([]) // 这个制程的数据是临时存的,用来修改预排交期时,做比对
     let specialDates = ref(new Set());
     let loading = ref(false)
     // 查询tableData下的工序长度，确定表格中的工序显示的数量
@@ -25,8 +27,8 @@ export default defineComponent({
         // 无效果，待以后优化本页面
         formHeight.value = await getPageHeight([formCard.value]);
       })
-      await getProgressBase(); //// 获取进度表基础数据
       await fetchSpecialDates();
+      await getProgressBase(); //// 获取进度表基础数据
     })
     
     // 获取进度表基础数据
@@ -56,6 +58,8 @@ export default defineComponent({
         const cycles = res.data.cycles
         date_more.value = res.data.date_more
         cycleList.value = cycles
+        // 这个制程的数据是临时存的,用来修改预排交期时,做比对,使用深拷贝是为了不让cycleList被修改时,temCycleList被同步修改
+        temCycleList.value = deepClone(cycles)
         // 工序的数据
         const works = res.data.works
         const groupedData = {};
@@ -123,21 +127,43 @@ export default defineComponent({
       }
     }
     // 选择预排交期的时间
-    const paiChange = (value, row, param) => {
+    const paiChange = (value, row, param, colIndex, rowIndex) => {
+      // 原始的预排交期
+      const oldTime = temCycleList.value[colIndex].cycle[rowIndex].end_date
+      // 用户所选日期
+      const time = row.end_date
+      // 上一个制程的日期
+      let prevDate = null
+      for (let i = colIndex - 1; i >= 0; i--) {
+        const prevCycle = cycleList.value[i].cycle[rowIndex]
+        if (prevCycle && prevCycle.end_date) {
+          prevDate = prevCycle.end_date
+          break
+        }
+      }
+      if(prevDate){
+        const newD = dayjs(time)
+        const prevD = dayjs(prevDate)
+        if (newD.isBefore(prevD, 'day')) {
+          // 重置并提示
+          row.end_date = oldTime ? oldTime : ''
+          ElMessage.error('所选日期不能早于上一制程的日期')
+          return
+        }
+      }
       if(!param.start_date) {
-        ElMessage.error('请先选择起始生产日期')
+        ElMessage.error('起始生产日期不能为空')
         row.end_date = ''
         return
       }
-      const time = row.end_date
       // 检查是否是特殊日期
       if (isSpecialDate(time)) {
         ElMessage.warning('请注意，你所选择的日期为节假日');
       }
       
       if(dayjs(time).isBefore(dayjs(param.start_date))){
-        ElMessage.error('请选择大于或等于起始生产的日期')
-        row.end_date = ''
+        ElMessage.error('所选日期不能早于起始生产日期')
+        row.end_date = oldTime ? oldTime : ''
         return
       }
 
@@ -262,14 +288,13 @@ export default defineComponent({
     // 头部的警告背景色
     const loadCellStyle = ({ row, column }) => {
       if (column.label && date_more.value.includes(column.label)) {
-        const currentLoad = Number(row.dateData[column.label]);
-        const maxLoad = Number(row.maxLoad);
-        if (currentLoad > maxLoad) {
-          return { 
-            backgroundColor: '#f1c40f', 
+        const currentLoad = row.dateData[column.label].big
+        if(currentLoad){
+          return {
+            backgroundColor: '#f1c40f',
             color: '#fff',
             fontWeight: 'bold'
-          };
+          }
         }
       }
     }
@@ -286,7 +311,7 @@ export default defineComponent({
                   <ElTableColumn label={ date } width="90" align="center">
                     {{
                       default: ({ row }) => {
-                        const value = row.dateData[date];
+                        const value = row.dateData[date].maxLong;
                         if(value == '休') return <span style={{ color: 'red' }}>{ value }</span>
                         if(value == '-') return '-'
                         return Number(value).toFixed(1)
@@ -354,14 +379,17 @@ export default defineComponent({
                         <ElTableColumn label="预排交期" width="130" align="center">
                           {{
                             default: ({ row, $index }) => {
-                              const data = e.cycle[$index]
-                              const isOverdue = data.end_date && dayjs(data.end_date).isBefore(dayjs().startOf('day')) && Number(data.load || 0) > 0;
+                              if(!isEmptyValue(row)){
+                                const data = e.cycle[$index]
+                                const dateObj = e.dateData[data.end_date]
+                                // const isOverdue = data.end_date && dayjs(data.end_date).isBefore(dayjs().startOf('day')) && Number(data.load || 0) > 0;
 
-                              return (
-                                <div class="myCell" style={{ backgroundColor: isOverdue ? '#ff4d4f' : '', color: isOverdue ? '#fff' : '' }}>
-                                  <ElDatePicker v-model={ data.end_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 100px" onBlur={ (value) => paiChange(value, data, row) }></ElDatePicker>
-                                </div>
-                              )
+                                return (
+                                  <div class="myCell" style={{ backgroundColor: dateObj?.big ? '#f1c40f' : '', color: dateObj?.big ? '#fff' : '' }}>
+                                    <ElDatePicker v-model={ data.end_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 100px" onBlur={ (value) => paiChange(value, data, row, index, $index) }></ElDatePicker>
+                                  </div>
+                                )
+                              }
                             }
                           }}
                         </ElTableColumn>

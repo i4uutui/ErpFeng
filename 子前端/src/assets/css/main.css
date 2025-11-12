@@ -57,6 +57,15 @@
 .textButton.el-button--text:not(.is-disabled):hover{
   color: #fd4545;
 }
+.disabled .el-select__wrapper.is-disabled{
+  background-color: initial !important;
+}
+.disabled .el-select__wrapper.is-disabled .el-select__selected-item.is-transparent{
+  color: var(--el-text-color-placeholder);
+}
+.disabled .el-select__wrapper.is-disabled .el-select__selected-item{
+  color: var(--el-input-text-color, var(--el-text-color-regular));
+}
 /* el-table滚动条样式 */
 .el-scrollbar .el-scrollbar__bar.is-horizontal {
   height: 6px; /* 添加横向高度 */

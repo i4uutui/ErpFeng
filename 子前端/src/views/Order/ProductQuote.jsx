@@ -15,9 +15,6 @@ export default defineComponent({
       sale_id: [
         { required: true, message: '请选择销售订单', trigger: 'blur' },
       ],
-      notice: [
-        { required: true, message: '请输入报价单号', trigger: 'blur' },
-      ],
       product_price: [
         { required: true, message: '请输入产品单价', trigger: 'blur' },
       ],
@@ -31,11 +28,13 @@ export default defineComponent({
       notice: '',
       product_price: '',
       transaction_currency: '',
-      condition: '',
+      transaction_method: '',
       other_transaction_terms: '',
       other_text: ''
     })
+    let method = ref([])
     let payTime = ref([])
+    let saleList = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(20);
@@ -55,6 +54,7 @@ export default defineComponent({
         formHeight.value = await getPageHeight([formCard.value, pagin.value]);
       })
       fetchProductList()
+      getSaleOrder()
       getConstType()
     })
 
@@ -70,11 +70,18 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
+    const getSaleOrder = async () => {
+      const res = await request.get('/api/getSaleOrder')
+      if(res.code == 200){
+        saleList.value = res.data
+      }
+    }
     // 获取常量
     const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['payTime'] })
+      const res = await request.post('/api/getConstType', { type: ['payInfo', 'payTime'] })
       if(res.code == 200){
-        payTime.value = res.data
+        method.value = res.data.filter(o => o.type == 'payInfo')
+        payTime.value = res.data.filter(o => o.type == 'payTime')
       }
     }
     const handleSubmit = async (formEl) => {
@@ -86,7 +93,6 @@ export default defineComponent({
             if(res && res.code == 200){
               ElMessage.success('新增成功');
               dialogVisible.value = false;
-              fetchProductList();
               reportOperationLog({
                 operationType: 'add',
                 module: '产品报价',
@@ -105,7 +111,6 @@ export default defineComponent({
             if(res && res.code == 200){
               ElMessage.success('修改成功');
               dialogVisible.value = false;
-              fetchProductList();
               reportOperationLog({
                 operationType: 'update',
                 module: '产品报价',
@@ -114,6 +119,8 @@ export default defineComponent({
               })
             }
           }
+          fetchProductList();
+          getSaleOrder()
         }
       })
     }
@@ -142,13 +149,15 @@ export default defineComponent({
         notice: '',
         product_price: '',
         transaction_currency: '',
-        condition: '',
+        transaction_method: '',
         other_transaction_terms: '',
         other_text: ''
       }
     }
-    const saleChange = (row) => {
+    const saleChange = (value) => {
+      const row = saleList.value.find(o => o.id == value)
       form.value.other_transaction_terms = Number(row.customer.other_transaction_terms)
+      form.value.transaction_method = Number(row.customer.transaction_method)
     }
     // 分页相关
     function pageSizeChange(val) {
@@ -220,7 +229,9 @@ export default defineComponent({
                   <ElTableColumn prop="sale.unit" label="单位" width="100" />
                   <ElTableColumn prop="product_price" label="产品单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
-                  <ElTableColumn prop="condition" label="交易条件" width="120" />
+                  <ElTableColumn label="交易方式" width="120">
+                    {({row}) => <span>{ method.value.find(e => e.id == row.transaction_method)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn label="结算周期" width="120">
                     {({row}) => {
                       const rowId = row.other_transaction_terms
@@ -248,8 +259,10 @@ export default defineComponent({
           {{
             default: () => (
               <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">
-                <ElFormItem label="销售订单" prop="sale_id">
-                  <MySelect v-model={ form.value.sale_id } arrValue={ ['customer_order', 'product.drawing'] } apiUrl="/api/getSaleOrder" query="customer_order" itemValue="customer_order" placeholder="请选择销售订单" onChange={ (value) => saleChange(value) } />
+                <ElFormItem label="客户订单号" prop="sale_id">
+                  <ElSelect v-model={ form.value.sale_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择客户订单号" onChange={ (row) => saleChange(row) }>
+                    {saleList.value.map((e, index) => <ElOption value={ e.id } label={ e.customer_order } disabled={ !e.is_quote } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="报价单号" prop="notice">
                   <ElInput v-model={ form.value.notice } placeholder="请输入报价单号" />
@@ -260,8 +273,10 @@ export default defineComponent({
                 <ElFormItem label="交易币别" prop="transaction_currency">
                   <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
                 </ElFormItem>
-                <ElFormItem label="交易条件" prop="condition">
-                  <ElInput v-model={ form.value.condition } placeholder="请输入交易条件" />
+                <ElFormItem label="交易方式" prop="transaction_method">
+                  <ElSelect v-model={ form.value.transaction_method } multiple={ false } filterable remote remote-show-suffix placeholder="请选择交易方式">
+                    {method.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="结算周期" prop="other_transaction_terms">
                   <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix placeholder="请选择结算周期">

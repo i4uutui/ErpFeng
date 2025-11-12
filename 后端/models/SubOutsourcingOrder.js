@@ -71,7 +71,7 @@ const SubOutsourcingOrder = sequelize.define('SubOutsourcingOrder', {
     allowNull: true,
     comment: ' 交易币别 '
   },
-  other_transaction_terms: {
+  transaction_terms: {
     type: DataTypes.TEXT,
     allowNull: true,
     comment: ' 交易条件 '

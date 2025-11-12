@@ -99,66 +99,76 @@ router.get('/statistics', authMiddleware, async (req, res) => {
  *     tags:
  *       - 首页接口(Home)
  */
-router.get('/order_total', authMiddleware, async (req, res) => {
+router.post('/order_total', authMiddleware, async (req, res) => {
+  const { time } = req.body
   const { company_id } = req.user;
-  const created_at = req.query['created_at[]']
 
-  try {
-    const result = await SubProductNotice.findAll({
-      where: {
-        company_id,
-        is_notice: 0, // 已排产
-        is_deleted: 1, // 未删除
-      },
-      attributes: ['id', 'is_finish']
-    })
-    let onlineOrder = 0
-    let finishOrder = 0
-    let orderNumber = 0
-    result.forEach(e => {
-      const item = e.toJSON()
-      if (item.is_finish === 1) {
-        onlineOrder++
-      } else {
-        finishOrder++;
+  // 统计在线订单
+  const saleOrder = await SubSaleOrder.findAll({
+    where: {
+      company_id,
+      delivery_time: {
+        [Op.between]: [new Date(time[0]), new Date(time[1])] // 使用 between 筛选范围
       }
-    })
-    const progress = await SubProductionProgress.findAll({
+    },
+    attributes: ['id']
+  })
+  const saleLeng = saleOrder.length ? saleOrder.length : 0
+
+  // 完成订单
+  const notice = await SubProductNotice.findAll({
+    where: {
+      company_id,
+      is_finish: 0,
+      // 结案时间 = 数据最后的修改时间
+      updated_at: {
+        [Op.between]: [new Date(time[0]), new Date(time[1])] // 使用 between 筛选范围
+      }
+    },
+    attributes: ['id']
+  })
+  const noticeLeng = notice.length ? notice.length : 0
+
+  // 统计订单存量，进度表的总订单数量 - 已出库的数量
+  // 先找到进度表里的订单数量，注意，是订单数量，不是进度条数量
+  const notice2 = await SubProductNotice.findAll({
+    where: {
+      company_id,
+      is_notice: 0, // 已排产
+      is_finish: 1, // 未完结
+      // 结案时间 = 数据最后的修改时间
+      updated_at: {
+        [Op.between]: [new Date(time[0]), new Date(time[1])] // 使用 between 筛选范围
+      }
+    },
+    attributes: ['id', 'sale_id'],
+    include: [{ model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number'], required: true }]
+  })
+  const noticeResult = notice2.map(item => item.toJSON());
+  // 统计总订单量
+  const totalOrderNumber = noticeResult.reduce((sum, item) => {
+    const orderNum = Number(item.sale?.order_number);
+    return isNaN(orderNum) ? sum : PreciseMath.add(sum, orderNum);
+  }, 0);
+  // 提取销售ID
+  const saleIds = noticeResult.map(item => item.sale_id).filter(Boolean); // 过滤无效 sale_id
+  let inventory = 0;
+  if(saleIds.length){
+    const warehouseApplies = await SubWarehouseApply.findAll({
       where: {
-        is_finish: 1,
-        company_id
-      },
-      attributes: ['id', 'order_number', 'is_finish', 'order_number'],
-      include: [
-        {
-          model: SubProductNotice,
-          as: 'notice',
-          attributes: ['id', 'sale_id'],
-          include: [
-            { model: SubSaleOrder, as: 'sale', attributes: ['id'] }
-          ]
-        }
-      ]
-    })
-    const sumOrder = progress.reduce((sum, item) => PreciseMath.add(sum, Number(item.order_number)), 0);
-    const resultProgress = progress.map(e => {
-      const item = e.toJSON()
-      return item.notice.sale.id
-    })
-    const apply = await SubWarehouseApply.findAll({
-      where: {
-        sale_id: resultProgress,
+        sale_id: saleIds,
         company_id,
         type: 14
       },
-      attributes: ['id', 'quantity']
+      attributes: ['quantity']
     })
-    const outOrder = apply.reduce((sum, item) => PreciseMath.add(sum, Number(item.quantity)), 0)
-    orderNumber = PreciseMath.sub(sumOrder, outOrder)
-
-    res.json({ code: 200, data: { onlineOrder, finishOrder, orderNumber } })
-  } catch (error) {
-    console.log(error);
+    const totalOutQuantity = warehouseApplies.reduce((sum, apply) => {
+      const quantity = Number(apply.quantity);
+      return isNaN(quantity) ? sum : PreciseMath.add(sum, quantity);
+    }, 0);
+    inventory = PreciseMath.sub(totalOrderNumber, totalOutQuantity)
   }
+
+  res.json({ code: 200, data: { saleLeng, noticeLeng, inventory } })
 })
 module.exports = router;

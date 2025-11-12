@@ -117,14 +117,14 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
   works.forEach(item => {
     item.all_work_time = (PreciseMath.mul(Number(item.order_number), Number(item.children.time)) / 60 / 60).toFixed(1)
   })
-  // 获取日期列表(deliveryTimes先获取客户交期的数组)
+  // // 获取日期列表(deliveryTimes先获取客户交期的数组)
   const deliveryTimes = [...new Set(base.map(e => e.delivery_time))]
   const date_more = getDateInfo(deliveryTimes)
-  // 处理工序的每日负荷
+  // // 处理工序的每日负荷
   const cased = setProgressLoad(base, cycles, works, dateInfo)
-  // 处理制程日总负荷
+  // // 处理制程日总负荷
   const callLoad = setCycleLoad(cycles, cased)
-  // 处理页面头部的日期
+  // // 处理页面头部的日期
   const newCycles = setDateMore(base, callLoad, dateInfo, date_more)
 
   res.json({ code: 200, data: { cycles: newCycles, works: cased, date_more } })

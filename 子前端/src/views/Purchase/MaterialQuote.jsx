@@ -39,7 +39,7 @@ export default defineComponent({
       packaging: '', 
       transaction_currency: '',
       unit: '',
-      condition: '',
+      transaction_method: '',
       other_transaction_terms: '', 
       other_text: '',
       invoice: ''
@@ -48,6 +48,7 @@ export default defineComponent({
     let invoice = ref([])
     let payTime = ref([])
     let supplyMethod = ref([])
+    let method = ref([])
     let materialList = ref([])
     let tableData = ref([])
     let edit = ref(-1)
@@ -69,11 +70,12 @@ export default defineComponent({
     }
     // 获取常量
     const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['invoice', 'supplyMethod', 'payTime'] })
+      const res = await request.post('/api/getConstType', { type: ['invoice', 'supplyMethod', 'payTime', 'payInfo'] })
       if(res.code == 200){
         invoice.value = res.data.filter(o => o.type == 'invoice')
         payTime.value = res.data.filter(o => o.type == 'payTime')
         supplyMethod.value =  res.data.filter(o => o.type == 'supplyMethod')
+        method.value = res.data.filter(o => o.type == 'payInfo')
       }
     }
     const getMaterialCode = async () => {
@@ -98,7 +100,7 @@ export default defineComponent({
           packaging: e.packaging, 
           transaction_currency: e.transaction_currency, 
           unit: e.unit,
-          condition: e.condition,
+          transaction_method: e.transaction_method,
           other_transaction_terms: e.other_transaction_terms,
           other_text: e.other_text,
           invoice: e.invoice ? e.invoice : null
@@ -148,7 +150,7 @@ export default defineComponent({
             packaging: data.packaging,
             transaction_currency: data.transaction_currency,
             unit: data.unit,
-            condition: data.condition,
+            transaction_method: data.transaction_method,
             other_transaction_terms: data.other_transaction_terms,
             other_text: data.other_text,
             invoice: data.invoice ? data.invoice : '',
@@ -201,7 +203,7 @@ export default defineComponent({
         packaging: '', 
         transaction_currency: '', 
         unit: '',
-        condition: '',
+        transaction_method: '',
         other_transaction_terms: '', 
         invoice: '',
         other_text: ''
@@ -213,6 +215,7 @@ export default defineComponent({
       form.value.transaction_currency = row.transaction_currency
       form.value.other_transaction_terms = Number(row.other_transaction_terms)
       form.value.other_text = row.other_text
+      form.value.transaction_method = row.transaction_method
     }
     const materialChange = (value) => {
       const row = materialList.value.find(o => o.id == value)
@@ -259,7 +262,9 @@ export default defineComponent({
                     {({row}) => <span>{ supplyMethod.value.find(e => e.id == row.delivery)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn prop="packaging" label="包装要求" width="100" />
-                  <ElTableColumn prop="condition" label="交易条件" width="120" />
+                  <ElTableColumn label="交易方式" width="100">
+                    {({row}) => <span>{ method.value.find(e => e.id == row.transaction_method)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn label="结算周期" width="120">
                     {({row}) => {
                       const rowId = row.other_transaction_terms
@@ -323,8 +328,10 @@ export default defineComponent({
                 <ElFormItem label="包装要求" prop="packaging">
                   <ElInput v-model={ form.value.packaging } placeholder="请输入包装要求" />
                 </ElFormItem>
-                <ElFormItem label="交易条件" prop="condition">
-                  <ElInput v-model={ form.value.condition } placeholder="请输入交易条件" />
+                <ElFormItem label="交易方式" prop="transaction_method">
+                  <ElSelect v-model={ form.value.transaction_method } multiple={ false } filterable remote remote-show-suffix placeholder="请选择交易方式">
+                    {method.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="结算周期" prop="other_transaction_terms">
                   <ElSelect v-model={ form.value.other_transaction_terms } multiple={ false } filterable remote remote-show-suffix placeholder="请选择结算周期">

@@ -294,7 +294,7 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
       sale_id: { [Op.notIn]: saleIds },
       ...whereNotice
     },
-    attributes: ['id', 'notice', 'product_price', 'transaction_currency', 'condition', 'other_transaction_terms', 'other_text', 'created_at'],
+    attributes: ['id', 'notice', 'product_price', 'transaction_currency', 'transaction_method', 'other_transaction_terms', 'other_text', 'created_at'],
     include: [
       { model: SubSaleOrder, as: 'sale', attributes: ['id', 'customer_order', 'order_number', 'unit'] },
       { model: SubCustomerInfo, as: 'customer', attributes: ['id', 'customer_code', 'customer_abbreviation'], where: whereCustomer },
@@ -325,7 +325,7 @@ router.get('/product_quotation', authMiddleware, async (req, res) => {
 });
 // 添加产品报价
 router.post('/product_quotation', authMiddleware, async (req, res) => {
-  const { sale_id, notice, product_price, transaction_currency, condition, other_transaction_terms, other_text } = req.body;
+  const { sale_id, notice, product_price, transaction_currency, transaction_method, other_transaction_terms, other_text } = req.body;
   
   const { id: userId, company_id } = req.user;
   
@@ -342,40 +342,47 @@ router.post('/product_quotation', authMiddleware, async (req, res) => {
     return res.json({ code: 401, message: '数据出错，请联系管理员' })
   }
   const create = {
-    sale_id, customer_id, product_id, notice, product_price, transaction_currency, condition, other_transaction_terms, other_text, company_id,
+    sale_id, customer_id, product_id, notice, product_price, transaction_currency, transaction_method, other_transaction_terms, other_text, company_id,
     user_id: userId
   }
   await SubProductQuotation.create(create)
+  await SubSaleOrder.update({ is_quote: 0 }, { where: { id: sale_id } })
   
   res.json({ message: '添加成功', code: 200 });
 });
 // 更新产品报价
 router.put('/product_quotation', authMiddleware, async (req, res) => {
-  const { sale_id, notice, product_price, transaction_currency, condition, other_transaction_terms, other_text, id } = req.body;
-  
+  const { sale_id, notice, product_price, transaction_currency, transaction_method, other_transaction_terms, other_text, id } = req.body;
   const { id: userId, company_id } = req.user;
 
-  let customer_id = ''
-  let product_id = ''
+  const quote = await SubProductQuotation.findByPk(id)
+  if(!quote) return res.json({ message: '数据不存在，或已被删除', code: 401})
+  const quoteResult = quote.toJSON()
+
   const saleOrder = await SubSaleOrder.findOne({
     where: { id: sale_id },
     raw: true
   })
-  if(saleOrder){
-    customer_id = saleOrder.customer_id
-    product_id = saleOrder.product_id
+  if(!saleOrder) return res.json({ code: 401, message: '数据出错，请联系管理员' })
+
+  if(sale_id != quoteResult.sale_id){
+    const update = [{ id: quoteResult.sale_id, is_quote: 1 }, { id: sale_id, is_quote: 0 }]
+    SubSaleOrder.bulkCreate(update, { updateOnDuplicate: ['is_quote'] })
   }else{
-    return res.json({ code: 401, message: '数据出错，请联系管理员' })
+    if(saleOrder.is_quote == 1){
+      SubSaleOrder.update({ is_quote: 0 }, { where: { id: sale_id } })
+    }
   }
   
-  const updateResult = await SubProductQuotation.update({
-    sale_id, customer_id, product_id, notice, product_price, transaction_currency, condition, other_transaction_terms, other_text, company_id,
+  SubProductQuotation.update({
+    sale_id, notice, product_price, transaction_currency, transaction_method, other_transaction_terms, other_text, company_id,
+    product_id: saleOrder.product_id,
+    customer_id: saleOrder.customer_id,
     user_id: userId
   }, {
     where: { id }
   })
-  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
-  
+
   res.json({ message: '修改成功', code: 200 });
 });
 

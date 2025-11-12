@@ -1,6 +1,6 @@
 import { defineComponent, onMounted, reactive, ref, computed, nextTick } from 'vue'
 import { useStore } from '@/stores';
-import { getRandomString, getNoLast, getPageHeight } from '@/utils/tool'
+import { getRandomString, getNoLast, getPageHeight, isEmptyValue } from '@/utils/tool'
 import { reportOperationLog } from '@/utils/log';
 import { getItem } from '@/assets/js/storage';
 import request from '@/utils/request';
@@ -20,8 +20,10 @@ export default defineComponent({
       2: '已拒绝'
     })
     const statusList = ref([{ id: 0, name: '待审批' }, { id: 1, name: '已通过' }, { id: 2, name: '已拒绝' }])
-    const approval = getItem('approval').filter(e => e.type == 'outsourcing_order')
     const user = getItem('user')
+    const approval = getItem('approval').filter(e => e.type == 'outsourcing_order')
+    // 找到当前这个用户在这个页面中是否有审批权限
+    const approvalUser = approval.find(e => e.user_id == user.id)
     const nowDate = ref()
     const formRef = ref(null);
     const formCard = ref(null)
@@ -47,7 +49,7 @@ export default defineComponent({
       ment: '',
       unit: '',
       transaction_currency: '',
-      other_transaction_terms: '',
+      transaction_terms: '',
       remarks: '',
       delivery_time: ''
     })
@@ -163,7 +165,7 @@ export default defineComponent({
                 ment: form.value.ment,
                 unit: form.value.unit,
                 transaction_currency: form.value.transaction_currency,
-                other_transaction_terms: form.value.other_transaction_terms,
+                transaction_terms: form.value.transaction_terms,
                 remarks: form.value.remarks,
                 delivery_time: form.value.delivery_time
               }
@@ -331,7 +333,7 @@ export default defineComponent({
       form.value.supplier_abbreviation = row.supplier.supplier_abbreviation
       form.value.price = row.price
       form.value.transaction_currency = row.transaction_currency
-      form.value.other_transaction_terms = row.other_transaction_terms
+      form.value.transaction_terms = row.transaction_terms
     }
     // 单个提交本地数据进行审批
     const handleStatusData = async (row) => {
@@ -391,7 +393,7 @@ export default defineComponent({
         ment: e.ment,
         unit: e.unit,
         transaction_currency: e.transaction_currency,
-        other_transaction_terms: e.other_transaction_terms,
+        transaction_terms: e.transaction_terms,
         remarks: e.remarks,
         delivery_time: e.delivery_time
       }
@@ -435,7 +437,7 @@ export default defineComponent({
         ment: '',
         unit: '',
         transaction_currency: '',
-        other_transaction_terms: '',
+        transaction_terms: '',
         remarks: '',
         delivery_time: ''
       }
@@ -525,8 +527,21 @@ export default defineComponent({
                   <ElTableColumn type="selection" width="55" />
                   <ElTableColumn label="状态" width='80'>
                     {({row}) => {
-                      const spanDom = <span>{ statusType[row.status] }</span>
-                      return spanDom
+                      if(!isEmptyValue(row)){
+                        if(row.status == 1) return <span>{ statusType[row.status] }</span>
+                        
+                        // 判断当前用户是否有权限和审批记录，否则直接返回默认状态文案
+                        const hasApprovalPerm = !!approvalUser && !!row.approval
+                        if(hasApprovalPerm){
+                          // 如果有权限，获取当前这条数据中，该用户的审批步骤
+                          const rowApproval = row.approval?.find(o => o.user_id == approvalUser.user_id)
+                          // 存在该用户的审批记录，且当前步骤>=审批步骤 = 已审批
+                          if(rowApproval && row.step >= rowApproval.step){
+                            return <span>已审批</span>
+                          }
+                        }
+                        return <span>{statusType[row.status]}</span>;
+                      }
                     }}
                   </ElTableColumn>
                   <ElTableColumn prop="notice.notice" label="生产订单号" width='100' />
@@ -543,30 +558,49 @@ export default defineComponent({
                   <ElTableColumn prop="number" label="委外数量" width='100' />
                   <ElTableColumn prop="price" label="加工单价" width='90' />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width='90' />
-                  <ElTableColumn prop="other_transaction_terms" label="结算周期" width='100' />
+                  {/* <ElTableColumn prop="transaction_terms" label="交易方式" width='100' /> */}
                   <ElTableColumn prop="delivery_time" label="要求交期" width='120' />
-                  <ElTableColumn prop="remarks" label="备注" width='100' />
+                  {/* <ElTableColumn prop="remarks" label="备注" width='100' /> */}
                   <ElTableColumn label="操作" width="150" fixed="right">
                     {{
                       default: ({ row }) => {
-                        let dom = []
-                        if(row.status == undefined || row.status == 2){
-                          dom.push(<>
-                            <ElButton size="small" type="warning" v-permission={ 'OutsourcingOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
-                            <ElButton size="small" type="primary" v-permission={ 'OutsourcingOrder:set' } onClick={ () => handleStatusData(row) }>提交</ElButton>
-                          </>)
+                        if(!isEmptyValue(row)){
+                          let dom = []
+                          const isRowStatus = row.status === undefined || (row.status == 2 && row.user_id == user.id);
+                          // 查询当前用户是否有审批权限
+                          const isApproval = !!approvalUser && !!row.approval;
+                          // 如果有审批权限，获取当前这条数据中，该用户的审批步骤
+                          const rowApproval = isApproval ? row.approval.find(o => o.user_id === approvalUser.user_id) : null;
+
+                          // 当前这条数据状态为undefined或2：显示修改、提交按钮
+                          if(isRowStatus){
+                            dom.push(<>
+                              <ElButton size="small" type="warning" v-permission={ 'OutsourcingOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
+                              <ElButton size="small" type="primary" v-permission={ 'OutsourcingOrder:set' } onClick={ () => handleStatusData(row) }>提交</ElButton>
+                            </>)
+                          }
+
+                          // 有权限且有审批记录,处理审批相关按钮
+                          if(isApproval){
+                            const renderApprovalButton = () => {
+                              // 判断当前这条数据的步骤是否与用户的步骤相对应，true则有审批按钮
+                              if (rowApproval && row.status === 0 && row.step + 1 === rowApproval.step && rowApproval.status === 0) {
+                                return <ElButton size="small" type="primary" onClick={() => handleApproval(row)}>审批</ElButton>;
+                              }
+
+                              return <ElButton size="small" type="primary" disabled>{rowApproval?.status === 1 ? '已审批' : '待审批'}</ElButton>
+                            }
+                            dom.push(renderApprovalButton());
+
+                            if(row.status === 1){
+                              dom.push(
+                                <ElButton size="small" type="primary" onClick={() => handleBackApproval(row)}>反审批</ElButton>
+                              );
+                            }
+                          }
+
+                          return dom
                         }
-                        if(row.status == 0 && approval.findIndex(e => e.user_id == user.id) >= 0){
-                          dom.push(<>
-                            <ElButton size="small" type="primary" onClick={ () => handleApproval(row) }>审批</ElButton>
-                          </>)
-                        }
-                        if(row.status == 1 && approval.findIndex(e => e.user_id == user.id) >= 0){
-                          dom.push(<>
-                            <ElButton size="small" type="primary" onClick={ () => handleBackApproval(row) }>反审批</ElButton>
-                          </>)
-                        }
-                        return dom
                       }
                     }}
                   </ElTableColumn>
@@ -683,7 +717,9 @@ export default defineComponent({
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="供应商名称">
-                  <el-input v-model={ form.value.supplier_abbreviation } readonly placeholder="请选择材料名称"></el-input>
+                  <ElSelect class="disabled" v-model={ form.value.supplier_id } multiple={false} disabled filterable remote remote-show-suffix valueKey="id" placeholder="请选择供应商编码">
+                    {supplierInfo.value.map((e, index) => <ElOption value={ e.id } label={ e.supplier_abbreviation } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="加工单价" prop="price">
                   <ElInput v-model={ form.value.price } placeholder="请输入加工单价" />
@@ -700,15 +736,15 @@ export default defineComponent({
                 <ElFormItem label="加工要求" prop="ment">
                   <ElInput v-model={ form.value.ment } placeholder="请输入加工要求" />
                 </ElFormItem>
-                <ElFormItem label="交易条件" prop="other_transaction_terms">
-                  <ElInput v-model={ form.value.other_transaction_terms } placeholder="请输入交易条件" />
-                </ElFormItem>
+                {/* <ElFormItem label="交易方式" prop="transaction_terms">
+                  <ElInput v-model={ form.value.transaction_terms } placeholder="请输入交易方式" />
+                </ElFormItem> */}
                 <ElFormItem label="要求交期" prop="delivery_time">
-                  <ElDatePicker v-model={ form.value.delivery_time } value-format="YYYY-MM-DD" type="date" placeholder="请选择交期" clearable={ false } />
+                  <ElDatePicker v-model={ form.value.delivery_time } value-format="YYYY-MM-DD" type="date" placeholder="请选择交期" clearable={ false } style={{ width: '100%' }} />
                 </ElFormItem>
-                <ElFormItem label="备注" prop="remarks">
+                {/* <ElFormItem label="备注" prop="remarks">
                   <ElInput v-model={ form.value.remarks } placeholder="请输入备注" />
-                </ElFormItem>
+                </ElFormItem> */}
               </ElForm>
             ),
             footer: () => (

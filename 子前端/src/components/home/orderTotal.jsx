@@ -19,7 +19,9 @@ export default defineComponent({
     });
 
     const getOrderTotal = async () => {
-      const res = await request.get('/api/order_total')
+      const res = await request.post('/api/order_total', {
+        time: dateTime.value
+      })
       if(res.code == 200){
         data.value = res.data
       }
@@ -46,7 +48,7 @@ export default defineComponent({
               <div class="flex w100 row-between">
                 <div>在线订单：</div>
                 <div>
-                  <span class="f26" style={{ color: '#409eff' }}>{ data.value.onlineOrder }</span>
+                  <span class="f26" style={{ color: '#409eff' }}>{ data.value.saleLeng }</span>
                   <span>笔</span>
                 </div>
               </div>
@@ -55,7 +57,7 @@ export default defineComponent({
               <div class="flex w100 row-between">
                 <div>完成订单：</div>
                 <div>
-                  <span class="f26" style={{ color: '#409eff' }}>{ data.value.finishOrder }</span>
+                  <span class="f26" style={{ color: '#409eff' }}>{ data.value.noticeLeng }</span>
                   <span>笔</span>
                 </div>
               </div>
@@ -82,7 +84,7 @@ export default defineComponent({
               <div class="flex w100 row-between">
                 <div>订单存量：</div>
                 <div>
-                  <span class="f26" style={{ color: '#409eff' }}>{ data.value.orderNumber }</span>
+                  <span class="f26" style={{ color: '#409eff' }}>{ data.value.inventory }</span>
                   <span>PCS</span>
                 </div>
               </div>

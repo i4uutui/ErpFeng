@@ -295,7 +295,8 @@ export default defineComponent({
       }
     }
     // 选择工艺后自动带出设备
-    const processChange = (row, index) => {
+    const processChange = (value, index) => {
+      const row = processList.value.find(o => o.id == value)
       const device_id = row.equipment_id
       form.value.children[index].equipment_id = device_id
     }
@@ -364,10 +365,24 @@ export default defineComponent({
             default: () => (
               <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="105">
                 <ElFormItem label="产品编码" prop="product_id">
-                  <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_code" itemValue="product_code" placeholder="请选择产品编码" />
+                  <ElSelect v-model={ form.value.product_id } multiple={ false } filterable remote remote-show-suffix placeholder="请选择产品编码">
+                    {productsList.value.map((e, index) => <ElOption value={ e.id } label={ e.product_code } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="产品编码">
+                  <ElSelect class="disabled" v-model={ form.value.product_id } multiple={ false } disabled filterable remote remote-show-suffix placeholder="请选择产品名称">
+                    {productsList.value.map((e, index) => <ElOption value={ e.id } label={ e.product_name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="部件编码" prop="part_id">
-                  <MySelect v-model={ form.value.part_id } apiUrl="/api/getPartCode" query="part_code" itemValue="part_code" placeholder="请选择部件编码" />
+                  <ElSelect v-model={ form.value.part_id } multiple={ false } filterable remote remote-show-suffix placeholder="请选择部件编码">
+                    {partList.value.map((e, index) => <ElOption value={ e.id } label={ e.part_code } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="部件名称">
+                  <ElSelect class="disabled" v-model={ form.value.part_id } multiple={ false } disabled filterable remote remote-show-suffix placeholder="请选择部件名称">
+                    {partList.value.map((e, index) => <ElOption value={ e.id } label={ e.part_name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="排序" prop='sort'>
                   <ElInput v-model={ form.value.sort } placeholder="请输入排序" />
@@ -378,13 +393,30 @@ export default defineComponent({
                       <>
                         <div key={ index }>
                           <ElFormItem label="工艺编码" prop={ `children[${index}].process_id` } rules={ rules.process_id }>
-                            
-                            <MySelect v-model={ e.process_id } apiUrl="/api/getProcessCode" query="process_code" itemValue="process_code" placeholder="请选择工艺编码" onChange={ (value) => processChange(value, index) } />
+                            <ElSelect v-model={ e.process_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择工艺编码" onChange={ (value) => processChange(value, index) }>
+                              {processList.value.map((e, index) => e && (
+                                <ElOption value={ e.id } label={ e.process_code } key={ index } />
+                              ))}
+                            </ElSelect>
+                          </ElFormItem>
+                          <ElFormItem label="工艺名称">
+                            <ElSelect class="disabled" v-model={ e.process_id } multiple={false} disabled filterable remote remote-show-suffix valueKey="id" placeholder="请选择工艺名称">
+                              {processList.value.map((e, index) => e && (
+                                <ElOption value={ e.id } label={ e.process_name } key={ index } />
+                              ))}
+                            </ElSelect>
                           </ElFormItem>
                           <ElFormItem label="设备编码" prop={ `children[${index}].equipment_id` } rules={ rules.equipment_id }>
                             <ElSelect v-model={ e.equipment_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择设备编码">
                               {deviceList.value.map((e, index) => e && (
                                 <ElOption value={ e.id } label={ e.equipment_code } key={ index } />
+                              ))}
+                            </ElSelect>
+                          </ElFormItem>
+                          <ElFormItem label="设备名称">
+                            <ElSelect class="disabled" v-model={ e.equipment_id } multiple={false} disabled filterable remote remote-show-suffix valueKey="id" placeholder="请选择设备名称">
+                              {deviceList.value.map((e, index) => e && (
+                                <ElOption value={ e.id } label={ e.equipment_name } key={ index } />
                               ))}
                             </ElSelect>
                           </ElFormItem>

@@ -34,11 +34,6 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
     allowNull: false,
     comment: ' 单价 '
   },
-  transaction_currency: {
-    type: DataTypes.STRING(10),
-    allowNull: true,
-    comment: ' 交易币别 '
-  },
   unit: {
     type: DataTypes.STRING(10),
     allowNull: true,
@@ -54,8 +49,13 @@ const SubMaterialQuote = sequelize.define('SubMaterialQuote', {
     allowNull: true,
     comment: ' 包装要求 '
   },
-  condition: {
-    type: DataTypes.STRING(255),
+  transaction_currency: {
+    type: DataTypes.STRING(10),
+    allowNull: true,
+    comment: ' 交易币别 '
+  },
+  transaction_method: {
+    type: DataTypes.INTEGER(5),
     allowNull: true,
     comment: '交易条件'
   },

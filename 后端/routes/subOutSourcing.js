@@ -122,7 +122,7 @@ router.get('/outsourcing_quote', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.post('/add_outsourcing_quote', authMiddleware, async (req, res) => {
-  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, condition, other_transaction_terms, other_text } = req.body;
+  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, transaction_method, other_transaction_terms, other_text } = req.body;
   const { id: userId, company_id } = req.user;
   
   const notice = await SubProductNotice.findOne({
@@ -140,7 +140,7 @@ router.post('/add_outsourcing_quote', authMiddleware, async (req, res) => {
   
   try {
     await SubOutsourcingQuote.create({
-      notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, number, transaction_currency, condition, other_transaction_terms, other_text, company_id,
+      notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, number, transaction_currency, transaction_method, other_transaction_terms, other_text, company_id,
       user_id: userId,
       now_price: price,
     })
@@ -193,11 +193,11 @@ router.post('/add_outsourcing_quote', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.put('/outsourcing_quote', authMiddleware, async (req, res) => {
-  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, condition, other_transaction_terms, other_text, status, now_price, id } = req.body;
+  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, transaction_method, other_transaction_terms, other_text, status, now_price, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   const updateResult = await SubOutsourcingQuote.update({
-    notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, condition, other_transaction_terms, other_text, status, now_price, company_id,
+    notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, transaction_method, other_transaction_terms, other_text, status, now_price, company_id,
     user_id: userId
   }, {
     where: {
@@ -213,7 +213,7 @@ router.put('/outsourcing_quote', authMiddleware, async (req, res) => {
 /**
  * @swagger
  * /api/outsourcing_order:
- *   post:
+ *   get:
  *     summary: 委外加工列表
  *     tags:
  *       - 委外管理(Outsourcing)
@@ -259,7 +259,7 @@ router.get('/outsourcing_order', authMiddleware, async (req, res) => {
       notice_id: { [Op.notIn]: noticeIds },
       ...whereOrder
     },
-    attributes: ['id', 'notice_id', 'supplier_id', 'process_bom_id', 'process_bom_children_id', 'ment', 'unit', 'number', 'price', 'transaction_currency', 'other_transaction_terms', 'delivery_time', 'remarks', 'status', 'apply_id', 'apply_name', 'apply_time', 'step'],
+    attributes: ['id', 'notice_id', 'supplier_id', 'process_bom_id', 'process_bom_children_id', 'ment', 'unit', 'number', 'price', 'transaction_currency', 'transaction_terms', 'delivery_time', 'remarks', 'status', 'apply_id', 'apply_name', 'apply_time', 'step'],
     include: [
       { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], separate: true, },
       { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_abbreviation', 'supplier_code'], where: { ...whereSupplier } },
@@ -334,7 +334,7 @@ router.post('/add_outsourcing_order', authMiddleware, async (req, res) => {
     return e
   })
   const result = await SubOutsourcingOrder.bulkCreate(dataValue, {
-    updateOnDuplicate: ['company_id', 'user_id', 'notice_id', 'supplier_id', 'process_bom_id', 'process_bom_children_id', 'ment', 'unit', 'number', 'price', 'transaction_currency', 'other_transaction_terms', 'delivery_time', 'remarks', 'status', 'apply_id', 'apply_name', 'apply_time', 'step']
+    updateOnDuplicate: ['company_id', 'user_id', 'notice_id', 'supplier_id', 'process_bom_id', 'process_bom_children_id', 'ment', 'unit', 'number', 'price', 'transaction_currency', 'transaction_terms', 'delivery_time', 'remarks', 'status', 'apply_id', 'apply_name', 'apply_time', 'step']
   })
 
   // 创建审批流程
@@ -372,14 +372,14 @@ router.post('/add_outsourcing_order', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.put('/outsourcing_order', authMiddleware, async (req, res) => {
-  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, unit, price, number, transaction_currency, other_transaction_terms, ment, remarks, status, delivery_time, id } = req.body;
+  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, unit, price, number, transaction_currency, transaction_terms, ment, remarks, status, delivery_time, id } = req.body;
   const { id: userId, company_id } = req.user;
 
   const result = await SubOutsourcingOrder.findByPk(id)
   if(!result) res.json({ message: '未找到该委外加工信息', code: 401 })
   
   const obj = {
-    notice_id, supplier_id, process_bom_id, process_bom_children_id, unit, price, number, transaction_currency, other_transaction_terms, ment, remarks, status, delivery_time, company_id,
+    notice_id, supplier_id, process_bom_id, process_bom_children_id, unit, price, number, transaction_currency, transaction_terms, ment, remarks, status, delivery_time, company_id,
     user_id: userId
   }
   const updateResult = await SubOutsourcingOrder.update(obj, {

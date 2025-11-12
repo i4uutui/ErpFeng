@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const dayjs = require('dayjs')
-const { SubWarehouseContent, SubWarehouseApply, SubApprovalStep, SubApprovalUser, Op } = require('../models')
+const { SubWarehouseContent, SubWarehouseApply, SubApprovalStep, SubApprovalUser, Op, SubProductNotice } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { isInteger, PreciseMath } = require('../middleware/tool')
@@ -159,7 +159,7 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
   })
   if(!step.length) return res.json({ code: 401, message: '未配置审批流程，请先联系管理员' })
   const steps = step.map(e => e.toJSON())
-  
+
   const dataValue = data.map(e => {
     e.company_id = company_id
     e.user_id = userId

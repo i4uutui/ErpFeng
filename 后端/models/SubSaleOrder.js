@@ -74,6 +74,12 @@ const SubSaleOrder = sequelize.define('SubSaleOrder', {
     allowNull: true,
     comment: ' 送货地点 '
   },
+  is_quote: {
+    type: DataTypes.INTEGER(1),
+    allowNull: true,
+    defaultValue: 1,
+    comment: ' 是否已创建报价单：1-未创建，0-已创建 '
+  },
   is_sale: {
     type: DataTypes.INTEGER(1),
     allowNull: true,

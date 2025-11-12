@@ -13,7 +13,7 @@ export default defineComponent({
     const formHeight = ref(0);
     const rules = reactive({
       sale_id: [
-        { required: true, message: '请选择报价单号', trigger: 'blur' },
+        { required: true, message: '请选择销售单号', trigger: 'blur' },
       ],
       notice: [
         { required: true, message: '请输入生产单号', trigger: 'blur' },
