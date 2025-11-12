@@ -11,7 +11,7 @@
  Target Server Version : 50722 (5.7.22)
  File Encoding         : 65001
 
- Date: 07/11/2025 00:23:30
+ Date: 13/11/2025 00:09:17
 */
 
 SET NAMES utf8mb4;
@@ -121,10 +121,10 @@ INSERT INTO `ad_user` VALUES (8, 1, '1231', '$2b$10$SNysIqFfTVzbYdYilDmMwOt0zF0O
 INSERT INTO `ad_user` VALUES (9, 1, '312121', '$2b$10$d5SvhAYPngTVFoyT0RZzYOrgX.9QzeCxcddQ2wUMnsE6Kl14rRdHW', '21213131', NULL, '[[\"采购管理\"],[\"采购管理\",\"MaterialQuote\"],[\"采购管理\",\"PurchaseOrder\"]]', 2, 1, 0, 1, '2025-10-16 14:48:59', '2025-10-21 12:45:08');
 INSERT INTO `ad_user` VALUES (10, 3, 'liang', '$2b$10$zkLfaAwf0gbLrsGcXv.fjebNp4OllOlRfQkpsoP3X8eb1ci6H3HDW', '梁伟锋', NULL, '[[\"系统管理\"],[\"基础资料\"],[\"基础资料\",\"PartCode\"],[\"基础资料\",\"MaterialCode\"],[\"系统管理\",\"OrganizeManagement\"]]', 2, 6, 1, 0, '2025-10-16 14:49:57', '2025-10-16 14:50:40');
 INSERT INTO `ad_user` VALUES (11, 3, 'lupeisen', '$2b$10$AfLUeYHX4zV7k9IQRtFXr.mtSMVEfsEopPbPHWPFrpBn3ta4j4uVy', 'lupeisen', NULL, '[[\"系统管理\"],[\"系统管理\",\"OrganizeManagement\"],[\"系统管理\",\"ProcessCycle\"]]', 2, 6, 0, 0, '2025-10-16 14:50:25', '2025-10-16 14:50:38');
-INSERT INTO `ad_user` VALUES (12, 3, 'xuchudong', '$2b$10$bDucRLeOiNHFFXRtbW10lutWWBcXItwYf3jSzomDePYbjmBbWDXD6', '徐楚东', NULL, '[[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:add\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:add\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:edit\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:delete\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:add\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:finish\"],[\"订单管理\",\"FinishNotice\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:add\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:set\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:print\"],[\"生产管理\",\"ProductionProgress\"],[\"生产管理\",\"WorkOrder\",\"WorkOrder:print\"],[\"仓库管理\",\"WarehouseRate\",\"WarehouseRate:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addIn\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addOut\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:set\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:print\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addIn\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addOut\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:set\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:print\"],[\"财务管理\",\"EmployeePieceRate\"],[\"财务管理\",\"AccountsReceivable\"],[\"财务管理\",\"AccountsPayable\"],[\"财务管理\",\"AccountsOutsourcing\"],[\"系统管理\",\"OrganizeManagement\"],[\"基础资料\",\"PartCode\",\"PartCode:add\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:add\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:add\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:add\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:add\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品工程\",\"MaterialBOMArchive\",\"MaterialBOM:cope\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:add\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:edit\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品工程\",\"ProcessBOMArchive\",\"ProcessBOM:cope\"],[\"系统管理\",\"UserManagement\",\"user:add\"],[\"系统管理\",\"UserManagement\",\"user:edit\"],[\"系统管理\",\"UserManagement\",\"user:delete\"],[\"基础资料\",\"ProductCode\",\"ProductCode:delete\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:delete\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:delete\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:delete\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:delete\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:edit\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:add\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:archive\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:newPage\"],[\"采购管理\",\"MaterialQuoteArchive\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:add\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:edit\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:set\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:print\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:edit\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:edit\"]]', 2, 6, 1, 1, '2025-10-16 14:55:08', '2025-11-03 11:30:01');
-INSERT INTO `ad_user` VALUES (15, 3, 'suyun', '$2b$10$3giSn6u0TSPgXQTMQxOhjeBlyIByKkV9KTXVtQFFFw.gyQN9y/xyC', '粟云', NULL, '[[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:add\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:add\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:delete\"],[\"基础资料\",\"PartCode\",\"PartCode:add\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:add\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:delete\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:add\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:edit\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:delete\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:add\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"系统管理\",\"UserManagement\",\"user:add\"],[\"系统管理\",\"UserManagement\",\"user:edit\"],[\"系统管理\",\"UserManagement\",\"user:delete\"],[\"系统管理\",\"OrganizeManagement\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:delete\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:add\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:finish\"],[\"订单管理\",\"FinishNotice\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:delete\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品工程\",\"MaterialBOMArchive\",\"MaterialBOM:cope\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:add\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:edit\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:delete\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品工程\",\"ProcessBOMArchive\",\"ProcessBOM:cope\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:add\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:edit\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:add\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:archive\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:newPage\"],[\"采购管理\",\"MaterialQuoteArchive\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:add\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:edit\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:set\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:print\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:add\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:set\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:print\"],[\"生产管理\",\"ProductionProgress\"],[\"生产管理\",\"WorkOrder\",\"WorkOrder:print\"],[\"仓库管理\",\"WarehouseRate\",\"WarehouseRate:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addIn\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addOut\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:set\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:print\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addIn\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addOut\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:edit\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:set\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:print\"],[\"财务管理\",\"EmployeePieceRate\"],[\"财务管理\",\"AccountsReceivable\"],[\"财务管理\",\"AccountsPayable\"],[\"财务管理\",\"AccountsOutsourcing\"]]', 2, 6, 1, 1, '2025-10-19 16:00:54', '2025-11-03 11:29:48');
-INSERT INTO `ad_user` VALUES (16, 3, 'lengbing', '$2b$10$7ndhZpR5StJSxEy7Oe7ByOo7NpyWNr2n9SHgnvcdAEaJfPihG0hN2', '冷冰', NULL, '[[\"系统管理\",\"UserManagement\",\"user:add\"],[\"系统管理\",\"UserManagement\",\"user:edit\"],[\"系统管理\",\"UserManagement\",\"user:delete\"],[\"系统管理\",\"OrganizeManagement\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:add\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:add\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:delete\"],[\"基础资料\",\"PartCode\",\"PartCode:add\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:add\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:delete\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:add\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:edit\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:delete\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:add\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:delete\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:add\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:finish\"],[\"订单管理\",\"FinishNotice\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:delete\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品工程\",\"MaterialBOMArchive\",\"MaterialBOM:cope\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:add\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:edit\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:delete\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品工程\",\"ProcessBOMArchive\",\"ProcessBOM:cope\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:add\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:edit\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:add\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:archive\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:newPage\"],[\"采购管理\",\"MaterialQuoteArchive\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:add\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:edit\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:set\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:print\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:add\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:set\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:print\"],[\"生产管理\",\"ProductionProgress\"],[\"生产管理\",\"WorkOrder\",\"WorkOrder:print\"],[\"仓库管理\",\"WarehouseRate\",\"WarehouseRate:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addIn\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addOut\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:set\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:print\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addIn\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addOut\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:edit\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:set\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:print\"],[\"财务管理\",\"EmployeePieceRate\"],[\"财务管理\",\"AccountsReceivable\"],[\"财务管理\",\"AccountsPayable\"],[\"财务管理\",\"AccountsOutsourcing\"]]', 2, 6, 1, 1, '2025-10-27 20:21:26', '2025-11-03 11:29:40');
-INSERT INTO `ad_user` VALUES (17, 3, 'hexiongming', '$2b$10$aJ2gjfgqhWKFNhA7jv8rVef1AkKhUgd3mq.owmEVJ3WpU935Yklci', '何雄明', NULL, '[[\"系统管理\",\"UserManagement\",\"user:add\"],[\"系统管理\",\"UserManagement\",\"user:edit\"],[\"系统管理\",\"UserManagement\",\"user:delete\"],[\"系统管理\",\"OrganizeManagement\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:add\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:add\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:delete\"],[\"基础资料\",\"PartCode\",\"PartCode:add\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:add\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:delete\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:add\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:edit\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:delete\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:add\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:delete\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:add\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:finish\"],[\"订单管理\",\"FinishNotice\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:delete\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品工程\",\"MaterialBOMArchive\",\"MaterialBOM:cope\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:add\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:edit\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:delete\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品工程\",\"ProcessBOMArchive\",\"ProcessBOM:cope\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:add\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:edit\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:add\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:archive\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:newPage\"],[\"采购管理\",\"MaterialQuoteArchive\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:add\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:edit\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:set\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:print\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:add\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:set\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:print\"],[\"生产管理\",\"ProductionProgress\"],[\"生产管理\",\"WorkOrder\",\"WorkOrder:print\"],[\"仓库管理\",\"WarehouseRate\",\"WarehouseRate:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addIn\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addOut\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:set\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:print\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addIn\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addOut\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:edit\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:set\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:print\"],[\"财务管理\",\"EmployeePieceRate\"],[\"财务管理\",\"AccountsReceivable\"],[\"财务管理\",\"AccountsPayable\"],[\"财务管理\",\"AccountsOutsourcing\"]]', 2, 6, 1, 1, '2025-10-27 20:22:48', '2025-11-03 11:29:27');
+INSERT INTO `ad_user` VALUES (12, 3, 'xuchudong', '$2b$10$bDucRLeOiNHFFXRtbW10lutWWBcXItwYf3jSzomDePYbjmBbWDXD6', '徐楚东', 12, '[[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:add\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:add\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:edit\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:delete\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:add\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:finish\"],[\"订单管理\",\"FinishNotice\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:add\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:set\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:print\"],[\"生产管理\",\"ProductionProgress\"],[\"生产管理\",\"WorkOrder\",\"WorkOrder:print\"],[\"仓库管理\",\"WarehouseRate\",\"WarehouseRate:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addIn\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addOut\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:set\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:print\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addIn\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addOut\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:set\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:print\"],[\"财务管理\",\"EmployeePieceRate\"],[\"财务管理\",\"AccountsReceivable\"],[\"财务管理\",\"AccountsPayable\"],[\"财务管理\",\"AccountsOutsourcing\"],[\"系统管理\",\"OrganizeManagement\"],[\"基础资料\",\"PartCode\",\"PartCode:add\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:add\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:add\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:add\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:add\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品工程\",\"MaterialBOMArchive\",\"MaterialBOM:cope\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:add\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:edit\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品工程\",\"ProcessBOMArchive\",\"ProcessBOM:cope\"],[\"系统管理\",\"UserManagement\",\"user:add\"],[\"系统管理\",\"UserManagement\",\"user:edit\"],[\"系统管理\",\"UserManagement\",\"user:delete\"],[\"基础资料\",\"ProductCode\",\"ProductCode:delete\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:delete\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:delete\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:delete\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:delete\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:edit\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:add\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:archive\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:newPage\"],[\"采购管理\",\"MaterialQuoteArchive\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:add\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:edit\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:set\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:print\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:edit\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:edit\"]]', 2, 6, 1, 1, '2025-10-16 14:55:08', '2025-11-09 01:08:22');
+INSERT INTO `ad_user` VALUES (15, 3, 'suyun', '$2b$10$3giSn6u0TSPgXQTMQxOhjeBlyIByKkV9KTXVtQFFFw.gyQN9y/xyC', '粟云', 16, '[[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:add\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:add\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:delete\"],[\"基础资料\",\"PartCode\",\"PartCode:add\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:add\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:delete\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:add\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:edit\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:delete\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:add\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"系统管理\",\"UserManagement\",\"user:add\"],[\"系统管理\",\"UserManagement\",\"user:edit\"],[\"系统管理\",\"UserManagement\",\"user:delete\"],[\"系统管理\",\"OrganizeManagement\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:delete\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:add\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:finish\"],[\"订单管理\",\"FinishNotice\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:delete\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品工程\",\"MaterialBOMArchive\",\"MaterialBOM:cope\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:add\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:edit\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:delete\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品工程\",\"ProcessBOMArchive\",\"ProcessBOM:cope\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:add\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:edit\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:add\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:archive\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:newPage\"],[\"采购管理\",\"MaterialQuoteArchive\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:add\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:edit\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:set\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:print\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:add\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:set\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:print\"],[\"生产管理\",\"ProductionProgress\"],[\"生产管理\",\"WorkOrder\",\"WorkOrder:print\"],[\"仓库管理\",\"WarehouseRate\",\"WarehouseRate:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addIn\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addOut\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:set\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:print\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addIn\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addOut\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:edit\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:set\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:print\"],[\"财务管理\",\"EmployeePieceRate\"],[\"财务管理\",\"AccountsReceivable\"],[\"财务管理\",\"AccountsPayable\"],[\"财务管理\",\"AccountsOutsourcing\"]]', 2, 6, 1, 1, '2025-10-19 16:00:54', '2025-11-09 01:09:18');
+INSERT INTO `ad_user` VALUES (16, 3, 'lengbing', '$2b$10$7ndhZpR5StJSxEy7Oe7ByOo7NpyWNr2n9SHgnvcdAEaJfPihG0hN2', '冷冰', 14, '[[\"系统管理\",\"UserManagement\",\"user:add\"],[\"系统管理\",\"UserManagement\",\"user:edit\"],[\"系统管理\",\"UserManagement\",\"user:delete\"],[\"系统管理\",\"OrganizeManagement\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:add\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:add\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:delete\"],[\"基础资料\",\"PartCode\",\"PartCode:add\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:add\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:delete\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:add\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:edit\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:delete\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:add\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:delete\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:add\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:finish\"],[\"订单管理\",\"FinishNotice\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:delete\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品工程\",\"MaterialBOMArchive\",\"MaterialBOM:cope\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:add\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:edit\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:delete\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品工程\",\"ProcessBOMArchive\",\"ProcessBOM:cope\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:add\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:edit\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:add\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:archive\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:newPage\"],[\"采购管理\",\"MaterialQuoteArchive\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:add\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:edit\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:set\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:print\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:add\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:set\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:print\"],[\"生产管理\",\"ProductionProgress\"],[\"生产管理\",\"WorkOrder\",\"WorkOrder:print\"],[\"仓库管理\",\"WarehouseRate\",\"WarehouseRate:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addIn\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addOut\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:set\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:print\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addIn\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addOut\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:edit\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:set\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:print\"],[\"财务管理\",\"EmployeePieceRate\"],[\"财务管理\",\"AccountsReceivable\"],[\"财务管理\",\"AccountsPayable\"],[\"财务管理\",\"AccountsOutsourcing\"]]', 2, 6, 1, 1, '2025-10-27 20:21:26', '2025-11-09 01:07:50');
+INSERT INTO `ad_user` VALUES (17, 3, 'hexiongming', '$2b$10$aJ2gjfgqhWKFNhA7jv8rVef1AkKhUgd3mq.owmEVJ3WpU935Yklci', '何雄明', 13, '[[\"系统管理\",\"UserManagement\",\"user:add\"],[\"系统管理\",\"UserManagement\",\"user:edit\"],[\"系统管理\",\"UserManagement\",\"user:delete\"],[\"系统管理\",\"OrganizeManagement\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:add\"],[\"系统管理\",\"ProcessCycle\",\"ProcessCycle:edit\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:add\"],[\"系统管理\",\"WarehouseType\",\"Warehouse:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:add\"],[\"基础资料\",\"ProductCode\",\"ProductCode:edit\"],[\"基础资料\",\"ProductCode\",\"ProductCode:delete\"],[\"基础资料\",\"PartCode\",\"PartCode:add\"],[\"基础资料\",\"PartCode\",\"PartCode:edit\"],[\"基础资料\",\"PartCode\",\"PartCode:delete\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:add\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:edit\"],[\"基础资料\",\"MaterialCode\",\"MaterialCode:delete\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:add\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:edit\"],[\"基础资料\",\"ProcessCode\",\"ProcessCode:delete\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:add\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:edit\"],[\"基础资料\",\"EquipmentCode\",\"EquipmentCode:delete\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:add\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:edit\"],[\"基础资料\",\"EmployeeInfo\",\"EmployeeInfo:delete\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:add\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:edit\"],[\"订单管理\",\"CustomerInfo\",\"CustomerInfo:delete\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:add\"],[\"订单管理\",\"SalesOrder\",\"SalesOrder:edit\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:add\"],[\"订单管理\",\"ProductQuote\",\"ProductQuote:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:add\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:edit\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:date\"],[\"订单管理\",\"ProductNotice\",\"ProductNotice:finish\"],[\"订单管理\",\"FinishNotice\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:add\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:edit\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:delete\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:archive\"],[\"产品工程\",\"MaterialBOM\",\"MaterialBOM:newPage\"],[\"产品工程\",\"MaterialBOMArchive\",\"MaterialBOM:cope\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:add\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:edit\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:delete\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:archive\"],[\"产品工程\",\"ProcessBOM\",\"ProcessBOM:newPage\"],[\"产品工程\",\"ProcessBOMArchive\",\"ProcessBOM:cope\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:add\"],[\"采购管理\",\"SupplierInfo\",\"SupplierInfo:edit\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:add\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:archive\"],[\"采购管理\",\"MaterialQuote\",\"MaterialQuote:newPage\"],[\"采购管理\",\"MaterialQuoteArchive\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:add\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:edit\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:set\"],[\"采购管理\",\"PurchaseOrder\",\"PurchaseOrder:print\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:add\"],[\"委外管理\",\"OutsourcingQuote\",\"OutsourcingQuote:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:add\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:edit\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:set\"],[\"委外管理\",\"OutsourcingOrder\",\"OutsourcingOrder:print\"],[\"生产管理\",\"ProductionProgress\"],[\"生产管理\",\"WorkOrder\",\"WorkOrder:print\"],[\"仓库管理\",\"WarehouseRate\",\"WarehouseRate:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addIn\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:addOut\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:edit\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:set\"],[\"仓库管理\",\"MaterialHouse\",\"MaterialHouse:print\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addIn\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:addOut\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:edit\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:set\"],[\"仓库管理\",\"ProductHouse\",\"ProductHouse:print\"],[\"财务管理\",\"EmployeePieceRate\"],[\"财务管理\",\"AccountsReceivable\"],[\"财务管理\",\"AccountsPayable\"],[\"财务管理\",\"AccountsOutsourcing\"]]', 2, 6, 1, 1, '2025-10-27 20:22:48', '2025-11-09 01:07:28');
 
 -- ----------------------------
 -- Table structure for sub_approval_step
@@ -177,7 +177,7 @@ CREATE TABLE `sub_approval_user`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 95 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '流程控制用户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 99 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '流程控制用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_approval_user
@@ -256,6 +256,10 @@ INSERT INTO `sub_approval_user` VALUES (91, 1, 'product_warehouse', 44, 5, '哈�
 INSERT INTO `sub_approval_user` VALUES (92, 1, 'product_warehouse', 44, 4, '2132', NULL, 2, 1, '2025-10-12 14:21:03', '2025-10-12 14:22:13');
 INSERT INTO `sub_approval_user` VALUES (93, 1, 'product_warehouse', 43, 5, '哈哈', NULL, 1, 1, '2025-10-12 14:21:03', '2025-10-12 14:21:48');
 INSERT INTO `sub_approval_user` VALUES (94, 1, 'product_warehouse', 43, 4, '2132', NULL, 2, 1, '2025-10-12 14:21:03', '2025-10-12 14:22:13');
+INSERT INTO `sub_approval_user` VALUES (95, 3, 'purchase_order', 5, 16, '冷冰', NULL, 1, 1, '2025-11-10 08:24:40', '2025-11-12 14:18:29');
+INSERT INTO `sub_approval_user` VALUES (96, 3, 'purchase_order', 5, 15, '粟云', NULL, 2, 0, '2025-11-10 08:24:40', '2025-11-10 08:24:40');
+INSERT INTO `sub_approval_user` VALUES (97, 3, 'purchase_order', 6, 16, '冷冰', NULL, 1, 0, '2025-11-10 08:24:40', '2025-11-10 08:24:40');
+INSERT INTO `sub_approval_user` VALUES (98, 3, 'purchase_order', 6, 15, '粟云', NULL, 2, 0, '2025-11-10 08:24:40', '2025-11-10 08:24:40');
 
 -- ----------------------------
 -- Table structure for sub_const_type
@@ -328,9 +332,10 @@ CREATE TABLE `sub_customer_info`  (
   `company_address` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '公司地址',
   `delivery_address` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交货地址',
   `tax_registration_number` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '税务登记号',
-  `transaction_method` int(5) NULL DEFAULT NULL COMMENT '交易方式',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
-  `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '其它交易条件',
+  `transaction_method` int(5) NULL DEFAULT NULL COMMENT '交易方式',
+  `other_transaction_terms` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '结算周期',
+  `other_text` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '其他结算周期',
   `is_deleted` int(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -340,11 +345,11 @@ CREATE TABLE `sub_customer_info`  (
 -- ----------------------------
 -- Records of sub_customer_info
 -- ----------------------------
-INSERT INTO `sub_customer_info` VALUES (1, 1, 1, '123223', '石龙佳洁士', '1', '1', '1', '1', '1', '1', 22, '1', '1', 1, '2025-07-08 19:29:21', '2025-10-22 13:14:26');
-INSERT INTO `sub_customer_info` VALUES (2, 1, 1, '1234', '惠州饮料厂', '212', '121', '21', '121', '2121', '21', 21, '2121', '2121', 1, '2025-07-09 00:58:19', '2025-10-22 13:18:16');
-INSERT INTO `sub_customer_info` VALUES (3, 1, 1, '12311', '东莞鞋厂', '12', '1', '15', '155', '15', '15', 23, '55', '11', 1, '2025-07-09 15:04:51', '2025-10-22 13:18:08');
-INSERT INTO `sub_customer_info` VALUES (4, 6, 3, 'KA001', '旭欧', '潘总', '13812345678', '东莞市旭欧精密五金有限公司', '东莞市石碣镇单屋村', '公司材料仓', 'SJ123456', 21, '人民币', '月结60天', 1, '2025-10-18 11:09:32', '2025-10-30 15:52:38');
-INSERT INTO `sub_customer_info` VALUES (5, 6, 3, 'KA002', '鑫宇', '王总', '13712345678', '东莞市鑫宇五金制品厂', '东莞市万江区官桥窖村', '高埗镇合鑫喷漆厂', 'WJ123456', 21, '人民币', '月结90天', 1, '2025-10-30 15:52:21', '2025-10-30 15:52:21');
+INSERT INTO `sub_customer_info` VALUES (1, 1, 1, '123223', '石龙佳洁士', '1', '1', '1', '1', '1', '1', '1', 22, '1', NULL, 1, '2025-07-08 19:29:21', '2025-10-22 13:14:26');
+INSERT INTO `sub_customer_info` VALUES (2, 1, 1, '1234', '惠州饮料厂', '212', '121', '21', '121', '2121', '21', '2121', 21, '2121', NULL, 1, '2025-07-09 00:58:19', '2025-10-22 13:18:16');
+INSERT INTO `sub_customer_info` VALUES (3, 1, 1, '12311', '东莞鞋厂', '12', '1', '15', '155', '15', '15', '55', 23, '11', NULL, 1, '2025-07-09 15:04:51', '2025-10-22 13:18:08');
+INSERT INTO `sub_customer_info` VALUES (4, 6, 3, 'KA001', '旭欧', '潘总', '13812345678', '东莞市旭欧精密五金有限公司', '东莞市石碣镇单屋村', '公司材料仓', 'SJ123456', '人民币', 23, '26', NULL, 1, '2025-10-18 11:09:32', '2025-11-08 21:15:08');
+INSERT INTO `sub_customer_info` VALUES (5, 6, 3, 'KA002', '鑫宇', '王总', '13712345678', '东莞市鑫宇五金制品厂', '东莞市万江区官桥窖村', '高埗镇合鑫喷漆厂', 'WJ123456', '人民币', 21, '27', NULL, 1, '2025-10-30 15:52:21', '2025-11-08 21:14:47');
 
 -- ----------------------------
 -- Table structure for sub_date_info
@@ -357,7 +362,7 @@ CREATE TABLE `sub_date_info`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '日历记录的表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '日历记录的表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_date_info
@@ -369,6 +374,10 @@ INSERT INTO `sub_date_info` VALUES (11, 1, '2025-10-04', '2025-10-16 11:07:35', 
 INSERT INTO `sub_date_info` VALUES (12, 1, '2025-10-11', '2025-10-16 11:07:35', '2025-10-16 11:07:35');
 INSERT INTO `sub_date_info` VALUES (13, 1, '2025-10-18', '2025-10-16 11:07:35', '2025-10-16 11:07:35');
 INSERT INTO `sub_date_info` VALUES (14, 1, '2025-10-25', '2025-10-16 11:07:35', '2025-10-16 11:07:35');
+INSERT INTO `sub_date_info` VALUES (17, 3, '2025-11-16', '2025-11-10 10:54:30', '2025-11-10 10:54:30');
+INSERT INTO `sub_date_info` VALUES (18, 3, '2025-11-30', '2025-11-10 10:54:30', '2025-11-10 10:54:30');
+INSERT INTO `sub_date_info` VALUES (19, 3, '2025-12-14', '2025-11-10 10:54:30', '2025-11-10 10:54:30');
+INSERT INTO `sub_date_info` VALUES (20, 3, '2025-12-28', '2025-11-10 10:54:30', '2025-11-10 10:54:30');
 
 -- ----------------------------
 -- Table structure for sub_employee_info
@@ -402,7 +411,7 @@ INSERT INTO `sub_employee_info` VALUES (4, 1, 1, '22', '5445', 'base3', '$2b$10$
 INSERT INTO `sub_employee_info` VALUES (5, 6, 3, 'GL0002', '冷冰', 'SC0001', '$2b$10$1fJx1ONLKdN8t7dmcuQ.KODgtQ1ff5bFVVC0tUk4IQbkkXUX3k7pm', 14, '业务部副总', 20, NULL, 1, '2025-10-18 10:54:01', '2025-11-03 11:28:38');
 INSERT INTO `sub_employee_info` VALUES (6, 6, 3, 'GL0001', '徐庆华', 'GL0002', '$2b$10$vqlF5BJP4DLhCjIc3rIS8.7j02OmX7NWxUQYBjScbdnUiZ49rT63C', 15, '公司创始人', 20, NULL, 1, '2025-10-18 11:00:50', '2025-10-28 15:04:40');
 INSERT INTO `sub_employee_info` VALUES (7, 6, 3, 'GL0003', '何雄明', NULL, '$2b$10$1zaoOimS5ZBJDnocBe5isuXqsA2RiW2/y1lmfm3YpnxhCCSBB4PQm', 13, '技术部副总', 20, NULL, 1, '2025-10-27 20:45:10', '2025-11-03 11:28:12');
-INSERT INTO `sub_employee_info` VALUES (8, 6, 3, 'GL0004', '粟云', NULL, '$2b$10$vIxMD.gzhk7SKu4nSAMSoeb8LMRr.w.MGYSM1axo1CztZSVfNbgtm', 15, '生产部副总', 20, NULL, 1, '2025-10-27 20:49:12', '2025-11-03 11:29:10');
+INSERT INTO `sub_employee_info` VALUES (8, 6, 3, 'GL0004', '粟云', NULL, '$2b$10$vIxMD.gzhk7SKu4nSAMSoeb8LMRr.w.MGYSM1axo1CztZSVfNbgtm', 16, '生产部副总', 20, NULL, 1, '2025-10-27 20:49:12', '2025-11-09 01:10:00');
 INSERT INTO `sub_employee_info` VALUES (9, 6, 3, 'GL0005', '徐楚东', NULL, '$2b$10$I2QbpPtCfgs6e.XcCVPASOkbCuL3Pjnaa82yrFLkw9OxUGmbJhQ6m', 12, '行政部专员', 20, NULL, 1, '2025-10-31 10:01:52', '2025-11-03 11:27:58');
 
 -- ----------------------------
@@ -436,7 +445,7 @@ INSERT INTO `sub_equipment_code` VALUES (5, 1, 1, '124', '激光机', 5, 1, '8',
 INSERT INTO `sub_equipment_code` VALUES (6, 6, 3, 'JX01', '打字机', 2, 6, '10', 20, 2, '', 1, '2025-10-18 10:17:12', '2025-11-02 09:14:56');
 INSERT INTO `sub_equipment_code` VALUES (7, 6, 3, 'JX02', '16T冲床', 8, 6, '10', 80, 8, '', 1, '2025-10-18 10:21:33', '2025-10-23 23:51:20');
 INSERT INTO `sub_equipment_code` VALUES (8, 6, 3, 'JX03', '钻床-A', 5, 6, '10', 50, 5, '', 1, '2025-10-18 10:24:42', '2025-10-23 23:51:15');
-INSERT INTO `sub_equipment_code` VALUES (9, 6, 3, 'JX04', '手动研磨机', 4, 9, '10', 40, 4, '', 1, '2025-10-18 10:38:09', '2025-10-28 22:35:10');
+INSERT INTO `sub_equipment_code` VALUES (9, 6, 3, 'JX04', '手动研磨机', 8, 9, '10', 80, 8, '', 1, '2025-10-18 10:38:09', '2025-11-10 10:57:54');
 INSERT INTO `sub_equipment_code` VALUES (10, 6, 3, 'JX05', '卧冲', 2, 6, '10', 20, 2, '', 1, '2025-10-28 13:17:08', '2025-10-29 15:00:24');
 INSERT INTO `sub_equipment_code` VALUES (11, 6, 3, 'JX06', '切料机', 3, 6, '10', 30, 3, '', 1, '2025-10-28 13:18:23', '2025-10-28 13:18:23');
 INSERT INTO `sub_equipment_code` VALUES (12, 6, 3, 'JX07', '双头钻', 1, 6, '10', 10, 1, '', 1, '2025-10-28 13:20:21', '2025-10-28 13:20:21');
@@ -541,8 +550,10 @@ INSERT INTO `sub_material_bom` VALUES (41, 3, 6, 20, 44, 0, 1, '2025-10-30 17:13
 DROP TABLE IF EXISTS `sub_material_bom_child`;
 CREATE TABLE `sub_material_bom_child`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增主键ID',
-  `material_bom_id` int(11) NOT NULL COMMENT '材料BOM的父表id',
-  `material_id` int(11) NOT NULL COMMENT '材料编码ID，关联材料编码表',
+  `company_id` int(11) NULL DEFAULT NULL COMMENT '企业id',
+  `user_id` int(11) NULL DEFAULT NULL COMMENT '发布的用户id',
+  `material_bom_id` int(11) NULL DEFAULT NULL COMMENT '材料BOM的父表id',
+  `material_id` int(11) NULL DEFAULT NULL COMMENT '材料编码ID，关联材料编码表',
   `number` int(20) NULL DEFAULT NULL COMMENT '数量',
   `process_index` int(5) NULL DEFAULT NULL COMMENT '工序下标',
   `is_buy` int(11) NULL DEFAULT 0 COMMENT '是否已采购，0未采购1已采购',
@@ -554,60 +565,60 @@ CREATE TABLE `sub_material_bom_child`  (
 -- ----------------------------
 -- Records of sub_material_bom_child
 -- ----------------------------
-INSERT INTO `sub_material_bom_child` VALUES (6, 12, 2, 12, 1, 0, '2025-08-13 10:38:41', '2025-10-31 10:23:14');
-INSERT INTO `sub_material_bom_child` VALUES (7, 12, 2, 22, 2, 0, '2025-08-13 10:38:41', '2025-10-31 10:23:14');
-INSERT INTO `sub_material_bom_child` VALUES (8, 12, 2, 24, 3, 0, '2025-08-13 10:38:41', '2025-10-31 10:23:16');
-INSERT INTO `sub_material_bom_child` VALUES (9, 11, 2, 23, 1, 0, '2025-08-13 10:59:47', '2025-10-31 10:23:17');
-INSERT INTO `sub_material_bom_child` VALUES (10, 11, 2, 34, 2, 0, '2025-08-13 10:59:47', '2025-10-31 10:23:17');
-INSERT INTO `sub_material_bom_child` VALUES (11, 10, 2, 12, 1, 0, '2025-08-13 10:59:52', '2025-10-31 10:23:18');
-INSERT INTO `sub_material_bom_child` VALUES (12, 13, 3, 12, 1, 0, '2025-08-13 14:41:35', '2025-10-31 10:22:59');
-INSERT INTO `sub_material_bom_child` VALUES (13, 14, 2, 12, 1, 0, '2025-08-13 14:41:55', '2025-10-31 10:22:57');
-INSERT INTO `sub_material_bom_child` VALUES (14, 14, 2, 22, 2, 0, '2025-08-13 14:41:55', '2025-10-31 10:23:23');
-INSERT INTO `sub_material_bom_child` VALUES (15, 14, 3, 24, 3, 0, '2025-08-13 14:41:55', '2025-10-31 10:23:27');
-INSERT INTO `sub_material_bom_child` VALUES (16, 15, 2, 23, 1, 0, '2025-08-13 14:42:03', '2025-10-31 10:22:52');
-INSERT INTO `sub_material_bom_child` VALUES (17, 15, 2, 34, 2, 0, '2025-08-13 14:42:03', '2025-10-31 10:22:51');
-INSERT INTO `sub_material_bom_child` VALUES (18, 16, 3, 12, 1, 0, '2025-08-21 09:35:05', '2025-10-31 10:22:47');
-INSERT INTO `sub_material_bom_child` VALUES (19, 17, 2, 600, 1, 0, '2025-09-25 14:38:28', '2025-10-31 10:22:45');
-INSERT INTO `sub_material_bom_child` VALUES (20, 17, 3, 400, 2, 0, '2025-09-25 14:38:28', '2025-10-31 10:22:46');
-INSERT INTO `sub_material_bom_child` VALUES (21, 18, 3, 900, 1, 0, '2025-09-25 14:39:31', '2025-10-31 10:22:44');
-INSERT INTO `sub_material_bom_child` VALUES (22, 19, 2, 600, 1, 0, '2025-09-25 14:39:45', '2025-10-31 10:22:41');
-INSERT INTO `sub_material_bom_child` VALUES (23, 19, 3, 700, 2, 0, '2025-09-25 14:39:45', '2025-10-31 10:22:43');
-INSERT INTO `sub_material_bom_child` VALUES (24, 20, 2, 198, 1, 0, '2025-09-25 14:44:26', '2025-10-31 10:22:39');
-INSERT INTO `sub_material_bom_child` VALUES (25, 20, 2, 158, 2, 0, '2025-09-25 14:44:26', '2025-10-31 10:22:41');
-INSERT INTO `sub_material_bom_child` VALUES (26, 21, 2, 485, 1, 0, '2025-09-25 14:44:36', '2025-10-31 10:22:38');
-INSERT INTO `sub_material_bom_child` VALUES (27, 22, 4, 5, 1, 0, '2025-10-18 14:29:06', '2025-10-31 10:22:37');
-INSERT INTO `sub_material_bom_child` VALUES (29, 24, 5, 1, 1, 0, '2025-10-18 15:08:30', '2025-10-31 10:22:35');
-INSERT INTO `sub_material_bom_child` VALUES (31, 23, 4, 1, 1, 0, '2025-10-19 15:37:50', '2025-10-31 10:22:34');
-INSERT INTO `sub_material_bom_child` VALUES (34, 25, 3, 30, 1, 0, '2025-10-21 21:04:49', '2025-10-31 10:22:25');
-INSERT INTO `sub_material_bom_child` VALUES (36, 25, 2, 60, 2, 0, '2025-10-21 21:04:49', '2025-10-31 10:22:25');
-INSERT INTO `sub_material_bom_child` VALUES (37, 25, 3, 40, 3, 0, '2025-10-21 21:23:26', '2025-10-31 10:22:26');
-INSERT INTO `sub_material_bom_child` VALUES (38, 25, 2, 50, 4, 0, '2025-10-21 21:23:26', '2025-10-31 10:22:33');
-INSERT INTO `sub_material_bom_child` VALUES (39, 26, 6, 1, 1, 0, '2025-10-30 16:49:20', '2025-10-31 10:22:24');
-INSERT INTO `sub_material_bom_child` VALUES (40, 27, 7, 1, 1, 0, '2025-10-30 16:49:58', '2025-10-31 10:22:22');
-INSERT INTO `sub_material_bom_child` VALUES (41, 28, 8, 1, 1, 0, '2025-10-30 16:54:25', '2025-10-31 10:22:19');
-INSERT INTO `sub_material_bom_child` VALUES (42, 28, 9, 1, 2, 0, '2025-10-30 16:54:25', '2025-10-31 10:22:20');
-INSERT INTO `sub_material_bom_child` VALUES (43, 29, 9, 3, 1, 0, '2025-10-30 16:55:14', '2025-10-31 10:22:18');
-INSERT INTO `sub_material_bom_child` VALUES (44, 30, 10, 1, 1, 0, '2025-10-30 16:58:07', '2025-10-31 10:22:07');
-INSERT INTO `sub_material_bom_child` VALUES (45, 30, 9, 2, 2, 0, '2025-10-30 16:58:07', '2025-10-31 10:22:07');
-INSERT INTO `sub_material_bom_child` VALUES (46, 30, 11, 1, 3, 0, '2025-10-30 16:58:07', '2025-10-31 10:22:08');
-INSERT INTO `sub_material_bom_child` VALUES (47, 30, 12, 1, 4, 0, '2025-10-30 16:58:07', '2025-10-31 10:22:11');
-INSERT INTO `sub_material_bom_child` VALUES (48, 31, 13, 1, 1, 0, '2025-10-30 16:59:47', '2025-10-31 10:22:03');
-INSERT INTO `sub_material_bom_child` VALUES (49, 31, 12, 1, 2, 0, '2025-10-30 16:59:47', '2025-10-31 10:22:06');
-INSERT INTO `sub_material_bom_child` VALUES (50, 32, 14, 1, 1, 0, '2025-10-30 17:01:11', '2025-10-31 10:22:01');
-INSERT INTO `sub_material_bom_child` VALUES (51, 33, 15, 1, 1, 0, '2025-10-30 17:01:55', '2025-10-31 10:22:00');
-INSERT INTO `sub_material_bom_child` VALUES (52, 34, 16, 1, 1, 0, '2025-10-30 17:02:54', '2025-10-31 10:21:54');
-INSERT INTO `sub_material_bom_child` VALUES (53, 34, 17, 1, 2, 0, '2025-10-30 17:02:54', '2025-10-31 10:22:00');
-INSERT INTO `sub_material_bom_child` VALUES (54, 35, 18, 1, 1, 0, '2025-10-30 17:04:53', '2025-10-31 10:21:50');
-INSERT INTO `sub_material_bom_child` VALUES (55, 35, 12, 3, 2, 0, '2025-10-30 17:04:53', '2025-10-31 10:21:51');
-INSERT INTO `sub_material_bom_child` VALUES (56, 35, 20, 2, 3, 0, '2025-10-30 17:04:53', '2025-10-31 10:21:53');
-INSERT INTO `sub_material_bom_child` VALUES (57, 36, 19, 1, 1, 0, '2025-10-30 17:05:52', '2025-10-31 10:21:49');
-INSERT INTO `sub_material_bom_child` VALUES (58, 37, 21, 1, 1, 0, '2025-10-30 17:07:19', '2025-10-31 10:21:41');
-INSERT INTO `sub_material_bom_child` VALUES (59, 37, 23, 1, 2, 0, '2025-10-30 17:07:19', '2025-10-31 10:21:45');
-INSERT INTO `sub_material_bom_child` VALUES (60, 38, 22, 1, 1, 0, '2025-10-30 17:07:53', '2025-10-31 10:21:40');
-INSERT INTO `sub_material_bom_child` VALUES (61, 39, 27, 2, 1, 0, '2025-10-30 17:12:29', '2025-10-31 10:21:36');
-INSERT INTO `sub_material_bom_child` VALUES (62, 40, 24, 1, 1, 0, '2025-10-30 17:12:55', '2025-10-31 10:21:15');
-INSERT INTO `sub_material_bom_child` VALUES (63, 41, 25, 1, 1, 0, '2025-10-30 17:13:58', '2025-10-31 10:18:34');
-INSERT INTO `sub_material_bom_child` VALUES (64, 41, 26, 1, 2, 0, '2025-10-30 17:13:58', '2025-10-31 10:18:37');
+INSERT INTO `sub_material_bom_child` VALUES (6, NULL, NULL, 12, 2, 12, 1, 0, '2025-08-13 10:38:41', '2025-10-31 10:23:14');
+INSERT INTO `sub_material_bom_child` VALUES (7, NULL, NULL, 12, 2, 22, 2, 0, '2025-08-13 10:38:41', '2025-10-31 10:23:14');
+INSERT INTO `sub_material_bom_child` VALUES (8, NULL, NULL, 12, 2, 24, 3, 0, '2025-08-13 10:38:41', '2025-10-31 10:23:16');
+INSERT INTO `sub_material_bom_child` VALUES (9, NULL, NULL, 11, 2, 23, 1, 0, '2025-08-13 10:59:47', '2025-10-31 10:23:17');
+INSERT INTO `sub_material_bom_child` VALUES (10, NULL, NULL, 11, 2, 34, 2, 0, '2025-08-13 10:59:47', '2025-10-31 10:23:17');
+INSERT INTO `sub_material_bom_child` VALUES (11, NULL, NULL, 10, 2, 12, 1, 0, '2025-08-13 10:59:52', '2025-10-31 10:23:18');
+INSERT INTO `sub_material_bom_child` VALUES (12, NULL, NULL, 13, 3, 12, 1, 0, '2025-08-13 14:41:35', '2025-10-31 10:22:59');
+INSERT INTO `sub_material_bom_child` VALUES (13, NULL, NULL, 14, 2, 12, 1, 0, '2025-08-13 14:41:55', '2025-10-31 10:22:57');
+INSERT INTO `sub_material_bom_child` VALUES (14, NULL, NULL, 14, 2, 22, 2, 0, '2025-08-13 14:41:55', '2025-10-31 10:23:23');
+INSERT INTO `sub_material_bom_child` VALUES (15, NULL, NULL, 14, 3, 24, 3, 0, '2025-08-13 14:41:55', '2025-10-31 10:23:27');
+INSERT INTO `sub_material_bom_child` VALUES (16, NULL, NULL, 15, 2, 23, 1, 0, '2025-08-13 14:42:03', '2025-10-31 10:22:52');
+INSERT INTO `sub_material_bom_child` VALUES (17, NULL, NULL, 15, 2, 34, 2, 0, '2025-08-13 14:42:03', '2025-10-31 10:22:51');
+INSERT INTO `sub_material_bom_child` VALUES (18, NULL, NULL, 16, 3, 12, 1, 0, '2025-08-21 09:35:05', '2025-10-31 10:22:47');
+INSERT INTO `sub_material_bom_child` VALUES (19, NULL, NULL, 17, 2, 600, 1, 0, '2025-09-25 14:38:28', '2025-10-31 10:22:45');
+INSERT INTO `sub_material_bom_child` VALUES (20, NULL, NULL, 17, 3, 400, 2, 0, '2025-09-25 14:38:28', '2025-10-31 10:22:46');
+INSERT INTO `sub_material_bom_child` VALUES (21, NULL, NULL, 18, 3, 900, 1, 0, '2025-09-25 14:39:31', '2025-10-31 10:22:44');
+INSERT INTO `sub_material_bom_child` VALUES (22, NULL, NULL, 19, 2, 600, 1, 0, '2025-09-25 14:39:45', '2025-10-31 10:22:41');
+INSERT INTO `sub_material_bom_child` VALUES (23, NULL, NULL, 19, 3, 700, 2, 0, '2025-09-25 14:39:45', '2025-10-31 10:22:43');
+INSERT INTO `sub_material_bom_child` VALUES (24, NULL, NULL, 20, 2, 198, 1, 0, '2025-09-25 14:44:26', '2025-10-31 10:22:39');
+INSERT INTO `sub_material_bom_child` VALUES (25, NULL, NULL, 20, 2, 158, 2, 0, '2025-09-25 14:44:26', '2025-10-31 10:22:41');
+INSERT INTO `sub_material_bom_child` VALUES (26, NULL, NULL, 21, 2, 485, 1, 0, '2025-09-25 14:44:36', '2025-10-31 10:22:38');
+INSERT INTO `sub_material_bom_child` VALUES (27, NULL, NULL, 22, 4, 5, 1, 0, '2025-10-18 14:29:06', '2025-10-31 10:22:37');
+INSERT INTO `sub_material_bom_child` VALUES (29, NULL, NULL, 24, 5, 1, 1, 0, '2025-10-18 15:08:30', '2025-10-31 10:22:35');
+INSERT INTO `sub_material_bom_child` VALUES (31, NULL, NULL, 23, 4, 1, 1, 0, '2025-10-19 15:37:50', '2025-10-31 10:22:34');
+INSERT INTO `sub_material_bom_child` VALUES (34, NULL, NULL, 25, 3, 30, 1, 0, '2025-10-21 21:04:49', '2025-10-31 10:22:25');
+INSERT INTO `sub_material_bom_child` VALUES (36, NULL, NULL, 25, 2, 60, 2, 0, '2025-10-21 21:04:49', '2025-10-31 10:22:25');
+INSERT INTO `sub_material_bom_child` VALUES (37, NULL, NULL, 25, 3, 40, 3, 0, '2025-10-21 21:23:26', '2025-10-31 10:22:26');
+INSERT INTO `sub_material_bom_child` VALUES (38, NULL, NULL, 25, 2, 50, 4, 0, '2025-10-21 21:23:26', '2025-10-31 10:22:33');
+INSERT INTO `sub_material_bom_child` VALUES (39, NULL, NULL, 26, 6, 1, 1, 0, '2025-10-30 16:49:20', '2025-10-31 10:22:24');
+INSERT INTO `sub_material_bom_child` VALUES (40, NULL, NULL, 27, 7, 1, 1, 0, '2025-10-30 16:49:58', '2025-10-31 10:22:22');
+INSERT INTO `sub_material_bom_child` VALUES (41, NULL, NULL, 28, 8, 1, 1, 0, '2025-10-30 16:54:25', '2025-10-31 10:22:19');
+INSERT INTO `sub_material_bom_child` VALUES (42, NULL, NULL, 28, 9, 1, 2, 0, '2025-10-30 16:54:25', '2025-10-31 10:22:20');
+INSERT INTO `sub_material_bom_child` VALUES (43, NULL, NULL, 29, 9, 3, 1, 0, '2025-10-30 16:55:14', '2025-10-31 10:22:18');
+INSERT INTO `sub_material_bom_child` VALUES (44, NULL, NULL, 30, 10, 1, 1, 0, '2025-10-30 16:58:07', '2025-10-31 10:22:07');
+INSERT INTO `sub_material_bom_child` VALUES (45, NULL, NULL, 30, 9, 2, 2, 0, '2025-10-30 16:58:07', '2025-10-31 10:22:07');
+INSERT INTO `sub_material_bom_child` VALUES (46, NULL, NULL, 30, 11, 1, 3, 0, '2025-10-30 16:58:07', '2025-10-31 10:22:08');
+INSERT INTO `sub_material_bom_child` VALUES (47, NULL, NULL, 30, 12, 1, 4, 0, '2025-10-30 16:58:07', '2025-10-31 10:22:11');
+INSERT INTO `sub_material_bom_child` VALUES (48, NULL, NULL, 31, 13, 1, 1, 0, '2025-10-30 16:59:47', '2025-10-31 10:22:03');
+INSERT INTO `sub_material_bom_child` VALUES (49, NULL, NULL, 31, 12, 1, 2, 0, '2025-10-30 16:59:47', '2025-10-31 10:22:06');
+INSERT INTO `sub_material_bom_child` VALUES (50, NULL, NULL, 32, 14, 1, 1, 0, '2025-10-30 17:01:11', '2025-10-31 10:22:01');
+INSERT INTO `sub_material_bom_child` VALUES (51, NULL, NULL, 33, 15, 1, 1, 0, '2025-10-30 17:01:55', '2025-10-31 10:22:00');
+INSERT INTO `sub_material_bom_child` VALUES (52, NULL, NULL, 34, 16, 1, 1, 0, '2025-10-30 17:02:54', '2025-10-31 10:21:54');
+INSERT INTO `sub_material_bom_child` VALUES (53, NULL, NULL, 34, 17, 1, 2, 0, '2025-10-30 17:02:54', '2025-10-31 10:22:00');
+INSERT INTO `sub_material_bom_child` VALUES (54, NULL, NULL, 35, 18, 1, 1, 0, '2025-10-30 17:04:53', '2025-10-31 10:21:50');
+INSERT INTO `sub_material_bom_child` VALUES (55, NULL, NULL, 35, 12, 3, 2, 0, '2025-10-30 17:04:53', '2025-10-31 10:21:51');
+INSERT INTO `sub_material_bom_child` VALUES (56, NULL, NULL, 35, 20, 2, 3, 0, '2025-10-30 17:04:53', '2025-10-31 10:21:53');
+INSERT INTO `sub_material_bom_child` VALUES (57, NULL, NULL, 36, 19, 1, 1, 0, '2025-10-30 17:05:52', '2025-10-31 10:21:49');
+INSERT INTO `sub_material_bom_child` VALUES (58, NULL, NULL, 37, 21, 1, 1, 0, '2025-10-30 17:07:19', '2025-10-31 10:21:41');
+INSERT INTO `sub_material_bom_child` VALUES (59, NULL, NULL, 37, 23, 1, 2, 0, '2025-10-30 17:07:19', '2025-10-31 10:21:45');
+INSERT INTO `sub_material_bom_child` VALUES (60, NULL, NULL, 38, 22, 1, 1, 0, '2025-10-30 17:07:53', '2025-10-31 10:21:40');
+INSERT INTO `sub_material_bom_child` VALUES (61, NULL, NULL, 39, 27, 2, 1, 0, '2025-10-30 17:12:29', '2025-10-31 10:21:36');
+INSERT INTO `sub_material_bom_child` VALUES (62, NULL, NULL, 40, 24, 1, 1, 0, '2025-10-30 17:12:55', '2025-10-31 10:21:15');
+INSERT INTO `sub_material_bom_child` VALUES (63, NULL, NULL, 41, 25, 1, 1, 1, '2025-10-30 17:13:58', '2025-11-10 08:24:40');
+INSERT INTO `sub_material_bom_child` VALUES (64, NULL, NULL, 41, 26, 1, 2, 1, '2025-10-30 17:13:58', '2025-11-10 08:24:40');
 
 -- ----------------------------
 -- Table structure for sub_material_code
@@ -636,30 +647,30 @@ CREATE TABLE `sub_material_code`  (
 -- ----------------------------
 INSERT INTO `sub_material_code` VALUES (2, 1, 1, '123', '121', '2121', '21', '2121', '21', '21', '21', 1, '2025-07-08 15:36:33', '2025-08-12 10:18:06');
 INSERT INTO `sub_material_code` VALUES (3, 1, 1, '789', '555', '5356', '35353', '353', '353', '5353', '353', 1, '2025-08-17 09:38:16', '2025-10-21 14:56:14');
-INSERT INTO `sub_material_code` VALUES (4, 6, 3, 'H0101-0089', '车首管', 'JHD-AT-0074*146L', 'JHD-AT-0074*146L', '', 'PCS', 'KG', '', 1, '2025-10-18 05:10:39', '2025-10-27 16:21:45');
-INSERT INTO `sub_material_code` VALUES (5, 6, 3, 'H0201-0053', '五通', 'φ43*4.6T*100L JHD-AK-002G偏心铣弧口', 'φ43*4.6T*100L JHD-AK-002G偏心铣弧口', '', 'PCS', 'KG', '', 1, '2025-10-18 14:27:16', '2025-10-27 16:21:38');
-INSERT INTO `sub_material_code` VALUES (6, 6, 3, 'M0101-0668', '中管', 'φ40.8*2.2T*410L', 'φ40.8*2.2T*410L', '', 'PCS', 'KG', '', 1, '2025-10-18 14:35:20', '2025-10-27 16:21:23');
-INSERT INTO `sub_material_code` VALUES (7, 6, 3, 'M0101-1123', '手提管', 'φ22.2*2.0T*200L', 'φ22.2*2.0T*200L', '', 'PCS', 'KG', '', 1, '2025-10-27 16:17:44', '2025-10-27 16:21:15');
-INSERT INTO `sub_material_code` VALUES (8, 6, 3, 'M0101-0565', '下管', 'φ28.6*2.0T*220L', 'φ28.6*2.0T*220L', '', 'PCS', 'KG', '', 1, '2025-10-27 16:19:44', '2025-10-27 16:21:30');
-INSERT INTO `sub_material_code` VALUES (9, 6, 3, 'M0103-0015', '过线管', '方27*17*2000L(CM-15114)(成品15L,一分百)', '方27*17*2000L(CM-15114)(成品15L,一分百)', '', 'PCS', 'KG', '', 1, '2025-10-27 16:21:05', '2025-10-27 16:21:05');
-INSERT INTO `sub_material_code` VALUES (10, 6, 3, 'M0103-0234', '主梁管', '方121*65*600L', '方121*65*600L', '', 'PCS', 'KG', '', 1, '2025-10-27 16:23:05', '2025-10-27 16:23:05');
-INSERT INTO `sub_material_code` VALUES (11, 6, 3, 'H0801-0004', '水壶螺母', 'YD008-044（M4）', 'YD008-044（M4）', '', '个', '盒（50个）', '', 1, '2025-10-27 16:28:28', '2025-10-27 16:28:28');
-INSERT INTO `sub_material_code` VALUES (12, 6, 3, 'H0703-0001', '油压线扣', 'YD007-004', 'YD007-004', '', '个', '盒（100个）', '', 1, '2025-10-27 16:29:45', '2025-10-28 10:47:18');
-INSERT INTO `sub_material_code` VALUES (13, 6, 3, 'M0101-0635', '后上叉L', 'φ19*2.0T*455L', 'φ19*2.0T*455L', '', 'PCS', 'PCS', '', 1, '2025-10-28 10:43:21', '2025-10-28 10:48:27');
-INSERT INTO `sub_material_code` VALUES (14, 6, 3, 'M0101-0636', '后上叉R', 'φ19*2.0T*455L', 'φ19*2.0T*455L', '', 'PCS', 'PCS', '', 1, '2025-10-28 10:44:33', '2025-10-28 10:48:41');
-INSERT INTO `sub_material_code` VALUES (15, 6, 3, 'M0101-0019', '上枝杆', 'φ19*1.8T*105L（±1MM)', 'φ19*1.8T*105L（±1MM)', '', 'PCS', 'PCS', '', 1, '2025-10-28 10:45:38', '2025-10-28 10:47:42');
-INSERT INTO `sub_material_code` VALUES (16, 6, 3, 'M0101-0020', '下枝杆', 'φ19*1.8T*105L（±1MM)', 'φ19*1.8T*105L（±1MM)', '', 'PCS', 'PCS', '', 1, '2025-10-28 10:46:52', '2025-10-28 10:48:00');
-INSERT INTO `sub_material_code` VALUES (17, 6, 3, 'H0801-0001', '硬焊螺母', 'YD008-006 M5*9L普通', 'YD008-006 M5*9L普通', '', '个', '盒（50个）', '', 1, '2025-10-28 10:50:20', '2025-10-28 10:50:20');
-INSERT INTO `sub_material_code` VALUES (18, 6, 3, 'M0101-0444', '后下叉R', 'φ22.2*2.0*420L', 'φ22.2*2.0*420L', '', 'PCS', 'PCS', '', 1, '2025-10-28 10:51:34', '2025-10-28 10:51:34');
-INSERT INTO `sub_material_code` VALUES (19, 6, 3, 'M0101-0445', '后下叉L', 'φ22.2*2.0*420L', 'φ22.2*2.0*420L', '', 'PCS', 'PCS', '', 1, '2025-10-28 10:52:42', '2025-10-28 10:52:42');
-INSERT INTO `sub_material_code` VALUES (20, 6, 3, 'H0702-0001', '止栓', 'YD004-026', 'YD004-026', '', 'PCS', 'PCS', '', 1, '2025-10-28 10:53:46', '2025-10-28 10:53:46');
-INSERT INTO `sub_material_code` VALUES (21, 6, 3, 'H0302-0013', '左勾爪', 'YD001-003DS-45度', 'YD001-003DS-45度', '', 'PCS', 'PCS', '', 1, '2025-10-28 11:01:29', '2025-10-28 11:01:29');
-INSERT INTO `sub_material_code` VALUES (22, 6, 3, 'H0302-0014', '右勾爪', 'YD001-003DS-45度', 'YD001-003DS-45度', '', 'PCS', 'PCS', '', 1, '2025-10-28 11:02:37', '2025-10-28 11:02:37');
-INSERT INTO `sub_material_code` VALUES (23, 6, 3, 'H1202-0012', '边支撑', 'JHD-TC18', 'JHD-TC18', '', 'PCS', 'PCS', '', 1, '2025-10-28 11:03:49', '2025-10-28 11:03:49');
-INSERT INTO `sub_material_code` VALUES (24, 6, 3, 'H0401-0036', '折叠器', 'ZHD-DX160-T01/02-Z', 'ZHD-DX160-T01/02-Z', '', 'PCS', 'PCS', '', 1, '2025-10-28 11:05:05', '2025-10-28 11:05:05');
-INSERT INTO `sub_material_code` VALUES (25, 6, 3, 'H1102-0099', '加强片', 'JHD-BQ-211', 'JHD-BQ-211', '', 'PCS', 'PCS', '', 1, '2025-10-28 11:06:14', '2025-10-28 11:06:14');
-INSERT INTO `sub_material_code` VALUES (26, 6, 3, 'H1201-0001', '支撑棒', 'JS-ZJ-001*120L', 'JS-ZJ-001*120L', '', 'PCS', 'PCS', '', 1, '2025-10-28 11:07:19', '2025-10-28 11:07:19');
-INSERT INTO `sub_material_code` VALUES (27, 6, 3, 'H0802-0001', '货架螺母', 'YD008-021 M5', 'YD008-021 M5', '', '个', '盒（50个）', '', 1, '2025-10-30 17:11:30', '2025-10-30 17:11:30');
+INSERT INTO `sub_material_code` VALUES (4, 6, 3, 'H0101-0089', '车首管', 'JHD-AT-0074*146L', 'JHD-AT-0074*146L', '', 'PCS', 'KG', '铝管材', 1, '2025-10-18 05:10:39', '2025-11-09 01:41:32');
+INSERT INTO `sub_material_code` VALUES (5, 6, 3, 'H0201-0053', '五通', 'φ43*4.6T*100L JHD-AK-002G偏心铣弧口', 'φ43*4.6T*100L JHD-AK-002G偏心铣弧口', '', 'PCS', 'KG', '铝管材', 1, '2025-10-18 14:27:16', '2025-11-09 01:42:02');
+INSERT INTO `sub_material_code` VALUES (6, 6, 3, 'M0101-0668', '中管', 'φ40.8*2.2T*410L', 'φ40.8*2.2T*410L', '', 'PCS', 'KG', '铝管材', 1, '2025-10-18 14:35:20', '2025-11-09 01:48:05');
+INSERT INTO `sub_material_code` VALUES (7, 6, 3, 'M0101-1123', '手提管', 'φ22.2*2.0T*200L', 'φ22.2*2.0T*200L', '', 'PCS', 'KG', '铝管材', 1, '2025-10-27 16:17:44', '2025-11-09 01:48:14');
+INSERT INTO `sub_material_code` VALUES (8, 6, 3, 'M0101-0565', '下管', 'φ28.6*2.0T*220L', 'φ28.6*2.0T*220L', '', 'PCS', 'KG', '铝管材', 1, '2025-10-27 16:19:44', '2025-11-09 01:47:16');
+INSERT INTO `sub_material_code` VALUES (9, 6, 3, 'M0103-0015', '过线管', '方27*17*2000L(CM-15114)(成品15L,一分百)', '方27*17*2000L(CM-15114)(成品15L,一分百)', '', 'PCS', 'KG', '铝管材', 1, '2025-10-27 16:21:05', '2025-11-09 01:48:26');
+INSERT INTO `sub_material_code` VALUES (10, 6, 3, 'M0103-0234', '主梁管', '方121*65*600L', '方121*65*600L', '', 'PCS', 'KG', '铝管材', 1, '2025-10-27 16:23:05', '2025-11-09 01:48:36');
+INSERT INTO `sub_material_code` VALUES (11, 6, 3, 'H0801-0004', '水壶螺母', 'YD008-044（M4）', 'YD008-044（M4）', '', '个', '盒（50个）', '铝架配件', 1, '2025-10-27 16:28:28', '2025-11-09 01:45:08');
+INSERT INTO `sub_material_code` VALUES (12, 6, 3, 'H0703-0001', '油压线扣', 'YD007-004', 'YD007-004', '', '个', '盒（100个）', '铝架配件', 1, '2025-10-27 16:29:45', '2025-11-09 01:44:42');
+INSERT INTO `sub_material_code` VALUES (13, 6, 3, 'M0101-0635', '后上叉L', 'φ19*2.0T*455L', 'φ19*2.0T*455L', '', 'PCS', 'PCS', '铝架配件', 1, '2025-10-28 10:43:21', '2025-11-09 01:47:34');
+INSERT INTO `sub_material_code` VALUES (14, 6, 3, 'M0101-0636', '后上叉R', 'φ19*2.0T*455L', 'φ19*2.0T*455L', '', 'PCS', 'PCS', '铝架配件', 1, '2025-10-28 10:44:33', '2025-11-09 01:47:45');
+INSERT INTO `sub_material_code` VALUES (15, 6, 3, 'M0101-0019', '上枝杆', 'φ19*1.8T*105L（±1MM)', 'φ19*1.8T*105L（±1MM)', '', 'PCS', 'PCS', '铝架配件', 1, '2025-10-28 10:45:38', '2025-11-09 01:46:19');
+INSERT INTO `sub_material_code` VALUES (16, 6, 3, 'M0101-0020', '下枝杆', 'φ19*1.8T*105L（±1MM)', 'φ19*1.8T*105L（±1MM)', '', 'PCS', 'PCS', '铝架配件', 1, '2025-10-28 10:46:52', '2025-11-09 01:46:31');
+INSERT INTO `sub_material_code` VALUES (17, 6, 3, 'H0801-0001', '硬焊螺母', 'YD008-006 M5*9L普通', 'YD008-006 M5*9L普通', '', '个', '盒（50个）', '铝架配件', 1, '2025-10-28 10:50:20', '2025-11-09 01:44:56');
+INSERT INTO `sub_material_code` VALUES (18, 6, 3, 'M0101-0444', '后下叉R', 'φ22.2*2.0*420L', 'φ22.2*2.0*420L', '', 'PCS', 'PCS', '铝架配件', 1, '2025-10-28 10:51:34', '2025-11-09 01:46:49');
+INSERT INTO `sub_material_code` VALUES (19, 6, 3, 'M0101-0445', '后下叉L', 'φ22.2*2.0*420L', 'φ22.2*2.0*420L', '', 'PCS', 'PCS', '铝架配件', 1, '2025-10-28 10:52:42', '2025-11-09 01:47:00');
+INSERT INTO `sub_material_code` VALUES (20, 6, 3, 'H0702-0001', '止栓', 'YD004-026', 'YD004-026', '', 'PCS', 'PCS', '铝架配件', 1, '2025-10-28 10:53:46', '2025-11-09 01:44:25');
+INSERT INTO `sub_material_code` VALUES (21, 6, 3, 'H0302-0013', '左勾爪', 'YD001-003DS-45度', 'YD001-003DS-45度', '', 'PCS', 'PCS', '铝架配件', 1, '2025-10-28 11:01:29', '2025-11-09 01:43:03');
+INSERT INTO `sub_material_code` VALUES (22, 6, 3, 'H0302-0014', '右勾爪', 'YD001-003DS-45度', 'YD001-003DS-45度', '', 'PCS', 'PCS', '铝架配件', 1, '2025-10-28 11:02:37', '2025-11-09 01:43:36');
+INSERT INTO `sub_material_code` VALUES (23, 6, 3, 'H1202-0012', '边支撑', 'JHD-TC18', 'JHD-TC18', '', 'PCS', 'PCS', '铝架配件', 1, '2025-10-28 11:03:49', '2025-11-09 01:46:06');
+INSERT INTO `sub_material_code` VALUES (24, 6, 3, 'H0401-0036', '折叠器', 'ZHD-DX160-T01/02-Z', 'ZHD-DX160-T01/02-Z', '', 'PCS', 'PCS', '铝架配件', 1, '2025-10-28 11:05:05', '2025-11-09 01:44:12');
+INSERT INTO `sub_material_code` VALUES (25, 6, 3, 'H1102-0099', '加强片', 'JHD-BQ-211', 'JHD-BQ-211', '', 'PCS', 'PCS', '铝架配件', 1, '2025-10-28 11:06:14', '2025-11-09 01:45:36');
+INSERT INTO `sub_material_code` VALUES (26, 6, 3, 'H1201-0001', '支撑棒', 'JS-ZJ-001*120L', 'JS-ZJ-001*120L', '', 'PCS', 'PCS', '铝架配件', 1, '2025-10-28 11:07:19', '2025-11-09 01:45:47');
+INSERT INTO `sub_material_code` VALUES (27, 6, 3, 'H0802-0001', '货架螺母', 'YD008-021 M5', 'YD008-021 M5', '', '个', '盒（50个）', '铝架配件', 1, '2025-10-30 17:11:30', '2025-11-09 01:45:20');
 
 -- ----------------------------
 -- Table structure for sub_material_ment
@@ -686,6 +697,7 @@ CREATE TABLE `sub_material_ment`  (
   `model_spec` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '型号&规格',
   `other_features` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '其它特性',
   `unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '单位',
+  `usage_unit` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '使用单位',
   `price` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '单价',
   `order_number` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '预计数量',
   `number` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '实际数量',
@@ -699,13 +711,15 @@ CREATE TABLE `sub_material_ment`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料采购单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料采购单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_ment
 -- ----------------------------
-INSERT INTO `sub_material_ment` VALUES (3, 1, 1, NULL, NULL, 15, 6, '2222', 2, '1234', '151', '10', '1233', '212', 3, '789', '555', '535/35353', '353', '353', '2.5', '18000', '18000', '2025-07-07', 1, '我是名字', '2025-09-23 14:54:56', 1, 1, 1, '2025-09-23 14:54:56', '2025-10-24 12:59:26');
-INSERT INTO `sub_material_ment` VALUES (4, 1, 1, NULL, NULL, 15, 8, '1122', 2, '1234', '151', '19', 'A001', '圆珠笔', 2, '123', '121', '2121/21', '2121', '21', '2.6', '15000', '15000', '2025-10-31', 1, '我是名字', '2025-09-26 14:03:04', 1, 1, 1, '2025-09-26 14:03:04', '2025-10-24 12:59:29');
+INSERT INTO `sub_material_ment` VALUES (3, 1, 1, NULL, NULL, 15, 6, '2222', 2, '1234', '151', '10', '1233', '212', 3, '789', '555', '535/35353', '353', '353', NULL, '2.5', '18000', '18000', '2025-07-07', 1, '我是名字', '2025-09-23 14:54:56', 1, 1, 1, '2025-09-23 14:54:56', '2025-10-24 12:59:26');
+INSERT INTO `sub_material_ment` VALUES (4, 1, 1, NULL, NULL, 15, 8, '1122', 2, '1234', '151', '19', 'A001', '圆珠笔', 2, '123', '121', '2121/21', '2121', '21', NULL, '2.6', '15000', '15000', '2025-10-31', 1, '我是名字', '2025-09-26 14:03:04', 1, 1, 1, '2025-09-26 14:03:04', '2025-10-24 12:59:29');
+INSERT INTO `sub_material_ment` VALUES (5, 3, 6, NULL, '41', NULL, 9, 'DD-A2510001', 3, 'GA001', '晶鑫昌', '20', 'WA-A00001', '0611铝车架', 26, 'H1201-0001', '支撑棒', 'JS-ZJ-001*120L', NULL, NULL, NULL, NULL, NULL, '18000', '2025-12-08', 6, '徐庆华', '2025-11-10 08:24:40', 1, 0, 1, '2025-11-10 08:24:40', '2025-11-12 14:18:29');
+INSERT INTO `sub_material_ment` VALUES (6, 3, 6, NULL, '41', NULL, 9, 'DD-A2510001', 3, 'GA001', '晶鑫昌', '20', 'WA-A00001', '0611铝车架', 25, 'H1102-0099', '加强片', 'JHD-BQ-211', NULL, NULL, NULL, NULL, NULL, '18000', '2025-12-08', 6, '徐庆华', '2025-11-10 08:24:40', 0, 0, 1, '2025-11-10 08:24:40', '2025-11-10 08:24:40');
 
 -- ----------------------------
 -- Table structure for sub_material_quote
@@ -722,20 +736,23 @@ CREATE TABLE `sub_material_quote`  (
   `delivery` int(5) NULL DEFAULT NULL COMMENT '送货方式',
   `packaging` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '包装要求',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
-  `other_transaction_terms` int(5) NULL DEFAULT NULL COMMENT '交易条件',
+  `transaction_method` int(5) NULL DEFAULT NULL COMMENT '交易方式',
+  `other_transaction_terms` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '结算周期',
+  `other_text` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '其他结算周期',
   `invoice` int(5) NULL DEFAULT NULL COMMENT '税票要求',
   `is_deleted` int(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料报价信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '材料报价信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_material_quote
 -- ----------------------------
-INSERT INTO `sub_material_quote` VALUES (1, 1, 1, 2, 2, 24, NULL, 1111, '1111', '1111', 1111, 1111, 1, '2025-07-27 21:43:20', '2025-09-26 13:28:03');
-INSERT INTO `sub_material_quote` VALUES (2, 1, 1, 1, 2, 21, NULL, 2222, '222', '22', 222, 22, 1, '2025-07-27 22:40:03', '2025-09-26 13:41:17');
-INSERT INTO `sub_material_quote` VALUES (3, 1, 1, 2, 3, 111, NULL, 515, '2www', '1', 11, 2, 1, '2025-10-23 13:26:53', '2025-11-05 11:55:25');
+INSERT INTO `sub_material_quote` VALUES (1, 1, 1, 2, 2, 24, NULL, 1111, '1111', '1111', NULL, '1111', NULL, 1111, 1, '2025-07-27 21:43:20', '2025-09-26 13:28:03');
+INSERT INTO `sub_material_quote` VALUES (2, 1, 1, 1, 2, 21, NULL, 2222, '222', '22', NULL, '222', NULL, 22, 1, '2025-07-27 22:40:03', '2025-09-26 13:41:17');
+INSERT INTO `sub_material_quote` VALUES (3, 1, 1, 2, 3, 111, NULL, 515, '2www', '1', NULL, '11', NULL, 2, 1, '2025-10-23 13:26:53', '2025-11-05 11:55:25');
+INSERT INTO `sub_material_quote` VALUES (6, 3, 6, 4, 22, 1111, '2222', 29, '3333', '人民币', 21, '26', NULL, 37, 1, '2025-11-12 13:34:45', '2025-11-12 13:34:45');
 
 -- ----------------------------
 -- Table structure for sub_no_encoding
@@ -770,11 +787,44 @@ CREATE TABLE `sub_operation_history`  (
   `data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '操作数据（JSON 格式，存储前后数据对比）',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户操作日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户操作日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_operation_history
 -- ----------------------------
+INSERT INTO `sub_operation_history` VALUES (1, 3, 16, '冷冰', 'login', '登录', '用户{ 冷冰 }成功登录', '{\"newData\":{\"username\":\"lengbing\",\"password\":\"***\"}}', '2025-11-10 12:45:12');
+INSERT INTO `sub_operation_history` VALUES (2, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-11-10 12:48:21');
+INSERT INTO `sub_operation_history` VALUES (3, 3, 15, '粟云', 'login', '登录', '用户{ 粟云 }成功登录', '{\"newData\":{\"username\":\"suyun\",\"password\":\"***\"}}', '2025-11-10 12:48:42');
+INSERT INTO `sub_operation_history` VALUES (4, 3, 16, '冷冰', 'login', '登录', '用户{ 冷冰 }成功登录', '{\"newData\":{\"username\":\"lengbing\",\"password\":\"***\"}}', '2025-11-10 12:49:17');
+INSERT INTO `sub_operation_history` VALUES (5, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-11-11 02:20:41');
+INSERT INTO `sub_operation_history` VALUES (6, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-11-11 02:22:36');
+INSERT INTO `sub_operation_history` VALUES (7, 3, 6, '徐庆华', 'add', '移动端', '员工{ 徐庆华 }报工数量：80', '{\"newData\":{\"number\":80,\"id\":100,\"company_id\":\"3\"}}', '2025-11-11 02:39:50');
+INSERT INTO `sub_operation_history` VALUES (8, 3, 6, '徐庆华', 'add', '移动端', '员工{ 徐庆华 }报工数量：600', '{\"newData\":{\"number\":600,\"id\":100,\"company_id\":\"3\"}}', '2025-11-11 03:58:21');
+INSERT INTO `sub_operation_history` VALUES (9, 3, 6, '徐庆华', 'add', '移动端', '员工{ 徐庆华 }报工数量：1600', '{\"newData\":{\"number\":1600,\"id\":100,\"company_id\":\"3\"}}', '2025-11-11 04:02:38');
+INSERT INTO `sub_operation_history` VALUES (10, 3, 6, '徐庆华', 'update', '员工计件工资', '修改员工计件工资，员工编码：GL0001，员工姓名：徐庆华', '{\"newData\":{\"id\":3,\"progress_id\":23,\"bom_child_id\":86,\"sub_number\":\"1000\"}}', '2025-11-11 04:03:25');
+INSERT INTO `sub_operation_history` VALUES (11, 1, 1, '我是名字', 'login', '登录', '用户{ 我是名字 }成功登录', '{\"newData\":{\"username\":\"admin1\",\"password\":\"***\"}}', '2025-11-11 04:26:04');
+INSERT INTO `sub_operation_history` VALUES (12, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-11-11 04:26:15');
+INSERT INTO `sub_operation_history` VALUES (13, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-11-11 04:45:01');
+INSERT INTO `sub_operation_history` VALUES (14, 1, 1, '我是名字', 'login', '登录', '用户{ 我是名字 }成功登录', '{\"newData\":{\"username\":\"admin1\",\"password\":\"***\"}}', '2025-11-11 05:24:47');
+INSERT INTO `sub_operation_history` VALUES (15, 1, 1, '我是名字', 'login', '登录', '用户{ 我是名字 }成功登录', '{\"newData\":{\"username\":\"admin1\",\"password\":\"***\"}}', '2025-11-11 05:50:32');
+INSERT INTO `sub_operation_history` VALUES (16, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-11-11 13:48:02');
+INSERT INTO `sub_operation_history` VALUES (17, 3, 6, '徐庆华', 'login', '登录', '用户{ 徐庆华 }成功登录', '{\"newData\":{\"username\":\"xuqinghua\",\"password\":\"***\"}}', '2025-11-12 03:27:07');
+INSERT INTO `sub_operation_history` VALUES (18, 3, 6, '徐庆华', 'update', '产品报价', '修改产品报价，报价单号：BJD002', '{\"newData\":{\"id\":14,\"notice\":\"BJD002\",\"product_price\":\"560\",\"transaction_currency\":\"RMB\",\"condition\":null,\"other_transaction_terms\":0,\"other_text\":null,\"created_at\":\"2025-11-09\",\"sale\":{\"id\":4,\"customer_order\":\"CG02-2510018\",\"order_number\":\"7500\",\"unit\":\"台\"},\"customer\":{\"id\":5,\"customer_code\":\"KA002\",\"customer_abbreviation\":\"鑫宇\"},\"product\":{\"id\":20,\"product_code\":\"WA-A00001\",\"product_name\":\"0611铝车架\",\"model\":\"城市代步Q1\",\"specification\":\"36寸\",\"other_features\":\"折叠型\",\"drawing\":\"0611\"},\"sale_id\":4}}', '2025-11-12 03:48:04');
+INSERT INTO `sub_operation_history` VALUES (19, 3, 6, '徐庆华', 'update', '产品报价', '修改产品报价，报价单号：BJD002', '{\"newData\":{\"id\":14,\"notice\":\"BJD002\",\"product_price\":\"560\",\"transaction_currency\":\"RMB\",\"condition\":null,\"other_transaction_terms\":0,\"other_text\":null,\"created_at\":\"2025-11-09\",\"sale\":{\"id\":4,\"customer_order\":\"CG02-2510018\",\"order_number\":\"7500\",\"unit\":\"台\"},\"customer\":{\"id\":5,\"customer_code\":\"KA002\",\"customer_abbreviation\":\"鑫宇\"},\"product\":{\"id\":20,\"product_code\":\"WA-A00001\",\"product_name\":\"0611铝车架\",\"model\":\"城市代步Q1\",\"specification\":\"36寸\",\"other_features\":\"折叠型\",\"drawing\":\"0611\"},\"sale_id\":4}}', '2025-11-12 03:49:39');
+INSERT INTO `sub_operation_history` VALUES (20, 3, 6, '徐庆华', 'update', '产品报价', '修改产品报价，报价单号：BJD002', '{\"newData\":{\"id\":14,\"notice\":\"BJD002\",\"product_price\":\"560\",\"transaction_currency\":\"RMB\",\"condition\":null,\"other_transaction_terms\":0,\"other_text\":null,\"created_at\":\"2025-11-09\",\"sale\":{\"id\":4,\"customer_order\":\"CG02-2510018\",\"order_number\":\"7500\",\"unit\":\"台\"},\"customer\":{\"id\":5,\"customer_code\":\"KA002\",\"customer_abbreviation\":\"鑫宇\"},\"product\":{\"id\":20,\"product_code\":\"WA-A00001\",\"product_name\":\"0611铝车架\",\"model\":\"城市代步Q1\",\"specification\":\"36寸\",\"other_features\":\"折叠型\",\"drawing\":\"0611\"},\"sale_id\":4}}', '2025-11-12 03:51:29');
+INSERT INTO `sub_operation_history` VALUES (21, 3, 6, '徐庆华', 'update', '产品报价', '修改产品报价，报价单号：BJD002', '{\"newData\":{\"id\":14,\"notice\":\"BJD002\",\"product_price\":\"560\",\"transaction_currency\":\"RMB\",\"condition\":null,\"other_transaction_terms\":0,\"other_text\":null,\"created_at\":\"2025-11-09\",\"sale\":{\"id\":4,\"customer_order\":\"CG02-2510018\",\"order_number\":\"7500\",\"unit\":\"台\"},\"customer\":{\"id\":5,\"customer_code\":\"KA002\",\"customer_abbreviation\":\"鑫宇\"},\"product\":{\"id\":20,\"product_code\":\"WA-A00001\",\"product_name\":\"0611铝车架\",\"model\":\"城市代步Q1\",\"specification\":\"36寸\",\"other_features\":\"折叠型\",\"drawing\":\"0611\"},\"sale_id\":3}}', '2025-11-12 03:57:39');
+INSERT INTO `sub_operation_history` VALUES (22, 3, 6, '徐庆华', 'update', '产品报价', '修改产品报价，报价单号：BJD001', '{\"newData\":{\"id\":13,\"notice\":\"BJD001\",\"product_price\":\"550\",\"transaction_currency\":\"RMB\",\"condition\":null,\"other_transaction_terms\":27,\"other_text\":null,\"created_at\":\"2025-10-18\",\"sale\":{\"id\":3,\"customer_order\":\"CG01-2510009\",\"order_number\":\"18000\",\"unit\":\"台\"},\"customer\":{\"id\":4,\"customer_code\":\"KA001\",\"customer_abbreviation\":\"旭欧\"},\"product\":{\"id\":20,\"product_code\":\"WA-A00001\",\"product_name\":\"0611铝车架\",\"model\":\"城市代步Q1\",\"specification\":\"36寸\",\"other_features\":\"折叠型\",\"drawing\":\"0611\"},\"sale_id\":4}}', '2025-11-12 04:00:31');
+INSERT INTO `sub_operation_history` VALUES (23, 3, 6, '徐庆华', 'update', '产品报价', '修改产品报价，报价单号：BJD002', '{\"newData\":{\"id\":14,\"notice\":\"BJD002\",\"product_price\":\"560\",\"transaction_currency\":\"RMB\",\"transaction_method\":null,\"other_transaction_terms\":0,\"other_text\":null,\"created_at\":\"2025-11-09\",\"sale\":{\"id\":3,\"customer_order\":\"CG01-2510009\",\"order_number\":\"18000\",\"unit\":\"台\"},\"customer\":{\"id\":4,\"customer_code\":\"KA001\",\"customer_abbreviation\":\"旭欧\"},\"product\":{\"id\":20,\"product_code\":\"WA-A00001\",\"product_name\":\"0611铝车架\",\"model\":\"城市代步Q1\",\"specification\":\"36寸\",\"other_features\":\"折叠型\",\"drawing\":\"0611\"},\"sale_id\":3}}', '2025-11-12 04:55:15');
+INSERT INTO `sub_operation_history` VALUES (24, 3, 6, '徐庆华', 'keyup', '原材料报价', '存档原材料报价', '{\"newData\":{\"data\":[{\"supplier_id\":3,\"supplier_abbreviation\":\"晶鑫昌\",\"material_id\":5,\"price\":\"21\",\"delivery\":29,\"packaging\":\"2121\",\"transaction_currency\":\"人民币\",\"unit\":\"121\",\"transaction_method\":21,\"other_transaction_terms\":27,\"other_text\":null,\"invoice\":37}]}}', '2025-11-12 05:25:26');
+INSERT INTO `sub_operation_history` VALUES (25, 3, 6, '徐庆华', 'keyup', '原材料报价', '存档原材料报价', '{\"newData\":{\"data\":[{\"supplier_id\":4,\"supplier_abbreviation\":\"城至\",\"material_id\":21,\"price\":\"211\",\"delivery\":29,\"packaging\":\"212\",\"transaction_currency\":\"人民币\",\"unit\":\"311\",\"transaction_method\":21,\"other_transaction_terms\":26,\"other_text\":null,\"invoice\":37}]}}', '2025-11-12 05:29:23');
+INSERT INTO `sub_operation_history` VALUES (26, 3, 6, '徐庆华', 'keyup', '原材料报价', '存档原材料报价', '{\"newData\":{\"data\":[{\"supplier_id\":4,\"supplier_abbreviation\":\"城至\",\"material_id\":22,\"price\":\"1111\",\"delivery\":29,\"packaging\":\"3333\",\"transaction_currency\":\"人民币\",\"unit\":\"2222\",\"transaction_method\":21,\"other_transaction_terms\":26,\"other_text\":null,\"invoice\":37}]}}', '2025-11-12 05:34:45');
+INSERT INTO `sub_operation_history` VALUES (27, 3, 6, '徐庆华', 'add', '产品报价', '新增产品报价，报价单号：121', '{\"newData\":{\"sale_id\":3,\"notice\":\"121\",\"product_price\":\"221\",\"transaction_currency\":\"313131\",\"transaction_method\":23,\"other_transaction_terms\":26,\"other_text\":\"\"}}', '2025-11-12 05:35:23');
+INSERT INTO `sub_operation_history` VALUES (28, 3, 6, '徐庆华', 'update', '委外报价', '修改委外报价，供应商编码：GA002，生产订单号：DD-A2510001，工艺BOM：WA-A00001:0611铝车架 - Y003:上叉支杆，工艺工序：', '{\"newData\":{\"id\":9,\"notice_id\":9,\"supplier_id\":4,\"process_bom_id\":78,\"price\":\"2.1\",\"transaction_currency\":\"人民币\",\"transaction_method\":null,\"other_transaction_terms\":0,\"other_text\":null}}', '2025-11-12 05:52:05');
+INSERT INTO `sub_operation_history` VALUES (29, 3, 6, '徐庆华', 'add', '委外报价', '新增委外报价，供应商编码：GA002，生产订单号：DD-2510002，工艺BOM：WA-A00001:0611铝车架 - Y004:组立折叠器，工艺工序：PB058:点折叠器 - JX24:氩焊机', '{\"newData\":{\"notice_id\":10,\"supplier_id\":4,\"process_bom_id\":79,\"process_index\":\"\",\"price\":\"5\",\"transaction_currency\":\"人民币\",\"transaction_method\":21,\"other_transaction_terms\":26,\"other_text\":null,\"process_bom_children_id\":185}}', '2025-11-12 05:55:03');
+INSERT INTO `sub_operation_history` VALUES (30, 3, 16, '冷冰', 'login', '登录', '用户{ 冷冰 }成功登录', '{\"newData\":{\"username\":\"lengbing\",\"password\":\"***\"}}', '2025-11-12 06:18:22');
+INSERT INTO `sub_operation_history` VALUES (31, 3, 16, '冷冰', 'approval', '采购单', '审批通过了采购单，它们有：{ 供应商编码：GA001，生产订单号：DD-A2510001，产品编码：WA-A00001，材料编码：H1201-0001 }', '{\"newData\":{\"data\":[{\"id\":5,\"company_id\":3,\"user_id\":6,\"quote_id\":null,\"material_bom_id\":\"41\",\"print_id\":null,\"notice_id\":9,\"notice\":\"DD-A2510001\",\"supplier_id\":3,\"supplier_code\":\"GA001\",\"supplier_abbreviation\":\"晶鑫昌\",\"product_id\":\"20\",\"product_code\":\"WA-A00001\",\"product_name\":\"0611铝车架\",\"material_id\":26,\"material_code\":\"H1201-0001\",\"material_name\":\"支撑棒\",\"model_spec\":\"JS-ZJ-001*120L\",\"other_features\":null,\"unit\":null,\"usage_unit\":null,\"price\":null,\"order_number\":null,\"number\":\"18000\",\"delivery_time\":\"2025-12-08\",\"apply_id\":6,\"apply_name\":\"徐庆华\",\"apply_time\":\"2025-11-10\",\"step\":0,\"status\":0,\"is_deleted\":1,\"created_at\":\"2025-11-10\",\"updated_at\":\"2025-11-10\",\"approval\":[{\"user_id\":16,\"user_name\":\"冷冰\",\"type\":\"purchase_order\",\"step\":1,\"company_id\":3,\"source_id\":5,\"user_time\":null,\"status\":0,\"id\":95},{\"user_id\":15,\"user_name\":\"粟云\",\"type\":\"purchase_order\",\"step\":2,\"company_id\":3,\"source_id\":5,\"user_time\":null,\"status\":0,\"id\":96}]}],\"type\":\"purchase_order\"}}', '2025-11-12 06:18:29');
+INSERT INTO `sub_operation_history` VALUES (32, 3, 15, '粟云', 'login', '登录', '用户{ 粟云 }成功登录', '{\"newData\":{\"username\":\"suyun\",\"password\":\"***\"}}', '2025-11-12 06:46:44');
+INSERT INTO `sub_operation_history` VALUES (33, 3, 6, '徐庆华', 'update', '委外报价', '修改委外报价，供应商编码：GA001，生产订单号：DD-A2510001，工艺BOM：WA-A00001:0611铝车架 - Y001:左钩爪，工艺工序：', '{\"newData\":{\"id\":6,\"notice_id\":9,\"supplier_id\":3,\"process_bom_id\":76,\"price\":\"2\",\"transaction_currency\":\"人民币\",\"transaction_method\":null,\"other_transaction_terms\":0,\"other_text\":null}}', '2025-11-12 16:05:10');
 
 -- ----------------------------
 -- Table structure for sub_outsourcing_order
@@ -794,9 +844,9 @@ CREATE TABLE `sub_outsourcing_order`  (
   `price` int(11) NULL DEFAULT NULL COMMENT '加工单价',
   `number` int(11) NULL DEFAULT NULL COMMENT '委外数量',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
-  `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '交易条件',
   `ment` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '加工要求',
   `delivery_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '要求交期',
+  `transaction_terms` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易方式',
   `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
   `status` int(1) NULL DEFAULT 0 COMMENT '状态（0审批中/1通过/2拒绝）',
   `apply_id` int(11) NULL DEFAULT NULL COMMENT '申请人ID',
@@ -812,8 +862,8 @@ CREATE TABLE `sub_outsourcing_order`  (
 -- ----------------------------
 -- Records of sub_outsourcing_order
 -- ----------------------------
-INSERT INTO `sub_outsourcing_order` VALUES (11, 1, 1, 16, 8, NULL, 1, 58, 75, '￥', 3, 600, '无1', '无2', '无', '2025-09-30', '无', 1, 1, '我是名字', '2025-09-26 21:29:06', 0, 1, '2025-09-26 14:40:30', '2025-10-24 13:05:23');
-INSERT INTO `sub_outsourcing_order` VALUES (12, 1, 1, 16, 8, NULL, 1, 57, 74, '21', 21, 21, '121', '2121', '212', '2025-09-25', '2121', 1, 1, '我是名字', '2025-09-26 21:29:06', 0, 1, '2025-09-26 21:29:06', '2025-10-24 13:05:26');
+INSERT INTO `sub_outsourcing_order` VALUES (11, 1, 1, 16, 8, NULL, 1, 58, 75, '￥', 3, 600, '无1', '无', '2025-09-30', NULL, '无', 1, 1, '我是名字', '2025-09-26 21:29:06', 0, 1, '2025-09-26 14:40:30', '2025-10-24 13:05:23');
+INSERT INTO `sub_outsourcing_order` VALUES (12, 1, 1, 16, 8, NULL, 1, 57, 74, '21', 21, 21, '121', '212', '2025-09-25', NULL, '2121', 1, 1, '我是名字', '2025-09-26 21:29:06', 0, 1, '2025-09-26 21:29:06', '2025-10-24 13:05:26');
 
 -- ----------------------------
 -- Table structure for sub_outsourcing_quote
@@ -831,22 +881,18 @@ CREATE TABLE `sub_outsourcing_quote`  (
   `now_price` int(11) NULL DEFAULT NULL COMMENT '实际单价',
   `number` int(11) NULL DEFAULT NULL COMMENT '委外实际数量',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
-  `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '交易条件',
-  `ment` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '加工要求',
-  `remarks` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
+  `transaction_method` int(5) NULL DEFAULT NULL COMMENT '交易方式',
+  `other_transaction_terms` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '结算周期',
+  `other_text` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '其他结算周期',
   `is_deleted` int(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '委外报价信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '委外报价信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_outsourcing_quote
 -- ----------------------------
-INSERT INTO `sub_outsourcing_quote` VALUES (5, 1, 1, 8, 1, 57, '73', '3', 3, 15000, '￥', '无', NULL, '', 1, '2025-09-26 14:07:56', '2025-09-26 14:28:40');
-INSERT INTO `sub_outsourcing_quote` VALUES (6, 3, 6, 9, 3, 76, '77', '2', 1, 800, '人民币', '现金', NULL, '', 1, '2025-10-19 16:43:13', '2025-10-31 09:00:05');
-INSERT INTO `sub_outsourcing_quote` VALUES (8, 1, 1, 8, 2, 57, '74', '2.5', 3, 15000, '2121', '313131', NULL, '', 1, '2025-10-23 13:42:18', '2025-10-23 13:42:18');
-INSERT INTO `sub_outsourcing_quote` VALUES (9, 3, 6, 9, 4, 78, '78', '2.1', 2, 800, '人民币', '现金', NULL, '', 1, '2025-10-24 11:44:48', '2025-10-31 09:17:55');
 
 -- ----------------------------
 -- Table structure for sub_part_code
@@ -894,7 +940,7 @@ INSERT INTO `sub_part_code` VALUES (23, 6, 3, 'X003', '辅助管', '', '', '', '
 INSERT INTO `sub_part_code` VALUES (24, 6, 3, 'X004', '上管', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:03:56', '2025-10-27 15:03:56');
 INSERT INTO `sub_part_code` VALUES (25, 6, 3, 'X005', '下管', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:04:18', '2025-10-27 15:04:18');
 INSERT INTO `sub_part_code` VALUES (26, 6, 3, 'X006', '座管', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:04:59', '2025-10-27 15:04:59');
-INSERT INTO `sub_part_code` VALUES (27, 6, 3, 'X007', '五通', 'X', 'X', '', 'PCS', '', '', 1, '2025-10-27 15:06:48', '2025-10-30 16:46:24');
+INSERT INTO `sub_part_code` VALUES (27, 6, 3, 'X007', '五通', '', 'X', '', 'PCS', '', '', 1, '2025-10-27 15:06:48', '2025-11-08 21:11:57');
 INSERT INTO `sub_part_code` VALUES (28, 6, 3, 'X008', '后上叉R', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:07:21', '2025-10-27 15:07:21');
 INSERT INTO `sub_part_code` VALUES (29, 6, 3, 'X009', '后上叉L', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:11:47', '2025-10-27 15:11:47');
 INSERT INTO `sub_part_code` VALUES (30, 6, 3, 'X010', '后下叉R', '', '', '', 'PCS', '', '', 1, '2025-10-27 15:12:39', '2025-10-27 15:12:39');
@@ -946,30 +992,30 @@ CREATE TABLE `sub_process_bom`  (
 INSERT INTO `sub_process_bom` VALUES (56, 1, 1, NULL, NULL, 19, 8, 0, 0, 1, '2025-09-24 15:58:17', '2025-09-24 16:03:21');
 INSERT INTO `sub_process_bom` VALUES (57, 1, 1, NULL, NULL, 14, 12, 0, 0, 1, '2025-09-25 14:50:12', '2025-09-25 14:51:59');
 INSERT INTO `sub_process_bom` VALUES (58, 1, 1, NULL, NULL, 14, 8, 0, 0, 1, '2025-09-25 14:51:50', '2025-09-25 14:51:59');
-INSERT INTO `sub_process_bom` VALUES (59, 3, 6, NULL, NULL, 20, 21, 0, 0, 1, '2025-10-19 15:45:17', '2025-10-30 19:21:18');
-INSERT INTO `sub_process_bom` VALUES (60, 3, 6, NULL, NULL, 20, 27, 0, 0, 1, '2025-10-19 15:49:23', '2025-10-30 20:00:52');
+INSERT INTO `sub_process_bom` VALUES (59, 3, 6, NULL, NULL, 20, 21, 1, 0, 1, '2025-10-19 15:45:17', '2025-11-06 02:07:19');
+INSERT INTO `sub_process_bom` VALUES (60, 3, 6, NULL, NULL, 20, 27, 2, 0, 1, '2025-10-19 15:49:23', '2025-11-06 02:07:56');
 INSERT INTO `sub_process_bom` VALUES (61, 1, 1, NULL, NULL, 14, 8, 0, 1, 1, '2025-10-21 21:32:41', '2025-10-21 21:35:24');
 INSERT INTO `sub_process_bom` VALUES (62, 3, 6, NULL, NULL, 20, 21, 0, 1, 0, '2025-10-29 09:46:29', '2025-10-30 19:10:28');
-INSERT INTO `sub_process_bom` VALUES (63, 3, 6, NULL, NULL, 20, 34, 0, 0, 1, '2025-10-30 20:02:25', '2025-10-30 20:13:35');
-INSERT INTO `sub_process_bom` VALUES (64, 3, 6, NULL, NULL, 20, 33, 0, 0, 1, '2025-10-30 20:16:04', '2025-10-30 21:46:26');
-INSERT INTO `sub_process_bom` VALUES (65, 3, 6, NULL, NULL, 20, 25, 0, 0, 1, '2025-10-30 20:31:48', '2025-10-30 20:36:48');
-INSERT INTO `sub_process_bom` VALUES (66, 3, 6, NULL, NULL, 20, 38, 0, 0, 1, '2025-10-30 21:48:54', '2025-10-30 21:49:47');
-INSERT INTO `sub_process_bom` VALUES (67, 3, 6, NULL, NULL, 20, 22, 0, 0, 1, '2025-10-30 22:03:52', '2025-10-30 22:16:36');
-INSERT INTO `sub_process_bom` VALUES (68, 3, 6, NULL, NULL, 20, 29, 0, 0, 1, '2025-10-30 22:21:18', '2025-10-30 22:26:39');
-INSERT INTO `sub_process_bom` VALUES (69, 3, 6, NULL, NULL, 20, 28, 0, 0, 1, '2025-10-30 22:30:01', '2025-10-30 22:30:50');
-INSERT INTO `sub_process_bom` VALUES (70, 3, 6, NULL, NULL, 20, 35, 0, 0, 1, '2025-10-30 22:32:06', '2025-10-30 22:40:20');
-INSERT INTO `sub_process_bom` VALUES (71, 3, 6, NULL, NULL, 20, 36, 0, 0, 1, '2025-10-30 22:55:21', '2025-10-30 22:55:36');
-INSERT INTO `sub_process_bom` VALUES (72, 3, 6, NULL, NULL, 20, 39, 0, 0, 1, '2025-10-30 22:56:45', '2025-10-30 23:00:10');
-INSERT INTO `sub_process_bom` VALUES (73, 3, 6, NULL, NULL, 20, 30, 0, 0, 1, '2025-10-30 23:01:17', '2025-10-30 23:05:47');
-INSERT INTO `sub_process_bom` VALUES (74, 3, 6, NULL, NULL, 20, 31, 0, 0, 1, '2025-10-30 23:06:50', '2025-10-30 23:14:31');
-INSERT INTO `sub_process_bom` VALUES (75, 3, 6, NULL, NULL, 20, 37, 0, 0, 1, '2025-10-30 23:16:29', '2025-10-30 23:18:34');
-INSERT INTO `sub_process_bom` VALUES (76, 3, 6, NULL, NULL, 20, 40, 0, 0, 1, '2025-10-30 23:24:51', '2025-10-30 23:25:07');
-INSERT INTO `sub_process_bom` VALUES (77, 3, 6, NULL, NULL, 20, 41, 0, 0, 1, '2025-10-30 23:28:36', '2025-10-30 23:31:42');
-INSERT INTO `sub_process_bom` VALUES (78, 3, 6, NULL, NULL, 20, 42, 0, 0, 1, '2025-10-30 23:30:00', '2025-10-30 23:31:42');
-INSERT INTO `sub_process_bom` VALUES (79, 3, 6, NULL, NULL, 20, 43, 0, 0, 1, '2025-10-30 23:35:15', '2025-10-30 23:38:06');
-INSERT INTO `sub_process_bom` VALUES (80, 3, 6, NULL, NULL, 20, 44, 0, 0, 1, '2025-10-30 23:36:27', '2025-10-30 23:38:06');
-INSERT INTO `sub_process_bom` VALUES (81, 3, 6, NULL, NULL, 20, 45, 0, 0, 1, '2025-10-30 23:37:56', '2025-10-30 23:38:06');
-INSERT INTO `sub_process_bom` VALUES (82, 3, 6, NULL, NULL, 20, 46, 0, 0, 1, '2025-10-30 23:50:10', '2025-10-30 23:50:29');
+INSERT INTO `sub_process_bom` VALUES (63, 3, 6, NULL, NULL, 20, 34, 3, 0, 1, '2025-10-30 20:02:25', '2025-11-06 02:08:36');
+INSERT INTO `sub_process_bom` VALUES (64, 3, 6, NULL, NULL, 20, 33, 4, 0, 1, '2025-10-30 20:16:04', '2025-11-06 02:09:42');
+INSERT INTO `sub_process_bom` VALUES (65, 3, 6, NULL, NULL, 20, 25, 5, 0, 1, '2025-10-30 20:31:48', '2025-11-06 02:10:46');
+INSERT INTO `sub_process_bom` VALUES (66, 3, 6, NULL, NULL, 20, 38, 6, 0, 1, '2025-10-30 21:48:54', '2025-11-06 02:11:26');
+INSERT INTO `sub_process_bom` VALUES (67, 3, 6, NULL, NULL, 20, 22, 7, 0, 1, '2025-10-30 22:03:52', '2025-11-06 02:11:49');
+INSERT INTO `sub_process_bom` VALUES (68, 3, 6, NULL, NULL, 20, 29, 8, 0, 1, '2025-10-30 22:21:18', '2025-11-06 02:12:17');
+INSERT INTO `sub_process_bom` VALUES (69, 3, 6, NULL, NULL, 20, 28, 9, 0, 1, '2025-10-30 22:30:01', '2025-11-06 02:12:29');
+INSERT INTO `sub_process_bom` VALUES (70, 3, 6, NULL, NULL, 20, 35, 10, 0, 1, '2025-10-30 22:32:06', '2025-11-06 02:12:58');
+INSERT INTO `sub_process_bom` VALUES (71, 3, 6, NULL, NULL, 20, 36, 11, 0, 1, '2025-10-30 22:55:21', '2025-11-06 02:13:13');
+INSERT INTO `sub_process_bom` VALUES (72, 3, 6, NULL, NULL, 20, 39, 12, 0, 1, '2025-10-30 22:56:45', '2025-11-06 02:13:45');
+INSERT INTO `sub_process_bom` VALUES (73, 3, 6, NULL, NULL, 20, 30, 13, 0, 1, '2025-10-30 23:01:17', '2025-11-06 02:14:14');
+INSERT INTO `sub_process_bom` VALUES (74, 3, 6, NULL, NULL, 20, 31, 14, 0, 1, '2025-10-30 23:06:50', '2025-11-06 02:14:43');
+INSERT INTO `sub_process_bom` VALUES (75, 3, 6, NULL, NULL, 20, 37, 15, 0, 1, '2025-10-30 23:16:29', '2025-11-06 02:15:08');
+INSERT INTO `sub_process_bom` VALUES (76, 3, 6, NULL, NULL, 20, 40, 16, 0, 1, '2025-10-30 23:24:51', '2025-11-06 02:15:59');
+INSERT INTO `sub_process_bom` VALUES (77, 3, 6, NULL, NULL, 20, 41, 17, 0, 1, '2025-10-30 23:28:36', '2025-11-06 02:16:09');
+INSERT INTO `sub_process_bom` VALUES (78, 3, 6, NULL, NULL, 20, 42, 18, 0, 1, '2025-10-30 23:30:00', '2025-11-06 02:16:18');
+INSERT INTO `sub_process_bom` VALUES (79, 3, 6, NULL, NULL, 20, 43, 19, 0, 1, '2025-10-30 23:35:15', '2025-11-06 02:16:35');
+INSERT INTO `sub_process_bom` VALUES (80, 3, 6, NULL, NULL, 20, 44, 20, 0, 1, '2025-10-30 23:36:27', '2025-11-06 02:17:07');
+INSERT INTO `sub_process_bom` VALUES (81, 3, 6, NULL, NULL, 20, 45, 21, 0, 1, '2025-10-30 23:37:56', '2025-11-06 02:17:16');
+INSERT INTO `sub_process_bom` VALUES (82, 3, 6, NULL, NULL, 20, 46, 22, 0, 1, '2025-10-30 23:50:10', '2025-11-06 02:17:24');
 
 -- ----------------------------
 -- Table structure for sub_process_bom_child
@@ -987,6 +1033,10 @@ CREATE TABLE `sub_process_bom_child`  (
   `time` int(11) NULL DEFAULT NULL COMMENT '单件工时(秒)',
   `price` decimal(11, 2) NULL DEFAULT NULL COMMENT '加工单价',
   `points` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '段数点数',
+  `all_time` decimal(11, 1) NULL DEFAULT NULL COMMENT '全部工时-H',
+  `all_load` decimal(11, 1) NULL DEFAULT NULL COMMENT '每日负荷-H',
+  `add_finish` int(11) NULL DEFAULT NULL COMMENT '累计完成',
+  `order_number` int(11) NULL DEFAULT NULL COMMENT '订单尾数',
   `qr_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '二维码',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -996,116 +1046,116 @@ CREATE TABLE `sub_process_bom_child`  (
 -- ----------------------------
 -- Records of sub_process_bom_child
 -- ----------------------------
-INSERT INTO `sub_process_bom_child` VALUES (71, 1, '1122', 8, 56, 5, 4, 1, 8, 2.00, NULL, 'http://cdn.yuanfangzixun.com.cn/qrcodes/7e081466-1421-4fcb-ad52-2164378ceb55.png', '2025-09-24 15:58:17', '2025-11-05 14:38:30');
-INSERT INTO `sub_process_bom_child` VALUES (72, 1, '1122', 8, 56, 6, 3, 2, 9, 2.00, NULL, 'http://cdn.yuanfangzixun.com.cn/qrcodes/363b2db6-40f9-4d98-b7aa-9dc97b33327a.png', '2025-09-24 15:58:17', '2025-11-05 14:38:16');
-INSERT INTO `sub_process_bom_child` VALUES (73, NULL, NULL, NULL, 57, 5, 5, 1, 8, 2.00, NULL, 'http://cdn.yuanfangzixun.com.cn/qrcodes/478e261e-327e-41b5-ab9b-6e5840980e00.png', '2025-09-25 14:50:12', '2025-09-25 14:50:12');
-INSERT INTO `sub_process_bom_child` VALUES (74, NULL, NULL, NULL, 57, 6, 5, 2, 6, 8.00, NULL, 'http://cdn.yuanfangzixun.com.cn/qrcodes/d48ac941-c764-49a3-9914-cc6cf9af32e6.png', '2025-09-25 14:50:12', '2025-09-25 14:50:12');
-INSERT INTO `sub_process_bom_child` VALUES (75, NULL, NULL, NULL, 58, 5, 4, 1, 6, 8.00, NULL, 'http://cdn.yuanfangzixun.com.cn/qrcodes/dc9ac27b-7a9b-4f7f-8ce2-89094ae5ca61.png', '2025-09-25 14:51:50', '2025-09-25 14:51:50');
-INSERT INTO `sub_process_bom_child` VALUES (77, 3, 'DD-A2510001', 9, 60, 8, 7, 1, 4, 0.05, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/691c887e-3de0-4afe-8b32-4e121625955b.png', '2025-10-19 15:49:23', '2025-11-05 14:38:16');
-INSERT INTO `sub_process_bom_child` VALUES (78, 3, 'DD-A2510001', 9, 60, 8, 7, 2, 4, 0.05, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/d8f387be-9b3e-45bf-9664-acb8efd1621e.png', '2025-10-19 15:49:23', '2025-11-05 14:38:16');
-INSERT INTO `sub_process_bom_child` VALUES (79, NULL, NULL, NULL, 61, 5, 4, 4, 8, 8.00, NULL, NULL, '2025-10-21 21:32:41', '2025-10-21 21:35:24');
-INSERT INTO `sub_process_bom_child` VALUES (80, NULL, NULL, NULL, 61, 6, 3, 1, 7, 7.00, NULL, NULL, '2025-10-21 21:34:41', '2025-10-21 21:35:04');
-INSERT INTO `sub_process_bom_child` VALUES (81, NULL, NULL, NULL, 61, 5, 5, 2, 6, 6.00, NULL, NULL, '2025-10-21 21:34:41', '2025-10-21 21:35:04');
-INSERT INTO `sub_process_bom_child` VALUES (83, NULL, NULL, NULL, 61, 5, 3, 3, 4, 4.00, NULL, NULL, '2025-10-21 21:34:41', '2025-10-21 21:35:24');
-INSERT INTO `sub_process_bom_child` VALUES (85, NULL, NULL, NULL, 61, 5, 3, 5, 9, 9.00, NULL, NULL, '2025-10-21 21:35:24', '2025-10-21 21:35:24');
-INSERT INTO `sub_process_bom_child` VALUES (86, 3, 'DD-A2510001', 9, 59, 7, 6, 1, 5, 0.18, '1', NULL, '2025-10-22 14:22:50', '2025-11-05 14:38:16');
-INSERT INTO `sub_process_bom_child` VALUES (87, NULL, NULL, NULL, 62, 7, 6, 1, 3, 0.00, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/6916e3f8-ff22-4d00-85ca-df7f952ae963.png', '2025-10-29 09:46:29', '2025-10-29 09:46:30');
-INSERT INTO `sub_process_bom_child` VALUES (88, 3, 'DD-A2510001', 9, 60, 8, 7, 3, 4, 0.05, '1', NULL, '2025-10-30 20:00:52', '2025-11-05 14:38:16');
-INSERT INTO `sub_process_bom_child` VALUES (89, 3, 'DD-A2510001', 9, 60, 8, 7, 4, 4, 0.05, '1', NULL, '2025-10-30 20:00:52', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (92, 3, 'DD-A2510001', 9, 63, 9, 8, 3, 5, 0.05, '1', NULL, '2025-10-30 20:02:25', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (93, 3, 'DD-A2510001', 9, 63, 9, 8, 4, 5, 0.05, '1', NULL, '2025-10-30 20:02:25', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (94, 3, 'DD-A2510001', 9, 63, 9, 8, 1, 5, 0.05, '1', NULL, '2025-10-30 20:02:25', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (95, 3, 'DD-A2510001', 9, 63, 9, 8, 2, 5, 0.05, '1', NULL, '2025-10-30 20:02:25', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (96, 3, 'DD-A2510001', 9, 63, 12, 10, 5, 5, 0.08, '1', NULL, '2025-10-30 20:13:30', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (97, 3, 'DD-A2510001', 9, 63, 39, 47, 6, 15, 0.10, '1', NULL, '2025-10-30 20:13:30', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (102, 3, 'DD-A2510001', 9, 64, 11, 7, 2, 8, 0.08, '1', NULL, '2025-10-30 20:16:04', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (103, 3, 'DD-A2510001', 9, 64, 13, 11, 4, 8, 0.07, '1', NULL, '2025-10-30 20:16:04', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (104, 3, 'DD-A2510001', 9, 64, 13, 11, 5, 8, 0.08, '1', NULL, '2025-10-30 20:16:04', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (105, 3, 'DD-A2510001', 9, 64, 39, 47, 1, 15, 0.05, '1', NULL, '2025-10-30 20:16:04', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (106, 3, 'DD-A2510001', 9, 64, 12, 10, 3, 5, 0.07, '1', NULL, '2025-10-30 20:21:41', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (111, 3, 'DD-A2510001', 9, 65, 39, 47, 1, 60, 0.07, '1', NULL, '2025-10-30 20:31:48', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (112, 3, 'DD-A2510001', 9, 65, 13, 11, 3, 10, 0.08, '1', NULL, '2025-10-30 20:31:48', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (113, 3, 'DD-A2510001', 9, 65, 13, 11, 4, 10, 0.08, '1', NULL, '2025-10-30 20:31:48', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (114, 3, 'DD-A2510001', 9, 65, 29, 22, 5, 20, 0.35, '1', NULL, '2025-10-30 20:31:48', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (115, 3, 'DD-A2510001', 9, 65, 12, 10, 2, 8, 0.07, '1', NULL, '2025-10-30 20:31:48', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (116, 3, 'DD-A2510001', 9, 66, 13, 11, 1, 5, 0.08, '1', NULL, '2025-10-30 21:48:54', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (117, 3, 'DD-A2510001', 9, 67, 13, 11, 2, 8, 0.08, '1', NULL, '2025-10-30 22:03:52', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (118, 3, 'DD-A2510001', 9, 67, 12, 10, 4, 5, 0.08, '1', NULL, '2025-10-30 22:03:52', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (119, 3, 'DD-A2510001', 9, 67, 12, 10, 6, 5, 0.07, '1', NULL, '2025-10-30 22:03:52', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (120, 3, 'DD-A2510001', 9, 67, 13, 11, 1, 8, 0.08, '1', NULL, '2025-10-30 22:03:52', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (121, 3, 'DD-A2510001', 9, 67, 12, 10, 3, 5, 0.08, '1', NULL, '2025-10-30 22:03:52', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (122, 3, 'DD-A2510001', 9, 67, 12, 10, 5, 5, 0.08, '1', NULL, '2025-10-30 22:03:52', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (123, 3, 'DD-A2510001', 9, 67, 12, 10, 7, 5, 0.03, '1', NULL, '2025-10-30 22:16:36', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (124, 3, 'DD-A2510001', 9, 67, 28, 47, 8, 5, 0.04, '1', NULL, '2025-10-30 22:16:36', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (125, 3, 'DD-A2510001', 9, 67, 15, 11, 9, 10, 0.04, '1', NULL, '2025-10-30 22:16:36', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (126, 3, 'DD-A2510001', 9, 67, 16, 8, 10, 15, 0.05, '1', NULL, '2025-10-30 22:16:36', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (127, 3, 'DD-A2510001', 9, 67, 30, 8, 11, 8, 0.04, '1', NULL, '2025-10-30 22:16:36', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (128, 3, 'DD-A2510001', 9, 67, 39, 47, 12, 8, 0.04, '1', NULL, '2025-10-30 22:16:36', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (129, 3, 'DD-A2510001', 9, 67, 29, 22, 13, 8, 0.05, '1', NULL, '2025-10-30 22:16:36', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (130, 3, 'DD-A2510001', 9, 67, 29, 22, 14, 15, 0.06, '1', NULL, '2025-10-30 22:16:36', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (137, 3, 'DD-A2510001', 9, 68, 13, 11, 6, 10, 0.08, '1', NULL, '2025-10-30 22:21:18', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (138, 3, 'DD-A2510001', 9, 68, 18, 13, 2, 8, 0.07, '1', NULL, '2025-10-30 22:21:18', '2025-11-05 14:38:17');
-INSERT INTO `sub_process_bom_child` VALUES (139, 3, 'DD-A2510001', 9, 68, 30, 8, 4, 5, 0.05, '1', NULL, '2025-10-30 22:21:18', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (140, 3, 'DD-A2510001', 9, 68, 11, 7, 5, 8, 0.07, '1', NULL, '2025-10-30 22:21:18', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (141, 3, 'DD-A2510001', 9, 68, 39, 47, 1, 10, 0.04, '1', NULL, '2025-10-30 22:21:18', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (142, 3, 'DD-A2510001', 9, 68, 28, 47, 3, 10, 0.10, '1', NULL, '2025-10-30 22:21:18', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (143, 3, 'DD-A2510001', 9, 69, 13, 11, 2, 10, 0.08, '1', NULL, '2025-10-30 22:30:01', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (144, 3, 'DD-A2510001', 9, 69, 18, 13, 4, 8, 0.07, '1', NULL, '2025-10-30 22:30:01', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (145, 3, 'DD-A2510001', 9, 69, 30, 8, 6, 5, 0.05, '1', NULL, '2025-10-30 22:30:01', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (146, 3, 'DD-A2510001', 9, 69, 11, 7, 1, 8, 0.07, '1', NULL, '2025-10-30 22:30:01', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (147, 3, 'DD-A2510001', 9, 69, 39, 47, 3, 10, 0.04, '1', NULL, '2025-10-30 22:30:01', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (148, 3, 'DD-A2510001', 9, 69, 28, 47, 5, 10, 0.10, '1', NULL, '2025-10-30 22:30:01', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (149, 3, 'DD-A2510001', 9, 70, 30, 8, 2, 5, 0.05, '1', NULL, '2025-10-30 22:32:06', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (150, 3, 'DD-A2510001', 9, 70, 12, 10, 4, 5, 0.07, '1', NULL, '2025-10-30 22:32:06', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (151, 3, 'DD-A2510001', 9, 70, 12, 10, 5, 5, 0.08, '1', NULL, '2025-10-30 22:32:06', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (152, 3, 'DD-A2510001', 9, 70, 8, 7, 1, 5, 0.08, '1', NULL, '2025-10-30 22:32:06', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (153, 3, 'DD-A2510001', 9, 70, 39, 47, 3, 10, 0.10, '1', NULL, '2025-10-30 22:32:06', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (154, 3, 'DD-A2510001', 9, 71, 30, 8, 4, 5, 0.05, '1', NULL, '2025-10-30 22:55:21', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (155, 3, 'DD-A2510001', 9, 71, 12, 10, 1, 5, 0.07, '1', NULL, '2025-10-30 22:55:21', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (156, 3, 'DD-A2510001', 9, 71, 12, 10, 2, 5, 0.08, '1', NULL, '2025-10-30 22:55:21', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (157, 3, 'DD-A2510001', 9, 71, 8, 7, 3, 5, 0.08, '1', NULL, '2025-10-30 22:55:21', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (158, 3, 'DD-A2510001', 9, 71, 39, 47, 5, 10, 0.10, '1', NULL, '2025-10-30 22:55:21', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (159, 3, 'DD-A2510001', 9, 72, 39, 47, 2, 10, 0.04, '1', NULL, '2025-10-30 22:56:45', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (160, 3, 'DD-A2510001', 9, 72, 29, 22, 3, 15, 0.35, '1', NULL, '2025-10-30 22:56:45', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (162, 3, 'DD-A2510001', 9, 72, 25, 18, 1, 20, 0.18, '1', NULL, '2025-10-30 22:56:45', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (163, 3, 'DD-A2510001', 9, 73, 30, 8, 4, 5, 0.05, '1', NULL, '2025-10-30 23:01:17', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (164, 3, 'DD-A2510001', 9, 73, 11, 7, 6, 5, 0.07, '1', NULL, '2025-10-30 23:01:17', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (165, 3, 'DD-A2510001', 9, 73, 11, 7, 2, 5, 0.05, '1', NULL, '2025-10-30 23:01:17', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (166, 3, 'DD-A2510001', 9, 73, 18, 13, 3, 8, 0.07, '1', NULL, '2025-10-30 23:01:17', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (167, 3, 'DD-A2510001', 9, 73, 20, 7, 5, 5, 0.07, '1', NULL, '2025-10-30 23:01:17', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (168, 3, 'DD-A2510001', 9, 73, 39, 47, 1, 10, 0.04, '1', NULL, '2025-10-30 23:01:17', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (170, 3, 'DD-A2510001', 9, 74, 11, 7, 2, 5, 0.05, '1', NULL, '2025-10-30 23:06:50', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (171, 3, 'DD-A2510001', 9, 74, 30, 8, 4, 5, 0.05, '1', NULL, '2025-10-30 23:06:50', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (172, 3, 'DD-A2510001', 9, 74, 11, 7, 5, 5, 0.07, '1', NULL, '2025-10-30 23:06:50', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (173, 3, 'DD-A2510001', 9, 74, 39, 47, 1, 10, 0.04, '1', NULL, '2025-10-30 23:06:50', '2025-11-05 14:38:18');
-INSERT INTO `sub_process_bom_child` VALUES (174, 3, 'DD-A2510001', 9, 74, 18, 13, 3, 8, 0.07, '1', NULL, '2025-10-30 23:06:50', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (175, 3, 'DD-A2510001', 9, 75, 20, 7, 1, 5, 0.05, '1', NULL, '2025-10-30 23:16:29', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (176, 3, 'DD-A2510001', 9, 75, 29, 22, 2, 10, 0.35, '1', NULL, '2025-10-30 23:16:29', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (177, 3, 'DD-A2510001', 9, 75, 29, 22, 3, 10, 0.35, '1', NULL, '2025-10-30 23:16:29', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (178, 3, 'DD-A2510001', 9, 76, 41, 29, 1, 15, 0.20, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/65f22e24-4044-45f8-8d1e-88193837d46c.png', '2025-10-30 23:24:51', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (179, 3, 'DD-A2510001', 9, 76, 75, 22, 2, 10, 0.35, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/dacae4d9-95fd-4c26-b6c6-887bb5a492c4.png', '2025-10-30 23:24:51', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (180, 3, 'DD-A2510001', 9, 76, 74, 23, 3, 20, 0.18, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/43c5e1c4-5de1-41c1-8cbd-683c216dbe81.png', '2025-10-30 23:24:51', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (181, 3, 'DD-A2510001', 9, 77, 96, 29, 1, 15, 0.20, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/57f1457c-f6be-45ee-aa03-ef7c5ff11053.png', '2025-10-30 23:28:36', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (182, 3, 'DD-A2510001', 9, 78, 45, 29, 1, 15, 0.50, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/be61b76f-f656-48a4-8446-b9b386b1784e.png', '2025-10-30 23:30:00', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (183, 3, 'DD-A2510001', 9, 78, 97, 48, 2, 10, 0.05, '1', NULL, '2025-10-30 23:31:08', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (185, 3, 'DD-A2510001', 9, 79, 98, 29, 1, 20, 0.72, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/14abc1a7-a11e-463e-a209-dbdb0d0712fb.png', '2025-10-30 23:35:15', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (186, 3, 'DD-A2510001', 9, 80, 90, 31, 1, 120, 1.20, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/d1954167-3d9e-4041-84ea-24a58106cc59.png', '2025-10-30 23:36:27', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (187, 3, 'DD-A2510001', 9, 81, 91, 32, 1, 60, 1.10, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/ed7d9e90-9ede-45b3-af93-8e322aec4d2f.png', '2025-10-30 23:37:56', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (188, 3, 'DD-A2510001', 9, 82, 100, 35, 1, 5400, 1.00, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/de032772-9114-4ffe-bf2b-7132aad9b4bd.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (189, 3, 'DD-A2510001', 9, 82, 101, 34, 2, 15, 0.10, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/e71e4348-2b25-47cd-8e3c-ef2fa2311ae1.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (190, 3, 'DD-A2510001', 9, 82, 102, 36, 3, 15, 0.10, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/a1b7192d-cb4f-44e7-bef4-5787d632731a.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (191, 3, 'DD-A2510001', 9, 82, 103, 37, 4, 12600, 2.00, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/79d6d53f-c258-45d9-9966-861d8ae8020b.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (192, 3, 'DD-A2510001', 9, 82, 104, 38, 5, 20, 0.15, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/7a9ed5ee-ffb3-41f5-afda-b79b0ae9a86e.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (193, 3, 'DD-A2510001', 9, 82, 105, 39, 6, 10, 0.10, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/caef18e7-bf3e-4852-9760-c6a13ab07249.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (194, 3, 'DD-A2510001', 9, 82, 106, 40, 7, 10, 0.10, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/6713361b-3c5f-4ada-a8fa-16cee6a2b254.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (195, 3, 'DD-A2510001', 9, 82, 107, 41, 8, 10, 0.10, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/aa565973-0d7d-4a66-9995-3dd52489368c.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (196, 3, 'DD-A2510001', 9, 82, 108, 9, 9, 15, 0.13, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/2d6a765e-db1d-42d8-8615-d7c0ac16c57f.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (197, 3, 'DD-A2510001', 9, 82, 111, 21, 10, 600, 4.50, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/9a72bfa8-b9da-435c-a0ec-4de520a64ba7.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (198, 3, 'DD-A2510001', 9, 82, 109, 9, 11, 300, 2.30, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/7a1c4c1d-104d-41f4-a382-e438d0a08295.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (199, 3, 'DD-A2510001', 9, 82, 112, 42, 12, 600, 1.10, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/ba077b3a-262b-44b1-b4cc-a1b8fef1c8d5.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (200, 3, 'DD-A2510001', 9, 82, 110, 43, 13, 4000, 20.00, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/fef45690-d985-4af4-8049-34dee160e5b4.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (201, 3, 'DD-A2510001', 9, 82, 113, 44, 14, 140, 0.65, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/5df9bbd6-8ccb-4e9c-84bd-e587a7576c78.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
-INSERT INTO `sub_process_bom_child` VALUES (202, 3, 'DD-A2510001', 9, 82, 114, 45, 15, 140, 0.60, '1', 'http://cdn.yuanfangzixun.com.cn/qrcodes/c80f86a4-f1e2-4411-a80d-c2d43c9ea5de.png', '2025-10-30 23:50:10', '2025-11-05 14:38:19');
+INSERT INTO `sub_process_bom_child` VALUES (71, 1, '1122', 8, 56, 5, 4, 1, 8, 2.00, NULL, 33.3, NULL, 50, 11920, 'http://cdn.yuanfangzixun.com.cn/qrcodes/7e081466-1421-4fcb-ad52-2164378ceb55.png', '2025-09-24 15:58:17', '2025-10-31 01:04:11');
+INSERT INTO `sub_process_bom_child` VALUES (72, 1, '1122', 8, 56, 6, 3, 2, 9, 2.00, NULL, 37.5, NULL, NULL, 11970, 'http://cdn.yuanfangzixun.com.cn/qrcodes/363b2db6-40f9-4d98-b7aa-9dc97b33327a.png', '2025-09-24 15:58:17', '2025-10-31 01:04:11');
+INSERT INTO `sub_process_bom_child` VALUES (73, NULL, NULL, NULL, 57, 5, 5, 1, 8, 2.00, NULL, NULL, NULL, NULL, NULL, 'http://cdn.yuanfangzixun.com.cn/qrcodes/478e261e-327e-41b5-ab9b-6e5840980e00.png', '2025-09-25 14:50:12', '2025-09-25 14:50:12');
+INSERT INTO `sub_process_bom_child` VALUES (74, NULL, NULL, NULL, 57, 6, 5, 2, 6, 8.00, NULL, NULL, NULL, NULL, NULL, 'http://cdn.yuanfangzixun.com.cn/qrcodes/d48ac941-c764-49a3-9914-cc6cf9af32e6.png', '2025-09-25 14:50:12', '2025-09-25 14:50:12');
+INSERT INTO `sub_process_bom_child` VALUES (75, NULL, NULL, NULL, 58, 5, 4, 1, 6, 8.00, NULL, NULL, NULL, NULL, NULL, 'http://cdn.yuanfangzixun.com.cn/qrcodes/dc9ac27b-7a9b-4f7f-8ce2-89094ae5ca61.png', '2025-09-25 14:51:50', '2025-09-25 14:51:50');
+INSERT INTO `sub_process_bom_child` VALUES (77, NULL, NULL, NULL, 60, 8, 7, 1, 4, 0.05, '1', 72000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/691c887e-3de0-4afe-8b32-4e121625955b.png', '2025-10-19 15:49:23', '2025-11-06 02:07:56');
+INSERT INTO `sub_process_bom_child` VALUES (78, NULL, NULL, NULL, 60, 8, 7, 2, 4, 0.05, '1', 72000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/d8f387be-9b3e-45bf-9664-acb8efd1621e.png', '2025-10-19 15:49:23', '2025-11-06 02:07:56');
+INSERT INTO `sub_process_bom_child` VALUES (79, NULL, NULL, NULL, 61, 5, 4, 4, 8, 8.00, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-21 21:32:41', '2025-10-21 21:35:24');
+INSERT INTO `sub_process_bom_child` VALUES (80, NULL, NULL, NULL, 61, 6, 3, 1, 7, 7.00, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-21 21:34:41', '2025-10-21 21:35:04');
+INSERT INTO `sub_process_bom_child` VALUES (81, NULL, NULL, NULL, 61, 5, 5, 2, 6, 6.00, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-21 21:34:41', '2025-10-21 21:35:04');
+INSERT INTO `sub_process_bom_child` VALUES (83, NULL, NULL, NULL, 61, 5, 3, 3, 4, 4.00, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-21 21:34:41', '2025-10-21 21:35:24');
+INSERT INTO `sub_process_bom_child` VALUES (85, NULL, NULL, NULL, 61, 5, 3, 5, 9, 9.00, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-21 21:35:24', '2025-10-21 21:35:24');
+INSERT INTO `sub_process_bom_child` VALUES (86, NULL, NULL, NULL, 59, 7, 6, 1, 5, 0.18, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/68825ded-1d72-4743-bb1b-aa8bb4f0a980.png', '2025-10-22 14:22:50', '2025-11-06 02:07:20');
+INSERT INTO `sub_process_bom_child` VALUES (87, NULL, NULL, NULL, 62, 7, 6, 1, 3, 0.00, '1', NULL, NULL, NULL, NULL, 'http://cdn.yuanfangzixun.com.cn/qrcodes/6916e3f8-ff22-4d00-85ca-df7f952ae963.png', '2025-10-29 09:46:29', '2025-10-29 09:46:30');
+INSERT INTO `sub_process_bom_child` VALUES (88, NULL, NULL, NULL, 60, 8, 7, 3, 4, 0.05, '1', 72000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/897d38e9-6232-4211-9729-9337d1f5cb58.png', '2025-10-30 20:00:52', '2025-11-06 02:07:57');
+INSERT INTO `sub_process_bom_child` VALUES (89, NULL, NULL, NULL, 60, 8, 7, 4, 4, 0.05, '1', 72000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/34c800f6-73a9-4d9b-be1a-08f8b3202b08.png', '2025-10-30 20:00:52', '2025-11-06 02:07:57');
+INSERT INTO `sub_process_bom_child` VALUES (92, NULL, NULL, NULL, 63, 9, 8, 3, 5, 0.05, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/eaf422bf-3d5a-424b-889f-e90ce2bb65a2.png', '2025-10-30 20:02:25', '2025-11-06 02:08:37');
+INSERT INTO `sub_process_bom_child` VALUES (93, NULL, NULL, NULL, 63, 9, 8, 4, 5, 0.05, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/859cec97-156a-4f90-bb1b-2ccf7a26e19d.png', '2025-10-30 20:02:25', '2025-11-06 02:08:37');
+INSERT INTO `sub_process_bom_child` VALUES (94, NULL, NULL, NULL, 63, 9, 8, 1, 5, 0.05, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/9803de5b-8517-439f-9531-1ce23e0bcbfe.png', '2025-10-30 20:02:25', '2025-11-06 02:08:37');
+INSERT INTO `sub_process_bom_child` VALUES (95, NULL, NULL, NULL, 63, 9, 8, 2, 5, 0.05, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/1d563ef0-d408-4214-9bfc-c5faa608e68f.png', '2025-10-30 20:02:25', '2025-11-06 02:08:37');
+INSERT INTO `sub_process_bom_child` VALUES (96, NULL, NULL, NULL, 63, 12, 10, 5, 5, 0.08, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/cf04c264-b836-4d00-b5e0-0ebd8dabcaae.png', '2025-10-30 20:13:30', '2025-11-06 02:08:37');
+INSERT INTO `sub_process_bom_child` VALUES (97, NULL, NULL, NULL, 63, 39, 47, 6, 15, 0.10, '1', 270000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/bd48db9d-fdc3-4953-a233-0a76f1165782.png', '2025-10-30 20:13:30', '2025-11-06 02:08:37');
+INSERT INTO `sub_process_bom_child` VALUES (102, NULL, NULL, NULL, 64, 11, 7, 2, 8, 0.08, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/79d819ff-f587-4704-9f19-4b916f639c64.png', '2025-10-30 20:16:04', '2025-11-06 02:09:42');
+INSERT INTO `sub_process_bom_child` VALUES (103, NULL, NULL, NULL, 64, 13, 11, 4, 8, 0.07, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/4e8f3065-c99b-4d09-a477-78e68ed5547b.png', '2025-10-30 20:16:04', '2025-11-06 02:09:42');
+INSERT INTO `sub_process_bom_child` VALUES (104, NULL, NULL, NULL, 64, 13, 11, 5, 8, 0.08, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/97f772a5-3434-4ae0-b35d-544305d5ec93.png', '2025-10-30 20:16:04', '2025-11-06 02:09:42');
+INSERT INTO `sub_process_bom_child` VALUES (105, NULL, NULL, NULL, 64, 39, 47, 1, 15, 0.05, '1', 270000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/76cda8bb-c572-4595-af3c-c42f9f7b220a.png', '2025-10-30 20:16:04', '2025-11-06 02:09:42');
+INSERT INTO `sub_process_bom_child` VALUES (106, NULL, NULL, NULL, 64, 12, 10, 3, 5, 0.07, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/5abc9af4-81b8-47d5-8215-e18f61ef10c2.png', '2025-10-30 20:21:41', '2025-11-06 02:09:42');
+INSERT INTO `sub_process_bom_child` VALUES (111, NULL, NULL, NULL, 65, 39, 47, 1, 60, 0.07, '1', 1080000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/57d140af-a2be-41d1-8b28-8d48d7529121.png', '2025-10-30 20:31:48', '2025-11-06 02:10:47');
+INSERT INTO `sub_process_bom_child` VALUES (112, NULL, NULL, NULL, 65, 13, 11, 3, 10, 0.08, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/b3485f40-78eb-41f0-b6e7-f42f96ac6839.png', '2025-10-30 20:31:48', '2025-11-06 02:10:47');
+INSERT INTO `sub_process_bom_child` VALUES (113, NULL, NULL, NULL, 65, 13, 11, 4, 10, 0.08, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/b0b477ff-10a9-4f44-8d63-6a7582f9e55f.png', '2025-10-30 20:31:48', '2025-11-06 02:10:47');
+INSERT INTO `sub_process_bom_child` VALUES (114, NULL, NULL, NULL, 65, 29, 22, 5, 20, 0.35, '1', 360000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/406f2caa-6b6c-41a2-9845-f2bfb3c92fd1.png', '2025-10-30 20:31:48', '2025-11-06 02:10:47');
+INSERT INTO `sub_process_bom_child` VALUES (115, NULL, NULL, NULL, 65, 12, 10, 2, 8, 0.07, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/acd8ca16-d3d6-4473-ac97-1924934bb050.png', '2025-10-30 20:31:48', '2025-11-06 02:10:47');
+INSERT INTO `sub_process_bom_child` VALUES (116, NULL, NULL, NULL, 66, 13, 11, 1, 5, 0.08, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/bcc1aced-aa25-4335-999e-41d2e6d6b1e6.png', '2025-10-30 21:48:54', '2025-11-06 02:11:26');
+INSERT INTO `sub_process_bom_child` VALUES (117, NULL, NULL, NULL, 67, 13, 11, 2, 8, 0.08, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/c7273382-2ef8-4dbc-89c7-4b8ad05fe33b.png', '2025-10-30 22:03:52', '2025-11-06 02:11:51');
+INSERT INTO `sub_process_bom_child` VALUES (118, NULL, NULL, NULL, 67, 12, 10, 4, 5, 0.08, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/173595b2-a6c6-4fa9-91c2-10c8856fc8cc.png', '2025-10-30 22:03:52', '2025-11-06 02:11:51');
+INSERT INTO `sub_process_bom_child` VALUES (119, NULL, NULL, NULL, 67, 12, 10, 6, 5, 0.07, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/8784610c-1e4c-4ff2-9618-891af1d6c283.png', '2025-10-30 22:03:52', '2025-11-06 02:11:51');
+INSERT INTO `sub_process_bom_child` VALUES (120, NULL, NULL, NULL, 67, 13, 11, 1, 8, 0.08, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/581aa08a-54f9-4e09-862d-82d8e83f6a0e.png', '2025-10-30 22:03:52', '2025-11-06 02:11:51');
+INSERT INTO `sub_process_bom_child` VALUES (121, NULL, NULL, NULL, 67, 12, 10, 3, 5, 0.08, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/1e15bbb2-3212-454e-a7e2-f95f96ad4d0c.png', '2025-10-30 22:03:52', '2025-11-06 02:11:51');
+INSERT INTO `sub_process_bom_child` VALUES (122, NULL, NULL, NULL, 67, 12, 10, 5, 5, 0.08, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/3c677e87-cba1-4b49-941a-ce617b45f58d.png', '2025-10-30 22:03:52', '2025-11-06 02:11:51');
+INSERT INTO `sub_process_bom_child` VALUES (123, NULL, NULL, NULL, 67, 12, 10, 7, 5, 0.03, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/151721e6-e5a9-456c-91fc-c9715b69f8cb.png', '2025-10-30 22:16:36', '2025-11-06 02:11:51');
+INSERT INTO `sub_process_bom_child` VALUES (124, NULL, NULL, NULL, 67, 28, 47, 8, 5, 0.04, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/72f4a745-0139-4c5a-b68a-81c6e754dedb.png', '2025-10-30 22:16:36', '2025-11-06 02:11:51');
+INSERT INTO `sub_process_bom_child` VALUES (125, NULL, NULL, NULL, 67, 15, 11, 9, 10, 0.04, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/14df2dbd-1049-4f25-b630-f81cc02903c1.png', '2025-10-30 22:16:36', '2025-11-06 02:11:51');
+INSERT INTO `sub_process_bom_child` VALUES (126, NULL, NULL, NULL, 67, 16, 8, 10, 15, 0.05, '1', 270000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/d84b3ae6-b823-4133-b8ff-55ee25323099.png', '2025-10-30 22:16:36', '2025-11-06 02:11:51');
+INSERT INTO `sub_process_bom_child` VALUES (127, NULL, NULL, NULL, 67, 30, 8, 11, 8, 0.04, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/f9cdb772-7da5-4869-9e36-51d3f04ac60d.png', '2025-10-30 22:16:36', '2025-11-06 02:11:51');
+INSERT INTO `sub_process_bom_child` VALUES (128, NULL, NULL, NULL, 67, 39, 47, 12, 8, 0.04, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/8596392f-aba2-4a8c-8440-a5791c3ad43a.png', '2025-10-30 22:16:36', '2025-11-06 02:11:51');
+INSERT INTO `sub_process_bom_child` VALUES (129, NULL, NULL, NULL, 67, 29, 22, 13, 8, 0.05, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/3d884bd9-a0e2-4b2f-9807-6e68cf8c8193.png', '2025-10-30 22:16:36', '2025-11-06 02:11:51');
+INSERT INTO `sub_process_bom_child` VALUES (130, NULL, NULL, NULL, 67, 29, 22, 14, 15, 0.06, '1', 270000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/26c0bf39-e418-4272-833f-3b09835de526.png', '2025-10-30 22:16:36', '2025-11-06 02:11:51');
+INSERT INTO `sub_process_bom_child` VALUES (137, NULL, NULL, NULL, 68, 13, 11, 6, 10, 0.08, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/29fb2585-ebed-4c47-bf92-e3b24503c690.png', '2025-10-30 22:21:18', '2025-11-06 02:12:18');
+INSERT INTO `sub_process_bom_child` VALUES (138, NULL, NULL, NULL, 68, 18, 13, 2, 8, 0.07, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/3f8e637f-cc3b-474d-ad16-5f90b3fdf8c2.png', '2025-10-30 22:21:18', '2025-11-06 02:12:18');
+INSERT INTO `sub_process_bom_child` VALUES (139, NULL, NULL, NULL, 68, 30, 8, 4, 5, 0.05, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/14d0c351-4a2b-4bf2-9236-296e5bb0f620.png', '2025-10-30 22:21:18', '2025-11-06 02:12:18');
+INSERT INTO `sub_process_bom_child` VALUES (140, NULL, NULL, NULL, 68, 11, 7, 5, 8, 0.07, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/f77db8ab-d036-4b04-853e-ba15e960e0c0.png', '2025-10-30 22:21:18', '2025-11-06 02:12:18');
+INSERT INTO `sub_process_bom_child` VALUES (141, NULL, NULL, NULL, 68, 39, 47, 1, 10, 0.04, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/fceaf9ac-1a93-425b-963a-37afb5c0a579.png', '2025-10-30 22:21:18', '2025-11-06 02:12:18');
+INSERT INTO `sub_process_bom_child` VALUES (142, NULL, NULL, NULL, 68, 28, 47, 3, 10, 0.10, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/478613db-f7f4-4fdd-aeaa-053e4745a4bf.png', '2025-10-30 22:21:18', '2025-11-06 02:12:18');
+INSERT INTO `sub_process_bom_child` VALUES (143, NULL, NULL, NULL, 69, 13, 11, 2, 10, 0.08, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/a8a887b3-00b4-4d1c-9556-00a6755b46ce.png', '2025-10-30 22:30:01', '2025-11-06 02:12:30');
+INSERT INTO `sub_process_bom_child` VALUES (144, NULL, NULL, NULL, 69, 18, 13, 4, 8, 0.07, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/cab2c280-e5b0-46e6-a9e0-2ea5094dcc2f.png', '2025-10-30 22:30:01', '2025-11-06 02:12:30');
+INSERT INTO `sub_process_bom_child` VALUES (145, NULL, NULL, NULL, 69, 30, 8, 6, 5, 0.05, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/dfb44501-0fc4-4279-b3a9-722aa303032e.png', '2025-10-30 22:30:01', '2025-11-06 02:12:30');
+INSERT INTO `sub_process_bom_child` VALUES (146, NULL, NULL, NULL, 69, 11, 7, 1, 8, 0.07, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/c31076bd-fc91-4746-95b0-41b74331c3ac.png', '2025-10-30 22:30:01', '2025-11-06 02:12:30');
+INSERT INTO `sub_process_bom_child` VALUES (147, NULL, NULL, NULL, 69, 39, 47, 3, 10, 0.04, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/dbd9cde6-224d-4b98-81e9-b8f8b1fa79e5.png', '2025-10-30 22:30:01', '2025-11-06 02:12:30');
+INSERT INTO `sub_process_bom_child` VALUES (148, NULL, NULL, NULL, 69, 28, 47, 5, 10, 0.10, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/0eb7bf20-32a4-4b09-ba7f-969b94936f2b.png', '2025-10-30 22:30:01', '2025-11-06 02:12:30');
+INSERT INTO `sub_process_bom_child` VALUES (149, NULL, NULL, NULL, 70, 30, 8, 2, 5, 0.05, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/ae558a0d-7418-4e0c-a5f6-710f5199119a.png', '2025-10-30 22:32:06', '2025-11-06 02:12:59');
+INSERT INTO `sub_process_bom_child` VALUES (150, NULL, NULL, NULL, 70, 12, 10, 4, 5, 0.07, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/f6a554f2-62b7-416c-be65-e4610435aa75.png', '2025-10-30 22:32:06', '2025-11-06 02:12:59');
+INSERT INTO `sub_process_bom_child` VALUES (151, NULL, NULL, NULL, 70, 12, 10, 5, 5, 0.08, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/61230b46-5d50-401f-9969-3fe02ff3964b.png', '2025-10-30 22:32:06', '2025-11-06 02:12:59');
+INSERT INTO `sub_process_bom_child` VALUES (152, NULL, NULL, NULL, 70, 8, 7, 1, 5, 0.08, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/030370f4-99dc-4d92-a036-4e6c74aa8a52.png', '2025-10-30 22:32:06', '2025-11-06 02:12:59');
+INSERT INTO `sub_process_bom_child` VALUES (153, NULL, NULL, NULL, 70, 39, 47, 3, 10, 0.10, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/36b2580f-0eaa-4e4e-b7aa-c97b0108bf61.png', '2025-10-30 22:32:06', '2025-11-06 02:12:59');
+INSERT INTO `sub_process_bom_child` VALUES (154, NULL, NULL, NULL, 71, 30, 8, 4, 5, 0.05, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/7632476f-2501-4488-8b55-a6361f05a9ae.png', '2025-10-30 22:55:21', '2025-11-06 02:13:14');
+INSERT INTO `sub_process_bom_child` VALUES (155, NULL, NULL, NULL, 71, 12, 10, 1, 5, 0.07, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/4b8807e9-18b7-4494-8786-e0023f67fe3a.png', '2025-10-30 22:55:21', '2025-11-06 02:13:14');
+INSERT INTO `sub_process_bom_child` VALUES (156, NULL, NULL, NULL, 71, 12, 10, 2, 5, 0.08, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/69bd1c76-4e31-4cf4-ab20-0f7bc662004c.png', '2025-10-30 22:55:21', '2025-11-06 02:13:14');
+INSERT INTO `sub_process_bom_child` VALUES (157, NULL, NULL, NULL, 71, 8, 7, 3, 5, 0.08, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/d808407c-c452-4060-a5cb-69e928486605.png', '2025-10-30 22:55:21', '2025-11-06 02:13:14');
+INSERT INTO `sub_process_bom_child` VALUES (158, NULL, NULL, NULL, 71, 39, 47, 5, 10, 0.10, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/907d7d93-4885-4fb3-92e6-180d4f56378f.png', '2025-10-30 22:55:21', '2025-11-06 02:13:14');
+INSERT INTO `sub_process_bom_child` VALUES (159, NULL, NULL, NULL, 72, 39, 47, 2, 10, 0.04, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/5483da4b-7808-4582-b485-804b646ab183.png', '2025-10-30 22:56:45', '2025-11-06 02:13:45');
+INSERT INTO `sub_process_bom_child` VALUES (160, NULL, NULL, NULL, 72, 29, 22, 3, 15, 0.35, '1', 270000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/c3007653-9978-4f18-91a4-ea53332b8a22.png', '2025-10-30 22:56:45', '2025-11-06 02:13:45');
+INSERT INTO `sub_process_bom_child` VALUES (162, NULL, NULL, NULL, 72, 25, 18, 1, 20, 0.18, '1', 360000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/1a60abdd-d25c-4857-8ba9-8c397f618480.png', '2025-10-30 22:56:45', '2025-11-06 02:13:45');
+INSERT INTO `sub_process_bom_child` VALUES (163, NULL, NULL, NULL, 73, 30, 8, 4, 5, 0.05, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/a184da20-5726-4738-b499-e9b04dbb2006.png', '2025-10-30 23:01:17', '2025-11-06 02:14:15');
+INSERT INTO `sub_process_bom_child` VALUES (164, NULL, NULL, NULL, 73, 11, 7, 6, 5, 0.07, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/98225df8-414f-417a-9150-a5d9a2af4f75.png', '2025-10-30 23:01:17', '2025-11-06 02:14:15');
+INSERT INTO `sub_process_bom_child` VALUES (165, NULL, NULL, NULL, 73, 11, 7, 2, 5, 0.05, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/7669f5f6-c5d5-4faa-b6ed-e9a4e8a93ec0.png', '2025-10-30 23:01:17', '2025-11-06 02:14:15');
+INSERT INTO `sub_process_bom_child` VALUES (166, NULL, NULL, NULL, 73, 18, 13, 3, 8, 0.07, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/b96aa8d4-41f7-4361-87bf-e503101d547e.png', '2025-10-30 23:01:17', '2025-11-06 02:14:15');
+INSERT INTO `sub_process_bom_child` VALUES (167, NULL, NULL, NULL, 73, 20, 7, 5, 5, 0.07, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/4804520c-e8be-4b34-ad04-259ff88652ed.png', '2025-10-30 23:01:17', '2025-11-06 02:14:15');
+INSERT INTO `sub_process_bom_child` VALUES (168, NULL, NULL, NULL, 73, 39, 47, 1, 10, 0.04, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/441be92d-dd11-4e60-8464-ce97e9fba8f2.png', '2025-10-30 23:01:17', '2025-11-06 02:14:15');
+INSERT INTO `sub_process_bom_child` VALUES (170, NULL, NULL, NULL, 74, 11, 7, 2, 5, 0.05, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/a912022a-d507-45c1-b8f0-9b0a8fb4a997.png', '2025-10-30 23:06:50', '2025-11-06 02:14:43');
+INSERT INTO `sub_process_bom_child` VALUES (171, NULL, NULL, NULL, 74, 30, 8, 4, 5, 0.05, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/0d4c260e-8205-4573-a777-4a8f060f37d9.png', '2025-10-30 23:06:50', '2025-11-06 02:14:43');
+INSERT INTO `sub_process_bom_child` VALUES (172, NULL, NULL, NULL, 74, 11, 7, 5, 5, 0.07, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/5a45e040-92c2-460a-a695-0b85dd6c73d3.png', '2025-10-30 23:06:50', '2025-11-06 02:14:43');
+INSERT INTO `sub_process_bom_child` VALUES (173, NULL, NULL, NULL, 74, 39, 47, 1, 10, 0.04, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/a33c9aea-4bcc-420b-b669-2940efdf2446.png', '2025-10-30 23:06:50', '2025-11-06 02:14:43');
+INSERT INTO `sub_process_bom_child` VALUES (174, NULL, NULL, NULL, 74, 18, 13, 3, 8, 0.07, '1', 144000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/f74459f2-2aa8-4ae4-bad5-28e2ad3ec6bf.png', '2025-10-30 23:06:50', '2025-11-06 02:14:43');
+INSERT INTO `sub_process_bom_child` VALUES (175, NULL, NULL, NULL, 75, 20, 7, 1, 5, 0.05, '1', 90000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/64c9cb8b-117d-46ad-bca7-d9fb3224e0d0.png', '2025-10-30 23:16:29', '2025-11-06 02:15:08');
+INSERT INTO `sub_process_bom_child` VALUES (176, NULL, NULL, NULL, 75, 29, 22, 2, 10, 0.35, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/5b7da50d-1dc2-41a7-ad3b-76f7584b779b.png', '2025-10-30 23:16:29', '2025-11-06 02:15:08');
+INSERT INTO `sub_process_bom_child` VALUES (177, NULL, NULL, NULL, 75, 29, 22, 3, 10, 0.35, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/b0229d08-b5fc-4785-b48e-1cab55730079.png', '2025-10-30 23:16:29', '2025-11-06 02:15:08');
+INSERT INTO `sub_process_bom_child` VALUES (178, NULL, NULL, NULL, 76, 41, 29, 1, 15, 0.20, '1', 270000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/65f22e24-4044-45f8-8d1e-88193837d46c.png', '2025-10-30 23:24:51', '2025-11-06 02:16:00');
+INSERT INTO `sub_process_bom_child` VALUES (179, NULL, NULL, NULL, 76, 75, 22, 2, 10, 0.35, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/dacae4d9-95fd-4c26-b6c6-887bb5a492c4.png', '2025-10-30 23:24:51', '2025-11-06 02:16:00');
+INSERT INTO `sub_process_bom_child` VALUES (180, NULL, NULL, NULL, 76, 74, 23, 3, 20, 0.18, '1', 360000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/43c5e1c4-5de1-41c1-8cbd-683c216dbe81.png', '2025-10-30 23:24:51', '2025-11-06 02:16:00');
+INSERT INTO `sub_process_bom_child` VALUES (181, NULL, NULL, NULL, 77, 96, 29, 1, 15, 0.20, '1', 270000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/57f1457c-f6be-45ee-aa03-ef7c5ff11053.png', '2025-10-30 23:28:36', '2025-11-05 19:16:44');
+INSERT INTO `sub_process_bom_child` VALUES (182, NULL, NULL, NULL, 78, 45, 29, 1, 15, 0.50, '1', 270000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/be61b76f-f656-48a4-8446-b9b386b1784e.png', '2025-10-30 23:30:00', '2025-11-06 02:16:18');
+INSERT INTO `sub_process_bom_child` VALUES (183, NULL, NULL, NULL, 78, 97, 48, 2, 10, 0.05, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/bf2fe174-31a0-4aa4-aaf6-fc2b7394ebf5.png', '2025-10-30 23:31:08', '2025-11-06 02:16:19');
+INSERT INTO `sub_process_bom_child` VALUES (185, NULL, NULL, NULL, 79, 98, 29, 1, 20, 0.72, '1', 360000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/14abc1a7-a11e-463e-a209-dbdb0d0712fb.png', '2025-10-30 23:35:15', '2025-11-06 02:16:35');
+INSERT INTO `sub_process_bom_child` VALUES (186, NULL, NULL, NULL, 80, 90, 31, 1, 120, 1.20, '1', 2160000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/d1954167-3d9e-4041-84ea-24a58106cc59.png', '2025-10-30 23:36:27', '2025-11-06 02:17:07');
+INSERT INTO `sub_process_bom_child` VALUES (187, NULL, NULL, NULL, 81, 91, 32, 1, 60, 1.10, '1', 1080000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/ed7d9e90-9ede-45b3-af93-8e322aec4d2f.png', '2025-10-30 23:37:56', '2025-11-06 02:17:16');
+INSERT INTO `sub_process_bom_child` VALUES (188, NULL, NULL, NULL, 82, 100, 35, 1, 5400, 1.00, '1', 97200000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/de032772-9114-4ffe-bf2b-7132aad9b4bd.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
+INSERT INTO `sub_process_bom_child` VALUES (189, NULL, NULL, NULL, 82, 101, 34, 2, 15, 0.10, '1', 270000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/e71e4348-2b25-47cd-8e3c-ef2fa2311ae1.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
+INSERT INTO `sub_process_bom_child` VALUES (190, NULL, NULL, NULL, 82, 102, 36, 3, 15, 0.10, '1', 270000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/a1b7192d-cb4f-44e7-bef4-5787d632731a.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
+INSERT INTO `sub_process_bom_child` VALUES (191, NULL, NULL, NULL, 82, 103, 37, 4, 12600, 2.00, '1', 226800000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/79d6d53f-c258-45d9-9966-861d8ae8020b.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
+INSERT INTO `sub_process_bom_child` VALUES (192, NULL, NULL, NULL, 82, 104, 38, 5, 20, 0.15, '1', 360000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/7a9ed5ee-ffb3-41f5-afda-b79b0ae9a86e.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
+INSERT INTO `sub_process_bom_child` VALUES (193, NULL, NULL, NULL, 82, 105, 39, 6, 10, 0.10, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/caef18e7-bf3e-4852-9760-c6a13ab07249.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
+INSERT INTO `sub_process_bom_child` VALUES (194, NULL, NULL, NULL, 82, 106, 40, 7, 10, 0.10, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/6713361b-3c5f-4ada-a8fa-16cee6a2b254.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
+INSERT INTO `sub_process_bom_child` VALUES (195, NULL, NULL, NULL, 82, 107, 41, 8, 10, 0.10, '1', 180000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/aa565973-0d7d-4a66-9995-3dd52489368c.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
+INSERT INTO `sub_process_bom_child` VALUES (196, NULL, NULL, NULL, 82, 108, 9, 9, 15, 0.13, '1', 270000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/2d6a765e-db1d-42d8-8615-d7c0ac16c57f.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
+INSERT INTO `sub_process_bom_child` VALUES (197, NULL, NULL, NULL, 82, 111, 21, 10, 600, 4.50, '1', 10800000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/9a72bfa8-b9da-435c-a0ec-4de520a64ba7.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
+INSERT INTO `sub_process_bom_child` VALUES (198, NULL, NULL, NULL, 82, 109, 9, 11, 300, 2.30, '1', 5400000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/7a1c4c1d-104d-41f4-a382-e438d0a08295.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
+INSERT INTO `sub_process_bom_child` VALUES (199, NULL, NULL, NULL, 82, 112, 42, 12, 600, 1.10, '1', 10800000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/ba077b3a-262b-44b1-b4cc-a1b8fef1c8d5.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
+INSERT INTO `sub_process_bom_child` VALUES (200, NULL, NULL, NULL, 82, 110, 43, 13, 4000, 20.00, '1', 72000000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/fef45690-d985-4af4-8049-34dee160e5b4.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
+INSERT INTO `sub_process_bom_child` VALUES (201, NULL, NULL, NULL, 82, 113, 44, 14, 140, 0.65, '1', 2520000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/5df9bbd6-8ccb-4e9c-84bd-e587a7576c78.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
+INSERT INTO `sub_process_bom_child` VALUES (202, NULL, NULL, NULL, 82, 114, 45, 15, 140, 0.60, '1', 2520000.0, NULL, NULL, 18000, 'http://cdn.yuanfangzixun.com.cn/qrcodes/c80f86a4-f1e2-4411-a80d-c2d43c9ea5de.png', '2025-10-30 23:50:10', '2025-11-06 02:17:24');
 
 -- ----------------------------
 -- Table structure for sub_process_code
@@ -1256,26 +1306,27 @@ CREATE TABLE `sub_process_cycle`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '制程组列表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '制程组列表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_process_cycle
 -- ----------------------------
-INSERT INTO `sub_process_cycle` VALUES (1, 1, 1, '备料组', '1', '4', 1, '2025-08-21 09:30:12', '2025-11-05 20:42:50');
-INSERT INTO `sub_process_cycle` VALUES (2, 1, 1, '设备组', '4', '4', 1, '2025-08-21 09:30:39', '2025-11-05 20:43:00');
-INSERT INTO `sub_process_cycle` VALUES (3, 1, 1, '生产组', '2', '5', 1, '2025-08-21 09:30:45', '2025-11-05 20:42:53');
-INSERT INTO `sub_process_cycle` VALUES (4, 1, 1, '其他组', '3', NULL, 1, '2025-10-16 19:09:55', '2025-11-05 20:42:57');
+INSERT INTO `sub_process_cycle` VALUES (1, 1, 1, '备料组', '0', '4', 1, '2025-08-21 09:30:12', '2025-10-26 18:10:51');
+INSERT INTO `sub_process_cycle` VALUES (2, 1, 1, '设备组', '0', '4', 1, '2025-08-21 09:30:39', '2025-10-26 18:10:52');
+INSERT INTO `sub_process_cycle` VALUES (3, 1, 1, '生产组', '0', '5', 1, '2025-08-21 09:30:45', '2025-10-26 18:10:52');
+INSERT INTO `sub_process_cycle` VALUES (4, 1, 1, '其他组', '0', NULL, 1, '2025-10-16 19:09:55', '2025-10-26 18:10:53');
 INSERT INTO `sub_process_cycle` VALUES (5, 1, 1, '不好组', '0', NULL, 1, '2025-10-16 19:15:43', '2025-10-26 18:10:53');
 INSERT INTO `sub_process_cycle` VALUES (6, 3, 6, '备料组', '1', '1', 1, '2025-10-18 10:10:27', '2025-10-28 13:40:09');
-INSERT INTO `sub_process_cycle` VALUES (7, 3, 6, '焊接组', '7', '1', 1, '2025-10-18 10:10:44', '2025-11-05 14:09:20');
-INSERT INTO `sub_process_cycle` VALUES (8, 3, 6, '热处理', '3', '2', 1, '2025-10-18 10:11:22', '2025-11-06 16:17:00');
-INSERT INTO `sub_process_cycle` VALUES (9, 3, 6, '研磨组', '4', '5', 1, '2025-10-18 10:11:37', '2025-10-28 13:44:10');
-INSERT INTO `sub_process_cycle` VALUES (10, 3, 6, '补土组', '5', '6', 1, '2025-10-18 10:11:55', '2025-10-28 13:44:35');
+INSERT INTO `sub_process_cycle` VALUES (7, 3, 6, '焊接组', '2', '2', 1, '2025-10-18 10:10:44', '2025-11-10 08:03:00');
+INSERT INTO `sub_process_cycle` VALUES (8, 3, 6, '热处理', '3', '1.5', 1, '2025-10-18 10:11:22', '2025-10-28 13:40:23');
+INSERT INTO `sub_process_cycle` VALUES (9, 3, 6, '研磨组', '4', '1', 1, '2025-10-18 10:11:37', '2025-11-10 08:03:13');
+INSERT INTO `sub_process_cycle` VALUES (10, 3, 6, '补土组', '5', '1.5', 1, '2025-10-18 10:11:55', '2025-11-10 08:03:22');
 INSERT INTO `sub_process_cycle` VALUES (11, 3, 6, '后段组', '6', '8', 1, '2025-10-18 10:12:08', '2025-10-28 13:44:44');
 INSERT INTO `sub_process_cycle` VALUES (12, 3, 6, '行政部', '0', NULL, 1, '2025-10-28 13:45:18', '2025-10-28 13:45:18');
 INSERT INTO `sub_process_cycle` VALUES (13, 3, 6, '技术部', '0', NULL, 1, '2025-10-28 13:45:30', '2025-10-28 13:45:30');
 INSERT INTO `sub_process_cycle` VALUES (14, 3, 6, '业务部', '0', NULL, 1, '2025-10-28 13:45:41', '2025-10-28 13:45:41');
 INSERT INTO `sub_process_cycle` VALUES (15, 3, 6, '总经办', '0', NULL, 1, '2025-10-28 13:45:53', '2025-10-28 13:45:53');
+INSERT INTO `sub_process_cycle` VALUES (16, 3, 6, '生产部', '0', NULL, 1, '2025-11-09 01:08:57', '2025-11-09 01:08:57');
 
 -- ----------------------------
 -- Table structure for sub_process_cycle_child
@@ -1581,9 +1632,9 @@ CREATE TABLE `sub_product_notice`  (
 -- ----------------------------
 -- Records of sub_product_notice
 -- ----------------------------
-INSERT INTO `sub_product_notice` VALUES (8, 1, 1, '1122', 2, 19, 2, '2025-10-15', 0, 1, 1, '2025-09-24 15:56:38', '2025-11-05 20:48:30');
-INSERT INTO `sub_product_notice` VALUES (9, 3, 6, 'DD-A2510001', 4, 20, 3, '2025-11-20', 0, 1, 1, '2025-10-18 14:17:30', '2025-11-06 15:50:12');
-INSERT INTO `sub_product_notice` VALUES (10, 3, 6, 'DD-2510002', 5, 20, 4, '2025-11-07', 1, 1, 1, '2025-10-30 16:20:55', '2025-10-30 16:20:55');
+INSERT INTO `sub_product_notice` VALUES (8, 1, 1, '1122', 2, 19, 2, '2025-10-15', 0, 1, 1, '2025-09-24 15:56:38', '2025-10-13 11:38:39');
+INSERT INTO `sub_product_notice` VALUES (9, 3, 6, 'DD-A2510001', 4, 20, 3, '2025-12-08', 0, 1, 1, '2025-10-18 14:17:30', '2025-11-10 07:40:48');
+INSERT INTO `sub_product_notice` VALUES (10, 3, 6, 'DD-2510002', 5, 20, 4, '2025-12-28', 0, 1, 1, '2025-10-30 16:20:55', '2025-11-10 15:32:56');
 
 -- ----------------------------
 -- Table structure for sub_product_quotation
@@ -1599,19 +1650,23 @@ CREATE TABLE `sub_product_quotation`  (
   `notice` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '报价单号',
   `product_price` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品单价',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
-  `other_transaction_terms` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '交易条件',
+  `transaction_method` int(5) NULL DEFAULT NULL COMMENT '交易方式',
+  `other_transaction_terms` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '结算周期',
+  `other_text` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '其他结算周期',
   `is_deleted` int(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品报价表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品报价表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_product_quotation
 -- ----------------------------
-INSERT INTO `sub_product_quotation` VALUES (11, 1, 1, 2, 2, 9, '111', '111', '111', '111', 1, '2025-07-25 22:44:22', '2025-07-25 22:44:22');
-INSERT INTO `sub_product_quotation` VALUES (12, 1, 1, 1, 3, 10, '222', '222', '222', '222', 1, '2025-07-25 22:44:29', '2025-07-25 22:44:29');
-INSERT INTO `sub_product_quotation` VALUES (13, 3, 6, 3, 4, 20, 'BJD001', '580', 'RMB', '现金/月结60天', 1, '2025-10-18 12:51:58', '2025-10-18 12:51:58');
+INSERT INTO `sub_product_quotation` VALUES (11, 1, 1, 2, 2, 9, '111', '111', '111', NULL, '111', NULL, 1, '2025-07-25 22:44:22', '2025-07-25 22:44:22');
+INSERT INTO `sub_product_quotation` VALUES (12, 1, 1, 1, 3, 10, '222', '222', '222', NULL, '222', NULL, 1, '2025-07-25 22:44:29', '2025-07-25 22:44:29');
+INSERT INTO `sub_product_quotation` VALUES (13, 3, 6, 4, 5, 20, 'BJD001', '550', 'RMB', NULL, '27', NULL, 1, '2025-10-18 12:51:58', '2025-11-12 12:00:31');
+INSERT INTO `sub_product_quotation` VALUES (14, 3, 6, 3, 4, 20, 'BJD002', '560', 'RMB', NULL, '0', NULL, 1, '2025-11-09 01:29:41', '2025-11-12 12:55:15');
+INSERT INTO `sub_product_quotation` VALUES (15, 3, 6, 3, 4, 20, '121', '221', '313131', 23, '26', '', 1, '2025-11-12 13:35:23', '2025-11-12 13:35:23');
 
 -- ----------------------------
 -- Table structure for sub_production_progress
@@ -1622,10 +1677,13 @@ CREATE TABLE `sub_production_progress`  (
   `company_id` int(11) NOT NULL COMMENT '企业id',
   `user_id` int(11) NOT NULL COMMENT '发布的用户id',
   `notice_id` int(11) NULL DEFAULT NULL COMMENT '生产通知单id',
+  `notice_number` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生产通知单',
+  `delivery_time` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '客户交期',
+  `customer_abbreviation` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '客户名称',
   `product_id` int(11) NULL DEFAULT NULL COMMENT '产品id',
   `product_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品编码',
   `product_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品名称',
-  `drawing` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品图号',
+  `product_drawing` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品图号',
   `part_id` int(11) NULL DEFAULT NULL COMMENT '部件id',
   `part_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '部件编码',
   `part_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '部件名称',
@@ -1642,11 +1700,33 @@ CREATE TABLE `sub_production_progress`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产进度表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 252 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '生产进度表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_production_progress
 -- ----------------------------
+INSERT INTO `sub_production_progress` VALUES (230, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 46, 'Z001', '成品车架', 82, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (231, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 45, 'Y006', '组立后三角', 81, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (232, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 44, 'Y005', '组立前三角', 80, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (233, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 43, 'Y004', '组立折叠器', 79, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (234, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 42, 'Y003', '上叉支杆', 78, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (235, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 41, 'Y002', '右钩爪', 77, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (236, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 40, 'Y001', '左钩爪', 76, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (237, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 37, 'X017', '下叉', 75, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (238, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 31, 'X011', '后下叉L', 74, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (239, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 30, 'X010', '后下叉R', 73, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (240, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 39, 'X019', '上叉', 72, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (241, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 36, 'X016', '下枝杆', 71, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (242, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 35, 'X015', '上支杆', 70, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (243, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 28, 'X008', '后上叉R', 69, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (244, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 29, 'X009', '后上叉L', 68, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (245, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 22, 'X002', '主梁管', 67, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (246, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 38, 'X018', '过线管', 66, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (247, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 25, 'X005', '下管', 65, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (248, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 33, 'X013', '手提管', 64, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (249, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 34, 'X014', '中管', 63, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (250, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 27, 'X007', '五通', 60, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
+INSERT INTO `sub_production_progress` VALUES (251, 3, 6, 9, 'DD-A2510001', '2025-11-30', '旭欧', 20, 'WA-A00001', '0611铝车架', '0611', 21, 'X001', '车首管', 59, NULL, 18000, 'CG01-2510009', '2025-10-10', 18000, NULL, NULL, 1, 1, '2025-11-02 14:38:22', '2025-11-02 14:38:22');
 
 -- ----------------------------
 -- Table structure for sub_progress_base
@@ -1675,11 +1755,55 @@ CREATE TABLE `sub_progress_base`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '进度表的基础数据表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 67 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '进度表的基础数据表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_progress_base
 -- ----------------------------
+INSERT INTO `sub_progress_base` VALUES (23, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 21, 'X001', '车首管', 59, 0, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 15:33:50');
+INSERT INTO `sub_progress_base` VALUES (24, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 27, 'X007', '五通', 60, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (25, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 34, 'X014', '中管', 63, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (26, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 33, 'X013', '手提管', 64, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (27, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 25, 'X005', '下管', 65, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (28, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 38, 'X018', '过线管', 66, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (29, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 22, 'X002', '主梁管', 67, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (30, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 29, 'X009', '后上叉L', 68, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (31, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 28, 'X008', '后上叉R', 69, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (32, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 35, 'X015', '上支杆', 70, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (33, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 36, 'X016', '下枝杆', 71, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (34, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 39, 'X019', '上叉', 72, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (35, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 30, 'X010', '后下叉R', 73, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (36, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 31, 'X011', '后下叉L', 74, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (37, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 37, 'X017', '下叉', 75, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (38, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 40, 'Y001', '左钩爪', 76, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (39, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 41, 'Y002', '右钩爪', 77, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (40, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 42, 'Y003', '上叉支杆', 78, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (41, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 43, 'Y004', '组立折叠器', 79, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (42, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 44, 'Y005', '组立前三角', 80, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (43, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 45, 'Y006', '组立后三角', 81, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (44, 3, 6, 9, 3, 20, 'WA-A00001', '0611铝车架', '0611', 46, 'Z001', '成品车架', 82, NULL, 18000, '2025-11-07', '', 1, 1, '2025-11-10 07:40:48', '2025-11-10 08:02:10');
+INSERT INTO `sub_progress_base` VALUES (45, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 21, 'X001', '车首管', 59, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (46, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 27, 'X007', '五通', 60, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (47, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 34, 'X014', '中管', 63, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (48, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 33, 'X013', '手提管', 64, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (49, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 25, 'X005', '下管', 65, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (50, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 38, 'X018', '过线管', 66, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (51, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 22, 'X002', '主梁管', 67, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (52, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 29, 'X009', '后上叉L', 68, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (53, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 28, 'X008', '后上叉R', 69, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (54, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 35, 'X015', '上支杆', 70, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (55, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 36, 'X016', '下枝杆', 71, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (56, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 39, 'X019', '上叉', 72, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (57, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 30, 'X010', '后下叉R', 73, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (58, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 31, 'X011', '后下叉L', 74, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (59, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 37, 'X017', '下叉', 75, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (60, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 40, 'Y001', '左钩爪', 76, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (61, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 41, 'Y002', '右钩爪', 77, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (62, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 42, 'Y003', '上叉支杆', 78, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (63, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 43, 'Y004', '组立折叠器', 79, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (64, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 44, 'Y005', '组立前三角', 80, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (65, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 45, 'Y006', '组立后三角', 81, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
+INSERT INTO `sub_progress_base` VALUES (66, 3, 6, 10, 4, 20, 'WA-A00001', '0611铝车架', '0611', 46, 'Z001', '成品车架', 82, NULL, 7500, '2025-11-20', '', 1, 1, '2025-11-10 15:32:56', '2025-11-10 15:35:15');
 
 -- ----------------------------
 -- Table structure for sub_progress_cycle
@@ -1697,11 +1821,275 @@ CREATE TABLE `sub_progress_cycle`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '进度表的制程子表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 397 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '进度表的制程子表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_progress_cycle
 -- ----------------------------
+INSERT INTO `sub_progress_cycle` VALUES (133, 3, 9, 6, 23, '2025-11-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 17:04:12');
+INSERT INTO `sub_progress_cycle` VALUES (134, 3, 9, 7, 23, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (135, 3, 9, 8, 23, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (136, 3, 9, 9, 23, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (137, 3, 9, 10, 23, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (138, 3, 9, 11, 23, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (139, 3, 9, 6, 24, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (140, 3, 9, 7, 24, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (141, 3, 9, 8, 24, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (142, 3, 9, 9, 24, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (143, 3, 9, 10, 24, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (144, 3, 9, 11, 24, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (145, 3, 9, 6, 25, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (146, 3, 9, 7, 25, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (147, 3, 9, 8, 25, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (148, 3, 9, 9, 25, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (149, 3, 9, 10, 25, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (150, 3, 9, 11, 25, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (151, 3, 9, 6, 26, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (152, 3, 9, 7, 26, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (153, 3, 9, 8, 26, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (154, 3, 9, 9, 26, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (155, 3, 9, 10, 26, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (156, 3, 9, 11, 26, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (157, 3, 9, 6, 27, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (158, 3, 9, 7, 27, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (159, 3, 9, 8, 27, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (160, 3, 9, 9, 27, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (161, 3, 9, 10, 27, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (162, 3, 9, 11, 27, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (163, 3, 9, 6, 28, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (164, 3, 9, 7, 28, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (165, 3, 9, 8, 28, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (166, 3, 9, 9, 28, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (167, 3, 9, 10, 28, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (168, 3, 9, 11, 28, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (169, 3, 9, 6, 29, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (170, 3, 9, 7, 29, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (171, 3, 9, 8, 29, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (172, 3, 9, 9, 29, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (173, 3, 9, 10, 29, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (174, 3, 9, 11, 29, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (175, 3, 9, 6, 30, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (176, 3, 9, 7, 30, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (177, 3, 9, 8, 30, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (178, 3, 9, 9, 30, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (179, 3, 9, 10, 30, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (180, 3, 9, 11, 30, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (181, 3, 9, 6, 31, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (182, 3, 9, 7, 31, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (183, 3, 9, 8, 31, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (184, 3, 9, 9, 31, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (185, 3, 9, 10, 31, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (186, 3, 9, 11, 31, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (187, 3, 9, 6, 32, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (188, 3, 9, 7, 32, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (189, 3, 9, 8, 32, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (190, 3, 9, 9, 32, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (191, 3, 9, 10, 32, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (192, 3, 9, 11, 32, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (193, 3, 9, 6, 33, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (194, 3, 9, 7, 33, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (195, 3, 9, 8, 33, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (196, 3, 9, 9, 33, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (197, 3, 9, 10, 33, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (198, 3, 9, 11, 33, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (199, 3, 9, 6, 34, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (200, 3, 9, 7, 34, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (201, 3, 9, 8, 34, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (202, 3, 9, 9, 34, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (203, 3, 9, 10, 34, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (204, 3, 9, 11, 34, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (205, 3, 9, 6, 35, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (206, 3, 9, 7, 35, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (207, 3, 9, 8, 35, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (208, 3, 9, 9, 35, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (209, 3, 9, 10, 35, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (210, 3, 9, 11, 35, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (211, 3, 9, 6, 36, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (212, 3, 9, 7, 36, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (213, 3, 9, 8, 36, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (214, 3, 9, 9, 36, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (215, 3, 9, 10, 36, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (216, 3, 9, 11, 36, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (217, 3, 9, 6, 37, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (218, 3, 9, 7, 37, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (219, 3, 9, 8, 37, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (220, 3, 9, 9, 37, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (221, 3, 9, 10, 37, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (222, 3, 9, 11, 37, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (223, 3, 9, 6, 38, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (224, 3, 9, 7, 38, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (225, 3, 9, 8, 38, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (226, 3, 9, 9, 38, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (227, 3, 9, 10, 38, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (228, 3, 9, 11, 38, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (229, 3, 9, 6, 39, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (230, 3, 9, 7, 39, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (231, 3, 9, 8, 39, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (232, 3, 9, 9, 39, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (233, 3, 9, 10, 39, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (234, 3, 9, 11, 39, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (235, 3, 9, 6, 40, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (236, 3, 9, 7, 40, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (237, 3, 9, 8, 40, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (238, 3, 9, 9, 40, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (239, 3, 9, 10, 40, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (240, 3, 9, 11, 40, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (241, 3, 9, 6, 41, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (242, 3, 9, 7, 41, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (243, 3, 9, 8, 41, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (244, 3, 9, 9, 41, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (245, 3, 9, 10, 41, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (246, 3, 9, 11, 41, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (247, 3, 9, 6, 42, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (248, 3, 9, 7, 42, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (249, 3, 9, 8, 42, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (250, 3, 9, 9, 42, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (251, 3, 9, 10, 42, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (252, 3, 9, 11, 42, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (253, 3, 9, 6, 43, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (254, 3, 9, 7, 43, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (255, 3, 9, 8, 43, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (256, 3, 9, 9, 43, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (257, 3, 9, 10, 43, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (258, 3, 9, 11, 43, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (259, 3, 9, 6, 44, '2025-11-15', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:04:38');
+INSERT INTO `sub_progress_cycle` VALUES (260, 3, 9, 7, 44, '2025-11-20', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:06:07');
+INSERT INTO `sub_progress_cycle` VALUES (261, 3, 9, 8, 44, '2025-11-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:11:26');
+INSERT INTO `sub_progress_cycle` VALUES (262, 3, 9, 9, 44, '2025-12-09', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 11:04:53');
+INSERT INTO `sub_progress_cycle` VALUES (263, 3, 9, 10, 44, '2025-12-22', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:20');
+INSERT INTO `sub_progress_cycle` VALUES (264, 3, 9, 11, 44, '2025-12-30', NULL, NULL, '2025-11-10 07:40:48', '2025-11-10 08:15:48');
+INSERT INTO `sub_progress_cycle` VALUES (265, 3, 10, 6, 45, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (266, 3, 10, 7, 45, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (267, 3, 10, 8, 45, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (268, 3, 10, 9, 45, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (269, 3, 10, 10, 45, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (270, 3, 10, 11, 45, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (271, 3, 10, 6, 46, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (272, 3, 10, 7, 46, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (273, 3, 10, 8, 46, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (274, 3, 10, 9, 46, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (275, 3, 10, 10, 46, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (276, 3, 10, 11, 46, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (277, 3, 10, 6, 47, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (278, 3, 10, 7, 47, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (279, 3, 10, 8, 47, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (280, 3, 10, 9, 47, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (281, 3, 10, 10, 47, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (282, 3, 10, 11, 47, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (283, 3, 10, 6, 48, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (284, 3, 10, 7, 48, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (285, 3, 10, 8, 48, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (286, 3, 10, 9, 48, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (287, 3, 10, 10, 48, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (288, 3, 10, 11, 48, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (289, 3, 10, 6, 49, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (290, 3, 10, 7, 49, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (291, 3, 10, 8, 49, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (292, 3, 10, 9, 49, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (293, 3, 10, 10, 49, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (294, 3, 10, 11, 49, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (295, 3, 10, 6, 50, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (296, 3, 10, 7, 50, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (297, 3, 10, 8, 50, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (298, 3, 10, 9, 50, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (299, 3, 10, 10, 50, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (300, 3, 10, 11, 50, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (301, 3, 10, 6, 51, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (302, 3, 10, 7, 51, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (303, 3, 10, 8, 51, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (304, 3, 10, 9, 51, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (305, 3, 10, 10, 51, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (306, 3, 10, 11, 51, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (307, 3, 10, 6, 52, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (308, 3, 10, 7, 52, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (309, 3, 10, 8, 52, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (310, 3, 10, 9, 52, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (311, 3, 10, 10, 52, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (312, 3, 10, 11, 52, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (313, 3, 10, 6, 53, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (314, 3, 10, 7, 53, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (315, 3, 10, 8, 53, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (316, 3, 10, 9, 53, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (317, 3, 10, 10, 53, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (318, 3, 10, 11, 53, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (319, 3, 10, 6, 54, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (320, 3, 10, 7, 54, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (321, 3, 10, 8, 54, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (322, 3, 10, 9, 54, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (323, 3, 10, 10, 54, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (324, 3, 10, 11, 54, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (325, 3, 10, 6, 55, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (326, 3, 10, 7, 55, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (327, 3, 10, 8, 55, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (328, 3, 10, 9, 55, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (329, 3, 10, 10, 55, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (330, 3, 10, 11, 55, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (331, 3, 10, 6, 56, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (332, 3, 10, 7, 56, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (333, 3, 10, 8, 56, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (334, 3, 10, 9, 56, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (335, 3, 10, 10, 56, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (336, 3, 10, 11, 56, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (337, 3, 10, 6, 57, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (338, 3, 10, 7, 57, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (339, 3, 10, 8, 57, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (340, 3, 10, 9, 57, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (341, 3, 10, 10, 57, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (342, 3, 10, 11, 57, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (343, 3, 10, 6, 58, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (344, 3, 10, 7, 58, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (345, 3, 10, 8, 58, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (346, 3, 10, 9, 58, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (347, 3, 10, 10, 58, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (348, 3, 10, 11, 58, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (349, 3, 10, 6, 59, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (350, 3, 10, 7, 59, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (351, 3, 10, 8, 59, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (352, 3, 10, 9, 59, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (353, 3, 10, 10, 59, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (354, 3, 10, 11, 59, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (355, 3, 10, 6, 60, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (356, 3, 10, 7, 60, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (357, 3, 10, 8, 60, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (358, 3, 10, 9, 60, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (359, 3, 10, 10, 60, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (360, 3, 10, 11, 60, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (361, 3, 10, 6, 61, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (362, 3, 10, 7, 61, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (363, 3, 10, 8, 61, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (364, 3, 10, 9, 61, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (365, 3, 10, 10, 61, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (366, 3, 10, 11, 61, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (367, 3, 10, 6, 62, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (368, 3, 10, 7, 62, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (369, 3, 10, 8, 62, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (370, 3, 10, 9, 62, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (371, 3, 10, 10, 62, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (372, 3, 10, 11, 62, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (373, 3, 10, 6, 63, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (374, 3, 10, 7, 63, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (375, 3, 10, 8, 63, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (376, 3, 10, 9, 63, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (377, 3, 10, 10, 63, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (378, 3, 10, 11, 63, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (379, 3, 10, 6, 64, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (380, 3, 10, 7, 64, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (381, 3, 10, 8, 64, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (382, 3, 10, 9, 64, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (383, 3, 10, 10, 64, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (384, 3, 10, 11, 64, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (385, 3, 10, 6, 65, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (386, 3, 10, 7, 65, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (387, 3, 10, 8, 65, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (388, 3, 10, 9, 65, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (389, 3, 10, 10, 65, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (390, 3, 10, 11, 65, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
+INSERT INTO `sub_progress_cycle` VALUES (391, 3, 10, 6, 66, '2025-11-27', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:36:04');
+INSERT INTO `sub_progress_cycle` VALUES (392, 3, 10, 7, 66, '2025-12-08', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:08');
+INSERT INTO `sub_progress_cycle` VALUES (393, 3, 10, 8, 66, '2025-12-20', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:37:54');
+INSERT INTO `sub_progress_cycle` VALUES (394, 3, 10, 9, 66, '2025-12-24', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:15');
+INSERT INTO `sub_progress_cycle` VALUES (395, 3, 10, 10, 66, '2025-12-26', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:40:47');
+INSERT INTO `sub_progress_cycle` VALUES (396, 3, 10, 11, 66, '2025-12-28', NULL, NULL, '2025-11-10 15:32:56', '2025-11-10 15:41:09');
 
 -- ----------------------------
 -- Table structure for sub_progress_work
@@ -1722,11 +2110,209 @@ CREATE TABLE `sub_progress_work`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表工序下进度表的子表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 298 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '工艺BOM表工序下进度表的子表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_progress_work
 -- ----------------------------
+INSERT INTO `sub_progress_work` VALUES (100, 3, 23, 9, 59, 86, 1, 'NaN', NULL, '1000', '17000', '2025-11-10 07:40:48', '2025-11-11 12:03:25');
+INSERT INTO `sub_progress_work` VALUES (101, 3, 24, 9, 60, 77, 1, '20.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (102, 3, 24, 9, 60, 78, 2, '20.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (103, 3, 24, 9, 60, 88, 3, '20.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (104, 3, 24, 9, 60, 89, 4, '20.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (105, 3, 25, 9, 63, 94, 1, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (106, 3, 25, 9, 63, 95, 2, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (107, 3, 25, 9, 63, 92, 3, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (108, 3, 25, 9, 63, 93, 4, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (109, 3, 25, 9, 63, 96, 5, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (110, 3, 25, 9, 63, 97, 6, '75.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (111, 3, 26, 9, 64, 105, 1, '75.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (112, 3, 26, 9, 64, 102, 2, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (113, 3, 26, 9, 64, 106, 3, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (114, 3, 26, 9, 64, 103, 4, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (115, 3, 26, 9, 64, 104, 5, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (116, 3, 27, 9, 65, 111, 1, '300.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (117, 3, 27, 9, 65, 115, 2, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (118, 3, 27, 9, 65, 112, 3, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (119, 3, 27, 9, 65, 113, 4, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (120, 3, 27, 9, 65, 114, 5, '100.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (121, 3, 28, 9, 66, 116, 1, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (122, 3, 29, 9, 67, 120, 1, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (123, 3, 29, 9, 67, 117, 2, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (124, 3, 29, 9, 67, 121, 3, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (125, 3, 29, 9, 67, 118, 4, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (126, 3, 29, 9, 67, 122, 5, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (127, 3, 29, 9, 67, 119, 6, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (128, 3, 29, 9, 67, 123, 7, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (129, 3, 29, 9, 67, 124, 8, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (130, 3, 29, 9, 67, 125, 9, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (131, 3, 29, 9, 67, 126, 10, '75.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (132, 3, 29, 9, 67, 127, 11, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (133, 3, 29, 9, 67, 128, 12, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (134, 3, 29, 9, 67, 129, 13, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (135, 3, 29, 9, 67, 130, 14, '75.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (136, 3, 30, 9, 68, 141, 1, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (137, 3, 30, 9, 68, 138, 2, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (138, 3, 30, 9, 68, 142, 3, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (139, 3, 30, 9, 68, 139, 4, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (140, 3, 30, 9, 68, 140, 5, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (141, 3, 30, 9, 68, 137, 6, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (142, 3, 31, 9, 69, 146, 1, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (143, 3, 31, 9, 69, 143, 2, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (144, 3, 31, 9, 69, 147, 3, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (145, 3, 31, 9, 69, 144, 4, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (146, 3, 31, 9, 69, 148, 5, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (147, 3, 31, 9, 69, 145, 6, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (148, 3, 32, 9, 70, 152, 1, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (149, 3, 32, 9, 70, 149, 2, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (150, 3, 32, 9, 70, 153, 3, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (151, 3, 32, 9, 70, 150, 4, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (152, 3, 32, 9, 70, 151, 5, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (153, 3, 33, 9, 71, 155, 1, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (154, 3, 33, 9, 71, 156, 2, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (155, 3, 33, 9, 71, 157, 3, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (156, 3, 33, 9, 71, 154, 4, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (157, 3, 33, 9, 71, 158, 5, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (158, 3, 34, 9, 72, 162, 1, '100.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (159, 3, 34, 9, 72, 159, 2, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (160, 3, 34, 9, 72, 160, 3, '75.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (161, 3, 35, 9, 73, 168, 1, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (162, 3, 35, 9, 73, 165, 2, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (163, 3, 35, 9, 73, 166, 3, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (164, 3, 35, 9, 73, 163, 4, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (165, 3, 35, 9, 73, 167, 5, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (166, 3, 35, 9, 73, 164, 6, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (167, 3, 36, 9, 74, 173, 1, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (168, 3, 36, 9, 74, 170, 2, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (169, 3, 36, 9, 74, 174, 3, '40.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (170, 3, 36, 9, 74, 171, 4, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (171, 3, 36, 9, 74, 172, 5, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (172, 3, 37, 9, 75, 175, 1, '25.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (173, 3, 37, 9, 75, 176, 2, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (174, 3, 37, 9, 75, 177, 3, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (175, 3, 38, 9, 76, 178, 1, '75.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (176, 3, 38, 9, 76, 179, 2, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (177, 3, 38, 9, 76, 180, 3, '100.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (178, 3, 39, 9, 77, 181, 1, '75.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (179, 3, 40, 9, 78, 182, 1, '75.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (180, 3, 40, 9, 78, 183, 2, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (181, 3, 41, 9, 79, 185, 1, '100.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (182, 3, 42, 9, 80, 186, 1, '600.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (183, 3, 43, 9, 81, 187, 1, '300.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (184, 3, 44, 9, 82, 188, 1, '27000.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (185, 3, 44, 9, 82, 189, 2, '75.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (186, 3, 44, 9, 82, 190, 3, '75.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (187, 3, 44, 9, 82, 191, 4, '63000.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (188, 3, 44, 9, 82, 192, 5, '100.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (189, 3, 44, 9, 82, 193, 6, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (190, 3, 44, 9, 82, 194, 7, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (191, 3, 44, 9, 82, 195, 8, '50.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (192, 3, 44, 9, 82, 196, 9, '75.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (193, 3, 44, 9, 82, 197, 10, '3000.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (194, 3, 44, 9, 82, 198, 11, '1500.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (195, 3, 44, 9, 82, 199, 12, '3000.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (196, 3, 44, 9, 82, 200, 13, '20000.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (197, 3, 44, 9, 82, 201, 14, '700.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (198, 3, 44, 9, 82, 202, 15, '700.0', NULL, NULL, '18000', '2025-11-10 07:40:48', '2025-11-10 07:40:48');
+INSERT INTO `sub_progress_work` VALUES (199, 3, 45, 10, 59, 86, 1, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (200, 3, 46, 10, 60, 77, 1, '8.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (201, 3, 46, 10, 60, 78, 2, '8.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (202, 3, 46, 10, 60, 88, 3, '8.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (203, 3, 46, 10, 60, 89, 4, '8.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (204, 3, 47, 10, 63, 94, 1, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (205, 3, 47, 10, 63, 95, 2, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (206, 3, 47, 10, 63, 92, 3, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (207, 3, 47, 10, 63, 93, 4, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (208, 3, 47, 10, 63, 96, 5, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (209, 3, 47, 10, 63, 97, 6, '31.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (210, 3, 48, 10, 64, 105, 1, '31.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (211, 3, 48, 10, 64, 102, 2, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (212, 3, 48, 10, 64, 106, 3, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (213, 3, 48, 10, 64, 103, 4, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (214, 3, 48, 10, 64, 104, 5, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (215, 3, 49, 10, 65, 111, 1, '125.0', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (216, 3, 49, 10, 65, 115, 2, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (217, 3, 49, 10, 65, 112, 3, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (218, 3, 49, 10, 65, 113, 4, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (219, 3, 49, 10, 65, 114, 5, '41.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (220, 3, 50, 10, 66, 116, 1, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (221, 3, 51, 10, 67, 120, 1, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (222, 3, 51, 10, 67, 117, 2, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (223, 3, 51, 10, 67, 121, 3, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (224, 3, 51, 10, 67, 118, 4, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (225, 3, 51, 10, 67, 122, 5, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (226, 3, 51, 10, 67, 119, 6, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (227, 3, 51, 10, 67, 123, 7, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (228, 3, 51, 10, 67, 124, 8, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (229, 3, 51, 10, 67, 125, 9, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (230, 3, 51, 10, 67, 126, 10, '31.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (231, 3, 51, 10, 67, 127, 11, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (232, 3, 51, 10, 67, 128, 12, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (233, 3, 51, 10, 67, 129, 13, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (234, 3, 51, 10, 67, 130, 14, '31.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (235, 3, 52, 10, 68, 141, 1, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (236, 3, 52, 10, 68, 138, 2, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (237, 3, 52, 10, 68, 142, 3, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (238, 3, 52, 10, 68, 139, 4, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (239, 3, 52, 10, 68, 140, 5, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (240, 3, 52, 10, 68, 137, 6, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (241, 3, 53, 10, 69, 146, 1, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (242, 3, 53, 10, 69, 143, 2, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (243, 3, 53, 10, 69, 147, 3, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (244, 3, 53, 10, 69, 144, 4, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (245, 3, 53, 10, 69, 148, 5, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (246, 3, 53, 10, 69, 145, 6, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (247, 3, 54, 10, 70, 152, 1, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (248, 3, 54, 10, 70, 149, 2, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (249, 3, 54, 10, 70, 153, 3, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (250, 3, 54, 10, 70, 150, 4, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (251, 3, 54, 10, 70, 151, 5, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (252, 3, 55, 10, 71, 155, 1, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (253, 3, 55, 10, 71, 156, 2, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (254, 3, 55, 10, 71, 157, 3, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (255, 3, 55, 10, 71, 154, 4, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (256, 3, 55, 10, 71, 158, 5, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (257, 3, 56, 10, 72, 162, 1, '41.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (258, 3, 56, 10, 72, 159, 2, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (259, 3, 56, 10, 72, 160, 3, '31.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (260, 3, 57, 10, 73, 168, 1, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (261, 3, 57, 10, 73, 165, 2, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (262, 3, 57, 10, 73, 166, 3, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (263, 3, 57, 10, 73, 163, 4, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (264, 3, 57, 10, 73, 167, 5, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (265, 3, 57, 10, 73, 164, 6, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (266, 3, 58, 10, 74, 173, 1, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (267, 3, 58, 10, 74, 170, 2, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (268, 3, 58, 10, 74, 174, 3, '16.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (269, 3, 58, 10, 74, 171, 4, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (270, 3, 58, 10, 74, 172, 5, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (271, 3, 59, 10, 75, 175, 1, '10.4', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (272, 3, 59, 10, 75, 176, 2, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (273, 3, 59, 10, 75, 177, 3, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (274, 3, 60, 10, 76, 178, 1, '31.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (275, 3, 60, 10, 76, 179, 2, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (276, 3, 60, 10, 76, 180, 3, '41.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (277, 3, 61, 10, 77, 181, 1, '31.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (278, 3, 62, 10, 78, 182, 1, '31.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (279, 3, 62, 10, 78, 183, 2, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (280, 3, 63, 10, 79, 185, 1, '41.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (281, 3, 64, 10, 80, 186, 1, '250.0', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (282, 3, 65, 10, 81, 187, 1, '125.0', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (283, 3, 66, 10, 82, 188, 1, '11250.0', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (284, 3, 66, 10, 82, 189, 2, '31.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (285, 3, 66, 10, 82, 190, 3, '31.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (286, 3, 66, 10, 82, 191, 4, '26250.0', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (287, 3, 66, 10, 82, 192, 5, '41.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (288, 3, 66, 10, 82, 193, 6, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (289, 3, 66, 10, 82, 194, 7, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (290, 3, 66, 10, 82, 195, 8, '20.8', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (291, 3, 66, 10, 82, 196, 9, '31.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (292, 3, 66, 10, 82, 197, 10, '1250.0', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (293, 3, 66, 10, 82, 198, 11, '625.0', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (294, 3, 66, 10, 82, 199, 12, '1250.0', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (295, 3, 66, 10, 82, 200, 13, '8333.3', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (296, 3, 66, 10, 82, 201, 14, '291.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
+INSERT INTO `sub_progress_work` VALUES (297, 3, 66, 10, 82, 202, 15, '291.7', NULL, NULL, '7500', '2025-11-10 15:32:56', '2025-11-10 15:32:56');
 
 -- ----------------------------
 -- Table structure for sub_rate_wage
@@ -1740,16 +2326,20 @@ CREATE TABLE `sub_rate_wage`  (
   `product_id` int(11) NULL DEFAULT NULL COMMENT '产品ID',
   `part_id` int(11) NULL DEFAULT NULL COMMENT '部件ID',
   `process_id` int(11) NULL DEFAULT NULL COMMENT '工艺ID',
+  `notice_id` int(11) NULL DEFAULT NULL COMMENT '生产订单ID',
+  `progress_id` int(11) NULL DEFAULT NULL COMMENT '进度表ID',
   `number` int(20) NULL DEFAULT NULL COMMENT '完成数量',
+  `status` int(2) NULL DEFAULT 0 COMMENT '状态，0未确认，1已确认',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '员工计件工资表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '员工计件工资表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_rate_wage
 -- ----------------------------
-INSERT INTO `sub_rate_wage` VALUES (1, 1, 3, 71, 19, 8, 5, 10, '2025-10-07 13:44:49', '2025-10-07 13:44:49');
+INSERT INTO `sub_rate_wage` VALUES (2, 3, 6, 86, 20, 21, 7, 9, 23, 400, 0, '2025-11-11 11:58:21', '2025-11-11 11:58:58');
+INSERT INTO `sub_rate_wage` VALUES (3, 3, 6, 86, 20, 21, 7, 9, 23, 600, 0, '2025-11-11 12:02:38', '2025-11-11 12:03:25');
 
 -- ----------------------------
 -- Table structure for sub_sale_cancel
@@ -1789,6 +2379,7 @@ CREATE TABLE `sub_sales_order`  (
   `delivery_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交货日期',
   `goods_time` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '送货日期',
   `goods_address` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '送货地点',
+  `is_quote` int(1) NULL DEFAULT 1 COMMENT '是否已创建报价单：1-未创建，0-已创建',
   `is_sale` int(1) NULL DEFAULT 1 COMMENT '是否已创建生产订单：1-未创建，0-已创建',
   `is_deleted` int(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -1799,10 +2390,10 @@ CREATE TABLE `sub_sales_order`  (
 -- ----------------------------
 -- Records of sub_sales_order
 -- ----------------------------
-INSERT INTO `sub_sales_order` VALUES (1, 1, 1, '2025-07-07', 3, 'G2222222', 10, '我的要求', '18000', 313, '个', '2025-07-07', '2025-07-27', '大朗镇', 1, 1, '2025-07-14 13:55:51', '2025-09-03 09:43:29');
-INSERT INTO `sub_sales_order` VALUES (2, 1, 1, '2025-07-10', 2, 'hui11111111', 19, '无要求', '12000', 2121, '件', '2025-10-31', '2025-07-14', '寮步镇', 1, 1, '2025-07-14 18:47:31', '2025-10-31 01:04:11');
-INSERT INTO `sub_sales_order` VALUES (3, 3, 6, '2025-10-10', 4, 'CG01-2510009', 20, '1.字码2510001-2510800；2.车架补土后烤漆', '17500', 800, '台', '2025-11-30', '2025-11-30', '公司材料仓', 1, 1, '2025-10-18 11:17:11', '2025-11-07 00:21:48');
-INSERT INTO `sub_sales_order` VALUES (4, 3, 6, '2025-10-30', 5, 'CG02-2510018', 20, '1.字码自2511001起；2.车架补土后送烤漆', '7500', 7500, '台', '2025-12-12', '2025-12-12', '高埗镇合鑫喷漆厂', 1, 1, '2025-10-30 16:04:11', '2025-10-30 16:22:00');
+INSERT INTO `sub_sales_order` VALUES (1, 1, 1, '2025-07-07', 3, 'G2222222', 10, '我的要求', '18000', 313, '个', '2025-07-07', '2025-07-27', '大朗镇', 1, 1, 1, '2025-07-14 13:55:51', '2025-09-03 09:43:29');
+INSERT INTO `sub_sales_order` VALUES (2, 1, 1, '2025-07-10', 2, 'hui11111111', 19, '无要求', '12000', 2121, '件', '2025-10-31', '2025-07-14', '寮步镇', 1, 1, 1, '2025-07-14 18:47:31', '2025-10-31 01:04:11');
+INSERT INTO `sub_sales_order` VALUES (3, 3, 6, '2025-10-10', 4, 'CG01-2510009', 20, '1.字码2510001-2510800；2.车架补土后烤漆', '18000', 800, '台', '2025-11-30', '2025-11-30', '公司材料仓', 0, 1, 1, '2025-10-18 11:17:11', '2025-11-12 13:35:23');
+INSERT INTO `sub_sales_order` VALUES (4, 3, 6, '2025-10-30', 5, 'CG02-2510018', 20, '1.字码自2511001起；2.车架补土后送烤漆', '7500', 7500, '台', '2025-12-12', '2025-12-12', '高埗镇合鑫喷漆厂', 0, 1, 1, '2025-10-30 16:04:11', '2025-11-12 12:00:31');
 
 -- ----------------------------
 -- Table structure for sub_supplier_info
@@ -1823,6 +2414,7 @@ CREATE TABLE `sub_supplier_info`  (
   `transaction_method` int(5) NULL DEFAULT NULL COMMENT '交易方式',
   `transaction_currency` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '交易币别',
   `other_transaction_terms` int(11) NULL DEFAULT NULL COMMENT '其它交易条件',
+  `other_text` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '其他结算周期',
   `is_deleted` int(1) NULL DEFAULT 1 COMMENT '是否删除：1-未删除，0-已删除',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -1832,11 +2424,11 @@ CREATE TABLE `sub_supplier_info`  (
 -- ----------------------------
 -- Records of sub_supplier_info
 -- ----------------------------
-INSERT INTO `sub_supplier_info` VALUES (1, 1, 1, '123', '2121', '13', '15', '1515', '212', '5151', 15, 15151, '1515', 15, 1, '2025-07-10 00:03:15', '2025-07-10 00:03:15');
-INSERT INTO `sub_supplier_info` VALUES (2, 1, 1, '1234', '151', '153333333', '1', '515', '155', '511', 515, 15, '1', 515, 1, '2025-07-10 00:03:27', '2025-07-10 00:03:37');
-INSERT INTO `sub_supplier_info` VALUES (3, 6, 3, 'GA001', '晶鑫昌', '刘总', '136123456678', '深圳市晶鑫昌科技有限公司', '深圳市宝安区沙井镇', '材料供应/委外加工', 29, 21, '人民币', 27, 1, '2025-10-19 16:27:11', '2025-11-05 11:58:10');
-INSERT INTO `sub_supplier_info` VALUES (4, 6, 3, 'GA002', '城至', '许总', '13112345678', '东莞市城至精密五金有限公司', '东莞市万江区简沙洲', '委外加工', 29, 21, '人民币', 26, 1, '2025-10-24 11:26:22', '2025-11-05 11:58:12');
-INSERT INTO `sub_supplier_info` VALUES (5, 6, 3, 'GA003', '源达', '葛小姐', '18812345678', '东莞市源达五金制品有限公司', '东莞市万江区五金工业城', '易耗材料/委外加工', 29, 23, '人民币', 25, 1, '2025-10-31 00:49:46', '2025-11-05 11:58:36');
+INSERT INTO `sub_supplier_info` VALUES (1, 1, 1, '123', '2121', '13', '15', '1515', '212', '5151', 15, 15151, '1515', 15, NULL, 1, '2025-07-10 00:03:15', '2025-07-10 00:03:15');
+INSERT INTO `sub_supplier_info` VALUES (2, 1, 1, '1234', '151', '153333333', '1', '515', '155', '511', 515, 15, '1', 515, NULL, 1, '2025-07-10 00:03:27', '2025-07-10 00:03:37');
+INSERT INTO `sub_supplier_info` VALUES (3, 6, 3, 'GA001', '晶鑫昌', '刘总', '136123456678', '深圳市晶鑫昌科技有限公司', '深圳市宝安区沙井镇', '[32,35]', 29, 21, '人民币', 27, NULL, 1, '2025-10-19 16:27:11', '2025-11-09 01:36:27');
+INSERT INTO `sub_supplier_info` VALUES (4, 6, 3, 'GA002', '城至', '许总', '13112345678', '东莞市城至精密五金有限公司', '东莞市万江区简沙洲', '[35,33]', 29, 21, '人民币', 26, NULL, 1, '2025-10-24 11:26:22', '2025-11-09 01:37:33');
+INSERT INTO `sub_supplier_info` VALUES (5, 6, 3, 'GA003', '源达', '葛小姐', '18812345678', '东莞市源达五金制品有限公司', '东莞市万江区五金工业城', '[32,35]', 29, 23, '人民币', 25, NULL, 1, '2025-10-31 00:49:46', '2025-11-09 01:37:54');
 
 -- ----------------------------
 -- Table structure for sub_warehouse_apply
@@ -1961,7 +2553,7 @@ CREATE TABLE `sub_warehouse_cycle`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '仓库名列表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '仓库名列表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sub_warehouse_cycle
@@ -1970,9 +2562,11 @@ INSERT INTO `sub_warehouse_cycle` VALUES (4, 1, 1, 3, '成品仓', 1, '2025-08-2
 INSERT INTO `sub_warehouse_cycle` VALUES (5, 1, 1, 2, '半成品仓', 1, '2025-08-23 09:35:27', '2025-09-09 10:21:55');
 INSERT INTO `sub_warehouse_cycle` VALUES (6, 1, 1, 1, '材料仓', 1, '2025-08-23 09:35:34', '2025-09-09 10:20:20');
 INSERT INTO `sub_warehouse_cycle` VALUES (7, 1, 1, 2, '小小部件', 1, '2025-09-16 13:01:10', '2025-09-16 13:01:10');
-INSERT INTO `sub_warehouse_cycle` VALUES (8, 3, 6, 1, '管料仓-铝管', 1, '2025-10-16 15:05:46', '2025-10-28 09:33:58');
+INSERT INTO `sub_warehouse_cycle` VALUES (8, 3, 6, 1, '管料仓-铝管材', 1, '2025-10-16 15:05:46', '2025-11-09 01:40:38');
 INSERT INTO `sub_warehouse_cycle` VALUES (9, 3, 6, 1, '配件仓-铝架配件', 1, '2025-10-16 15:06:04', '2025-10-29 09:31:59');
-INSERT INTO `sub_warehouse_cycle` VALUES (10, 3, 6, 1, '管件仓-铁管', 1, '2025-10-28 09:32:51', '2025-10-28 09:34:18');
+INSERT INTO `sub_warehouse_cycle` VALUES (10, 3, 6, 1, '管件仓-铁管材', 1, '2025-10-28 09:32:51', '2025-11-09 01:40:21');
 INSERT INTO `sub_warehouse_cycle` VALUES (11, 3, 6, 1, '配件仓-铁架配件', 1, '2025-10-28 09:33:44', '2025-10-29 09:32:20');
+INSERT INTO `sub_warehouse_cycle` VALUES (12, 3, 15, 3, '成品仓-铝车架', 1, '2025-11-10 07:33:54', '2025-11-10 16:51:41');
+INSERT INTO `sub_warehouse_cycle` VALUES (13, 3, 15, 3, '成品仓-铁车架', 1, '2025-11-10 07:34:25', '2025-11-10 16:51:28');
 
 SET FOREIGN_KEY_CHECKS = 1;
