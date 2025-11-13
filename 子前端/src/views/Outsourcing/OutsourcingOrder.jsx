@@ -402,9 +402,9 @@ export default defineComponent({
       }
       return obj
     }
-    // 待审批时，文字变成红色
+    // 待审批/已拒绝时，文字变成红色
     const handleRowStyle = ({ row }) => {
-      if(row.status == 0){
+      if(row.status == 0 || row.status == 2){
         return { color: 'red' }
       }
     }
@@ -549,8 +549,8 @@ export default defineComponent({
                   <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width='100' />
                   <ElTableColumn prop="processBom.product.product_code" label="产品编码" width='100' />
                   <ElTableColumn prop="processBom.product.product_name" label="产品名称" width='100' />
-                  <ElTableColumn prop="processBom.part.part_code" label="部位编码" width='100' />
-                  <ElTableColumn prop="processBom.part.part_name" label="部位名称" width='100' />
+                  <ElTableColumn prop="processBom.part.part_code" label="部件编码" width='100' />
+                  <ElTableColumn prop="processBom.part.part_name" label="部件名称" width='100' />
                   <ElTableColumn prop="processChildren.process.process_code" label="工艺编码" width='100' />
                   <ElTableColumn prop="processChildren.process.process_name" label="工艺名称" width='100' />
                   <ElTableColumn prop="ment" label="加工要求" width='100' />

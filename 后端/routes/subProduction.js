@@ -49,9 +49,11 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
   const { base } = req.body
   const { company_id } = req.user;
 
-  if(!base.length) return res.json({ code: 401, message: '数据出错' })
+  const baseJSON = JSON.parse(base)
+  if(!baseJSON.length) return res.json({ code: 401, message: '数据出错' })
 
-  const progress_id = base.map(e => e.id)
+  const progress_id = baseJSON.map(e => e.id)
+  console.time('db-query');
   const [ cycle, work, dates ] = await Promise.all([
     SubProcessCycle.findAll({
       where: {
@@ -100,6 +102,8 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
       attributes: ['date']
     })
   ])
+  console.timeEnd('db-query');
+  console.time('data-process');
   const dateInfo = dates.map(e => {
     const item = e.toJSON()
     return item.date
@@ -118,16 +122,18 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
     item.all_work_time = (PreciseMath.mul(Number(item.order_number), Number(item.children.time)) / 60 / 60).toFixed(1)
   })
   // // 获取日期列表(deliveryTimes先获取客户交期的数组)
-  const deliveryTimes = [...new Set(base.map(e => e.delivery_time))]
+  const deliveryTimes = [...new Set(baseJSON.map(e => e.delivery_time))]
   const date_more = getDateInfo(deliveryTimes)
   // // 处理工序的每日负荷
-  const cased = setProgressLoad(base, cycles, works, dateInfo)
+  const cased = setProgressLoad(baseJSON, cycles, works, dateInfo)
   // // 处理制程日总负荷
   const callLoad = setCycleLoad(cycles, cased)
   // // 处理页面头部的日期
-  const newCycles = setDateMore(base, callLoad, dateInfo, date_more)
-
-  res.json({ code: 200, data: { cycles: newCycles, works: cased, date_more } })
+  const newCycles = setDateMore(baseJSON, callLoad, dateInfo, date_more)
+  
+  const data = { cycles: newCycles, works: cased, date_more }
+  console.timeEnd('data-process');
+  res.json({ code: 200, data })
 })
 // 获取进度表工序数据
 router.post('/get_progress_work', authMiddleware, async (req, res) => {

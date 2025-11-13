@@ -84,7 +84,7 @@ export default defineComponent({
             default: () => (
               <ElCard bodyStyle={{ height: "calc(100vh - 198px)" }}>
                 <ElForm ref="formRef" model={ form.value } label-width="120px" style={{ height: '100%' }}>
-                  <ElFormItem label="业务类型" prop="source_type">
+                  <ElFormItem label="业务类型" prop="source_type" v-permission={ 'ApprovalStep:add' }>
                     <ElSelect v-model={ form.value.source_type } style={{ width: '150px' }} onChange={ (row) => sourceChange(row) }>
                       <ElOption label="采购单" value="purchase_order" />
                       <ElOption label="委外加工单" value="outsourcing_order" />
@@ -110,7 +110,7 @@ export default defineComponent({
                           )
                         }}
                       </ElTableColumn>
-                      <ElTableColumn label="操作">
+                      <ElTableColumn label="操作" v-permission={ 'ApprovalStep:delete' }>
                         {{
                           default: (scope) => (
                             <ElButton class="textButton" onClick={ () => removeStep(scope.$index) } type="text" danger>删除</ElButton>

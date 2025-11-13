@@ -17,16 +17,16 @@ const routes = [
         }
       },
       // 版本更新
-      {
-        path: '/version',
-        name: 'Version',
-        component: () => import('../views/version/index.jsx'),
-        meta: {
-          title: '版本更新',
-          parent: '首页',
-          menu: false
-        }
-      },
+      // {
+      //   path: '/version',
+      //   name: 'Version',
+      //   component: () => import('../views/version/index.jsx'),
+      //   meta: {
+      //     title: '版本更新',
+      //     parent: '首页',
+      //     menu: false
+      //   }
+      // },
       // 系统管理
       {
         path: '/system/employee-info',
@@ -51,11 +51,11 @@ const routes = [
           title: '用户管理',
           parent: '系统管理',
           menu: true,
-          buttons: [
-            { code: 'user:add', label: '新增' },
-            { code: 'user:edit', label: '修改' },
-            { code: 'user:delete', label: '删除' }
-          ]
+          // buttons: [
+          //   { code: 'user:add', label: '新增' },
+          //   { code: 'user:edit', label: '修改' },
+          //   { code: 'user:delete', label: '删除' }
+          // ]
         }
       },
       {
@@ -76,6 +76,10 @@ const routes = [
           title: '审核管理',
           parent: '系统管理',
           menu: true,
+          buttons: [
+            { code: 'ApprovalStep:add', label: '新增' },
+            { code: 'ApprovalStep:delete', label: '新增' },
+          ]
         }
       },
       // {
@@ -137,7 +141,7 @@ const routes = [
         name: 'PartCode',
         component: () => import('@/views/Basic/PartCode.jsx'),
         meta: {
-          title: '部位编码',
+          title: '部件编码',
           parent: '基础资料',
           menu: true,
           buttons: [

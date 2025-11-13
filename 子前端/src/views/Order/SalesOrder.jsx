@@ -307,7 +307,7 @@ export default defineComponent({
                       }
                     }}
                   </ElTableColumn>
-                  <ElTableColumn prop="created_at" label="创建时间" width="120" />
+                  <ElTableColumn prop="created_at" label="创建日期" width="120" />
                   <ElTableColumn label="操作" width="180" fixed="right">
                     {({ row }) => {
                       return !row.saleCancel ? 

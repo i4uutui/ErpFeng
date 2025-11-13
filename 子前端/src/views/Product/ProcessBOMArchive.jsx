@@ -299,8 +299,8 @@ export default defineComponent({
                   <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" minWidth="100" />
                   <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" minWidth="100" />
                   <ElTableColumn prop="sort" label="排序" fixed="left" minWidth="100" />
-                  <ElTableColumn prop="part.part_code" label="部位编码" fixed="left" minWidth="100" />
-                  <ElTableColumn prop="part.part_name" label="部位名称" fixed="left" minWidth="100" />
+                  <ElTableColumn prop="part.part_code" label="部件编码" fixed="left" minWidth="100" />
+                  <ElTableColumn prop="part.part_name" label="部件名称" fixed="left" minWidth="100" />
                   {
                     Array.from({ length: maxBomLength.value }).map((_, index) => (
                       <ElTableColumn label={`工序-${index + 1}`} key={index}>

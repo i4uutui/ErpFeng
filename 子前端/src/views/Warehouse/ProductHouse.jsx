@@ -476,8 +476,9 @@ export default defineComponent({
         return PreciseMath.add(sum, (Number(item[value]) || 0))
       }, 0)
     }
+    // 待审批/已拒绝时，文字变成红色
     const handleRowStyle = ({ row }) => {
-      if(row.status == 0){
+      if(row.status == 0 || row.status == 2){
         return { color: 'red' }
       }
     }

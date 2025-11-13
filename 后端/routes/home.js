@@ -134,12 +134,12 @@ router.post('/order_total', authMiddleware, async (req, res) => {
   const notice2 = await SubProductNotice.findAll({
     where: {
       company_id,
-      is_notice: 0, // 已排产
+      // is_notice: 0, // 已排产
       is_finish: 1, // 未完结
       // 结案时间 = 数据最后的修改时间
-      updated_at: {
-        [Op.between]: [new Date(time[0]), new Date(time[1])] // 使用 between 筛选范围
-      }
+      // updated_at: {
+      //   [Op.between]: [new Date(time[0]), new Date(time[1])] // 使用 between 筛选范围
+      // }
     },
     attributes: ['id', 'sale_id'],
     include: [{ model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number'], required: true }]

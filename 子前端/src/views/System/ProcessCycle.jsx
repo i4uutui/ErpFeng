@@ -138,7 +138,7 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
                   <ElTableColumn prop="name" label="名称" />
                   <ElTableColumn prop="sort" label="排序" />
-                  <ElTableColumn prop="created_at" label="创建时间" />
+                  <ElTableColumn prop="created_at" label="创建日期" />
                   <ElTableColumn label="操作">
                     {(scope) => (
                       <>

@@ -49,7 +49,8 @@ export default defineComponent({
     };
     // 获取进度表进程的数据
     const getProgressCycle = async (base) => {
-      const res = await request.post('/api/get_progress_cycle', { base })
+      const jsonStr = JSON.stringify(base)
+      const res = await request.post('/api/get_progress_cycle', { base: jsonStr })
       if(res.code == 200){
         nextTick(() => {
           loading.value = false
@@ -382,10 +383,9 @@ export default defineComponent({
                               if(!isEmptyValue(row)){
                                 const data = e.cycle[$index]
                                 const dateObj = e.dateData[data.end_date]
-                                // const isOverdue = data.end_date && dayjs(data.end_date).isBefore(dayjs().startOf('day')) && Number(data.load || 0) > 0;
 
                                 return (
-                                  <div class="myCell" style={{ backgroundColor: dateObj?.big ? '#f1c40f' : '', color: dateObj?.big ? '#fff' : '' }}>
+                                  <div class="myCell">
                                     <ElDatePicker v-model={ data.end_date } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="选择日期" style="width: 100px" onBlur={ (value) => paiChange(value, data, row, index, $index) }></ElDatePicker>
                                   </div>
                                 )
@@ -398,7 +398,20 @@ export default defineComponent({
                         <ElTableColumn label="制程日总负荷" width="90" align="center">
                           {{
                             default: ({ row, $index }) => {
-                              return <div class='myCell'>{ e.cycle[$index].load }</div>
+                              if(!isEmptyValue(row)){
+                                const data = e.cycle[$index]
+                                const dateObj = e.dateData[data.end_date]
+                                const isOverdue = data.end_date && dayjs(data.end_date).isBefore(dayjs().startOf('day')) && Number(data.load || 0) > 0;
+
+                                const bgColor = isOverdue ? 'red' : dateObj?.big ? '#f1c40f': ''
+                                const color = !isEmptyValue(e.cycle[$index].load) && e.cycle[$index].load == 0 ? 'green' : bgColor
+
+                                return (
+                                  <div class="myCell" style={{ backgroundColor: color, color: color != '' ? '#fff' : '' }}>
+                                    { e.cycle[$index].load }
+                                  </div>
+                                )
+                              }
                             }
                           }}
                         </ElTableColumn>

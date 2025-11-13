@@ -255,7 +255,7 @@ export default defineComponent({
                   <ElTableColumn prop="sale.order_number" label="订单数量" width="100" />
                   <ElTableColumn prop="sale.unit" label="单位" width="80" />
                   <ElTableColumn prop="delivery_time" label="交货日期" width="120" />
-                  <ElTableColumn prop="created_at" label="创建时间" width="120" />
+                  <ElTableColumn prop="created_at" label="创建日期" width="120" />
                   <ElTableColumn label="操作" width="200" fixed="right">
                     {(scope) => (
                       <>

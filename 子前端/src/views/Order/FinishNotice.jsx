@@ -107,7 +107,7 @@ export default defineComponent({
                   <ElTableColumn prop="sale.order_number" label="订单数量" width="100" />
                   <ElTableColumn prop="sale.unit" label="单位" width="80" />
                   <ElTableColumn prop="delivery_time" label="交货日期" width="120" />
-                  <ElTableColumn prop="created_at" label="创建时间" width="120" />
+                  <ElTableColumn prop="updated_at" label="结案日期" width="120" />
                 </ElTable>
                 <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>

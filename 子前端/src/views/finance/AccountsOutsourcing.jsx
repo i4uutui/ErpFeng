@@ -95,7 +95,7 @@ export default defineComponent({
                   <ElTableColumn prop="buyPrint.no" label="委外单号" width="160" />
                   <ElTableColumn prop="print.no" label="入库单号" width="160" />
                   <ElTableColumn prop="sourcing.notice.notice" label="生产订单" />
-                  <ElTableColumn prop="sourcing.processBom.part.part_name" label="部位名称" />
+                  <ElTableColumn prop="sourcing.processBom.part.part_name" label="部件名称" />
                   <ElTableColumn prop="sourcing.processChildren.process.process_name" label="工艺名称" />
                   <ElTableColumn prop="sourcing.ment" label="加工内容" />
                   <ElTableColumn prop="quantity" label="入库数量" />

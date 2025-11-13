@@ -14,7 +14,7 @@ export default defineComponent({
     const props = reactive({
       multiple: true,
     })
-    const user = getItem('user')
+    const user = ref(getItem('user'))
     const rules = reactive({
       username: [
         { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -26,7 +26,7 @@ export default defineComponent({
     })
     let dialogVisible = ref(false)
     let form = ref({
-      uid: user.id,
+      uid: user.value.id,
       username: '',
       password: '',
       cycle_id: '',
@@ -76,7 +76,7 @@ export default defineComponent({
         if (valid){
           if(!edit.value){
             form.value.attr = 2
-            form.value.company = user.company
+            form.value.company = user.value.company
             const formValue = {
               ...form.value,
               power: JSON.stringify(form.value.power)
@@ -97,8 +97,8 @@ export default defineComponent({
               cycle_id: form.value.cycle_id,
               power: JSON.stringify(form.value.power),
               status: form.value.status,
-              uid: user.id,
-              company: user.company,
+              uid: user.value.id,
+              company: user.value.company,
               attr: 2
             }
             const res = await request.put('/api/user', myForm);
@@ -180,7 +180,7 @@ export default defineComponent({
         groupedRoutes[parent].push(menuItem);
       });
       let filtered = Object.fromEntries(
-        Object.entries(filterMenu(groupedRoutes, ['ApprovalStep', 'Trajectory', 'Home', 'Version'])).filter(([_, routes]) => routes.length > 0)
+        Object.entries(filterMenu(groupedRoutes, ['Home', 'Version'])).filter(([_, routes]) => routes.length > 0)
       );
       options.value = Object.entries(filtered).map(([key, value]) => ({
         value: key,
@@ -255,13 +255,14 @@ export default defineComponent({
       <>
         <ElCard>
           {{
-            header: () => (
+            header: () => {
+              return user.value.type == 1 ? 
               <div class="clearfix" ref={ formCard }>
-                <ElButton style="margin-top: -5px" type="primary" v-permission={ 'user:add' } onClick={ handleAdd } >
+                <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
                   新增用户
                 </ElButton>
-              </div>
-            ),
+              </div> : ''
+            },
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
@@ -269,17 +270,20 @@ export default defineComponent({
                   <ElTableColumn prop="name" label="姓名" width="180" />
                   <ElTableColumn prop="cycle.name" label="工作岗位" width="180"></ElTableColumn>
                   <ElTableColumn prop="status" label="是否开启" width="180">
-                    {(scope) => <ElSwitch v-model={ scope.row.status } active-value={ 1 } inactive-value={ 0 } onChange={ () => closeUser(scope.row) } />}
+                    {(scope) => <ElSwitch v-model={ scope.row.status } active-value={ 1 } inactive-value={ 0 } disabled={ user.value.type != 1 } onChange={ () => closeUser(scope.row) } />}
                   </ElTableColumn>
-                  <ElTableColumn prop="created_at" label="创建时间" width="180" />
-                  <ElTableColumn label="操作">
+                  <ElTableColumn prop="created_at" label="创建日期" width="180" />
+                  {
+                    user.value.type == 1 ? 
+                    <ElTableColumn label="操作">
                     {(scope) => (
                       <>
                         <ElButton size="small" type="warning" v-permission={ 'user:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                         <ElButton size="small" type="danger" v-permission={ 'user:delete' } onClick={ () => handleDelete(scope.row) }>删除</ElButton>
                       </>
                     )}
-                  </ElTableColumn>
+                  </ElTableColumn> : ''
+                  }
                 </ElTable>
                 <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>

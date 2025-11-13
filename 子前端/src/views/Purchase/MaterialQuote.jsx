@@ -277,7 +277,7 @@ export default defineComponent({
                   <ElTableColumn label="税票要求" width="110">
                     {({row}) => <span>{ invoice.value.find(e => e.id == row.invoice)?.name }</span>}
                   </ElTableColumn>
-                  <ElTableColumn prop="created_at" label="创建时间" width="120" />
+                  <ElTableColumn prop="created_at" label="创建日期" width="120" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>

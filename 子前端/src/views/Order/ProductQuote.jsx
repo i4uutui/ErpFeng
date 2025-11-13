@@ -241,7 +241,7 @@ export default defineComponent({
                       return <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>
                     }}
                   </ElTableColumn>
-                  <ElTableColumn prop="created_at" label="创建时间" width="120" />
+                  <ElTableColumn prop="created_at" label="创建日期" width="120" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>

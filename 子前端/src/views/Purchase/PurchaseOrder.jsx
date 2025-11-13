@@ -472,9 +472,9 @@ export default defineComponent({
         delivery_time: '',
       }
     }
-    // 待审批时，文字变成红色
+    // 待审批/已拒绝时，文字变成红色
     const handleRowStyle = ({ row }) => {
-      if(row.status == 0){
+      if(row.status == 0 || row.status == 2){
         return { color: 'red' }
       }
     }

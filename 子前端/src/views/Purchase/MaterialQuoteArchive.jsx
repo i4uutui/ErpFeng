@@ -134,7 +134,7 @@ export default defineComponent({
                   <ElTableColumn label="税票要求" width="110">
                     {({row}) => <span>{ invoice.value.find(e => e.id == row.invoice)?.name }</span>}
                   </ElTableColumn>
-                  <ElTableColumn prop="created_at" label="创建时间" width="120" />
+                  <ElTableColumn prop="created_at" label="创建日期" width="120" />
                 </ElTable>
                 <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>
