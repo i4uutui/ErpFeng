@@ -17,10 +17,9 @@ export default defineComponent({
     const statusType = reactive({
       0: '待审批',
       1: '已通过',
-      2: '已拒绝',
-      3: '已反审'
+      2: '已拒绝'
     })
-    const statusList = ref([{ id: 0, name: '待审批' }, { id: 1, name: '已通过' }, { id: 2, name: '已拒绝' }, { id: 3, name: '已反审' }])
+    const statusList = ref([{ id: 0, name: '待审批' }, { id: 1, name: '已通过' }, { id: 2, name: '已拒绝' }])
     const user = getItem('user')
     const nowDate = ref()
     const formRef = ref(null);
