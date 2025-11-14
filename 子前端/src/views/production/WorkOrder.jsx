@@ -33,9 +33,10 @@ export default defineComponent({
       nextTick(async () => {
         formHeight.value = await getPageHeight([formCard.value]);
       })
+      getPrinters() // 获取打印机列表
       getNoticeList()
     })
-
+    
     // 获取列表
     const fetchProductList = async (value) => {
       const res = await request.get('/api/workQrCode', { params: { notice_id: notice_id.value } });
@@ -47,7 +48,11 @@ export default defineComponent({
         noticeList.value = res.data;
       }
     }
-
+    // 获取打印机列表
+    const getPrinters = async () => {
+      const res = await request.get('/api/printers')
+      printers.value = res.data
+    }
     // 执行打印
     const onPrint = async () => {
       const list = tableData.value
@@ -204,9 +209,9 @@ export default defineComponent({
                               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', padding: '5px 0' }}>
                                 { 
                                   e.bom.children.map((o, qrIndex) => (
-                                    <div key={ qrIndex } style={{ marginRight: '10px', width: '120px', height: '120px', pageBreakInside: 'avoid' }}>
+                                    <div key={ qrIndex } style={{ marginRight: '10px', width: '80px', height: '120px', pageBreakInside: 'avoid' }}>
                                       <img src={ o.qr_code } width={ 100 } height={ 100 } />
-                                      <div style={{ textAlign: 'center' }}>{ o.equipment.cycle.name }:{o.process.process_name}</div>
+                                      <div style={{ textAlign: 'center', fontSize: '12px' }}>{ o.equipment.cycle.name }:{o.process.process_name}</div>
                                     </div>
                                   )) 
                                 }
