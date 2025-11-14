@@ -368,6 +368,16 @@ const routes = [
         }
       },
       {
+        path: '/purchase/scription-order',
+        name: 'ScriptionOrder',
+        component: () => import('@/views/Purchase/ScriptionOrder.jsx'),
+        meta: {
+          title: '申购单',
+          parent: '采购管理',
+          menu: true,
+        }
+      },
+      {
         path: '/purchase/purchase-order',
         name: 'PurchaseOrder',
         component: () => import('@/views/Purchase/PurchaseOrder.jsx'),

@@ -8,6 +8,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { lazyImport, VxeResolver } from 'vite-plugin-lazy-import'
 
 export default defineConfig({
   plugins: [
@@ -21,6 +22,13 @@ export default defineConfig({
         /\.vue$/,
         /\.vue\?vue/,
       ],
+    }),
+    lazyImport({
+      resolvers: [
+        VxeResolver({
+          libraryName: 'vxe-table'
+        })
+      ]
     }),
     Components({
       resolvers: [

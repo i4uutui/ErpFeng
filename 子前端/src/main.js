@@ -9,6 +9,14 @@ import "@/assets/css/reset.css";
 import "@/assets/css/common.css";
 import "@/assets/css/main.css";
 
+import { VxeUI } from 'vxe-pc-ui'
+// vxe的样式
+import 'vxe-table/lib/style.css'
+// 导入vxe默认的语言
+import zhCN from 'vxe-pc-ui/lib/language/zh-CN'
+VxeUI.setI18n('zh-CN', zhCN)
+VxeUI.setLanguage('zh-CN')
+
 const store = createPinia();
 const app = createApp(App);
 
