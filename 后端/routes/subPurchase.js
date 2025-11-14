@@ -451,7 +451,7 @@ router.get('/material_ment', authMiddleware, async (req, res) => {
       ...whereMent
     },
     include: [
-      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], separate: true, }
+      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'purchase_order', company_id }, separate: true, }
     ],
     order: [['created_at', 'DESC']],
   })
@@ -483,61 +483,85 @@ router.post('/add_material_ment', authMiddleware, async (req, res) => {
   const { id: userId, company_id, name } = req.user;
 
   if(!data.length) return res.json({ code: 401, message: '请选择订单数据' })
-  const step = await SubApprovalStep.findAll({
-    where: {
-      is_deleted: 1,
+
+  const stepList = await SubApprovalStep.findAll({
+    where: { is_deleted: 1, company_id, type },
+    attributes: ['id', 'user_id', 'user_name', 'type', 'step', 'company_id'],
+    raw: true,
+  })
+  if(!stepList.length) return res.json({ code: 401, message: '未配置审批流程，请先联系管理员' })
+
+  const now = dayjs().toDate();
+  const noIdList = [];
+  const yesIdList = [];
+  for (const e of data) {
+    Object.assign(e, {
       company_id,
-      type
-    },
-    attributes: ['id', 'user_id', 'user_name', 'type', 'step', 'company_id']
-  })
-  if(!step.length) return res.json({ code: 401, message: '未配置审批流程，请先联系管理员' })
-  const steps = step.map(e => e.toJSON())
-
-  const dataValue = data.map(e => {
-    e.company_id = company_id
-    e.user_id = userId
-    e.apply_id = userId,
-    e.apply_name = name,
-    e.apply_time = dayjs().toDate(),
-    e.status = 0
-    return e
-  })
-  try {
-    const result = await SubMaterialMent.bulkCreate(dataValue, {
-      updateOnDuplicate: ['company_id', 'user_id', 'apply_id', 'apply_name', 'apply_time', 'status', 'quote_id', 'material_bom_id', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'price', 'order_number', 'number', 'delivery_time']
-    })
-    const childValue = data.map(e => ({
-      material_bom_id: e.material_bom_id,
-      material_id: e.material_id,
-      is_buy: 1,
-      id: e.material_bom_children_id
-    }))
-    SubMaterialBomChild.bulkCreate(childValue, {
-      updateOnDuplicate: ['is_buy']
-    })
-
-    // 创建审批流程
-    const resData = result.flatMap(e => {
-      const item = e.toJSON()
-      return steps.map(o => {
-        const { id, ...newData } = o;
-        return {
-          ...newData,
-          source_id: item.id, 
-          user_time: null,
-          status: 0,
-        };
-      })
-    })
-    await SubApprovalUser.bulkCreate(resData, {
-      updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status']
-    })
-
-    res.json({ message: '提交成功', code: 200 });
-  } catch (error) {
-    console.log(error);
+      user_id: userId,
+      apply_id: userId,
+      apply_name: name,
+      apply_time: now,
+      status: 0,
+    });
+    (e.id ? yesIdList : noIdList).push(e);
   }
+
+  const updateFields = [
+    'company_id', 'user_id', 'apply_id', 'apply_name', 'apply_time', 'status',
+    'quote_id', 'material_bom_id', 'notice_id', 'notice', 'supplier_id',
+    'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code',
+    'product_name', 'material_id', 'material_code', 'material_name',
+    'model_spec', 'other_features', 'unit', 'price', 'order_number',
+    'number', 'delivery_time'
+  ];
+  const [noResult, yesResult] = await Promise.all([
+    noIdList.length
+      ? SubMaterialMent.bulkCreate(noIdList, { updateOnDuplicate: updateFields })
+      : [],
+    yesIdList.length
+      ? SubMaterialMent.bulkCreate(yesIdList, { updateOnDuplicate: updateFields })
+      : []
+  ]);
+    
+
+  const childValue = data.map(e => ({
+    material_bom_id: e.material_bom_id,
+    material_id: e.material_id,
+    is_buy: 1,
+    id: e.material_bom_children_id
+  }));
+
+  const childPromise = SubMaterialBomChild.bulkCreate(childValue, {
+    updateOnDuplicate: ['is_buy'],
+  });
+  // 因为步骤有id，所以先修改有id的数据
+  const yesApprovalList = yesIdList.flatMap(item => item.approval || []).map(id => ({
+    id, status: 0
+  }));
+  const approvalPromise = yesApprovalList.length
+      ? SubApprovalUser.bulkCreate(yesApprovalList, {
+          updateOnDuplicate: ['status']
+        })
+      : Promise.resolve();
+  await Promise.all([childPromise, approvalPromise]);
+
+  const resData = noResult.flatMap(e => {
+    const item = e.toJSON()
+    return stepList.map(o => {
+      const { id, ...newData } = o;
+      return {
+        ...newData,
+        source_id: item.id, 
+        user_time: null,
+        status: 0,
+      };
+    })
+  })
+  await SubApprovalUser.bulkCreate(resData, {
+    updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status']
+  })
+
+  res.json({ message: '提交成功', code: 200 });
 })
 /**
  * @swagger

@@ -55,13 +55,13 @@ const SubOutsourcingOrder = sequelize.define('SubOutsourcingOrder', {
     comment: ' 单位 '
   },
   price: {
-    type: DataTypes.INTEGER(11),
+    type: DataTypes.STRING(50),
     allowNull: true,
     defaultValue: null,
     comment: ' 加工单价 '
   },
   number: {
-    type: DataTypes.INTEGER(11),
+    type: DataTypes.STRING(50),
     allowNull: true,
     defaultValue: null,
     comment: ' 委外数量 '

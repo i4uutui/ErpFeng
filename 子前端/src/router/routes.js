@@ -418,7 +418,7 @@ const routes = [
       {
         path: '/production/production-progress',
         name: 'ProductionProgress',
-        component: () => import('@/views/Production/ProductionProgress.jsx'),
+        component: () => import('@/views/production/ProductionProgress.jsx'),
         meta: {
           title: '生产进度表',
           parent: '生产管理',

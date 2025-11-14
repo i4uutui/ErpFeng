@@ -261,7 +261,7 @@ router.get('/outsourcing_order', authMiddleware, async (req, res) => {
     },
     attributes: ['id', 'notice_id', 'supplier_id', 'process_bom_id', 'process_bom_children_id', 'ment', 'unit', 'number', 'price', 'transaction_currency', 'transaction_terms', 'delivery_time', 'remarks', 'status', 'apply_id', 'apply_name', 'apply_time', 'step'],
     include: [
-      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], separate: true, },
+      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'outsourcing_order', company_id }, separate: true, },
       { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_abbreviation', 'supplier_code'], where: { ...whereSupplier } },
       { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice', 'sale_id'], where: { ...whereNotice }, include: [{ model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number', 'unit', 'delivery_time'] }] },
       {
@@ -313,34 +313,53 @@ router.post('/add_outsourcing_order', authMiddleware, async (req, res) => {
   const { id: userId, company_id, name } = req.user;
 
   if(!data.length) return res.json({ code: 401, message: '请选择订单数据' })
-  const step = await SubApprovalStep.findAll({
-    where: {
-      is_deleted: 1,
-      company_id,
-      type
-    },
-    attributes: ['id', 'user_id', 'user_name', 'type', 'step', 'company_id']
-  })
-  if(!step.length) return res.json({ code: 401, message: '未配置审批流程，请先联系管理员' })
-  const steps = step.map(e => e.toJSON())
 
-  const dataValue = data.map(e => {
-    e.company_id = company_id
-    e.user_id = userId
-    e.apply_id = userId,
-    e.apply_name = name,
-    e.apply_time = dayjs().toDate(),
-    e.status = 0
-    return e
+  const stepList = await SubApprovalStep.findAll({
+    where: { is_deleted: 1, company_id, type },
+    attributes: ['id', 'user_id', 'user_name', 'type', 'step', 'company_id'],
+    raw: true,
   })
-  const result = await SubOutsourcingOrder.bulkCreate(dataValue, {
-    updateOnDuplicate: ['company_id', 'user_id', 'notice_id', 'supplier_id', 'process_bom_id', 'process_bom_children_id', 'ment', 'unit', 'number', 'price', 'transaction_currency', 'transaction_terms', 'delivery_time', 'remarks', 'status', 'apply_id', 'apply_name', 'apply_time', 'step']
-  })
+  if(!stepList.length) return res.json({ code: 401, message: '未配置审批流程，请先联系管理员' })
+
+  const now = dayjs().toDate();
+  const noIdList = [];
+  const yesIdList = [];
+  for (const e of data) {
+    Object.assign(e, {
+      company_id,
+      user_id: userId,
+      apply_id: userId,
+      apply_name: name,
+      apply_time: now,
+      status: 0,
+    });
+    (e.id ? yesIdList : noIdList).push(e);
+  }
+
+  const updateFields = [
+    'company_id', 'user_id', 'notice_id', 'supplier_id', 'process_bom_id', 'process_bom_children_id', 'ment', 'unit', 'number', 'price', 'transaction_currency', 'transaction_terms', 'delivery_time', 'remarks', 'status', 'apply_id', 'apply_name', 'apply_time', 'step'
+  ]
+  const [noResult, yesResult] = await Promise.all([
+    noIdList.length
+      ? SubOutsourcingOrder.bulkCreate(noIdList, { updateOnDuplicate: updateFields })
+      : [],
+    yesIdList.length
+      ? SubOutsourcingOrder.bulkCreate(yesIdList, { updateOnDuplicate: updateFields })
+      : []
+  ]);
+
+  // 因为步骤有id，所以先修改有id的数据
+  const yesApprovalList = yesIdList.flatMap(item => item.approval || []).map(id => ({
+    id, status: 0
+  }));
+  if(yesApprovalList.length){
+    await SubApprovalUser.bulkCreate(yesApprovalList, { updateOnDuplicate: ['status'] })
+  }
 
   // 创建审批流程
-  const resData = result.flatMap(e => {
+  const resData = noResult.flatMap(e => {
     const item = e.toJSON()
-    return steps.map(o => {
+    return stepList.map(o => {
       const { id, ...newData } = o;
       return {
         ...newData,

@@ -381,12 +381,13 @@ export default defineComponent({
     // 批量提交本地数据进行审批
     const setStatusAllData = () => {
       const json = allSelect.value.filter(o => !o.approval || o.status == 2)
+      console.log(json);
       if(json.length == 0){
         return ElMessage.error('暂无可提交的数据')
       }
       const data = json.map(e => {
         for(let key in e){
-          if(isEmptyValue(e[key])){
+          if(e[key] === '' || e[key] === undefined || e[key] === null){
             e[key] = null
           }
         }
@@ -418,6 +419,7 @@ export default defineComponent({
         order_number: e.order_number,
         number: e.number,
         delivery_time: e.delivery_time,
+        approval: e.approval?.length ? e.approval.map(e => e.id) : []
       }
       if(e.status == 2){
         obj.id = e.id
@@ -741,7 +743,7 @@ export default defineComponent({
                               if (rowApproval && row.status === 0 && row.step + 1 === rowApproval.step && rowApproval.status === 0) {
                                 return <ElButton size="small" type="primary" onClick={() => handleApproval(row)}>审批</ElButton>;
                               }
-
+                              if(row.status === 2) return
                               return <ElButton size="small" type="primary" disabled>{rowApproval?.status === 1 ? '已审批' : '待审批'}</ElButton>
                             }
                             dom.push(renderApprovalButton());

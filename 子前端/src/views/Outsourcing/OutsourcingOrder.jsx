@@ -35,6 +35,9 @@ export default defineComponent({
       process_bom_id: [
         { required: true, message: '请选择工艺BOM表', trigger: 'blur' }
       ],
+      process_bom_children_id: [
+        { required: true, message: '请选择工艺工序', trigger: 'blur' }
+      ]
     })
     let dialogVisible = ref(false)
     let form = ref({
@@ -395,7 +398,8 @@ export default defineComponent({
         transaction_currency: e.transaction_currency,
         transaction_terms: e.transaction_terms,
         remarks: e.remarks,
-        delivery_time: e.delivery_time
+        delivery_time: e.delivery_time,
+        approval: e.approval?.length ? e.approval.map(e => e.id) : []
       }
       if(e.status == 2){
         obj.id = e.id
@@ -587,7 +591,7 @@ export default defineComponent({
                               if (rowApproval && row.status === 0 && row.step + 1 === rowApproval.step && rowApproval.status === 0) {
                                 return <ElButton size="small" type="primary" onClick={() => handleApproval(row)}>审批</ElButton>;
                               }
-
+                              if(row.status === 2) return
                               return <ElButton size="small" type="primary" disabled>{rowApproval?.status === 1 ? '已审批' : '待审批'}</ElButton>
                             }
                             dom.push(renderApprovalButton());

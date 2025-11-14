@@ -117,7 +117,7 @@ export default defineComponent({
         plan_id: supplierId.value ? supplierId.value : cycleId.value,
         item_id: materialId.value,
         status: statusId.value,
-        // source_type: 'material_warehouse',
+        source_type: 'material_warehouse',
         apply_time: dateTime.value
       })
       tableData.value = res.data
@@ -315,7 +315,8 @@ export default defineComponent({
         other_features: e.other_features,
         quantity: e.quantity,
         buy_price: e.buy_price,
-        status: e.status
+        status: e.status,
+        approval: e.approval?.length ? e.approval.map(e => e.id) : []
       }
       if(e.status == 2){
         obj.id = e.id
@@ -682,7 +683,7 @@ export default defineComponent({
                               if (rowApproval && row.status === 0 && row.step + 1 === rowApproval.step && rowApproval.status === 0) {
                                 return <ElButton size="small" type="primary" onClick={() => handleApproval(row)}>审批</ElButton>;
                               }
-
+                              if(row.status === 2) return
                               return <ElButton size="small" type="primary" disabled>{rowApproval?.status === 1 ? '已审批' : '待审批'}</ElButton>
                             }
                             dom.push(renderApprovalButton());

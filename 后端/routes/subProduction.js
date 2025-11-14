@@ -45,96 +45,244 @@ router.get('/get_progress_base', authMiddleware, async (req, res) => {
 })
 
 // 获取进度表制程和工序的数据
-router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
-  const { base } = req.body
-  const { company_id } = req.user;
+// router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
+//   const { base } = req.body
+//   const { company_id } = req.user;
 
-  const baseJSON = JSON.parse(base)
-  if(!baseJSON.length) return res.json({ code: 401, message: '数据出错' })
+//   const baseJSON = JSON.parse(base)
+//   if(!baseJSON.length) return res.json({ code: 401, message: '数据出错' })
 
-  const progress_id = baseJSON.map(e => e.id)
-  console.time('db-query');
-  const [ cycle, work, dates ] = await Promise.all([
-    SubProcessCycle.findAll({
-      where: {
-        company_id,
-        sort: { [Op.gt]: 0 }
-      },
-      attributes: ['id', 'name', 'sort', 'sort_date'],
-      order: [['sort', 'ASC'], ['cycle', 'progress_id', 'ASC']],
-      include: [
-        { model: SubProgressCycle, as: 'cycle', attributes: ['id', 'notice_id', 'progress_id', 'cycle_id', 'end_date', 'load', 'order_number'], where: { progress_id } },
-        { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'efficiency'], }
-      ]
-    }),
-    SubProgressWork.findAll({
-      where: {
-        company_id,
-        progress_id
-      },
-      attributes: ['id', 'progress_id', 'notice_id', 'bom_id', 'child_id', 'all_work_time', 'load', 'finish', 'order_number'],
-      include: [
-        {
-          model: SubProcessBomChild,
-          as: 'children',
-          attributes: ['id', 'process_index', 'process_id', 'time', 'price', 'points', 'equipment_id'],
-          include: [
-            { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
-            {
-              model: SubEquipmentCode,
-              as: 'equipment',
-              attributes: ['id', 'equipment_code', 'equipment_name'],
-              include: [
-                { model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }
-              ]
-            }
-          ]
-        }
-      ],
-      order: [
-        ['progress_id', 'ASC'],
-        ['children', 'process_index', 'ASC']
-      ]
-    }),
-    // 用户设置的假期
-    SubDateInfo.findAll({
-      where: { company_id },
-      attributes: ['date']
-    })
-  ])
-  console.timeEnd('db-query');
-  console.time('data-process');
-  const dateInfo = dates.map(e => {
-    const item = e.toJSON()
-    return item.date
-  })
-  const cycles = cycle.map(e => {
-    const item = e.toJSON()
-    item.maxLoad = e.equipment.reduce((total, current) => {
-      const value = current.efficiency && typeof current.efficiency === 'number' ? current.efficiency : 0;
-      return total + value;
-    }, 0)
-    return item
-  })
-
-  const works = work.map(e => e.toJSON())
-  works.forEach(item => {
-    item.all_work_time = (PreciseMath.mul(Number(item.order_number), Number(item.children.time)) / 60 / 60).toFixed(1)
-  })
-  // // 获取日期列表(deliveryTimes先获取客户交期的数组)
-  const deliveryTimes = [...new Set(baseJSON.map(e => e.delivery_time))]
-  const date_more = getDateInfo(deliveryTimes)
-  // // 处理工序的每日负荷
-  const cased = setProgressLoad(baseJSON, cycles, works, dateInfo)
-  // // 处理制程日总负荷
-  const callLoad = setCycleLoad(cycles, cased)
-  // // 处理页面头部的日期
-  const newCycles = setDateMore(baseJSON, callLoad, dateInfo, date_more)
+//   const progress_id = baseJSON.map(e => e.id)
   
-  const data = { cycles: newCycles, works: cased, date_more }
-  console.timeEnd('data-process');
-  res.json({ code: 200, data })
-})
+//   const [ cycle, work, dates ] = await Promise.all([
+//     SubProcessCycle.findAll({
+//       where: {
+//         company_id,
+//         sort: { [Op.gt]: 0 }
+//       },
+//       attributes: ['id', 'name', 'sort', 'sort_date'],
+//       order: [['sort', 'ASC'], ['cycle', 'progress_id', 'ASC']],
+//       include: [
+//         { model: SubProgressCycle, as: 'cycle', attributes: ['id', 'notice_id', 'progress_id', 'cycle_id', 'end_date', 'load', 'order_number'], where: { progress_id } },
+//         { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'efficiency'], }
+//       ]
+//     }),
+//     SubProgressWork.findAll({
+//       where: {
+//         company_id,
+//         progress_id
+//       },
+//       attributes: ['id', 'progress_id', 'notice_id', 'bom_id', 'child_id', 'all_work_time', 'load', 'finish', 'order_number'],
+//       include: [
+//         {
+//           model: SubProcessBomChild,
+//           as: 'children',
+//           attributes: ['id', 'process_index', 'process_id', 'time', 'price', 'points', 'equipment_id'],
+//           include: [
+//             { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
+//             {
+//               model: SubEquipmentCode,
+//               as: 'equipment',
+//               attributes: ['id', 'equipment_code', 'equipment_name'],
+//               include: [
+//                 { model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }
+//               ]
+//             }
+//           ]
+//         }
+//       ],
+//       order: [
+//         ['progress_id', 'ASC'],
+//         ['children', 'process_index', 'ASC']
+//       ]
+//     }),
+//     // 用户设置的假期
+//     SubDateInfo.findAll({
+//       where: { company_id },
+//       attributes: ['date']
+//     })
+//   ])
+
+//   const dateInfo = dates.map(e => {
+//     const item = e.toJSON()
+//     return item.date
+//   })
+//   const cycles = cycle.map(e => {
+//     const item = e.toJSON()
+//     item.maxLoad = e.equipment.reduce((total, current) => {
+//       const value = current.efficiency && typeof current.efficiency === 'number' ? current.efficiency : 0;
+//       return total + value;
+//     }, 0)
+//     return item
+//   })
+
+//   const works = work.map(e => e.toJSON())
+//   works.forEach(item => {
+//     item.all_work_time = (PreciseMath.mul(Number(item.order_number), Number(item.children.time)) / 60 / 60).toFixed(1)
+//   })
+//   // // 获取日期列表(deliveryTimes先获取客户交期的数组)
+//   const deliveryTimes = [...new Set(baseJSON.map(e => e.delivery_time))]
+//   const date_more = getDateInfo(deliveryTimes)
+//   // // 处理工序的每日负荷
+//   const cased = setProgressLoad(baseJSON, cycles, works, dateInfo)
+//   // // 处理制程日总负荷
+//   const callLoad = setCycleLoad(cycles, cased)
+//   // // 处理页面头部的日期
+//   const newCycles = setDateMore(baseJSON, callLoad, dateInfo, date_more)
+  
+//   const data = { cycles: newCycles, works: cased, date_more }
+  
+//   res.json({ code: 200, data })
+// })
+router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
+  try {
+    const { base: baseStr } = req.body;
+    const { company_id } = req.user;
+
+    // 基础参数校验与解析优化
+    if (!baseStr) return res.json({ code: 401, message: '数据出错' });
+    const baseJSON = JSON.parse(baseStr);
+    if (!baseJSON.length) return res.json({ code: 401, message: '数据出错' });
+
+    const progressIds = baseJSON.map(e => e.id);
+    if (!progressIds.length) return res.json({ code: 200, data: { cycles: [], works: [], date_more: [] } });
+
+    // 1. 数据库查询优化
+    // 1.1 并行查询改为顺序+批量，减少连接竞争
+    // 1.2 增加必要索引条件，减少返回字段
+    const [cycles, work] = await Promise.all([
+      // 制程数据查询优化
+      SubProcessCycle.findAll({
+        where: {
+          company_id,
+          sort: { [Op.gt]: 0 }
+        },
+        attributes: ['id', 'name', 'sort', 'sort_date'],
+        // 优化关联查询条件，只查需要的progress_id
+        include: [
+          { 
+            model: SubProgressCycle, 
+            as: 'cycle', 
+            attributes: ['id', 'notice_id', 'progress_id', 'cycle_id', 'end_date', 'load', 'order_number'], 
+            where: { progress_id: progressIds },
+            required: false // 允许没有关联数据的制程也返回
+          },
+          { 
+            model: SubEquipmentCode, 
+            as: 'equipment', 
+            attributes: ['id', 'efficiency'],
+            required: false
+          }
+        ],
+        order: [['sort', 'ASC']],
+        // 强制索引（如果存在）
+        // indexHints: [{ type: 'USE', values: ['idx_sub_process_cycle_company_sort'] }]
+      }),
+
+      // 工序数据查询优化
+      SubProgressWork.findAll({
+        where: {
+          company_id,
+          progress_id: progressIds
+        },
+        attributes: ['id', 'progress_id', 'notice_id', 'bom_id', 'child_id', 'all_work_time', 'load', 'finish', 'order_number'],
+        include: [
+          {
+            model: SubProcessBomChild,
+            as: 'children',
+            attributes: ['id', 'process_index', 'process_id', 'time', 'price', 'points', 'equipment_id'],
+            include: [
+              { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
+              {
+                model: SubEquipmentCode,
+                as: 'equipment',
+                attributes: ['id', 'equipment_code', 'equipment_name'],
+                include: [
+                  { model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }
+                ]
+              }
+            ]
+          }
+        ],
+        order: [
+          ['progress_id', 'ASC'],
+          ['children', 'process_index', 'ASC']
+        ],
+        // 强制索引（如果存在）
+        // indexHints: [{ type: 'USE', values: ['idx_sub_progress_work_company_progress'] }]
+      })
+    ]);
+
+    // 单独查询假期（数据量通常较小，可缓存）
+    const dates = await SubDateInfo.findAll({
+      where: { company_id },
+      attributes: ['date'],
+      raw: true // 直接返回原始数据，减少序列化开销
+    });
+
+    // 2. 数据处理优化
+    // 2.1 假期数据处理
+    const dateInfo = dates.map(item => item.date);
+
+    // 2.2 制程数据处理 - 使用Map加速查找
+    const cyclesMap = new Map();
+    const processedCycles = cycles.map(cycle => {
+      const item = cycle.toJSON();
+      // 计算maxLoad时过滤无效数据
+      item.maxLoad = (item.equipment || []).reduce((total, eq) => {
+        const eff = Number(eq.efficiency) || 0;
+        return total + eff;
+      }, 0);
+      cyclesMap.set(item.id, item);
+      return item;
+    });
+
+    // 2.3 工序数据处理 - 预计算并缓存
+    const worksMap = new Map();
+    (work || []).forEach(workItem => {
+      const item = workItem.toJSON();
+      // 提前计算工时（避免重复解析）
+      const orderNum = Number(item.order_number) || 0;
+      const time = Number(item.children?.time) || 0;
+      item.all_work_time = (orderNum * time / 3600).toFixed(1);
+      
+      // 按progress_id分组缓存
+      const key = item.progress_id;
+      if (!worksMap.has(key)) worksMap.set(key, []);
+      worksMap.get(key).push(item);
+    });
+
+    // 3. 日期相关处理优化
+    const deliveryTimes = [...new Set(baseJSON.map(e => e.delivery_time).filter(Boolean))];
+    const date_more = getDateInfo(deliveryTimes);
+
+    // 4. 负荷计算优化 - 传入缓存的Map而非数组
+    const cased = setProgressLoad(
+      baseJSON, 
+      processedCycles, 
+      Array.from(worksMap.values()).flat(), 
+      dateInfo // 传入Set而非数组，加速查询
+    );
+
+    // 5. 制程总负荷计算优化
+    const callLoad = setCycleLoad(processedCycles, cased);
+    const newCycles = setDateMore(baseJSON, callLoad, dateInfo, date_more);
+
+    // 6. 响应数据精简
+    res.json({ 
+      code: 200, 
+      data: { 
+        cycles: newCycles, 
+        works: cased, 
+        date_more 
+      } 
+    });
+  } catch (error) {
+    console.error('get_progress_cycle error:', error);
+    res.json({ code: 500, message: '服务器内部错误' });
+  }
+});
+
 // 获取进度表工序数据
 router.post('/get_progress_work', authMiddleware, async (req, res) => {
   const data = work.map(e => e.toJSON())

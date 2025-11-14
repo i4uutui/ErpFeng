@@ -87,7 +87,7 @@ router.post('/queryWarehouse', authMiddleware, async (req, res) => {
  *           type: array
  */
 router.post('/warehouse_apply', authMiddleware, async (req, res) => {
-  const { ware_id, house_id, operate, type, plan_id, item_id, status, apply_time } = req.body
+  const { ware_id, house_id, operate, type, plan_id, item_id, status, apply_time, source_type } = req.body
   const { id: userId, company_id } = req.user;
 
   let whereObj = {}
@@ -116,7 +116,7 @@ router.post('/warehouse_apply', authMiddleware, async (req, res) => {
   const result = await SubWarehouseApply.findAll({
     where: where,
     include: [
-      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], separate: true, }
+      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'material_warehouse', company_id, type: source_type }, separate: true, }
     ],
     order: [
       ['created_at', 'DESC']
@@ -149,39 +149,54 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
   const { data, type } = req.body;
   const { id: userId, company_id, name } = req.user;
 
-  const step = await SubApprovalStep.findAll({
-    where: {
-      is_deleted: 1,
-      company_id,
-      type
-    },
-    attributes: ['id', 'user_id', 'user_name', 'type', 'step', 'company_id']
+  if(!data.length) return res.json({ code: 401, message: '请选择订单数据' })
+
+  const stepList = await SubApprovalStep.findAll({
+    where: { is_deleted: 1, company_id, type },
+    attributes: ['id', 'user_id', 'user_name', 'type', 'step', 'company_id'],
+    raw: true,
   })
-  if(!step.length) return res.json({ code: 401, message: '未配置审批流程，请先联系管理员' })
-  const steps = step.map(e => e.toJSON())
+  if(!stepList.length) return res.json({ code: 401, message: '未配置审批流程，请先联系管理员' })
+  
+  const now = dayjs().toDate()
+  const noIdList = [];
+  const yesIdList = [];
 
   const dataValue = data.map(e => {
-    e.company_id = company_id
-    e.user_id = userId
-    e.total_price = e.buy_price && e.quantity ? PreciseMath.mul(e.quantity, e.buy_price) : 0
-    e.plan_id = e.plan_id ? e.plan_id : null
-    e.buy_price = e.buy_price ? e.buy_price : 0
-    e.quantity = e.quantity ? e.quantity : 0
-    e.buyPrint_id = e.buyPrint_id
-    e.sale_id = e.sale_id
-    e.apply_id = userId
-    e.apply_name = name
-    e.apply_time = dayjs().toDate()
-    e.status = 0
-    return e
+    const { id, buy_price = 0, quantity = 0, plan_id = null, buyPrint_id = null, sale_id = null, ...rest } = item
+    const total_price = buy_price && quantity ? PreciseMath.mul(quantity, buy_price) : 0
+
+    const record = { ...rest, id, company_id, user_id: userId, total_price, plan_id, buy_price, quantity, buyPrint_id, sale_id, apply_id: userId, apply_name: name, apply_time: now, status: 0, }
+
+    if (id){
+      yesIdList.push(record)
+    }else{
+      noIdList.push(record)
+    }
+    return record
   })
-  const result = await SubWarehouseApply.bulkCreate(dataValue, {
-    updateOnDuplicate: ['company_id', 'user_id', 'total_price', 'plan_id', 'buy_price', 'quantity', 'apply_id', 'apply_name', 'apply_time', 'status']
-  })
+  const updateFields = ['company_id', 'user_id', 'total_price', 'plan_id', 'buy_price', 'quantity', 'apply_id', 'apply_name', 'apply_time', 'status']
+  const [noResult, yesResult] = await Promise.all([
+    noIdList.length
+      ? SubWarehouseApply.bulkCreate(noIdList, { updateOnDuplicate: updateFields })
+      : [],
+    yesIdList.length
+      ? SubWarehouseApply.bulkCreate(yesIdList, { updateOnDuplicate: updateFields })
+      : []
+  ]);
+
+  // 因为步骤有id，所以先修改有id的数据
+  const yesApprovalList = yesIdList.flatMap(item => item.approval || []).map(id => ({
+    id, status: 0
+  }));
+  if(yesApprovalList.length){
+    await SubApprovalUser.bulkCreate(yesApprovalList, { updateOnDuplicate: ['status'] })
+  }
+
   // 创建审批流程
-  const resData = result.flatMap(e => {
+  const resData = noResult.flatMap(e => {
     const item = e.toJSON()
-    return steps.map(o => {
+    return stepList.map(o => {
       const { id, ...newData } = o;
       return {
         ...newData,

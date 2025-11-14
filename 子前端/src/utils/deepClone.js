@@ -5,48 +5,40 @@
  * @returns {*} 深拷贝后的对象
  */
 function deepClone(obj, hash = new WeakMap()) {
-  // 原始类型 或 null、undefined 直接返回
   if (obj === null || typeof obj !== 'object') return obj
-
-  // 如果已经拷贝过（处理循环引用）
   if (hash.has(obj)) return hash.get(obj)
 
-  // 处理特殊对象
-  if (obj instanceof Date) return new Date(obj)
-  if (obj instanceof RegExp) return new RegExp(obj)
+  // 特殊对象快速处理
+  const Ctor = obj.constructor
+  switch (Ctor) {
+    case Date: return new Date(obj)
+    case RegExp: return new RegExp(obj)
+  }
+
+  // Map / Set
   if (obj instanceof Map) {
-    const result = new Map()
-    hash.set(obj, result)
-    obj.forEach((v, k) => {
-      result.set(deepClone(k, hash), deepClone(v, hash))
-    })
-    return result
+    const res = new Map()
+    hash.set(obj, res)
+    for (const [k, v] of obj) res.set(deepClone(k, hash), deepClone(v, hash))
+    return res
   }
+
   if (obj instanceof Set) {
-    const result = new Set()
-    hash.set(obj, result)
-    obj.forEach(v => result.add(deepClone(v, hash)))
-    return result
+    const res = new Set()
+    hash.set(obj, res)
+    for (const v of obj) res.add(deepClone(v, hash))
+    return res
   }
 
-  // 处理数组或普通对象
-  const result = Array.isArray(obj) ? [] : {}
-  hash.set(obj, result)
+  // 普通对象 / 数组
+  const res = Array.isArray(obj) ? [] : {}
+  hash.set(obj, res)
 
-  // 遍历属性
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      result[key] = deepClone(obj[key], hash)
-    }
+  for (const key of Reflect.ownKeys(obj)) {
+    res[key] = deepClone(obj[key], hash)
   }
 
-  // 复制 Symbol 属性
-  const symbolKeys = Object.getOwnPropertySymbols(obj)
-  for (const sym of symbolKeys) {
-    result[sym] = deepClone(obj[sym], hash)
-  }
-
-  return result
+  return res
 }
 
 export default deepClone

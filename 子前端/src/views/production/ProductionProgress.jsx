@@ -1,4 +1,4 @@
-import { defineComponent, onMounted, ref, reactive, computed, nextTick } from 'vue'
+import { defineComponent, onMounted, ref, computed, nextTick, shallowRef, markRaw } from 'vue'
 import dayjs from 'dayjs';
 import request from '@/utils/request';
 import "@/assets/css/production.scss"
@@ -9,42 +9,56 @@ export default defineComponent({
   setup(){
     const formCard = ref(null)
     const formHeight = ref(0);
-    let tableData = ref([])
-    let cycleList = ref([])
+    let tableData = shallowRef([])
+    let cycleList = shallowRef([])
     let date_more = ref([])
     let temCycleList = ref([]) // 这个制程的数据是临时存的,用来修改预排交期时,做比对
     let specialDates = ref(new Set());
     let loading = ref(false)
     // 查询tableData下的工序长度，确定表格中的工序显示的数量
     const maxBomLength = computed(() => {
-      if (tableData.value.length === 0) return 0;
-      const list = tableData.value.map(item => item.items?.length || 0)
-      return Math.max(...list);
+      const data = tableData.value;
+      if (data.length === 0) return 0;
+      let max = 0;
+      for (let i = 0; i < data.length; i++) {
+        const len = data[i].items?.length || 0;
+        if (len > max) max = len;
+      }
+      return max;
     });
     
     onMounted(async () => {
-      nextTick(async () => {
-        // 无效果，待以后优化本页面
-        formHeight.value = await getPageHeight([formCard.value]);
-      })
-      await fetchSpecialDates();
-      await getProgressBase(); //// 获取进度表基础数据
+      await Promise.all([
+        nextTick(async () => {
+          formHeight.value = await getPageHeight([formCard.value]);
+        }),
+        fetchSpecialDates()
+      ]);
+      await getProgressBase();
     })
     
     // 获取进度表基础数据
     const getProgressBase = async () => {
       loading.value = true
-      const res = await request.get('/api/get_progress_base');
-      if(res.code == 200){
-        tableData.value = res.data
-        if(res.data.length){
-          const base = res.data.map(item => ({ id: item.id, start_date: item.start_date, delivery_time: item.notice.delivery_time }))
-          getProgressCycle(base)
-        }else{
-          loading.value = false
+      try {
+        const res = await request.get('/api/get_progress_base');
+        if(res.code == 200){
+          tableData.value = markRaw(res.data);
+          if(res.data.length){
+            const base = res.data.map(item => ({
+              id: item.id,
+              start_date: item.start_date,
+              delivery_time: item.notice?.delivery_time || ''
+            }))
+            await getProgressCycle(base)
+          }else{
+            loading.value = false
+          }
         }
-      }else{
-        loading.value = false
+      } catch (error) {
+        ElMessage.error('获取基础数据失败');
+      } finally {
+        if (!tableData.value.length) loading.value = false;
       }
     };
     // 获取进度表进程的数据
@@ -52,36 +66,66 @@ export default defineComponent({
       const jsonStr = JSON.stringify(base)
       const res = await request.post('/api/get_progress_cycle', { base: jsonStr })
       if(res.code == 200){
-        nextTick(() => {
-          loading.value = false
-        })
-        // 制程的数据
-        const cycles = res.data.cycles
-        date_more.value = res.data.date_more
-        cycleList.value = cycles
-        // 这个制程的数据是临时存的,用来修改预排交期时,做比对,使用深拷贝是为了不让cycleList被修改时,temCycleList被同步修改
-        temCycleList.value = deepClone(cycles)
-        // 工序的数据
-        const works = res.data.works
-        const groupedData = {};
-        works.forEach(item => {
+        const { cycles, works, date_more: dateMore } = res.data;
+        date_more.value = dateMore;
+
+        temCycleList.value = deepClone(cycles); // 保留原逻辑但确保深拷贝函数高效
+        const groupedData = Object.create(null);
+        for (let i = 0; i < works.length; i++) {
+          const item = works[i];
           const key = item.progress_id;
           if (!groupedData[key]) {
             groupedData[key] = [];
           }
           groupedData[key].push(item);
-        })
-        // 对每个分组按 process_index 排序（升序，确保顺序正确）
+        }
+
+        // 提前提取排序字段，减少属性访问
         Object.keys(groupedData).forEach(key => {
-          groupedData[key].sort((a, b) => a.children.process_index - b.children.process_index);
+          const list = groupedData[key];
+          list.sort((a, b) => {
+            // 缓存排序字段
+            const aIdx = a.children.process_index;
+            const bIdx = b.children.process_index;
+            return aIdx - bIdx;
+          });
         });
 
-        // 遍历 tableData，匹配分组数据并合并
-        tableData.value = tableData.value.map(tableItem => ({
-          ...tableItem,
-          // 匹配 progress_id = tableItem.id 的分组，无匹配则设为空数组
-          items: groupedData[tableItem.id] || []
-        }));
+        const newTableData = [];
+        const rawTableData = tableData.value;
+        for (let i = 0; i < rawTableData.length; i++) {
+          const tableItem = rawTableData[i];
+          // 直接构造新对象
+          newTableData.push({
+            id: tableItem.id,
+            notice_id: tableItem.notice_id,
+            sale_id: tableItem.sale_id,
+            notice: tableItem.notice,
+            sale: tableItem.sale,
+            product_code: tableItem.product_code,
+            product_name: tableItem.product_name,
+            drawing: tableItem.drawing,
+            remarks: tableItem.remarks,
+            house_number: tableItem.house_number,
+            out_number: tableItem.out_number,
+            part_code: tableItem.part_code,
+            part_name: tableItem.part_name,
+            start_date: tableItem.start_date,
+            // 只保留必要字段
+            items: groupedData[tableItem.id] || []
+          });
+        }
+
+        tableData.value = markRaw(newTableData);
+        
+        cycleList.value = markRaw(cycles.map(cycle => ({
+          ...cycle,
+          // 扁平化嵌套属性，方便表格渲染时访问
+          maxLoad: cycle.equipment.reduce((total, eq) => {
+            return total + (Number(eq.efficiency) || 0);
+          }, 0)
+        })));
+        loading.value = false
       }else{
         loading.value = false
       }
@@ -324,7 +368,7 @@ export default defineComponent({
             },
             default: () => (
               <>
-                <ElTable class="production" data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%", height: '400px' }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
+                <ElTable class="production" data={ tableData.value } border stripe rowKey="id" height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%", height: '400px' }} headerCellStyle={ headerCellStyle } cellStyle={ cellStyle }>
                   <ElTableColumn label="生产订单号" width="120">
                     { ({row}) => <div class="myCell">{row.notice.notice}</div> }
                   </ElTableColumn>
