@@ -3,130 +3,78 @@ const sequelize = require('../config/sequelize');
 
 const SubOutsourcingOrder = sequelize.define('SubOutsourcingOrder', {
   id: {
-    type: DataTypes.INTEGER(11),
+    type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
-    comment: '自增主键ID'
+    comment: ' 自增主键 ID'
   },
   company_id: {
-    type: DataTypes.INTEGER(11),
-    allowNull: true,
-    comment: '企业id'
-  },
-  user_id: {
-    type: DataTypes.INTEGER(11),
-    allowNull: true,
-    comment: '发布的用户id'
-  },
-  print_id: {
-    type: DataTypes.INTEGER(30),
-    allowNull: true,
-    comment: '打印的id'
-  },
-  notice_id: {
-    type: DataTypes.INTEGER(10),
-    allowNull: false,
-    comment: ' 生产通知单ID'
-  },
-  quote_id: {
-    type: DataTypes.STRING(20),
-    allowNull: true,
-    comment: ' 委外报价ID '
-  },
-  supplier_id: {
-    type: DataTypes.INTEGER(11),
-    allowNull: false,
-    comment: ' 供应商 ID'
-  },
-  process_bom_id: {
-    type: DataTypes.INTEGER(11),
-    allowNull: false,
-    comment: ' 工艺BOM ID '
-  },
-  process_bom_children_id: {
-    type: DataTypes.INTEGER(5),
-    allowNull: false,
-    comment: ' 工艺BOM副表的id '
-  },
-  unit: {
-    type: DataTypes.STRING(20),
-    allowNull: true,
-    comment: ' 单位 '
-  },
-  price: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    defaultValue: null,
-    comment: ' 加工单价 '
-  },
-  number: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    defaultValue: null,
-    comment: ' 委外数量 '
-  },
-  transaction_currency: {
-    type: DataTypes.STRING(10),
-    allowNull: true,
-    comment: ' 交易币别 '
-  },
-  transaction_terms: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    comment: ' 交易条件 '
-  },
-  ment: {
-    type: DataTypes.STRING(255),
-    allowNull: true,
-    comment: ' 加工要求 '
-  },
-  delivery_time: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    comment: ' 要求交期 '
-  },
-  remarks: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    comment: ' 备注 '
-  },
-  apply_id: {
     type: DataTypes.INTEGER,
     allowNull: true,
-    defaultValue: null,
-    comment: '申请人ID'
+    comment: ' 企业 id'
   },
-  apply_name: {
+  user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    comment: ' 发布的用户 id'
+  },
+  notice_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    comment: ' 生产订单ID'
+  },
+  notice: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    comment: ' 生产订单号'
+  },
+  supplier_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    comment: ' 供应商ID'
+  },
+  supplier_code: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    defaultValue: null,
+    comment: '供应商编码'
+  },
+  supplier_abbreviation: {
     type: DataTypes.STRING(50),
     allowNull: true,
     defaultValue: null,
-    comment: '申请人名称'
+    comment: '供应商名称'
   },
-  apply_time: {
-    type: DataTypes.DATE,
+  product_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    comment: ' 产品ID'
+  },
+  product_code: {
+    type: DataTypes.STRING(20),
     allowNull: true,
     defaultValue: null,
-    comment: '申请时间'
+    comment: '产品编码'
   },
-  step: {
-    type: DataTypes.INTEGER(2),
+  product_name: {
+    type: DataTypes.STRING(50),
     allowNull: true,
-    defaultValue: 0,
-    comment: '审核当前在第几步，默认0，每审核一步加1'
+    defaultValue: null,
+    comment: '产品名称'
   },
-  status: {
-    type: DataTypes.INTEGER(1),
+  no: {
+    type: DataTypes.STRING(50),
     allowNull: true,
-    defaultValue: 0,
-    comment: '状态（0审批中/1通过/2拒绝）'
+    defaultValue: null,
+    comment: '订单编号'
   },
   is_deleted: {
     type: DataTypes.INTEGER(1),
     allowNull: true,
     defaultValue: 1,
-    comment: ' 是否删除：1 - 未删除，0 - 已删除 '
-  },
+    comment: '是否删除：1-未删除，0-已删除'
+  }
 }, {
   sequelize,
   modelName: 'sub_outsourcing_order',

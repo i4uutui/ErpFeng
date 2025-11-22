@@ -39,7 +39,8 @@ export default defineComponent({
       transaction_method: '',
       other_transaction_terms: '',
       remarks: '',
-      other_text: ''
+      other_text: '',
+      invoice: ''
     })
     let tableData = ref([])
     let currentPage = ref(1);
@@ -48,6 +49,7 @@ export default defineComponent({
     let edit = ref(0)
     let supplierList = ref([])
     let noticeList = ref([])
+    let invoice = ref([])
     let bomList = ref([]) // 工艺Bom列表
     let procedure = ref([]) // 工序列表
     let allSelect = ref([]) // 用户选择的列表
@@ -86,10 +88,11 @@ export default defineComponent({
     };
     // 获取常量
     const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['payInfo', 'payTime'] })
+      const res = await request.post('/api/getConstType', { type: ['payInfo', 'payTime', 'invoice'] })
       if(res.code == 200){
         method.value = res.data.filter(o => o.type == 'payInfo')
         payTime.value = res.data.filter(o => o.type == 'payTime')
+        invoice.value = res.data.filter(o => o.type == 'invoice')
       }
     }
     const getSupplierInfo = async () => {
@@ -147,7 +150,8 @@ export default defineComponent({
               transaction_currency: form.value.transaction_currency,
               transaction_method: form.value.transaction_method,
               other_transaction_terms: form.value.other_transaction_terms,
-              other_text: form.value.other_text
+              other_text: form.value.other_text,
+              invoice: form.value.invoice
             }
             const res = await request.put('/api/outsourcing_quote', myForm);
             if(res && res.code == 200){
@@ -214,7 +218,8 @@ export default defineComponent({
         transaction_currency: '',
         transaction_method: '',
         other_transaction_terms: '',
-        other_text: ''
+        other_text: '',
+        invoice: ''
       }
     }
     const noticeChange = (value) => {
@@ -297,7 +302,7 @@ export default defineComponent({
                   <ElTableColumn prop="processChildren.process.process_name" label="工艺名称" width="120" />
                   <ElTableColumn prop="price" label="加工单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
-                  <ElTableColumn label="交易方式">
+                  <ElTableColumn label="交易方式" width="100">
                     {({row}) => <span>{ method.value.find(e => e.id == row.transaction_method)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn label="结算周期" width="120">
@@ -308,6 +313,9 @@ export default defineComponent({
                       }
                       return <span>{ payTime.value.find(e => e.id == row.other_transaction_terms)?.name }</span>
                     }}
+                  </ElTableColumn>
+                  <ElTableColumn label="税票要求" width="110">
+                    {({row}) => <span>{ invoice.value.find(e => e.id == row.invoice)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn label="操作" width="100" fixed="right">
                     {(scope) => (
@@ -369,6 +377,11 @@ export default defineComponent({
                 { form.value.other_transaction_terms == 28 ? <ElFormItem label="其他" prop="other_text">
                   <ElInput v-model={ form.value.other_text } placeholder="请输入结算周期" />
                 </ElFormItem> : '' }
+                <ElFormItem label="税票要求" prop="invoice">
+                  <ElSelect v-model={ form.value.invoice } multiple={ false } filterable remote remote-show-suffix placeholder="请选择税票要求">
+                    {invoice.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
               </ElForm>
             ),
             footer: () => (

@@ -264,12 +264,12 @@ export default defineComponent({
         part_id: '',
         sort: 0,
         children: [
-          { process_id: '', equipment_id: '', time: '', price: '', points: '1' }
+          { process_id: '', equipment_id: '', time: '', price: '', points: '1', sort: 1 }
         ]
       }
     }
     const handleAddJson = () => {
-      const obj = { process_id: '', equipment_id: '', time: '', price: '', points: '1' }
+      const obj = { process_id: '', equipment_id: '', time: '', price: '', points: '1', sort: 1 }
       form.value.children.push(obj)
     }
     const handledeletedJson = (index) => {
@@ -369,7 +369,7 @@ export default defineComponent({
                     {productsList.value.map((e, index) => <ElOption value={ e.id } label={ e.product_code } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="产品编码">
+                <ElFormItem label="产品名称">
                   <ElSelect class="disabled" v-model={ form.value.product_id } multiple={ false } disabled filterable remote remote-show-suffix placeholder="请选择产品名称">
                     {productsList.value.map((e, index) => <ElOption value={ e.id } label={ e.product_name } key={ index } />)}
                   </ElSelect>

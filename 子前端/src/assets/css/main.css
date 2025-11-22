@@ -66,6 +66,9 @@
 .disabled .el-select__wrapper.is-disabled .el-select__selected-item{
   color: var(--el-input-text-color, var(--el-text-color-regular));
 }
+.el-table__expand-column .cell{
+  padding: 0 !important;
+}
 /* el-table滚动条样式 */
 .el-scrollbar .el-scrollbar__bar.is-horizontal {
   height: 6px; /* 添加横向高度 */

@@ -134,38 +134,31 @@ const setProgressLoad = (base, cycles, works, dateInfo) => {
 };
 
 const setCycleLoad = (cycles, works) => {
-  // 第一步：提前构建 works 的哈希表（key：progress_id + "_" + cycle_id，value：该组合的总 load）
-  const workLoadMap = new Map();
+	// 遍历每个大循环（备料组、热处理等）
+	cycles.forEach(cycleGroup => {
+		// 遍历每个大循环下的具体循环项
+		cycleGroup.cycle.forEach(cycleItem => {
+			let totalLoad = 0;
+			let hasMatched = false;
+			// 遍历所有工作项，找到匹配的进行累加
+			works.forEach(work => {
+				// 匹配条件：
+				// 1. work.progress_id === cycleItem.progress_id
+				// 2. work.children.equipment.cycle.id === cycleItem.cycle_id
+				// 3. work.load 有值（非null/undefined）
+				if (work.progress_id === cycleItem.progress_id && work.children?.equipment?.cycle?.id === cycleItem.cycle_id && work.load !== null && work.load !== undefined) {
+					hasMatched = true;
+					// 将 work.load 转为数字后累加（处理字符串格式的数字）
+					totalLoad = PreciseMath.add(totalLoad, Number(work.load));
+				}
+			});
+			// console.log(totalLoad);
+			// 如果有累加结果，赋值给 cycleItem.load；否则保持 null
+			cycleItem.load = hasMatched ? totalLoad.toFixed(1) : null;
+		});
+	});
 
-  works.forEach(work => {
-    // 跳过无效数据（和原逻辑一致）
-    if (work.load === null || work.load === undefined) return;
-
-    // 提取关键匹配字段（和原条件一致）
-    const progressId = work.progress_id;
-    const cycleId = work.children?.equipment?.cycle?.id;
-
-    // 跳过无 cycleId 的数据（原条件隐含：cycleId 必须等于 cycleItem.cycle_id，无则不匹配）
-    if (!progressId || !cycleId) return;
-
-    // 构建唯一 key（避免重复键冲突）
-    const key = `${progressId}_${cycleId}`;
-    // 累加 load（转为数字，高精度计算）
-    const currentLoad = workLoadMap.get(key) || 0;
-    workLoadMap.set(key, PreciseMath.add(currentLoad, Number(work.load)));
-  });
-
-  // 第二步：遍历 cycles，直接从哈希表取结果（无需再遍历 works）
-  cycles.forEach(cycleGroup => {
-    cycleGroup.cycle.forEach(cycleItem => {
-      const key = `${cycleItem.progress_id}_${cycleItem.cycle_id}`;
-      const totalLoad = workLoadMap.get(key) || 0;
-      // 和原逻辑一致：有结果则保留 1 位小数，否则为 null
-      cycleItem.load = totalLoad > 0 ? totalLoad.toFixed(1) : null;
-    });
-  });
-
-  return cycles;
+	return cycles;
 };
 // dateInfo：特殊日期数组，date_more日期列表
 const setDateMore = (base, cycles, dateInfo, date_more) => {

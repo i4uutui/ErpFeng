@@ -15,4 +15,29 @@
       }
     }
   }
+  .vxe-table--render-wrapper .body--wrapper .vxe-table--body .vxe-body--row .vxe-cell{
+    // padding: 0;
+    .vxe-cell--wrapper{
+      // height: 100%;
+      // line-height: 36px;
+    }
+  }
+  .myCell{
+    // display: flex;
+    // height: 100%;
+    // align-items: center;
+  }
+  /* 滚动条样式 */
+  ::-webkit-scrollbar{
+    width: 7px;
+    height: 7px;
+  }
+}
+.orange{
+  background-color: #f1c40f;
+  color: #ffffff;
+}
+.green{
+  background-color: green;
+  color: #ffffff;
 }

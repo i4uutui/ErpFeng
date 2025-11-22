@@ -10,6 +10,11 @@ const routes = [
     component: () => import('../views/Login.jsx')
   },
   {
+    path: '/demoPdf',
+    name: 'demoPdf',
+    component: () => import('../views/demoPdf.vue')
+  },
+  {
     path: "/404",
     name: '404',
     component: () => import("@/views/404")

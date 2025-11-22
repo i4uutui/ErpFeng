@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const dayjs = require('dayjs')
-const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialMent, SubApprovalUser, SubApprovalStep, SubNoEncoding, Op, SubOutsourcingOrder, SubWarehouseApply, SubMaterialBomChild } = require('../models')
+const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialMent, SubApprovalUser, SubApprovalStep, SubNoEncoding, Op, subOutscriptionOrder, SubWarehouseApply, SubMaterialBomChild, SubMaterialOrder, sequelize } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { print, getPrinters, getDefaultPrinter } = require("pdf-to-printer");
@@ -399,7 +399,7 @@ router.put('/material_quote', authMiddleware, async (req, res) => {
  * @swagger
  * /api/material_ment:
  *   post:
- *     summary: 获取采购单的列表
+ *     summary: 获取采购作业的列表
  *     tags:
  *       - 采购单(Purchase)
  *     parameters:
@@ -439,7 +439,7 @@ router.get('/material_ment', authMiddleware, async (req, res) => {
     whereMent.status = status;
   } else {
     if (!hasOtherValues) {
-      whereMent.status = [0, 2];
+      whereMent.status = [0, 2, 3];
     }
   }
 
@@ -467,7 +467,7 @@ router.get('/material_ment', authMiddleware, async (req, res) => {
  * @swagger
  * /api/add_material_ment:
  *   post:
- *     summary: 创建采购单审批
+ *     summary: 创建申购单审批
  *     tags:
  *       - 采购单(Purchase)
  *     parameters:
@@ -590,7 +590,7 @@ router.post('/handlePurchaseApproval', authMiddleware, async (req, res) => {
       status: 0,
     },
     include: [
-      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], separate: true, }
+      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'purchase_order', company_id }, separate: true, }
     ],
     order: [
       ['created_at', 'DESC']
@@ -627,6 +627,85 @@ router.post('/handlePurchaseApproval', authMiddleware, async (req, res) => {
 })
 /**
  * @swagger
+ * /api/handlePurchaseIsBuying:
+ *   post:
+ *     summary: 采购单确认
+ *     tags:
+ *       - 采购单(Purchase)
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ */
+router.post('/handlePurchaseIsBuying', authMiddleware, async (req, res) => {
+  const { ids } = req.body
+  const { id: userId, company_id } = req.user;
+
+  if(!ids.length) return res.json({ code: 401, message: '请选择采购作业' })
+
+  const subMaterialMents = await SubMaterialMent.findAll({
+    where: { id: ids, company_id, is_buying: 1 },
+    raw: true
+  })
+  // 校验：选中的采购作业是否存在（避免无效ID）
+  if (subMaterialMents.length !== ids.length) {
+    const validIds = subMaterialMents.map(item => item.id);
+    const invalidIds = ids.filter(id => !validIds.includes(id));
+    return res.json({ 
+      code: 401, 
+      message: `部分采购作业不存在或已生成采购单，请检查` 
+    });
+  }
+
+  const supplierGroups = subMaterialMents.reduce((result, item) => {
+    const groupKey = item.supplier_id;
+    if (!result[groupKey]) {
+      // 初始化分组：存储供应商信息 + 关联的采购作业IDs
+      result[groupKey] = {
+        notice_id: item.notice_id,
+        notice: item.notice,
+        supplier_id: item.supplier_id,
+        supplier_code: item.supplier_code,
+        supplier_abbreviation: item.supplier_abbreviation,
+        product_id: item.product_id,
+        product_code: item.product_code,
+        product_name: item.product_name,
+        subMaterialIds: [item.id], // 关联的采购作业ID数组
+        company_id,
+        user_id: userId,
+      };
+    } else {
+      // 同一供应商：追加采购作业ID
+      result[groupKey].subMaterialIds.push(item.id);
+    }
+    return result;
+  }, {});
+  const groups = Object.values(supplierGroups);
+
+  // 批量创建采购单
+  const purchaseOrders = await SubMaterialOrder.bulkCreate(groups,
+    { returning: true } // 返回创建后的完整数据（包含自动生成的id）
+  );
+
+  const orderSubMaterialMap = purchaseOrders.map((order, index) => ({
+    orderId: order.id,
+    subMaterialIds: groups[index].subMaterialIds // 一一对应分组的采购作业IDs
+  }));
+
+  // 批量更新采购作业状态
+  const updateTasks = orderSubMaterialMap.map(({ orderId, subMaterialIds }) =>
+    SubMaterialMent.update(
+      { is_buying: 0, order_id: orderId },
+      { where: { id: subMaterialIds, company_id } }
+    )
+  );
+
+  await Promise.all(updateTasks);
+
+  res.json({ code: 200, message: '采购单确认成功' })
+})
+/**
+ * @swagger
  * /api/handlePurchaseBackFlow:
  *   post:
  *     summary: 采购单反审核
@@ -643,7 +722,7 @@ router.post('/handlePurchaseBackFlow', authMiddleware, async (req, res) => {
 
   const result = await SubMaterialMent.findByPk(id)
   if(!result) return res.json({ message: '数据出错，请联系管理员', code: 401 })
-  if(result.status != 1) return res.json({ message: '此数据未审核通过，不能进行反审核' })
+  // if(result.status != 1) return res.json({ message: '此数据未审核通过，不能进行反审核' })
   const dataValue = result.toJSON()
 
   const approval = await SubApprovalUser.findAll({
@@ -661,7 +740,7 @@ router.post('/handlePurchaseBackFlow', authMiddleware, async (req, res) => {
   await SubMaterialMent.update({
     user_id: dataValue.user_id,
     company_id: dataValue.company_id,
-    status: 0,
+    status: 3,
     step: 0
   },{
     where: {
@@ -701,6 +780,67 @@ router.put('/material_ment', authMiddleware, async (req, res) => {
   if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
 
   res.json({ message: '修改成功', code: 200 });
+})
+
+/**
+ * @swagger
+ * /api/get_gurchase_order:
+ *   get:
+ *     summary: 获取采购单
+ *     tags:
+ *       - 采购单(Purchase)
+ */
+router.get('/get_gurchase_order', authMiddleware, async (req, res) => {
+  const { page = 1, pageSize = 10 } = req.query;
+  const offset = (page - 1) * pageSize;
+  const { id: userId, company_id } = req.user;
+
+  const { count, rows } = await SubMaterialOrder.findAndCountAll({
+    where: { company_id },
+    attributes: ['id', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'no', 'created_at'],
+    include: [
+      { model: SubMaterialMent, as: 'order', attributes: ['id', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'usage_unit', 'price', 'order_number', 'number', 'delivery_time', 'order_id', 'apply_id', 'apply_name', 'apply_time'] }
+    ],
+    order: [['id', 'ASC']],
+    distinct: true,
+    // raw: true,
+    limit: parseInt(pageSize),
+    offset
+  })
+  const totalPages = Math.ceil(count / pageSize);
+  const result = rows.map(e => {
+    const item = e.toJSON()
+    if(item.order.length){
+      item.order = formatArrayTime(item.order)
+    }
+    return item
+  })
+
+  res.json({ 
+    data: formatArrayTime(result), 
+    total: count, 
+    totalPages, 
+    currentPage: parseInt(page), 
+    pageSize: parseInt(pageSize),
+    code: 200 
+  });
+})
+
+/**
+ * @swagger
+ * /api/setPurchaseOrderNo:
+ *   get:
+ *     summary: 设置采购单的no编码
+ *     tags:
+ *       - 采购单(Purchase)
+ */
+router.post('/setPurchaseOrderNo', authMiddleware, async (req, res) => {
+  const { no, id } = req.body
+  const { id: userId, company_id } = req.user;
+
+  await SubMaterialOrder.update({ no }, { where: { id } })
+
+  res.json({ code: 200, message: '编码配置成功' })
 })
 
 /**
@@ -783,7 +923,7 @@ router.post('/printers', upload.single('file'), authMiddleware, async (req, res)
         updateOnDuplicate: ['print_id']
       })
     }else if(printerType == 'TV'){
-      await SubOutsourcingOrder.bulkCreate(dataValue, {
+      await subOutscriptionOrder.bulkCreate(dataValue, {
         updateOnDuplicate: ['print_id']
       })
     }else{

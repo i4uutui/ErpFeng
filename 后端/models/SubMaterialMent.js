@@ -177,7 +177,19 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
     type: DataTypes.INTEGER(11),
     allowNull: true,
     defaultValue: 0,
-    comment: '状态（0审批中/1通过/2拒绝）'
+    comment: '状态（0审批中/1通过/2拒绝3反审核）'
+  },
+  is_buying: {
+    type: DataTypes.INTEGER(1),
+    allowNull: true,
+    defaultValue: 1,
+    comment: '是否已生成采购单：1未生成，0已生成'
+  },
+  order_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    defaultValue: 1,
+    comment: '采购单ID'
   },
   is_deleted: {
     type: DataTypes.INTEGER(1),
@@ -192,7 +204,7 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
-  comment: '材料编码基础信息表'
+  comment: '采购作业'
 });
 
 module.exports = SubMaterialMent;

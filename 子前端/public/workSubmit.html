@@ -115,7 +115,7 @@
       <div class="data-item">
         <div class="flex item">
           <div class="label">生产单号</div>
-          <div class="value">{{ progress.notice.notice }}</div>
+          <div class="value">{{ progress.notice?.notice }}</div>
         </div>
         <div class="flex item">
           <div class="label">产品编码</div>
@@ -179,8 +179,8 @@
     createApp({
       data() {
         return {
-          api: 'https://api.yuanfangzixun.com.cn',
-          // api: 'http://localhost:3000',
+          // api: 'https://api.yuanfangzixun.com.cn',
+          api: 'http://localhost:3000',
           headers: {
             "Content-Type": 'application/json',
             "Authorization": ''
@@ -212,6 +212,10 @@
         handleSubmit() {
           if (!this.quantity) {
             alert('请输入数量');
+            return;
+          }
+          if(Number(this.quantity) > Number(this.work.order_number)){
+            alert('报工数量不能大于订单尾数');
             return;
           }
           axios.post(`${this.api}/api/mobile_work_order`, {

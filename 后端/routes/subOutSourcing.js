@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const dayjs = require('dayjs')
-const { SubOutsourcingQuote, SubSupplierInfo, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProductCode, SubPartCode, SubProductNotice, SubSaleOrder, SubOutsourcingOrder, SubApprovalUser, SubApprovalStep, Op } = require('../models');
+const { SubOutsourcingQuote, SubSupplierInfo, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProductCode, SubPartCode, SubProductNotice, SubSaleOrder, subOutscriptionOrder, SubApprovalUser, SubApprovalStep, Op, SubOutsourcingOrder } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { getSaleCancelIds } = require('../middleware/tool');
@@ -122,7 +122,7 @@ router.get('/outsourcing_quote', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.post('/add_outsourcing_quote', authMiddleware, async (req, res) => {
-  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, transaction_method, other_transaction_terms, other_text } = req.body;
+  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, transaction_method, other_transaction_terms, other_text, invoice } = req.body;
   const { id: userId, company_id } = req.user;
   
   const notice = await SubProductNotice.findOne({
@@ -140,7 +140,7 @@ router.post('/add_outsourcing_quote', authMiddleware, async (req, res) => {
   
   try {
     await SubOutsourcingQuote.create({
-      notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, number, transaction_currency, transaction_method, other_transaction_terms, other_text, company_id,
+      notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, number, transaction_currency, transaction_method, other_transaction_terms, other_text, invoice, company_id,
       user_id: userId,
       now_price: price,
     })
@@ -193,11 +193,11 @@ router.post('/add_outsourcing_quote', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.put('/outsourcing_quote', authMiddleware, async (req, res) => {
-  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, transaction_method, other_transaction_terms, other_text, status, now_price, id } = req.body;
+  const { notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, transaction_method, other_transaction_terms, other_text, invoice, status, now_price, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   const updateResult = await SubOutsourcingQuote.update({
-    notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, transaction_method, other_transaction_terms, other_text, status, now_price, company_id,
+    notice_id, supplier_id, process_bom_id, process_bom_children_id, process_index, price, transaction_currency, transaction_method, other_transaction_terms, other_text, invoice, status, now_price, company_id,
     user_id: userId
   }, {
     where: {
@@ -214,7 +214,7 @@ router.put('/outsourcing_quote', authMiddleware, async (req, res) => {
  * @swagger
  * /api/outsourcing_order:
  *   get:
- *     summary: 委外加工列表
+ *     summary: 获取委外作业的列表
  *     tags:
  *       - 委外管理(Outsourcing)
  *     parameters:
@@ -248,18 +248,18 @@ router.get('/outsourcing_order', authMiddleware, async (req, res) => {
     whereOrder.status = status;
   } else {
     if (!hasOtherValues) {
-      whereOrder.status = [0, 2];
+      whereOrder.status = [0, 2, 3];
     }
   }
 
-  const rows = await SubOutsourcingOrder.findAll({
+  const rows = await subOutscriptionOrder.findAll({
     where: {
       is_deleted: 1,
       company_id,
       notice_id: { [Op.notIn]: noticeIds },
       ...whereOrder
     },
-    attributes: ['id', 'notice_id', 'supplier_id', 'process_bom_id', 'process_bom_children_id', 'ment', 'unit', 'number', 'price', 'transaction_currency', 'transaction_terms', 'delivery_time', 'remarks', 'status', 'apply_id', 'apply_name', 'apply_time', 'step'],
+    attributes: ['id', 'notice_id', 'supplier_id', 'process_bom_id', 'process_bom_children_id', 'ment', 'unit', 'number', 'price', 'transaction_currency', 'transaction_terms', 'delivery_time', 'remarks', 'status', 'is_buying', 'apply_id', 'apply_name', 'apply_time', 'step'],
     include: [
       { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'outsourcing_order', company_id }, separate: true, },
       { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_abbreviation', 'supplier_code'], where: { ...whereSupplier } },
@@ -341,10 +341,10 @@ router.post('/add_outsourcing_order', authMiddleware, async (req, res) => {
   ]
   const [noResult, yesResult] = await Promise.all([
     noIdList.length
-      ? SubOutsourcingOrder.bulkCreate(noIdList, { updateOnDuplicate: updateFields })
+      ? subOutscriptionOrder.bulkCreate(noIdList, { updateOnDuplicate: updateFields })
       : [],
     yesIdList.length
-      ? SubOutsourcingOrder.bulkCreate(yesIdList, { updateOnDuplicate: updateFields })
+      ? subOutscriptionOrder.bulkCreate(yesIdList, { updateOnDuplicate: updateFields })
       : []
   ]);
 
@@ -394,14 +394,14 @@ router.put('/outsourcing_order', authMiddleware, async (req, res) => {
   const { notice_id, supplier_id, process_bom_id, process_bom_children_id, unit, price, number, transaction_currency, transaction_terms, ment, remarks, status, delivery_time, id } = req.body;
   const { id: userId, company_id } = req.user;
 
-  const result = await SubOutsourcingOrder.findByPk(id)
+  const result = await subOutscriptionOrder.findByPk(id)
   if(!result) res.json({ message: '未找到该委外加工信息', code: 401 })
   
   const obj = {
     notice_id, supplier_id, process_bom_id, process_bom_children_id, unit, price, number, transaction_currency, transaction_terms, ment, remarks, status, delivery_time, company_id,
     user_id: userId
   }
-  const updateResult = await SubOutsourcingOrder.update(obj, {
+  const updateResult = await subOutscriptionOrder.update(obj, {
     where: {
       id
     }
@@ -430,14 +430,14 @@ router.post('/handleOutsourcingApproval', authMiddleware, async (req, res) => {
   const { id: userId, company_id } = req.user;
 
   if(data.length == 0) return res.json({ code: 401, message: '请选择需要审批的数据' })
-  const result = await SubOutsourcingOrder.findAll({
+  const result = await subOutscriptionOrder.findAll({
     where: {
       id: data,
       company_id,
       status: 0,
     },
     include: [
-      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], separate: true, }
+      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'outsourcing_order', company_id }, separate: true, }
     ],
     order: [
       ['created_at', 'DESC']
@@ -467,11 +467,104 @@ router.post('/handleOutsourcingApproval', authMiddleware, async (req, res) => {
   await SubApprovalUser.bulkCreate(approval, {
     updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status']
   })
-  await SubOutsourcingOrder.bulkCreate(dataValue, {
+  await subOutscriptionOrder.bulkCreate(dataValue, {
     updateOnDuplicate: ['status', 'step']
   })
   res.json({ data: null, code: 200 })
 })
+
+/**
+ * @swagger
+ * /api/handleOutSourcingIsBuying:
+ *   post:
+ *     summary: 委外加工单确认
+ *     tags:
+ *       - 委外管理(Outsourcing)
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ */
+router.post('/handleOutSourcingIsBuying', authMiddleware, async (req, res) => {
+  const { ids } = req.body
+  const { id: userId, company_id } = req.user;
+
+  if(!ids.length) return res.json({ code: 401, message: '请选择委外作业' })
+
+  const subOutscriptionOrders = await subOutscriptionOrder.findAll({
+    where: { id: ids, company_id, is_buying: 1 },
+    include: [
+      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'outsourcing_order', company_id }, separate: true, },
+      { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_abbreviation', 'supplier_code']},
+      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice', 'sale_id'] },
+      {
+        model: SubProcessBom,
+        as: 'processBom',
+        attributes: ['id', 'product_id'],
+        include: [
+          { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing', 'model', 'specification'] }
+        ]
+      },
+    ]
+  })
+  const outList = subOutscriptionOrders.length ? subOutscriptionOrders.map(e => e.toJSON()) : []
+  // 校验：选中的委外作业是否存在（避免无效ID）
+  if (outList.length !== ids.length) {
+    const validIds = outList.map(item => item.id);
+    const invalidIds = ids.filter(id => !validIds.includes(id));
+    return res.json({ 
+      code: 401, 
+      message: `部分委外作业不存在或已生成委外加工单，请检查` 
+    });
+  }
+  const supplierGroups = outList.reduce((result, item) => {
+    const groupKey = item.supplier_id;
+    if (!result[groupKey]) {
+      // 初始化分组：存储供应商信息 + 关联的委外作业IDs
+      result[groupKey] = {
+        notice_id: item.notice_id,
+        notice: item.notice.notice,
+        supplier_id: item.supplier_id,
+        supplier_code: item.supplier.supplier_code,
+        supplier_abbreviation: item.supplier.supplier_abbreviation,
+        product_id: item.processBom.product_id,
+        product_code: item.processBom.product.product_code,
+        product_name: item.processBom.product.product_name,
+        subMaterialIds: [item.id], // 关联的委外作业ID数组
+        company_id,
+        user_id: userId,
+      };
+    } else {
+      // 同一供应商：追加委外作业ID
+      result[groupKey].subMaterialIds.push(item.id);
+    }
+    return result;
+  }, {});
+  const groups = Object.values(supplierGroups);
+
+  // 批量创建委外加工单
+  const purchaseOrders = await SubOutsourcingOrder.bulkCreate(groups,
+    { returning: true } // 返回创建后的完整数据（包含自动生成的id）
+  );
+
+  const orderSubMaterialMap = purchaseOrders.map((order, index) => ({
+    orderId: order.id,
+    subMaterialIds: groups[index].subMaterialIds // 一一对应分组的委外作业IDs
+  }));
+
+  // 批量更新委外作业状态
+  const updateTasks = orderSubMaterialMap.map(({ orderId, subMaterialIds }) =>
+    subOutscriptionOrder.update(
+      { is_buying: 0, order_id: orderId },
+      { where: { id: subMaterialIds, company_id } }
+    )
+  );
+
+  await Promise.all(updateTasks);
+
+  res.json({ code: 200, message: '委外加工单确认成功' })
+})
+
 /**
  * @swagger
  * /api/handleOutsourcingBackFlow:
@@ -488,7 +581,7 @@ router.post('/handleOutsourcingBackFlow', authMiddleware, async (req, res) => {
   const { id } = req.body;
   const { id: userId, company_id } = req.user;
 
-  const result = await SubOutsourcingOrder.findByPk(id)
+  const result = await subOutscriptionOrder.findByPk(id)
   if(!result) return res.json({ message: '数据出错，请联系管理员', code: 401 })
   if(result.status != 1) return res.json({ message: '此数据未审核通过，不能进行反审核' })
   const dataValue = result.toJSON()
@@ -505,7 +598,7 @@ router.post('/handleOutsourcingBackFlow', authMiddleware, async (req, res) => {
     return item
   })
 
-  await SubOutsourcingOrder.update({
+  await subOutscriptionOrder.update({
     user_id: dataValue.user_id,
     company_id: dataValue.company_id,
     status: 0,
@@ -522,6 +615,93 @@ router.post('/handleOutsourcingBackFlow', authMiddleware, async (req, res) => {
   res.json({ code: 200, message: '操作成功' })
 })
 
+/**
+ * @swagger
+ * /api/get_outsourcing_order:
+ *   get:
+ *     summary: 获取委外加工单
+ *     tags:
+ *       - 委外管理(Outsourcing)
+ */
+router.get('/get_outsourcing_order', authMiddleware, async (req, res) => {
+  const { page = 1, pageSize = 10 } = req.query;
+  const offset = (page - 1) * pageSize;
+  const { id: userId, company_id } = req.user;
+
+  const { count, rows } = await SubOutsourcingOrder.findAndCountAll({
+    where: { company_id },
+    attributes: ['id', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'no', 'created_at'],
+    include: [
+      {
+        model: subOutscriptionOrder,
+        as: 'order',
+        attributes: ['id', 'notice_id', 'quote_id', 'supplier_id', 'process_bom_id', 'process_bom_children_id', 'unit', 'price', 'number', 'transaction_currency', 'transaction_terms', 'ment', 'delivery_time', 'remarks', 'is_buying', 'order_id'],
+        include: [
+          { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'outsourcing_order', company_id }, separate: true, },
+          { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_abbreviation', 'supplier_code']},
+          { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice', 'sale_id'] },
+          {
+            model: SubProcessBom,
+            as: 'processBom',
+            attributes: ['id', 'product_id', 'part_id', 'archive'],
+            include: [
+              { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing', 'model', 'specification'] },
+              { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
+            ]
+          },
+          {
+            model: SubProcessBomChild,
+            as: 'processChildren',
+            attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'time', 'price', 'points'],
+            include: [
+              { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
+              { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'equipment_code', 'equipment_name'] }
+            ]
+          }
+        ]
+      }
+    ],
+    order: [['id', 'ASC']],
+    distinct: true,
+    // raw: true,
+    limit: parseInt(pageSize),
+    offset
+  })
+  const totalPages = Math.ceil(count / pageSize);
+  const result = rows.map(e => {
+    const item = e.toJSON()
+    if(item.order.length){
+      item.order = formatArrayTime(item.order)
+    }
+    return item
+  })
+
+  res.json({ 
+    data: formatArrayTime(result), 
+    total: count, 
+    totalPages, 
+    currentPage: parseInt(page), 
+    pageSize: parseInt(pageSize),
+    code: 200 
+  });
+})
+
+/**
+ * @swagger
+ * /api/setOutsourcingNo:
+ *   get:
+ *     summary: 设置采购单的no编码
+ *     tags:
+ *       - 委外管理(Outsourcing)
+ */
+router.post('/setOutsourcingNo', authMiddleware, async (req, res) => {
+  const { no, id } = req.body
+  const { id: userId, company_id } = req.user;
+
+  await SubOutsourcingOrder.update({ no }, { where: { id } })
+
+  res.json({ code: 200, message: '编码配置成功' })
+})
 
 
 module.exports = router;

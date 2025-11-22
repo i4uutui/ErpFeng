@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubRateWage, Op, SubProductCode, SubPartCode, SubProcessCode, SubProcessBomChild, SubEmployeeInfo, SubWarehouseApply, SubNoEncoding, SubMaterialMent, SubSaleOrder, SubOutsourcingOrder, SubProductNotice, SubProcessBom, SubProcessCycle, SubSupplierInfo, SubCustomerInfo, SubProgressBase, SubProgressWork } = require('../models')
+const { SubRateWage, Op, SubProductCode, SubPartCode, SubProcessCode, SubProcessBomChild, SubEmployeeInfo, SubWarehouseApply, SubNoEncoding, SubMaterialMent, SubSaleOrder, subOutscriptionOrder, SubProductNotice, SubProcessBom, SubProcessCycle, SubSupplierInfo, SubCustomerInfo, SubProgressBase, SubProgressWork } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -249,7 +249,7 @@ router.post('/getOutSourcingPrice', authMiddleware, async (req, res) => {
       { model: SubNoEncoding, as: 'print', attributes: ['id', 'no', 'print_type'] },
       { model: SubNoEncoding, as: 'buyPrint', attributes: ['id', 'no', 'print_type'] },
       {
-        model: SubOutsourcingOrder,
+        model: subOutscriptionOrder,
         as: 'sourcing',
         attributes: ['id', 'print_id', 'ment'],
         include: [

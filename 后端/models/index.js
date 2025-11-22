@@ -30,9 +30,7 @@ const SubProcessBom = require('./SubProcessBom.js') // 工艺BOM信息表
 const SubProcessBomChild = require('./SubProcessBomChild.js') // 工艺BOM信息表 子表
 const SubSaleOrder = require('./SubSaleOrder.js') // 销售订单表
 const SubMaterialQuote = require('./SubMaterialQuote.js') // 材料报价表
-const SubMaterialMent = require('./SubMaterialMent.js') // 材料报价单表
 const SubOutsourcingQuote = require('./SubOutsourcingQuote.js') // 委外报价信息表
-const SubOutsourcingOrder = require('./SubOutsourcingOrder.js') // 委外加工单
 const SubProductionProgress = require('./SubProductionProgress.js') // 生产进度表
 const SubRateWage = require('./SubRateWage.js') // 工资表
 const SubNoEncoding = require('./SubNoEncoding.js') // 打印的编码表
@@ -41,6 +39,10 @@ const SubSaleCancel = require('./SubSaleCancel.js') // 销售订单取消订单�
 const SubProgressWork = require('./SubProgressWork.js') // 工艺BOM表工序下进度表的子表
 const SubProcessCycleChild = require('./SubProcessCycleChild.js')
 const SubProgressBase = require('./SubProgressBase.js') // 进度表的基础数据表
+const SubMaterialMent = require('./SubMaterialMent.js') // 采购作业
+const SubMaterialOrder = require('./SubMaterialOrder.js') // 采购单
+const subOutscriptionOrder = require('./subOutscriptionOrder.js') // 委外作业单
+const SubOutsourcingOrder = require('./SubOutsourcingOrder.js') // 委外加工单
 
 AdUser.belongsTo(AdCompanyInfo, { foreignKey: 'company_id', as: 'company' })
 AdUser.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
@@ -95,14 +97,14 @@ SubOutsourcingQuote.belongsTo(SubSupplierInfo, { foreignKey: 'supplier_id', as: 
 SubOutsourcingQuote.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as: 'processBom' })
 SubOutsourcingQuote.belongsTo(SubProcessBomChild, { foreignKey: 'process_bom_children_id', as: 'processChildren' })
 SubOutsourcingQuote.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
-SubOutsourcingOrder.belongsTo(SubSupplierInfo, { foreignKey: 'supplier_id', as: 'supplier' })
-SubOutsourcingOrder.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as: 'processBom' })
-SubOutsourcingOrder.belongsTo(SubProcessBomChild, { foreignKey: 'process_bom_children_id', as: 'processChildren' })
-SubOutsourcingOrder.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
+subOutscriptionOrder.belongsTo(SubSupplierInfo, { foreignKey: 'supplier_id', as: 'supplier' })
+subOutscriptionOrder.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as: 'processBom' })
+subOutscriptionOrder.belongsTo(SubProcessBomChild, { foreignKey: 'process_bom_children_id', as: 'processChildren' })
+subOutscriptionOrder.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
 
 SubWarehouseApply.hasMany(SubApprovalUser, { foreignKey: 'source_id', as: 'approval' })
 SubMaterialMent.hasMany(SubApprovalUser, { foreignKey: 'source_id', as: 'approval' })
-SubOutsourcingOrder.hasMany(SubApprovalUser, { foreignKey: 'source_id', as: 'approval' })
+subOutscriptionOrder.hasMany(SubApprovalUser, { foreignKey: 'source_id', as: 'approval' })
 
 SubRateWage.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 SubRateWage.belongsTo(SubPartCode, { foreignKey: 'part_id', as: 'part' })
@@ -116,7 +118,7 @@ SubWarehouseApply.belongsTo(SubNoEncoding, { foreignKey: 'print_id', as: 'print'
 SubWarehouseApply.belongsTo(SubNoEncoding, { foreignKey: 'buyPrint_id', as: 'buyPrint' })
 SubWarehouseApply.belongsTo(SubMaterialMent, { foreignKey: 'buyPrint_id', as: 'buy' })
 SubMaterialMent.belongsTo(SubNoEncoding, { foreignKey: 'print_id', as: 'print' })
-SubWarehouseApply.belongsTo(SubOutsourcingOrder, { foreignKey: 'buyPrint_id', targetKey: 'print_id', as: 'sourcing' })
+SubWarehouseApply.belongsTo(subOutscriptionOrder, { foreignKey: 'buyPrint_id', targetKey: 'print_id', as: 'sourcing' })
 SubWarehouseApply.belongsTo(SubCustomerInfo, { foreignKey: 'plan_id', as: 'customer' })
 SubWarehouseApply.belongsTo(SubSupplierInfo, { foreignKey: 'plan_id', as: 'supplier' })
 
@@ -128,6 +130,12 @@ SubProcessCycle.hasMany(SubProgressCycle, { foreignKey: 'cycle_id', as: 'cycle' 
 SubProcessBomChild.hasOne(SubProgressWork, { foreignKey: 'child_id', as: 'work' })
 SubProgressWork.belongsTo(SubProcessBomChild, { foreignKey: 'child_id', as: 'children' })
 SubProgressBase.belongsTo(SubProcessBom, { foreignKey: 'bom_id', as: 'bom' })
+
+SubMaterialMent.belongsTo(SubMaterialOrder, { foreignKey: 'order_id', as: 'ment' })
+SubMaterialOrder.hasMany(SubMaterialMent, { foreignKey: 'order_id', as: 'order' })
+
+subOutscriptionOrder.belongsTo(SubOutsourcingOrder, { foreignKey: 'order_id', as: 'out' })
+SubOutsourcingOrder.hasMany(subOutscriptionOrder, { foreignKey: 'order_id', as: 'order' })
 
 module.exports = {
   Op,
@@ -161,9 +169,7 @@ module.exports = {
   SubProcessBomChild,
   SubSaleOrder,
   SubMaterialQuote,
-  SubMaterialMent,
   SubOutsourcingQuote,
-  SubOutsourcingOrder,
   SubProductionProgress,
   SubRateWage,
   SubNoEncoding,
@@ -171,7 +177,11 @@ module.exports = {
   SubSaleCancel,
   SubProgressWork,
   SubProcessCycleChild,
-  SubProgressBase
+  SubProgressBase,
+  SubMaterialMent,
+  SubMaterialOrder,
+  subOutscriptionOrder,
+  SubOutsourcingOrder
 }
 
 

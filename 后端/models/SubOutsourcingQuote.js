@@ -72,6 +72,11 @@ const SubOutsourcingQuote = sequelize.define('SubOutsourcingQuote', {
     allowNull: true,
     comment: '结算周期'
   },
+  invoice: {
+    type: DataTypes.STRING(5),
+    allowNull: true,
+    comment: '税票要求'
+  },
   // ment: {
   //   type: DataTypes.STRING(255),
   //   allowNull: true,

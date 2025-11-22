@@ -22,7 +22,7 @@ router.get('/material_bom', authMiddleware, async (req, res) => {
       company_id,
       archive
     },
-    attributes: ['id', 'product_id', 'part_id', 'archive'],
+    attributes: ['id', 'product_id', 'part_id', 'archive', 'sort'],
     include: [
       { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'], where: whereObj},
       { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
@@ -36,7 +36,7 @@ router.get('/material_bom', authMiddleware, async (req, res) => {
       }
     ],
     order: [
-      ['id', 'DESC'],
+      ['sort', 'ASC'],
       ['children', 'process_index', 'ASC']
     ],
     distinct: true,
@@ -59,11 +59,11 @@ router.get('/material_bom', authMiddleware, async (req, res) => {
 
 // 添加材料BOM
 router.post('/material_bom', authMiddleware, async (req, res) => {
-  const { product_id, part_id, archive, children } = req.body;
+  const { product_id, part_id, archive, children, sort } = req.body;
   const { id: userId, company_id } = req.user;
   
   const material = await SubMaterialBom.create({
-    product_id, part_id, archive, company_id,
+    product_id, part_id, archive, sort, company_id,
     user_id: userId
   })
   const childrens = children.map(e => ({ material_bom_id: material.id, company_id, user_id: userId, ...e }))
@@ -74,7 +74,7 @@ router.post('/material_bom', authMiddleware, async (req, res) => {
 
 // 更新材料BOM
 router.put('/material_bom', authMiddleware, async (req, res) => {
-  const { product_id, part_id, children, archive, id } = req.body;
+  const { product_id, part_id, children, archive, sort, id } = req.body;
   const { id: userId, company_id } = req.user;
   
   // 验证材料BOM是否存在
@@ -82,7 +82,7 @@ router.put('/material_bom', authMiddleware, async (req, res) => {
   if (!material) return res.json({ message: '材料BOM不存在', code: 401 });
   
   await SubMaterialBom.update({
-    product_id, part_id, archive, company_id,
+    product_id, part_id, archive, sort, company_id,
     user_id: userId
   }, {
     where: { id }

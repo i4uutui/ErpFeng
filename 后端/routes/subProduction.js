@@ -165,7 +165,7 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
             as: 'cycle', 
             attributes: ['id', 'notice_id', 'progress_id', 'cycle_id', 'end_date', 'load', 'order_number'], 
             where: { progress_id: progressIds },
-            required: false // 允许没有关联数据的制程也返回
+            required: false, // 允许没有关联数据的制程也返回
           },
           { 
             model: SubEquipmentCode, 
@@ -174,7 +174,7 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
             required: false
           }
         ],
-        order: [['sort', 'ASC']],
+        order: [['sort', 'ASC'], ['cycle', 'progress_id', 'ASC']],
         // 强制索引（如果存在）
         // indexHints: [{ type: 'USE', values: ['idx_sub_process_cycle_company_sort'] }]
       }),
@@ -514,12 +514,22 @@ router.post('/mobile_work_order', EmployeeAuth, async (req, res) => {
 
   if(!quantity || quantity <= 0) return res.json({ message: '数量输入错误，请重新输入', code: 401 })
 
-  const dataValue = await SubProgressWork.findByPk(id)
+  const result = await SubProgressWork.findOne({
+    where: { id },
+    include: [
+      {
+        model: SubProcessBomChild,
+        as: 'children',
+        attributes: ['id', 'time'],
+      },
+    ]
+  })
+  const dataValue = result.toJSON()
 
   dataValue.finish = dataValue.finish ? PreciseMath.add(dataValue.finish, quantity) : quantity
   dataValue.order_number = PreciseMath.sub(dataValue.order_number, quantity)
-  dataValue.all_work_time = (dataValue.order_number * dataValue.time).toFixed(1)
-
+  dataValue.all_work_time = (PreciseMath.mul(Number(dataValue.order_number), Number(dataValue.children.time)) / 60 / 60).toFixed(1)
+  
   await SubRateWage.create({ 
     company_id: companyId,
     user_id: userId, 

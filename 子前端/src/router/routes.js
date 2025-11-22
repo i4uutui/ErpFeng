@@ -372,9 +372,15 @@ const routes = [
         name: 'ScriptionOrder',
         component: () => import('@/views/Purchase/ScriptionOrder.jsx'),
         meta: {
-          title: '申购单',
+          title: '采购作业',
           parent: '采购管理',
           menu: true,
+          buttons: [
+            { code: 'ScriptionOrder:add', label: '新增' },
+            { code: 'ScriptionOrder:edit', label: '修改' },
+            { code: 'ScriptionOrder:set', label: '采购作业提交' },
+            { code: 'ScriptionOrder:buy', label: '申购单确认' },
+          ]
         }
       },
       {
@@ -386,9 +392,6 @@ const routes = [
           parent: '采购管理',
           menu: true,
           buttons: [
-            { code: 'PurchaseOrder:add', label: '新增' },
-            { code: 'PurchaseOrder:edit', label: '修改' },
-            { code: 'PurchaseOrder:set', label: '采购单提交' },
             { code: 'PurchaseOrder:print', label: '打印' },
           ]
         }
@@ -405,6 +408,22 @@ const routes = [
           buttons: [
             { code: 'OutsourcingQuote:add', label: '添加委外报价' },
             { code: 'OutsourcingQuote:edit', label: '修改' },
+          ]
+        }
+      },
+      {
+        path: '/outsourcing/outscription-order',
+        name: 'OutscriptionOrder',
+        component: () => import('@/views/Outsourcing/OutscriptionOrder.jsx'),
+        meta: {
+          title: '委外作业',
+          parent: '委外管理',
+          menu: true,
+          buttons: [
+            { code: 'OutscriptionOrder:add', label: '新增' },
+            { code: 'OutscriptionOrder:edit', label: '修改' },
+            { code: 'OutscriptionOrder:set', label: '采购单提交' },
+            { code: 'OutscriptionOrder:buy', label: '加工单确认' },
           ]
         }
       },

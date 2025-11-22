@@ -29,8 +29,9 @@ export default defineComponent({
     let form = ref({
       product_id: '',
       part_id: '',
+      sort: 0,
       children: [
-        { material_id: '', number: '' }
+        { material_id: '', number: '', sort: 1 }
       ]
     })
     let productsList = ref([])
@@ -215,14 +216,14 @@ export default defineComponent({
         }
       }).catch(() => {})
     }
-    const handleUplate = ({ id, product_id, part_id, children }) => {
+    const handleUplate = ({ id, product_id, part_id, children, sort }) => {
       edit.value = id;
       dialogVisible.value = true;
       let filtered = children.filter(item => {
         return !Object.values(item).every(isEmptyValue);
       });
       if(!filtered.length) filtered = [{ material_id: '', number: '' }]
-      form.value = { product_id, part_id, children: filtered };
+      form.value = { product_id, part_id, children: filtered, sort };
 
       // 判断材料是否可选,已选的材料不能再选择
       const showList = children.map(e => e.material_id)
@@ -253,13 +254,14 @@ export default defineComponent({
       form.value = {
         product_id: '',
         part_id: '',
+        sort: 0,
         children: [
-          { material_id: '', number: '' }
+          { material_id: '', number: '', sort: 1 }
         ]
       }
     }
     const handleAddJson = () => {
-      const obj = { material_id: '', number: '' }
+      const obj = { material_id: '', number: '', sort: 1 }
       form.value.children.push(obj)
     }
     const handledeletedJson = (index) => {
@@ -271,7 +273,7 @@ export default defineComponent({
         item.is_show = showList.includes(item.id);
       })
     }
-    const columnLength = 5 // 表示前面不需要颜色的列数
+    const columnLength = 6 // 表示前面不需要颜色的列数
     const headerCellStyle = ({ columnIndex, rowIndex, column }) => {
       if(!tableData.value.length) return
 
@@ -331,6 +333,7 @@ export default defineComponent({
                   <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" minWidth="100" />
                   <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" minWidth="100" />
                   <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" minWidth="100" />
+                  <ElTableColumn prop="sort" label="排序" fixed="left" minWidth="100" />
                   <ElTableColumn prop="part.part_code" label="部件编码" fixed="left" minWidth="100" />
                   <ElTableColumn prop="part.part_name" label="部件名称" fixed="left" minWidth="100" />
                   {
@@ -362,19 +365,41 @@ export default defineComponent({
             default: () => (
               <ElForm class="ml20" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="95">
                 <ElFormItem label="产品编码" prop="product_id">
-                  <MySelect v-model={ form.value.product_id } apiUrl="/api/getProductsCode" query="product_code" itemValue="product_code" placeholder="请选择产品编码" />
+                  <ElSelect v-model={ form.value.product_id } multiple={ false } filterable remote remote-show-suffix placeholder="请选择产品编码">
+                    {productsList.value.map((e, index) => <ElOption value={ e.id } label={ e.product_code } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="部件编码" prop="part_id" data-index={ form.value.children.length }>
-                  <MySelect v-model={ form.value.part_id } apiUrl="/api/getPartCode" query="part_code" itemValue="part_code" placeholder="请选择部件编码" />
+                <ElFormItem label="产品名称">
+                  <ElSelect class="disabled" v-model={ form.value.product_id } multiple={ false } disabled filterable remote remote-show-suffix placeholder="请选择产品名称">
+                    {productsList.value.map((e, index) => <ElOption value={ e.id } label={ e.product_name } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="部件编码" prop="part_id">
+                  <ElSelect v-model={ form.value.part_id } multiple={ false } filterable remote remote-show-suffix placeholder="请选择部件编码">
+                    {partList.value.map((e, index) => <ElOption value={ e.id } label={ e.part_code } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="部件名称">
+                  <ElSelect class="disabled" v-model={ form.value.part_id } multiple={ false } disabled filterable remote remote-show-suffix placeholder="请选择部件名称">
+                    {partList.value.map((e, index) => <ElOption value={ e.id } label={ e.part_name } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="排序" prop='sort'>
+                  <ElInput v-model={ form.value.sort } placeholder="请输入排序" />
                 </ElFormItem>
                 {
                   form.value.children.map((e, index) => (
-                    <Fragment key={ index }>
+                    <div key={ index }>
                       <ElFormItem label="材料编码" prop={ `children[${index}].material_id` } rules={ rules.material_id }>
                         <ElSelect v-model={ e.material_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料编码" onChange={ (value) => materialChange(value) }>
                           {materialList.value.map((e, index) => {
                             return <ElOption value={ e.id } label={ e.material_code } key={ index } disabled={ e.is_show } />
                           })}
+                        </ElSelect>
+                      </ElFormItem>
+                      <ElFormItem label="材料名称">
+                        <ElSelect class="disabled" v-model={ e.material_id } multiple={ false } disabled filterable remote remote-show-suffix placeholder="请选择材料名称">
+                          {materialList.value.map((e, index) => <ElOption value={ e.id } label={ e.material_name } key={ index } />)}
                         </ElSelect>
                       </ElFormItem>
                       <ElFormItem label="数量" prop={ `children[${index}].number` } rules={ rules.number }>
@@ -390,13 +415,14 @@ export default defineComponent({
                                 if(form.value.children.length > 1){
                                   dom.push(<ElIcon style={{ fontSize: '26px', color: 'red', cursor: "pointer" }} onClick={ () => handledeletedJson(index) }><RemoveFilled /></ElIcon>)
                                 }
+                                dom.push(<div class="pl20">{ index + 1 }</div>)
                                 return dom
                               }
                             }}
                           </div>
                         </div>
                       </ElFormItem>
-                    </Fragment>
+                    </div>
                   ))
                 }
               </ElForm>
