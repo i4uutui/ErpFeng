@@ -223,6 +223,9 @@ const getNoLast = async (printType) => {
     useStore().setPrintNo(no)
   }
 }
+const setPurchaseOrderNo = async (no, id, printType, typeIndex) => {
+  const res = await request.post('/api/setOrderNoCode', { no, id, printType, typeIndex })
+}
 /**
  * 计算页面中元素的高度
  * @returns {string} 返回的结果
@@ -242,5 +245,6 @@ export {
   PreciseMath,
   generateNextCode,
   getNoLast,
-  getPageHeight
+  getPageHeight,
+  setPurchaseOrderNo
 }

@@ -366,7 +366,7 @@ router.get('/getProcessBom', authMiddleware, async (req, res) => {
   })
   const bom = rows.map(e => {
     const obj = e.toJSON()
-    obj.name = `${obj.product.product_code}:${obj.product.product_name} - ${obj.part.part_code}:${obj.part.part_name}`
+    obj.name = `${obj.part.part_code}:${obj.part.part_name}`
     return obj
   })
   

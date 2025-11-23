@@ -34,10 +34,7 @@ export default defineComponent({
         { required: true, message: '请选择供应商编码', trigger: 'blur' }
       ],
       process_bom_id: [
-        { required: true, message: '请选择工艺BOM表', trigger: 'blur' }
-      ],
-      process_bom_children_id: [
-        { required: true, message: '请选择工艺工序', trigger: 'blur' }
+        { required: true, message: '请选择部件', trigger: 'blur' }
       ]
     })
     let dialogVisible = ref(false)
@@ -104,15 +101,6 @@ export default defineComponent({
     const fetchProductList = async () => {
       const res = await request.get('/api/outsourcing_order', { params: search.value });
       tableData.value = res.data;
-
-      // 打印的时候用的
-      if(res.data.length){
-        const data = res.data[0]
-        supplierName.value = data.supplier.supplier_abbreviation
-        productName.value = data.processBom.product.product_name
-        productCode.value = data.processBom.product.product_code
-        noticeNumber.value = data.notice.notice
-      }
     }
     // 获取生产通知单列表
     const getProductNotice = async () => {
@@ -132,11 +120,13 @@ export default defineComponent({
     // 获取工艺BOM列表
     const getProcessBomList = async (product_id) => {
       const res = await request.get('/api/getProcessBom', { params: { product_id } })
-      bomList.value = res.data
+      const obj = { id: 0, name: '全部部件' }
+      bomList.value = [obj, ...res.data]
     }
     const getProcessBomChildren = async (value) => {
       const res = await request.get(`/api/getProcessBomChildren?process_bom_id=${value}`)
-      procedure.value = res.data
+      const obj = { id: 0, name: '全部工序' }
+      procedure.value = [obj, ...res.data]
     }
     // 弹窗确认按钮
     const handleSubmit = async (formEl) => {
@@ -301,7 +291,7 @@ export default defineComponent({
     // 批量采购单确认
     const handleProcurementAll = () => {
       const json = allSelect.value.filter(e => e.status && e.status == 1 && e.is_buying == 1)
-      if(!json.length) return ElMessage.error('请选择委外作业')
+      if(!json.length) return ElMessage.error('暂无可操作确认的数据')
       const ids = json.map(e => e.id)
 
       ElMessageBox.confirm('是否确认委外加工单？', '提示', {
@@ -354,9 +344,20 @@ export default defineComponent({
     }
     // 工艺BOM选中后返回的数据
     const changeBomSelect = (value) => {
-      procedure.value = []
-      form.value.process_bom_children_id = ''
-      getProcessBomChildren(value)
+      if(value != 0){
+        procedure.value = []
+        form.value.process_bom_children_id = 0
+        getProcessBomChildren(value)
+        rules.process_bom_children_id = [
+          { required: true, message: '请选择工序', trigger: 'blur' }
+        ]
+      }else{
+        procedure.value = [{ id: 0, name: '全部工序' }]
+        form.value.process_bom_children_id = 0
+        if(rules.process_bom_children_id){
+          delete rules.process_bom_children_id
+        }
+      }
     }
     const quoteChange = async (value) => {
       const row = quoteList.value.find(o => o.id == value)
@@ -469,6 +470,9 @@ export default defineComponent({
     const handleClose = () => {
       edit.value = 0;
       dialogVisible.value = false;
+      quoteList.value = []
+      bomList.value = []
+      procedure.value = []
       resetForm()
     }
     // 用户主动多选，然后保存到allSelect
@@ -550,7 +554,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } rowStyle={ handleRowStyle } onSelectionChange={ (select) => handleSelectionChange(select) }>
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 234}px)` } rowStyle={ handleRowStyle } onSelectionChange={ (select) => handleSelectionChange(select) }>
                   <ElTableColumn type="selection" width="55" />
                   <ElTableColumn label="状态" width='80'>
                     {({row}) => {
@@ -574,12 +578,20 @@ export default defineComponent({
                   <ElTableColumn prop="notice.notice" label="生产订单号" width='100' />
                   <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width='100' />
                   <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width='100' />
-                  <ElTableColumn prop="processBom.product.product_code" label="产品编码" width='100' />
-                  <ElTableColumn prop="processBom.product.product_name" label="产品名称" width='100' />
-                  <ElTableColumn prop="processBom.part.part_code" label="部件编码" width='100' />
-                  <ElTableColumn prop="processBom.part.part_name" label="部件名称" width='100' />
-                  <ElTableColumn prop="processChildren.process.process_code" label="工艺编码" width='100' />
-                  <ElTableColumn prop="processChildren.process.process_name" label="工艺名称" width='100' />
+                  <ElTableColumn prop="notice.product.product_code" label="产品编码" width='100' />
+                  <ElTableColumn prop="notice.product.product_name" label="产品名称" width='100' />
+                  <ElTableColumn label="部件编码" width='100'>
+                    {({row}) => row.process_bom_id == 0 ? '全部部件' : row.processBom.part.part_code}
+                  </ElTableColumn>
+                  <ElTableColumn label="部件名称" width='100'>
+                    {({row}) => row.process_bom_id == 0 ? '全部部件' : row.processBom.part.part_name}
+                  </ElTableColumn>
+                  <ElTableColumn label="工艺编码" width='100'>
+                    {({row}) => row.process_bom_children_id == 0 ? '全部工序' : row.processChildren.process.process_code}
+                  </ElTableColumn>
+                  <ElTableColumn label="工艺名称" width='100'>
+                    {({row}) => row.process_bom_children_id == 0 ? '全部工序' : row.processChildren.process.process_name}
+                  </ElTableColumn>
                   <ElTableColumn prop="ment" label="加工要求" width='100' />
                   <ElTableColumn prop="unit" label="单位" width='80' />
                   <ElTableColumn prop="number" label="委外数量" width='100' />
@@ -598,7 +610,10 @@ export default defineComponent({
                           // 如果当前用户有审批权限，获取当前这条数据中，该用户的审批步骤
                           const rowApproval = isApproval ? row.approval.find(o => o.user_id === approvalUser.user_id) : null;
                           // 查询这条数据相对当前用户来说，状态是否可以修改
-                          const isRowStatus = row.status === undefined || row.status === 2 || row.status === 3 && row.is_buying === 1 && row.user_id === user.id
+                          const { apply_id, is_buying, status } = row;
+                          const isUserApplied = apply_id === user.id && is_buying === 1;
+                          const isStatusValid = status === 2 || status === 3;
+                          const isRowStatus = status === undefined || (isUserApplied && isStatusValid);
 
                           if(isRowStatus){
                             dom.push(
@@ -659,15 +674,15 @@ export default defineComponent({
                     {quoteList.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="工艺BOM" prop="process_bom_id">
-                  <ElSelect v-model={ form.value.process_bom_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择工艺BOM" onChange={(value) => changeBomSelect(value)}>
+                <ElFormItem label="部件选择" prop="process_bom_id">
+                  <ElSelect v-model={ form.value.process_bom_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择部件" onChange={(value) => changeBomSelect(value)}>
                     {bomList.value.map((e, index) => {
                       return <ElOption value={ e.id } label={ e.name } key={ index } />
                     })}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="工艺工序" prop="process_bom_children_id">
-                  <ElSelect v-model={ form.value.process_bom_children_id } multiple={ false } filterable remote remote-show-suffix valueKey="id" placeholder="请选择工艺工序">
+                <ElFormItem label="选择工序" prop="process_bom_children_id">
+                  <ElSelect v-model={ form.value.process_bom_children_id } multiple={ false } disabled={ form.value.process_bom_id === 0 } filterable remote remote-show-suffix valueKey="id" placeholder="请选择工序">
                     {procedure.value.map((e, index) => {
                       return <ElOption value={ e.id } label={ e.name } key={ index } />
                     })}

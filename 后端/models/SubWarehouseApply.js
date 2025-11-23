@@ -123,6 +123,18 @@ const SubWarehouseApply = sequelize.define('SubWarehouseApply', {
     defaultValue: null,
     comment: '总价'
   },
+  order_id: {
+    type: DataTypes.INTEGER(11),
+    allowNull: true,
+    defaultValue: 1,
+    comment: '出入库单ID'
+  },
+  is_buying: {
+    type: DataTypes.INTEGER(1),
+    allowNull: true,
+    defaultValue: 1,
+    comment: '是否已生成出入库单：1未生成，0已生成'
+  },
   apply_id: {
     type: DataTypes.INTEGER,
     allowNull: true,

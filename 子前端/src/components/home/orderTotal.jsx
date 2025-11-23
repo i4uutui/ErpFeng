@@ -66,7 +66,7 @@ export default defineComponent({
               <div class="flex w100 row-between">
                 <div>延期订单：</div>
                 <div>
-                  <span class="f26" style={{ color: '#409eff' }}>0</span>
+                  <span class="f26" style={{ color: '#409eff' }}>{ data.value.progressLeng }</span>
                   <span>笔</span>
                 </div>
               </div>

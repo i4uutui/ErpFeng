@@ -1,15 +1,11 @@
-import { defineComponent, onMounted, reactive, ref, computed, nextTick } from 'vue'
+import { defineComponent, onMounted, ref, computed, nextTick } from 'vue'
 import { useStore } from '@/stores';
-import { getRandomString, getNoLast, getPageHeight, isEmptyValue } from '@/utils/tool'
-import { reportOperationLog } from '@/utils/log';
+import { getNoLast, getPageHeight, setPurchaseOrderNo } from '@/utils/tool'
 import { getItem } from '@/assets/js/storage';
 import request from '@/utils/request';
 import dayjs from "dayjs"
 import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
-import html2pdf from 'html2pdf.js';
-import WinPrint from '@/components/print/winPrint';
-import HeadForm from '@/components/form/HeadForm';
 import { setPrint } from '@/utils/print';
 
 export default defineComponent({
@@ -50,9 +46,6 @@ export default defineComponent({
         total.value = res.total;
       }
     }
-    const setPurchaseOrderNo = async (no, id) => {
-      const res = await request.post('/api/setOutsourcingNo', { no, id })
-    }
     // 用户主动多选，然后保存到allSelect
     const handleSelectionChange = (select) => {
       allSelect.value = JSON.parse(JSON.stringify(select))
@@ -69,29 +62,23 @@ export default defineComponent({
           no.value = row.no
         }else{
           await getNoLast('TV')
-          await setPurchaseOrderNo(printNo.value, row.id)
+          await setPurchaseOrderNo(printNo.value, row.id, 'TV', 2)
           await getGurchaseOrder()
         }
-        const head = [
-          [
-            { content: `供应商：${row.supplier_abbreviation}`, colSpan: 2, rowSpan: 1, styles: { halign : 'left', fillColor: '#FFFFFF',textColor: '#333333', fontSize: 14, lineWidth: 0 } }, 
-            { content: `产品编码：${row.product_code}`, colSpan: 3, rowSpan: 1, styles: { halign : 'center', fillColor: '#FFFFFF',textColor: '#333333', fontSize: 14, lineWidth: 0 } }, 
-            { content: `产品名称：${row.product_name}`, colSpan: 3, rowSpan: 1, styles: { halign : 'center', fillColor: '#FFFFFF',textColor: '#333333', fontSize: 14, lineWidth: 0 } }, 
-            { content: `生产订单：${row.notice}`, colSpan: 3, rowSpan: 1, styles: { halign : 'right', fillColor: '#FFFFFF',textColor: '#333333', fontSize: 14, lineWidth: 0 } }, 
-          ],
-          ['序号', '部件编码', '部件名称', '工艺编码', '工艺名称', '加工要求', '单位', '委外数量', '加工单价', '币别', '要求交期']
-        ]
-        const data = {
-          date: nowDate.value,
-          userName: user.name,
-          no: no.value ? no.value : printNo.value,
-          name: '委外加工单'
-        }
+        const head = [ `供应商：${row.supplier_abbreviation}`, `产品编码：${row.product_code}`, `产品名称：${row.product_name}`, `生产订单：${row.notice}`, ]
+        const head2 = [['序号', '部件编码', '部件名称', '工艺编码', '工艺名称', '加工要求', '单位', '委外数量', '加工单价', '币别', '要求交期']]
         const body = row.order.map((e, index) => {
           const arr = [index + 1, e.processBom.part.part_code, e.processBom.part.part_name, e.processChildren.process.process_code, e.processChildren.process.process_name, e.ment, e.unit, e.number, e.price,e.transaction_currency,e.delivery_time]
           return arr
         })
-        setPrint(head, body, data, [2,3,3,3])
+        const data = {
+          no: no.value ? no.value : printNo.value,
+          name: '委外加工单'
+        }
+        const foot = [
+          '核准：', '审查：', `制表：${user.name}`, `日期：${nowDate.value}`
+        ]
+        setPrint(head, head2, body, data, foot)
       }else{
         ElMessage.error('暂无可打印的数据')
       }
@@ -126,7 +113,7 @@ export default defineComponent({
             // ),
             default: () => (
               <>
-                <ElTable ref={ expandableTable } data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } onSelectionChange={ (select) => handleSelectionChange(select) } onRowClick={ (row, column) => handleRowClick(row, column) }>
+                <ElTable ref={ expandableTable } data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 196}px)` } onSelectionChange={ (select) => handleSelectionChange(select) } onRowClick={ (row, column) => handleRowClick(row, column) }>
                   <ElTableColumn type="expand" width="1">
                     {({ row }) => (
                       <ElTable data={ row.order } border stripe>

@@ -43,16 +43,16 @@ export default defineComponent({
           default: () => (
             <ElRow>
               <ElCol md={ 6 } xl={ 6 } class="text-center mb-4">
-                <ElStatistic title="采购单" value={ dataObj.value.materialMent } valueStyle={{ fontSize: '32px', fontWeight: 'blod', color: dataObj.value.materialMent > 0 ? "red" : '' }} onClick={ () => goToDo('/purchase/purchase-order', 'PurchaseOrder') } />
+                <ElStatistic title="采购单" value={ dataObj.value.materialMent } valueStyle={{ fontSize: '32px', fontWeight: 'blod', color: dataObj.value.materialMent > 0 ? "red" : '' }} onClick={ () => goToDo('/purchase/scription-order', 'ScriptionOrder') } />
               </ElCol>
               <ElCol md={ 6 } xl={ 6 } class="text-center mb-4">
-                <ElStatistic title="委外加工单" value={ dataObj.value.outsourcingOrder } valueStyle={{ fontSize: '32px', fontWeight: 'blod', color: dataObj.value.outsourcingOrder > 0 ? "red" : '' }} onClick={ () => goToDo('/outsourcing/outsourcing-order', 'OutsourcingOrder') } />
+                <ElStatistic title="委外加工单" value={ dataObj.value.outsourcingOrder } valueStyle={{ fontSize: '32px', fontWeight: 'blod', color: dataObj.value.outsourcingOrder > 0 ? "red" : '' }} onClick={ () => goToDo('/outsourcing/outscription-order', 'OutscriptionOrder') } />
               </ElCol>
               <ElCol md={ 6 } xl={ 6 } class="text-center mb-4">
-                <ElStatistic title="材料出入库" value={ dataObj.value.materialOrder } valueStyle={{ fontSize: '32px', fontWeight: 'blod', color: dataObj.value.materialOrder > 0 ? "red" : '' }} onClick={ () => goToDo('/warehouse/material-house', 'MaterialHouse') } />
+                <ElStatistic title="材料出入库" value={ dataObj.value.materialOrder } valueStyle={{ fontSize: '32px', fontWeight: 'blod', color: dataObj.value.materialOrder > 0 ? "red" : '' }} onClick={ () => goToDo('/warehouse/material-house-Scription', 'MaterialHouseScription') } />
               </ElCol>
               <ElCol md={ 6 } xl={ 6 } class="text-center mb-4">
-                <ElStatistic title="成品出入库" value={ dataObj.value.productOrder } valueStyle={{ fontSize: '32px', fontWeight: 'blod', color: dataObj.value.productOrder > 0 ? "red" : '' }} onClick={ () => goToDo('/warehouse/product-house', 'ProductHouse') } />
+                <ElStatistic title="成品出入库" value={ dataObj.value.productOrder } valueStyle={{ fontSize: '32px', fontWeight: 'blod', color: dataObj.value.productOrder > 0 ? "red" : '' }} onClick={ () => goToDo('/warehouse/product-house-scription', 'ProductHouseScription') } />
               </ElCol>
             </ElRow>
           )

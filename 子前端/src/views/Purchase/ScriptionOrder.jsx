@@ -353,7 +353,7 @@ export default defineComponent({
     // 批量采购单确认
     const handleProcurementAll = () => {
       const json = allSelect.value.filter(e => e.status && e.status == 1 && e.is_buying == 1)
-      if(!json.length) return ElMessage.error('请选择采购作业')
+      if(!json.length) return ElMessage.error('暂无可操作确认的数据')
       const ids = json.map(e => e.id)
 
       ElMessageBox.confirm('是否确认采购单？', '提示', {
@@ -417,6 +417,11 @@ export default defineComponent({
     }
     // 单个提交本地数据进行审批
     const handleStatusData = async (row) => {
+      for(let key in row){
+        if(row[key] === '' || row[key] === undefined || row[key] === null){
+          row[key] = null
+        }
+      }
       const data = getFormData(row)
       setApiData([data])
     }
@@ -752,7 +757,11 @@ export default defineComponent({
                           // 如果当前用户有审批权限，获取当前这条数据中，该用户的审批步骤
                           const rowApproval = isApproval ? row.approval.find(o => o.user_id === approvalUser.user_id) : null;
                           // 查询这条数据相对当前用户来说，状态是否可以修改
-                          const isRowStatus = row.status === undefined || row.status === 2 || row.status === 3 && row.is_buying === 1 && row.user_id === user.id
+                          const { apply_id, is_buying, status } = row;
+                          const isUserApplied = apply_id === user.id && is_buying === 1;
+                          const isStatusValid = status === 2 || status === 3;
+                          const isRowStatus = status === undefined || (isUserApplied && isStatusValid);
+                          
                           if(isRowStatus){
                             dom.push(
                               <>

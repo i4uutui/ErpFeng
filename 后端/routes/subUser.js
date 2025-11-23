@@ -724,7 +724,7 @@ router.post('/approval_flow', authMiddleware, async (req, res) => {
  *           type: string
  */
 router.post('/handleApproval', authMiddleware, async (req, res) => {
-  const { data, action, ware_id } = req.body;
+  const { data, action, ware_id, source_type } = req.body;
   const { id: userId, company_id, name } = req.user;
 
   if(data.length == 0) return res.json({ code: 401, message: '请选择需要审批的数据' })
@@ -735,14 +735,13 @@ router.post('/handleApproval', authMiddleware, async (req, res) => {
       status: 0,
     },
     include: [
-      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], separate: true, }
+      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'material_warehouse', company_id, type: source_type }, separate: true, }
     ],
     order: [
       ['created_at', 'DESC']
     ],
   })
   const warehouse = result.map(e => e.toJSON())
-
   let approval = []
   let approvalData = [] // 储存需要放入库存的数据
   const dataValue = warehouse.map(e => {
@@ -764,7 +763,6 @@ router.post('/handleApproval', authMiddleware, async (req, res) => {
     }
     return e
   })
-
   if(approvalData.length){
     // 获取仓库列表数据
     const wareData = await SubWarehouseContent.findAll({

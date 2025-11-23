@@ -1,16 +1,9 @@
-import { defineComponent, nextTick, onMounted, ref, computed } from 'vue'
+import { defineComponent, nextTick, onMounted, ref } from 'vue'
 import request from '@/utils/request';
 import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
 import { getPageHeight } from '@/utils/tool';
-import html2pdf from 'html2pdf.js';
-import WinPrint from '@/components/print/winPrint';
-// import { exportPDF } from '@/utils/exportPDF';
-
-// import { jsPDF } from "jspdf";
-// import  { applyPlugin } from 'jspdf-autotable'
-// applyPlugin ( jsPDF )
-// import { arial } from '@/utils/font/arial.js';
+import { setPrint } from '@/utils/workPrint';
 
 export default defineComponent({
   setup(){
@@ -19,15 +12,7 @@ export default defineComponent({
     let tableData = ref([])
     let noticeList = ref([])
     let notice_id = ref('')
-    let setPdfBlobUrl = ref('')
-    const noticeNumber = computed(() => {
-      const row = noticeList.value.find(o => o.notice_id == notice_id.value)
-      return row?.notice.notice
-    })
-    let isPrint = ref(false)
     let printers = ref([]) //打印机列表
-    let printVisible = ref(false)
-    let printDataIds = ref([]) // 需要打印的数据的id
 
     onMounted(() => {
       nextTick(async () => {
@@ -57,57 +42,23 @@ export default defineComponent({
     const onPrint = async () => {
       const list = tableData.value
       if(!list.length) return ElMessage.error('请选择需要打印的数据')
-
-      const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
-
-      // const doc = new jsPDF()
-      // doc.addFileToVFS("../../utils/font/arial.ttf", arial);
-      // doc.addFont("../../utils/font/arial.ttf", "arial", "normal");
-      // doc.setFont('arial');
-      // doc.autoTable( { html : '#print-table' } ) 
-      // doc.save ( 'table.pdf' )
-
-
-
-      // const dataUrl = await exportPDF(printTable.innerHTML)
-      // setPdfBlobUrl.value = dataUrl
-      // printVisible.value = true
-      // return
-
-
-      const opt = {
-        margin: 10,
-        filename: 'workOrder.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        pagebreak: {
-          mode: 'avoid-all', // 自动分页
-          before: 'table-header',
-          // margin: 10 // 分页后页边距，避免表头与页边距重叠
-        },
-        onclose: (e) => {
-          console.log(e);
-        },
-        html2canvas: { 
-          scale: 2, // 提高清晰度（默认1，2倍更清晰）
-          useCORS: true, // 允许跨域图片
-          allowTaint: true, // 允许有污染的图片（跨域但无 CORS 时）
-          logging: false,
-          letterRendering: true,
-        }, // 保证清晰度
-        jsPDF: {
-          unit: 'mm',
-          format: 'a4',
-          orientation: 'landscape',
-          putOnlyUsedFonts: true,
-          compress: true
+      const body = list.map((e, index) => {
+        return {
+          part_code: e.part_code,
+          part_name: e.part_name,
+          out_number: e.out_number,
+          images: e.bom.children.map(e => ({ url: e.qr_code, title: `${e.equipment.cycle.name}:${e.process.process_name}` }))
         }
-      };
-      // 生成 PDF 并转为 Blob
-      html2pdf().from(printTable).set(opt).output('blob').then(async pdfBlob => {
-        let urlTwo = URL.createObjectURL(pdfBlob);
-        setPdfBlobUrl.value = urlTwo
-        printVisible.value = true
-      }); 
+      })
+      const row = noticeList.value.find(o => o.id == notice_id.value)
+      const notice = `生产订单号：${row.notice}`
+      const product_code = `产品编码：${tableData.value[0]?.product_code}`
+      const product_name = `产品名称：${tableData.value[0]?.product_name}`
+      const drawing = `工程图号：${tableData.value[0]?.drawing}`
+      const delivery_time = `客户交期：${tableData.value[0]?.notice.delivery_time}`
+      const head = [notice, product_code, product_name, drawing, delivery_time]
+      
+      setPrint(head, body)
     }
     
     return() => (
@@ -165,64 +116,6 @@ export default defineComponent({
                     }}
                   </ElTableColumn>
                 </ElTable>
-                <ElDialog v-model={ printVisible.value } title="打印预览" width="900px" destroyOnClose>
-                  {{
-                    default: () => (
-                      <WinPrint printType="ES" url={ setPdfBlobUrl.value } printList={ printers.value } onClose={ () => printVisible.value = false } dataIds={ printDataIds.value } />
-                    ),
-                  }}
-                </ElDialog>
-                <div class="printTable" id='totalTable2'>
-                  <div id="printTable">
-                    <table class="print-table" id='print-table' style={{ width: '100%', borderCollapse: 'collapse' }}>
-                      <thead>
-                        <tr>
-                          <th colspan="4" class="title-cell">
-                            <div class="popTitle" style={{ textAlign: 'center', fontSize: '36px' }}>派工单</div>
-                          </th>
-                        </tr>
-                        <tr>
-                          <th colspan="4" class="header-cell">
-                            <div class="flex row-between print-header">
-                              <div>生产订单号：{ noticeNumber.value }</div>
-                              <div>产品编码：{ tableData.value[0]?.product_code }</div>
-                              <div>产品名称：{ tableData.value[0]?.product_name }</div>
-                              <div>工程图号：{ tableData.value[0]?.product_drawing }</div>
-                              <div>客户交期：{ tableData.value[0]?.delivery_time }</div>
-                            </div>
-                          </th>
-                        </tr>
-                        <tr class="table-header">
-                          <th>部件编码</th>
-                          <th>部件名称</th>
-                          <th>生产数量</th>
-                          <th>派工二维码</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {tableData.value.map((e, rowIndex) => (
-                          <tr class="table-row" key={ rowIndex } style="page-break-inside: avoid;">
-                            <td>{ e.part_code }</td>
-                            <td>{ e.part_name }</td>
-                            <td>{ e.out_number }</td>
-                            <td>
-                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', padding: '5px 0' }}>
-                                { 
-                                  e.bom.children.map((o, qrIndex) => (
-                                    <div key={ qrIndex } style={{ marginRight: '10px', width: '80px', height: '120px', pageBreakInside: 'avoid' }}>
-                                      <img src={ o.qr_code } width={ 100 } height={ 100 } />
-                                      <div style={{ textAlign: 'center', fontSize: '12px' }}>{ o.equipment.cycle.name }:{o.process.process_name}</div>
-                                    </div>
-                                  )) 
-                                }
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
               </>
             )
           }}

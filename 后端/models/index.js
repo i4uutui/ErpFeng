@@ -14,6 +14,7 @@ const SubConstType = require('./SubConstType.js') // 仓库类型
 const SubWarehouseCycle = require('./SubWarehouseCycle.js') // 仓库类型表
 const SubWarehouseContent = require('./SubWarehouseContent.js') // 仓库列表数据表
 const SubWarehouseApply = require('./SubWarehouseApply.js') // 出库入库申请表
+const SubWarehouseOrder = require('./SubWarehouseOrder.js') // 仓库出入库单
 const SubProductNotice = require('./SubProductNotice.js') // 生产通知单信息表
 const SubProductQuotation = require('./SubProductQuotation.js') // 产品报价信息表
 const SubCustomerInfo = require('./SubCustomerInfo.js') // 客户信息基础信息表
@@ -137,6 +138,9 @@ SubMaterialOrder.hasMany(SubMaterialMent, { foreignKey: 'order_id', as: 'order' 
 subOutscriptionOrder.belongsTo(SubOutsourcingOrder, { foreignKey: 'order_id', as: 'out' })
 SubOutsourcingOrder.hasMany(subOutscriptionOrder, { foreignKey: 'order_id', as: 'order' })
 
+SubWarehouseOrder.belongsTo(SubWarehouseCycle, { foreignKey: 'house_id', as: 'house' })
+SubWarehouseOrder.hasMany(SubWarehouseApply, { foreignKey: 'order_id', as: 'order' })
+
 module.exports = {
   Op,
   sequelize,
@@ -153,6 +157,7 @@ module.exports = {
   SubWarehouseCycle,
   SubWarehouseContent,
   SubWarehouseApply,
+  SubWarehouseOrder,
   SubProductNotice,
   SubProductQuotation,
   SubCustomerInfo,

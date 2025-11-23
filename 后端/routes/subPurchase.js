@@ -828,47 +828,6 @@ router.get('/get_gurchase_order', authMiddleware, async (req, res) => {
 
 /**
  * @swagger
- * /api/setPurchaseOrderNo:
- *   get:
- *     summary: 设置采购单的no编码
- *     tags:
- *       - 采购单(Purchase)
- */
-router.post('/setPurchaseOrderNo', authMiddleware, async (req, res) => {
-  const { no, id } = req.body
-  const { id: userId, company_id } = req.user;
-
-  await SubMaterialOrder.update({ no }, { where: { id } })
-
-  res.json({ code: 200, message: '编码配置成功' })
-})
-
-/**
- * @swagger
- * /api/sub_no_encoding:
- *   get:
- *     summary: 获取no编码
- *     tags:
- *       - 采购单(Purchase)
- */
-router.get('/sub_no_encoding', authMiddleware, async (req, res) => {
-  const { printType } = req.query;
-  const { company_id } = req.user;
-
-  const lastRecord = await SubNoEncoding.findOne({
-    where: {
-      print_type: printType,
-      company_id
-    },
-    attributes: ['id', 'no', 'print_type'],
-    order: [['id', 'DESC']],
-    limit: 1
-  })
-  res.json({ code: 200, data: lastRecord })
-}) 
-
-/**
- * @swagger
  * /api/printers:
  *   get:
  *     summary: 获取打印机列表

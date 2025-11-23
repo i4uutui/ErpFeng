@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const dayjs = require('dayjs')
-const { SubWarehouseContent, SubWarehouseApply, SubApprovalStep, SubApprovalUser, Op, SubProductNotice } = require('../models')
+const { SubWarehouseContent, SubWarehouseApply, SubApprovalStep, SubApprovalUser, Op, SubProductNotice, SubWarehouseOrder, SubWarehouseCycle } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { isInteger, PreciseMath } = require('../middleware/tool')
@@ -96,7 +96,7 @@ router.post('/warehouse_apply', authMiddleware, async (req, res) => {
   if(type) whereObj.type = type
   if(plan_id) whereObj.plan_id = plan_id
   if(item_id) whereObj.item_id = item_id
-  if(status === '' || status === undefined) whereObj.status = [0, 2]
+  if(status === '' || status === undefined) whereObj.status = [0, 2, 3]
   if(house_id || operate || plan_id || item_id){
     delete whereObj.status
   }
@@ -163,11 +163,26 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
   const yesIdList = [];
 
   const dataValue = data.map(e => {
-    const { id, buy_price = 0, quantity = 0, plan_id = null, buyPrint_id = null, sale_id = null, ...rest } = item
+    const { id, buy_price = 0, quantity = 0, plan_id = null, buyPrint_id = null, sale_id = null, ...rest } = e
     const total_price = buy_price && quantity ? PreciseMath.mul(quantity, buy_price) : 0
 
-    const record = { ...rest, id, company_id, user_id: userId, total_price, plan_id, buy_price, quantity, buyPrint_id, sale_id, apply_id: userId, apply_name: name, apply_time: now, status: 0, }
-
+    const record = {
+      ...rest,
+      id,
+      company_id,
+      user_id: userId,
+      total_price,
+      plan_id: plan_id ? plan_id : null,
+      buy_price: buy_price ? buy_price : 0,
+      quantity: quantity ? quantity : 0,
+      buyPrint_id: null,
+      sale_id: sale_id ? sale_id : null,
+      apply_id: userId,
+      apply_name: name,
+      apply_time: now,
+      status: 0
+    }
+    
     if (id){
       yesIdList.push(record)
     }else{
@@ -175,41 +190,46 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
     }
     return record
   })
-  const updateFields = ['company_id', 'user_id', 'total_price', 'plan_id', 'buy_price', 'quantity', 'apply_id', 'apply_name', 'apply_time', 'status']
-  const [noResult, yesResult] = await Promise.all([
-    noIdList.length
-      ? SubWarehouseApply.bulkCreate(noIdList, { updateOnDuplicate: updateFields })
-      : [],
-    yesIdList.length
-      ? SubWarehouseApply.bulkCreate(yesIdList, { updateOnDuplicate: updateFields })
-      : []
-  ]);
+  
+  const updateFields = ['company_id', 'user_id', 'total_price', 'plan_id', 'buy_price', 'quantity', 'buyPrint_id', 'sale_id', 'apply_id', 'apply_name', 'apply_time', 'status']
+  try {
+    const [noResult, yesResult] = await Promise.all([
+      noIdList.length
+        ? SubWarehouseApply.bulkCreate(noIdList, { updateOnDuplicate: updateFields })
+        : [],
+      yesIdList.length
+        ? SubWarehouseApply.bulkCreate(yesIdList, { updateOnDuplicate: updateFields })
+        : []
+    ]);
 
-  // 因为步骤有id，所以先修改有id的数据
-  const yesApprovalList = yesIdList.flatMap(item => item.approval || []).map(id => ({
-    id, status: 0
-  }));
-  if(yesApprovalList.length){
-    await SubApprovalUser.bulkCreate(yesApprovalList, { updateOnDuplicate: ['status'] })
-  }
+    // 因为步骤有id，所以先修改有id的数据
+    const yesApprovalList = yesIdList.flatMap(item => item.approval || []).map(id => ({
+      id, status: 0
+    }));
+    if(yesApprovalList.length){
+      await SubApprovalUser.bulkCreate(yesApprovalList, { updateOnDuplicate: ['status'] })
+    }
 
-  // 创建审批流程
-  const resData = noResult.flatMap(e => {
-    const item = e.toJSON()
-    return stepList.map(o => {
-      const { id, ...newData } = o;
-      return {
-        ...newData,
-        source_id: item.id, 
-        user_time: null,
-        status: 0,
-      };
+    // 创建审批流程
+    const resData = noResult.flatMap(e => {
+      const item = e.toJSON()
+      return stepList.map(o => {
+        const { id, ...newData } = o;
+        return {
+          ...newData,
+          source_id: item.id, 
+          user_time: null,
+          status: 0,
+        };
+      })
     })
-  })
-  await SubApprovalUser.bulkCreate(resData, {
-    updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status']
-  })
-  res.json({ message: '提交成功', code: 200 });
+    await SubApprovalUser.bulkCreate(resData, {
+      updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status']
+    })
+    res.json({ message: '提交成功', code: 200 });
+  } catch (error) {
+    console.log(error);
+  }
 })
 /**
  * @swagger
@@ -380,6 +400,125 @@ router.put('/set_wareHouser', authMiddleware, async (req, res) => {
   }, { where: { id } })
   
   res.json({ msg: "修改成功", code: 200 });
+})
+
+/**
+ * @swagger
+ * /api/handleMaterialIsBuying:
+ *   post:
+ *     summary: 出入库单确认
+ *     tags:
+ *       - 仓库管理(WareHouse)
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ */
+router.post('/handleMaterialIsBuying', authMiddleware, async (req, res) => {
+  const { ids } = req.body
+  const { id: userId, company_id } = req.user;
+
+  if(!ids.length) return res.json({ code: 401, message: '请选择出入库作业' })
+
+  const subMaterialMents = await SubWarehouseApply.findAll({
+    where: { id: ids, company_id, is_buying: 1 },
+    raw: true
+  })
+  // 校验：选中的出入库作业是否存在（避免无效ID）
+  if (subMaterialMents.length !== ids.length) {
+    const validIds = subMaterialMents.map(item => item.id);
+    const invalidIds = ids.filter(id => !validIds.includes(id));
+    return res.json({ 
+      code: 401, 
+      message: `部分出入库作业不存在或已生成采购单，请检查` 
+    });
+  }
+
+  const supplierGroups = subMaterialMents.reduce((result, item) => {
+    const groupKey = item.house_id;
+    if (!result[groupKey]) {
+      // 初始化分组：存储仓库信息 + 关联的出入库作业IDs
+      result[groupKey] = {
+        ware_id: item.ware_id,
+        house_id: item.house_id,
+        subMaterialIds: [item.id], // 关联的出入库作业ID数组
+        company_id,
+        user_id: userId,
+      };
+    } else {
+      // 同一仓库ID：追加出入库作业ID
+      result[groupKey].subMaterialIds.push(item.id);
+    }
+    return result;
+  }, {});
+  const groups = Object.values(supplierGroups);
+  
+  // 批量创建出入库单
+  const purchaseOrders = await SubWarehouseOrder.bulkCreate(groups,
+    { returning: true } // 返回创建后的完整数据（包含自动生成的id）
+  );
+
+  const orderSubMaterialMap = purchaseOrders.map((order, index) => ({
+    orderId: order.id,
+    subMaterialIds: groups[index].subMaterialIds // 一一对应分组的采购作业IDs
+  }));
+
+  // 批量更新采购作业状态
+  const updateTasks = orderSubMaterialMap.map(({ orderId, subMaterialIds }) =>
+    SubWarehouseApply.update(
+      { is_buying: 0, order_id: orderId },
+      { where: { id: subMaterialIds, company_id } }
+    )
+  );
+  await Promise.all(updateTasks);
+
+  res.json({ code: 200, message: '出入库单确认成功' })
+})
+
+/**
+ * @swagger
+ * /api/getWareHouseList:
+ *   post:
+ *     summary: 获取材料/部件/成品出入库单
+ *     tags:
+ *       - 仓库管理(WareHouse)
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ */
+router.get('/getWareHouseList', authMiddleware, async (req, res) => {
+  const { page = 1, pageSize = 10, ware_id } = req.query;
+  const offset = (page - 1) * pageSize;
+  const { id: userId, company_id } = req.user;
+
+  const { count, rows } = await SubWarehouseOrder.findAndCountAll({
+    where: {
+      company_id,
+      ware_id
+    },
+    attributes: ['id', 'ware_id', 'house_id', 'no', 'created_at'],
+    include: [
+      { model: SubWarehouseCycle, as: 'house', attributes: ['id', 'ware_id', 'name'] },
+      { model: SubWarehouseApply, as: 'order', attributes: ['id', 'operate', 'type', 'plan', 'code', 'name', 'quantity', 'model_spec', 'other_features', 'buy_price', 'total_price', 'apply_name', 'apply_time'] }
+    ],
+    order: [['id', 'ASC']],
+    distinct: true,
+    limit: parseInt(pageSize),
+    offset
+  })
+
+  const totalPages = Math.ceil(count / pageSize);
+  const result = rows.map(e => e.toJSON())
+
+  res.json({ 
+    data: formatArrayTime(result), 
+    total: count, 
+    totalPages, 
+    currentPage: parseInt(page), 
+    pageSize: parseInt(pageSize),
+    code: 200 
+  });
 })
 
 module.exports = router;

@@ -263,13 +263,12 @@ router.get('/outsourcing_order', authMiddleware, async (req, res) => {
     include: [
       { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'outsourcing_order', company_id }, separate: true, },
       { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_abbreviation', 'supplier_code'], where: { ...whereSupplier } },
-      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice', 'sale_id'], where: { ...whereNotice }, include: [{ model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number', 'unit', 'delivery_time'] }] },
+      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice', 'sale_id'], where: { ...whereNotice }, include: [{ model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number', 'unit', 'delivery_time'] }, { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing', 'model', 'specification'] }] },
       {
         model: SubProcessBom,
         as: 'processBom',
         attributes: ['id', 'product_id', 'part_id', 'archive'],
         include: [
-          { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing', 'model', 'specification'] },
           { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
         ]
       },
@@ -686,22 +685,6 @@ router.get('/get_outsourcing_order', authMiddleware, async (req, res) => {
   });
 })
 
-/**
- * @swagger
- * /api/setOutsourcingNo:
- *   get:
- *     summary: 设置采购单的no编码
- *     tags:
- *       - 委外管理(Outsourcing)
- */
-router.post('/setOutsourcingNo', authMiddleware, async (req, res) => {
-  const { no, id } = req.body
-  const { id: userId, company_id } = req.user;
-
-  await SubOutsourcingOrder.update({ no }, { where: { id } })
-
-  res.json({ code: 200, message: '编码配置成功' })
-})
 
 
 module.exports = router;

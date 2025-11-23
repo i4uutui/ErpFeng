@@ -501,36 +501,62 @@ const routes = [
         }
       },
       {
-        path: '/warehouse/material-house',
-        name: 'MaterialHouse',
-        component: () => import('@/views/Warehouse/MaterialHouse.jsx'),
+        path: '/warehouse/material-house-Scription',
+        name: 'MaterialHouseScription',
+        component: () => import('@/views/Warehouse/MaterialHouseScription.jsx'),
         meta: {
-          title: '材料出入库',
+          title: '材料出入库作业',
           parent: '仓库管理',
           menu: true,
           buttons: [
-            { code: 'MaterialHouse:addIn', label: '新增入库单' },
-            { code: 'MaterialHouse:addOut', label: '新增出库单' },
-            { code: 'MaterialHouse:edit', label: '修改' },
-            { code: 'MaterialHouse:set', label: '出入库提交' },
-            { code: 'MaterialHouse:print', label: '打印' },
+            { code: 'MaterialHouseScription:addIn', label: '新增入库单' },
+            { code: 'MaterialHouseScription:addOut', label: '新增出库单' },
+            { code: 'MaterialHouseScription:edit', label: '修改' },
+            { code: 'MaterialHouseScription:set', label: '出入库提交' },
+            { code: 'MaterialHouseScription:buy', label: '出入库单确认' },
           ]
         }
       },
       {
-        path: '/warehouse/product-house',
-        name: 'ProductHouse',
-        component: () => import('@/views/Warehouse/ProductHouse.jsx'),
+        path: '/warehouse/material-ware',
+        name: 'MaterialHouse',
+        component: () => import('@/views/Warehouse/MaterialHouse.jsx'),
         meta: {
-          title: '成品出入库',
+          title: '材料出入库单',
           parent: '仓库管理',
           menu: true,
           buttons: [
-            { code: 'ProductHouse:addIn', label: '新增入库单' },
-            { code: 'ProductHouse:addOut', label: '新增出库单' },
-            { code: 'ProductHouse:edit', label: '修改' },
-            { code: 'ProductHouse:set', label: '出入库提交' },
-            { code: 'ProductHouse:print', label: '打印' },
+            { code: 'MaterialHouse:print', label: '出入库单打印' },
+          ]
+        }
+      },
+      {
+        path: '/warehouse/product-house-scription',
+        name: 'ProductHouseScription',
+        component: () => import('@/views/Warehouse/ProductHouseScription.jsx'),
+        meta: {
+          title: '成品出入库作业',
+          parent: '仓库管理',
+          menu: true,
+          buttons: [
+            { code: 'ProductHouseScription:addIn', label: '新增入库单' },
+            { code: 'ProductHouseScription:addOut', label: '新增出库单' },
+            { code: 'ProductHouseScription:edit', label: '修改' },
+            { code: 'ProductHouseScription:set', label: '出入库提交' },
+            { code: 'ProductHouseScription:buy', label: '出入库单确认' },
+          ]
+        }
+      },
+      {
+        path: '/warehouse/product-ware',
+        name: 'ProductHouse',
+        component: () => import('@/views/Warehouse/ProductHouse.jsx'),
+        meta: {
+          title: '成品出入库单',
+          parent: '仓库管理',
+          menu: true,
+          buttons: [
+            { code: 'ProductHouse:print', label: '出入库单打印' },
           ]
         }
       },

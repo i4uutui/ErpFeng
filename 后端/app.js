@@ -39,6 +39,7 @@ app.use('/api', require('./routes/subOutSourcing')); // 委外管理
 app.use('/api', require('./routes/subProduction')); // 生产管理
 app.use('/api', require('./routes/subWareHouse')); // 仓库管理
 app.use('/api', require('./routes/subGetList')); // 获取其他列表相关的接口
+app.use('/api', require('./routes/subNoCode')); // 获取和设置相关编码
 app.use('/upload', require('./routes/upload'));
 
 const PORT = process.env.PORT || 3000;

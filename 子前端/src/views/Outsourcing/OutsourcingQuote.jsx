@@ -288,7 +288,7 @@ export default defineComponent({
             ),
             default: () => (
               <>
-                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }} onSelectionChange={ (select) => handleSelectionChange(select) }>
+                <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 234}px)` } style={{ width: "100%" }} onSelectionChange={ (select) => handleSelectionChange(select) }>
                   <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width="100" />
                   <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="100" />
                   <ElTableColumn prop="notice.notice" label="生产订单" width="120" />
