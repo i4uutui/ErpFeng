@@ -502,7 +502,7 @@ router.get('/getWareHouseList', authMiddleware, async (req, res) => {
       { model: SubWarehouseCycle, as: 'house', attributes: ['id', 'ware_id', 'name'] },
       { model: SubWarehouseApply, as: 'order', attributes: ['id', 'operate', 'type', 'plan', 'code', 'name', 'quantity', 'model_spec', 'other_features', 'buy_price', 'total_price', 'apply_name', 'apply_time'] }
     ],
-    order: [['id', 'ASC']],
+    order: [['no', 'ASC']],
     distinct: true,
     limit: parseInt(pageSize),
     offset

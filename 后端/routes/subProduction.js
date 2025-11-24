@@ -451,7 +451,7 @@ router.get('/workQrCode', authMiddleware, async (req, res) => {
                 model: SubEquipmentCode,
                 as: 'equipment',
                 attributes: ['id', 'equipment_name', 'equipment_code'],
-                include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }]
+                include: [{ model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name', 'sort'] }]
               },
             ]
           }

@@ -382,6 +382,12 @@ export default defineComponent({
     const handleProcurementAll = () => {
       const json = allSelect.value.filter(e => e.status && e.status == 1 && e.is_buying == 1)
       if(!json.length) return ElMessage.error('暂无可操作确认的数据')
+      function isAllTypesSame(array) {
+        const firstType = array[0].operate;
+        return array.every(item => item.operate === firstType);
+      }
+      if(!isAllTypesSame(json)) return ElMessage.error('请将出/入库单分开确认')
+
       const ids = json.map(e => e.id)
 
       ElMessageBox.confirm('是否确认出入库单？', '提示', {
@@ -540,38 +546,38 @@ export default defineComponent({
         }
       }
     }
-    const onPrint = async () => {
-      const list = allSelect.value.length ? allSelect.value : tableData.value
-      if(!list.length) return ElMessage.error('请选择需要打印的数据')
-      const canPrintData = list.filter(o => o.status != undefined && o.status == 1)
-      if(!canPrintData.length) return ElMessage.error('暂无可打印的数据或未审核通过')
+    // const onPrint = async () => {
+    //   const list = allSelect.value.length ? allSelect.value : tableData.value
+    //   if(!list.length) return ElMessage.error('请选择需要打印的数据')
+    //   const canPrintData = list.filter(o => o.status != undefined && o.status == 1)
+    //   if(!canPrintData.length) return ElMessage.error('暂无可打印的数据或未审核通过')
       
-      const printType = getPrintType()
-      await getNoLast(printType)
-      const ids = canPrintData.map(e => e.id)
-      printDataIds.value = ids
+    //   const printType = getPrintType()
+    //   await getNoLast(printType)
+    //   const ids = canPrintData.map(e => e.id)
+    //   printDataIds.value = ids
       
-      const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
-      const opt = {
-        margin: 10,
-        filename: 'table-print.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 }, // 保证清晰度
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-      };
-      // 生成 PDF 并转为 Blob
-      html2pdf().from(printTable).set(opt).output('blob').then(async pdfBlob => {
-        let urlTwo = URL.createObjectURL(pdfBlob);
-        setPdfBlobUrl.value = urlTwo
-        printVisible.value = true
-      }); 
-    }
-    const getPrintType = () => {
-      if(tableData.value.length){
-        return tableData.value[0].operate == 1 ? 'PI' : 'PO'
-      }
-      return ''
-    }
+    //   const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
+    //   const opt = {
+    //     margin: 10,
+    //     filename: 'table-print.pdf',
+    //     image: { type: 'jpeg', quality: 0.98 },
+    //     html2canvas: { scale: 2 }, // 保证清晰度
+    //     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    //   };
+    //   // 生成 PDF 并转为 Blob
+    //   html2pdf().from(printTable).set(opt).output('blob').then(async pdfBlob => {
+    //     let urlTwo = URL.createObjectURL(pdfBlob);
+    //     setPdfBlobUrl.value = urlTwo
+    //     printVisible.value = true
+    //   }); 
+    // }
+    // const getPrintType = () => {
+    //   if(tableData.value.length){
+    //     return tableData.value[0].operate == 1 ? 'PR' : 'PC'
+    //   }
+    //   return ''
+    // }
 
     return() => (
       <>
@@ -599,7 +605,7 @@ export default defineComponent({
                         <></>
                       }
                       <ElFormItem v-permission={ 'ProductHouseScription:buy' }>
-                        <ElButton type="primary" onClick={ () => handleProcurementAll() } style={{ width: '100px' }}> 出入库单确认 </ElButton>
+                        <ElButton type="primary" onClick={ () => handleProcurementAll() } style={{ width: '100px' }}> 批量确认 </ElButton>
                       </ElFormItem>
                     </>
                   ),
@@ -694,7 +700,7 @@ export default defineComponent({
                   </ElTableColumn>
                   <ElTableColumn prop="apply_name" label="申请人" width="90" />
                   <ElTableColumn prop="apply_time" label="申请时间" width="110" />
-                  <ElTableColumn label="操作" width="150" fixed="right">
+                  <ElTableColumn label="操作" width="210" fixed="right">
                     {{
                       default: ({ row }) => {
                         if(!isEmptyValue(row)){
@@ -866,6 +872,13 @@ export default defineComponent({
                   <ElSelect v-model={ form.value.item_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择产品编码" onChange={ (row) => productChange(row) }>
                     {productList.value.map((e, index) => e && (
                       <ElOption value={ e.id } label={ e.product_code } key={ index } />
+                    ))}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="产品名称">
+                  <ElSelect class="disabled" v-model={ form.value.item_id } multiple={false} disabled filterable remote remote-show-suffix valueKey="id" placeholder="请选择产品名称" onChange={ (row) => productChange(row) }>
+                    {productList.value.map((e, index) => e && (
+                      <ElOption value={ e.id } label={ e.product_name } key={ index } />
                     ))}
                   </ElSelect>
                 </ElFormItem>

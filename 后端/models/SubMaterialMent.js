@@ -185,6 +185,12 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
     defaultValue: 1,
     comment: '是否已生成采购单：1未生成，0已生成'
   },
+  is_houser: {
+    type: DataTypes.INTEGER(1),
+    allowNull: true,
+    defaultValue: 1,
+    comment: '是否已生成采购单：1未生成，0已生成'
+  },
   order_id: {
     type: DataTypes.INTEGER(11),
     allowNull: true,

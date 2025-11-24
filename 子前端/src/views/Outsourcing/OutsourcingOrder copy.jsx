@@ -519,7 +519,7 @@ export default defineComponent({
                   ),
                   right: () => (
                     <ElFormItem>
-                      <ElButton type="primary" onClick={ () => fetchProductList() }>筛选</ElButton>
+                      <ElButton type="primary" onClick={ () => fetchProductList() }>查询</ElButton>
                     </ElFormItem>
                   )
                 }}

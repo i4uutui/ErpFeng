@@ -667,7 +667,7 @@ export default defineComponent({
                         <></>
                       }
                       <ElFormItem v-permission={ 'ScriptionOrder:buy' }>
-                        <ElButton type="primary" onClick={ () => handleProcurementAll() } style={{ width: '100px' }}> 采购单确认 </ElButton>
+                        <ElButton type="primary" onClick={ () => handleProcurementAll() } style={{ width: '100px' }}> 批量确认 </ElButton>
                       </ElFormItem>
                     </>
                   ),
@@ -712,6 +712,9 @@ export default defineComponent({
                   <ElTableColumn label="状态" width='80'>
                     {({row}) => {
                       if(!isEmptyValue(row)){
+                        if(row.is_buying == 0){
+                          return '已采购'
+                        }
                         if(row.status == 1 || row.status == 3) return <span>{ statusType[row.status] }</span>
                         
                         // 判断当前用户是否有权限和审批记录，否则直接返回默认状态文案
@@ -839,7 +842,7 @@ export default defineComponent({
                     })}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="材料名称" prop="material_id">
+                <ElFormItem label="材料名称">
                   <el-input v-model={ form.value.material_name } readonly placeholder="请选择材料名称"></el-input>
                 </ElFormItem>
                 <ElFormItem label="供应商编码" prop="supplier_id">
@@ -847,7 +850,7 @@ export default defineComponent({
                     {supplierInfo.value.map((e, index) => <ElOption value={ e.id } label={ e.supplier_code } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="供应商名称" prop="supplier_id">
+                <ElFormItem label="供应商名称">
                   <el-input v-model={ form.value.supplier_abbreviation } readonly placeholder="请选择供应商名称"></el-input>
                 </ElFormItem>
                 <ElFormItem label="型号&规格" prop="model_spec">

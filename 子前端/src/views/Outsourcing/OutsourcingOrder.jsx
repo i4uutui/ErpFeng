@@ -61,8 +61,8 @@ export default defineComponent({
         if(row.no){
           no.value = row.no
         }else{
-          await getNoLast('TV')
-          await setPurchaseOrderNo(printNo.value, row.id, 'TV', 2)
+          await getNoLast('WW')
+          await setPurchaseOrderNo(printNo.value, row.id, 'WW', 2)
           await getGurchaseOrder()
         }
         const head = [ `供应商：${row.supplier_abbreviation}`, `产品编码：${row.product_code}`, `产品名称：${row.product_name}`, `生产订单：${row.notice}`, ]
@@ -131,7 +131,7 @@ export default defineComponent({
                     )}
                   </ElTableColumn>
                   {/* <ElTableColumn type="selection" width="55" /> */}
-                  <ElTableColumn prop="no" label="订单编号" />
+                  <ElTableColumn prop="no" label="委外单号" />
                   <ElTableColumn prop="notice" label="生产订单号">
                     {({row}) => {
                       const str = row.notice_id == 0 ? '非管控材料' : row.notice

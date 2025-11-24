@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, subOutscriptionOrder, SubMaterialMent, Op, SubNoEncoding, SubMaterialBom, SubMaterialBomChild, SubMaterialQuote, SubOutsourcingQuote } = require('../models');
+const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, subOutscriptionOrder, SubMaterialMent, Op, SubNoEncoding, SubMaterialBom, SubMaterialBomChild, SubMaterialQuote, SubOutsourcingQuote, SubMaterialOrder } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { getSaleCancelIds } = require('../middleware/tool');
@@ -523,10 +523,11 @@ router.get('/getOutsourcingQuote', authMiddleware, async (req, res) => {
  *       - 常用列表(GetList)
  */
 router.get('/getMaterialMent', authMiddleware, async (req, res) => {
-  const { company_id, print_id } = req.user;
+  const { company_id, print_id, id } = req.user;
   
   const whereObj = {}
   if(print_id) whereObj.print_id = print_id
+  if(id) whereObj.id = id
   const rows = await SubMaterialMent.findAll({
     where: {
       is_deleted: 1,
@@ -693,6 +694,40 @@ router.get('/getMaterialQuote', authMiddleware, async (req, res) => {
     item.name = `${item.supplier.supplier_code}:${item.supplier.supplier_abbreviation} - ${item.material.material_code}:${item.material.material_name}`
     return item
   })
+
+  res.json({ code: 200, data })
+})
+
+/**
+ * @swagger
+ * /api/getMaterialOrderList:
+ *   get:
+ *     summary: 获取采购单列表
+ *     tags:
+ *       - 常用列表(GetList)
+ */
+router.get('/getMaterialOrderList', authMiddleware, async (req, res) => {
+  const { id } = req.query
+  const { company_id } = req.user;
+
+  const whereObj = {}
+  if(id) whereObj.id = id
+  const result = await SubMaterialOrder.findAll({
+    where: {
+      company_id,
+      ...whereObj,
+      no: {
+        [Op.ne]: null,
+        [Op.ne]: ''
+      }
+    },
+    attributes: ['id', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'no', 'created_at'],
+    include: [
+      { model: SubMaterialMent, as: 'order', attributes: ['id', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'usage_unit', 'price', 'order_number', 'number', 'delivery_time', 'order_id', 'is_houser'] }
+    ],
+    order: [['id', 'ASC']],
+  })
+  const data = result.map(e => e.toJSON())
 
   res.json({ code: 200, data })
 })

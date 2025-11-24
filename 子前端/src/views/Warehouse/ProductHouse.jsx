@@ -76,11 +76,13 @@ export default defineComponent({
     const onPrint = async (row) => {
       if(row.order && row.order.length){
         let no = ref('')
+        const operate = row.order[0].operate
         if(row.no){
           no.value = row.no
         }else{
-          await getNoLast('SO')
-          await setPurchaseOrderNo(printNo.value, row.id, 'SO', 3)
+          const noType = operate == 1 ? 'PR' : 'PC'
+          await getNoLast(noType)
+          await setPurchaseOrderNo(printNo.value, row.id, noType, 3)
           await getGurchaseOrder()
         }
         const head = [ `仓库类别：成品仓`, `仓库名称：${ row.house.name }`, `统计周期：${ dateTime.value[0] } 至 ${dateTime.value[1]}`]
@@ -91,7 +93,7 @@ export default defineComponent({
         })
         const data = {
           no: no.value ? no.value : printNo.value,
-          name: '成品出/入库单'
+          name: operate == 1 ? '成品入库单' : '成品出库单'
         }
         const foot = [
           '核准：', '审查：', `制表：${user.name}`, `日期：${nowDate.value}`
@@ -161,7 +163,7 @@ export default defineComponent({
                     )}
                   </ElTableColumn>
                   {/* <ElTableColumn type="selection" width="55" /> */}
-                  <ElTableColumn prop="no" label="订单编号" />
+                  <ElTableColumn prop="no" label="出入库单号" />
                   <ElTableColumn label="仓库类型">
                     {({row}) => <span>成品仓</span>}
                   </ElTableColumn>

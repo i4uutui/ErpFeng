@@ -10,6 +10,7 @@ import "@/assets/css/landscape.scss"
 import html2pdf from 'html2pdf.js';
 import WinPrint from '@/components/print/winPrint';
 import HeadForm from '@/components/form/HeadForm';
+import deepClone from '@/utils/deepClone';
 
 export default defineComponent({
   setup(){
@@ -100,7 +101,7 @@ export default defineComponent({
       await getMaterialCode() // 获取材料编码
       await getHouseList() // 获取仓库名称
       await filterQuery()
-      await getNoEncoding() // 获取采购单号
+      await getMaterialOrderList() // 获取采购单列表
 
       getPrinters()
     })
@@ -123,11 +124,12 @@ export default defineComponent({
       })
       tableData.value = res.data
     }
-    // 获取单号列表
-    const getNoEncoding = async () => {
-      const res = await request.get('/api/getNoEncoding', { params: { printType: ["ES", 'TV'] } })
-      materialBuy.value = res.data.filter(o => o.print_type == 'ES')
-      outBuy.value = res.data.filter(o => o.print_type == 'TV')
+    // 获取采购单列表
+    const getMaterialOrderList = async () => {
+      const res = await request.get('/api/getMaterialOrderList')
+      if(res.code == 200){
+        materialBuy.value = res.data
+      }
     }
     // 获取常量
     const getConstType = async () => {
@@ -403,15 +405,22 @@ export default defineComponent({
       form.value.buy_price = data[0].price
     }
     // 获取出入库单列表
-    const buyChange = async (row) => {
-      const res = await request.get('/api/getMaterialMent', { params: { print_id: row.no } })
+    const buyChange = async (id) => {
+      const res = await request.get('/api/getMaterialOrderList', { params: { id } })
       const data = res.data
       planChange(data[0].supplier_id, 'supplier_abbreviation')
-      materialChange(data[0].material_id)
+      getMaterialList(data[0].order)
       form.value.plan_id = data[0].supplier_id
-      form.value.item_id = data[0].material_id
-      form.value.quantity = data[0].order_number
-      form.value.buy_price = data[0].price
+    }
+    // 选择采购单后，获取材料数据
+    const getMaterialList = async (order) => {
+      const arr = deepClone(order)
+      const list = arr.map(e => ({...e, id: e.material_id}))
+      materialList.value = list
+      const material = list.filter(o => o.is_houser == 1)[0]
+      form.value.item_id = material.id
+      form.value.quantity = material.number
+      form.value.buy_price = material.price
     }
     // 出入库单确认接口调用
     const handlePurchaseIsBuying = async (ids) => {
@@ -426,6 +435,12 @@ export default defineComponent({
     const handleProcurementAll = () => {
       const json = allSelect.value.filter(e => e.status && e.status == 1 && e.is_buying == 1)
       if(!json.length) return ElMessage.error('暂无可操作确认的数据')
+      function isAllTypesSame(array) {
+        const firstType = array[0].operate;
+        return array.every(item => item.operate === firstType);
+      }
+      if(!isAllTypesSame(json)) return ElMessage.error('请将出/入库单分开确认')
+
       const ids = json.map(e => e.id)
 
       ElMessageBox.confirm('是否确认出入库单？', '提示', {
@@ -465,6 +480,11 @@ export default defineComponent({
     }
     const materialChange = (value) => {
       const obj = materialList.value.find(e => e.id == value)
+      if(form.value.buyPrint_id){
+        form.value.quantity = obj.number
+        form.value.buy_price = obj.price
+        return
+      }
       form.value.code = obj.material_code
       form.value.name = obj.material_name
       form.value.model_spec = obj.model
@@ -484,6 +504,7 @@ export default defineComponent({
     }
     const handleClose = () => {
       dialogVisible.value = false
+      getMaterialCode()
       reset()
     }
     const reset = () => {
@@ -552,41 +573,41 @@ export default defineComponent({
         }
       }
     }
-    const onPrint = async () => {
-      const list = allSelect.value.length ? allSelect.value : tableData.value
-      if(!list.length) return ElMessage.error('请选择需要打印的数据')
-      const canPrintData = list.filter(o => o.status != undefined && o.status == 1)
-      if(!canPrintData.length) return ElMessage.error('暂无可打印的数据或未审核通过')
+    // const onPrint = async () => {
+    //   const list = allSelect.value.length ? allSelect.value : tableData.value
+    //   if(!list.length) return ElMessage.error('请选择需要打印的数据')
+    //   const canPrintData = list.filter(o => o.status != undefined && o.status == 1)
+    //   if(!canPrintData.length) return ElMessage.error('暂无可打印的数据或未审核通过')
 
-      const printType = getPrintType()
-      await getNoLast(printType)
-      const ids = canPrintData.map(e => e.id)
-      printDataIds.value = ids
+    //   const printType = getPrintType()
+    //   await getNoLast(printType)
+    //   const ids = canPrintData.map(e => e.id)
+    //   printDataIds.value = ids
       
-      const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
-      const opt = {
-        margin: 10,
-        filename: 'table-print.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        pagebreak: {
-          mode: ['avoid-all', 'css', 'avoid']
-        },
-        html2canvas: { scale: 2 }, // 保证清晰度
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-      };
-      // 生成 PDF 并转为 Blob
-      html2pdf().from(printTable).set(opt).output('blob').then(async pdfBlob => {
-        let urlTwo = URL.createObjectURL(pdfBlob);
-        setPdfBlobUrl.value = urlTwo
-        printVisible.value = true
-      }); 
-    }
-    const getPrintType = () => {
-      if(tableData.value.length){
-        return tableData.value[0].operate == 1 ? 'SI' : 'SO'
-      }
-      return ''
-    }
+    //   const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
+    //   const opt = {
+    //     margin: 10,
+    //     filename: 'table-print.pdf',
+    //     image: { type: 'jpeg', quality: 0.98 },
+    //     pagebreak: {
+    //       mode: ['avoid-all', 'css', 'avoid']
+    //     },
+    //     html2canvas: { scale: 2 }, // 保证清晰度
+    //     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    //   };
+    //   // 生成 PDF 并转为 Blob
+    //   html2pdf().from(printTable).set(opt).output('blob').then(async pdfBlob => {
+    //     let urlTwo = URL.createObjectURL(pdfBlob);
+    //     setPdfBlobUrl.value = urlTwo
+    //     printVisible.value = true
+    //   }); 
+    // }
+    // const getPrintType = () => {
+    //   if(tableData.value.length){
+    //     return tableData.value[0].operate == 1 ? 'MR' : 'MC'
+    //   }
+    //   return ''
+    // }
 
     return() => (
       <>
@@ -614,7 +635,7 @@ export default defineComponent({
                         <></>
                       }
                       <ElFormItem v-permission={ 'MaterialHouseScription:buy' }>
-                        <ElButton type="primary" onClick={ () => handleProcurementAll() } style={{ width: '100px' }}> 出入库单确认 </ElButton>
+                        <ElButton type="primary" onClick={ () => handleProcurementAll() } style={{ width: '100px' }}> 批量确认 </ElButton>
                       </ElFormItem>
                     </>
                   ),
@@ -714,7 +735,7 @@ export default defineComponent({
                   </ElTableColumn>
                   <ElTableColumn prop="apply_name" label="申请人" width="90" />
                   <ElTableColumn prop="apply_time" label="申请时间" width="110" />
-                  <ElTableColumn label="操作" width="150" fixed="right">
+                  <ElTableColumn label="操作" width="210" fixed="right">
                     {{
                       default: ({ row }) => {
                         if(!isEmptyValue(row)){
@@ -891,7 +912,14 @@ export default defineComponent({
                 <ElFormItem label="材料编码" prop="item_id">
                   <ElSelect v-model={ form.value.item_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料编码" onChange={ (row) => materialChange(row) }>
                     {materialList.value.map((e, index) => e && (
-                      <ElOption value={ e.id } label={ e.material_code } key={ index } />
+                      <ElOption value={ e.id } label={ e.material_code } disabled={ form.value.buyPrint_id ? !e.is_houser : false } key={ index } />
+                    ))}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="材料名称">
+                  <ElSelect class="disabled" v-model={ form.value.item_id } multiple={false} disabled filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料名称" onChange={ (row) => materialChange(row) }>
+                    {materialList.value.map((e, index) => e && (
+                      <ElOption value={ e.id } label={ e.material_name } key={ index } />
                     ))}
                   </ElSelect>
                 </ElFormItem>
@@ -899,7 +927,7 @@ export default defineComponent({
                   <ElInput v-model={ form.value.quantity } placeholder="请输入数量" />
                 </ElFormItem>
                 <ElFormItem label="单价" prop="buy_price">
-                  <ElInput v-model={ form.value.buy_price } placeholder="请输入单价" />
+                  <ElInput v-model={ form.value.buy_price } type="number" placeholder="请输入单价" />
                 </ElFormItem>
               </ElForm>
             ),

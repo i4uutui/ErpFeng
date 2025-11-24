@@ -522,7 +522,7 @@ export default defineComponent({
                         <></>
                       }
                       <ElFormItem v-permission={ 'OutscriptionOrder:buy' }>
-                        <ElButton type="primary" onClick={ () => handleProcurementAll() } style={{ width: '100px' }}> 加工单确认 </ElButton>
+                        <ElButton type="primary" onClick={ () => handleProcurementAll() } style={{ width: '100px' }}> 批量确认 </ElButton>
                       </ElFormItem>
                     </>
                   ),
@@ -546,7 +546,7 @@ export default defineComponent({
                   ),
                   right: () => (
                     <ElFormItem>
-                      <ElButton type="primary" onClick={ () => fetchProductList() }>筛选</ElButton>
+                      <ElButton type="primary" onClick={ () => fetchProductList() }>查询</ElButton>
                     </ElFormItem>
                   )
                 }}

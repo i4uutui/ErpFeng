@@ -160,7 +160,17 @@ const setPrint = (head, body) => {
 					}
 				},
 			});
-			pdf.save("表格含图片（自动换行）.pdf");
+			// pdf.save("表格含图片（自动换行）.pdf");
+			const pdfBlob = pdf.output('blob'); // 生成 Blob 流
+			const pdfUrl = URL.createObjectURL(pdfBlob);
+			
+			const iframe = document.createElement('iframe');
+			iframe.style.display = 'none';
+			document.body.appendChild(iframe);
+			iframe.src = pdfUrl;
+			setTimeout(() => {
+				iframe.contentWindow.print();
+			}, 100);
 		})
 		.catch(error => {
 			console.error("图片加载失败：", error);

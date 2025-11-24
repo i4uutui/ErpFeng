@@ -47,7 +47,7 @@ export default defineComponent({
           part_code: e.part_code,
           part_name: e.part_name,
           out_number: e.out_number,
-          images: e.bom.children.map(e => ({ url: e.qr_code, title: `${e.equipment.cycle.name}:${e.process.process_name}` }))
+          images: e.bom.children.map((e, index) => ({ url: e.qr_code, title: `${index + 1}-${e.equipment.cycle.sort}:${e.process.process_name}` }))
         }
       })
       const row = noticeList.value.find(o => o.id == notice_id.value)
@@ -105,7 +105,7 @@ export default defineComponent({
                               <div key={index} style={{ textAlign: 'center' }}>
                                 <img src={e.qr_code} width={120} height={120} style={{ display: 'block' }} />
                                 <div style={{ marginTop: '5px' }}>
-                                  {e.equipment?.cycle?.name}:{e.process?.process_name}
+                                  {e.equipment?.cycle?.sort}:{e.process?.process_name}
                                 </div>
                               </div>
                             ))}
