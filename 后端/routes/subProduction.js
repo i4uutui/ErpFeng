@@ -178,27 +178,34 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
     const callLoad = setCycleLoad(processedCycles, cased);
     const newCycles = setDateMore(baseJSON, callLoad, dateInfo, date_more);
     
-    // 记录newCycles里面的big有多少个true
-    const cyclesBigs = newCycles.reduce((counts, cycle) => {
-      // 遍历当前cycle的所有dateData条目
-      Object.values(cycle.dateData).forEach(data => {
-        if (data.big) {
-          counts.trueCount++;
-        } else {
-          counts.falseCount++;
+    let cyclesBigs = 0
+    newCycles.forEach(item => {
+      const { maxLoad, cycle } = item;
+      if (maxLoad == null || isNaN(Number(maxLoad))) return;
+      
+      // 遍历当前对象的cycle数组
+      cycle.forEach(cycleItem => {
+        const { load } = cycleItem;
+        // 处理load为null/空的情况，直接跳过
+        if (load == null || load === '') return;
+        
+        const loadNum = Number(load);
+        if (isNaN(loadNum)) return;
+        
+        // 判断load是否大于maxLoad
+        if (loadNum > maxLoad) {
+          cyclesBigs++;
         }
       });
-      return counts;
-    }, { trueCount: 0, falseCount: 0 })
-    
+    });
     const total = await SubProgressTotal.findOne({ where: { company_id }, raw: true })
     
     if(total){
-      if(total.number != cyclesBigs.trueCount){
-        await SubProgressTotal.update({ number: cyclesBigs.trueCount, company_id }, { where: { id: total.id } })
+      if(total.number != cyclesBigs){
+        await SubProgressTotal.update({ number: cyclesBigs, company_id }, { where: { id: total.id } })
       }
     }else{
-      await SubProgressTotal.create({ number: cyclesBigs.trueCount, company_id })
+      await SubProgressTotal.create({ number: cyclesBigs, company_id })
     }
 
     // 6. 响应数据精简

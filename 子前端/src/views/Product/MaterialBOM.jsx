@@ -333,7 +333,7 @@ export default defineComponent({
                   <ElTableColumn prop="product.product_code" label="产品编码" fixed="left" minWidth="100" />
                   <ElTableColumn prop="product.product_name" label="产品名称" fixed="left" minWidth="100" />
                   <ElTableColumn prop="product.drawing" label="工程图号" fixed="left" minWidth="100" />
-                  <ElTableColumn prop="sort" label="排序" fixed="left" minWidth="100" />
+                  <ElTableColumn prop="sort" label="排序" fixed="left" minWidth="60" />
                   <ElTableColumn prop="part.part_code" label="部件编码" fixed="left" minWidth="100" />
                   <ElTableColumn prop="part.part_name" label="部件名称" fixed="left" minWidth="100" />
                   {

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCycle, Op, SubSaleCancel, SubProgressBase, SubProgressCycle, SubProgressWork } = require('../models')
+const { SubCustomerInfo, SubProductQuotation, SubProductCode, SubPartCode, SubSaleOrder, SubProductNotice, SubProductionProgress, SubProcessBom, SubProcessBomChild, SubProcessCycle, Op, SubSaleCancel, SubProgressBase, SubProgressCycle, SubProgressWork, SubProcessCode, SubEquipmentCode } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { PreciseMath, getSaleCancelIds } = require('../middleware/tool');
@@ -436,6 +436,9 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
       sort: { [Op.gt]: 0 }
     },
     attributes: ['id'],
+    include: [
+      { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'cycle_id'] }
+    ],
     order: [['sort', 'ASC']]
   })
   if(allCycles.length == 0) return res.json({ message: '未配置制程组，请先配置生产制程组', code: 401 })
@@ -449,7 +452,22 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
     },
     attributes: ['id', 'archive', 'product_id', 'part_id', 'sort'],
     include: [
-      { model: SubProcessBomChild, as: 'children', attributes: ['id', 'time', 'process_index'] },
+      {
+        model: SubProcessBomChild,
+        as: 'children',
+        attributes: ['id', 'time', 'process_index', 'process_id', 'equipment_id'],
+        include: [
+          { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
+          {
+            model: SubEquipmentCode,
+            as: 'equipment',
+            attributes: ['id', 'equipment_code', 'equipment_name', 'cycle_id'],
+            include: [
+              { model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }
+            ]
+          }
+        ]
+      },
       { model: SubPartCode, as: 'part', attributes: ['id', 'part_code', 'part_name'] }
     ],
     order: [
@@ -460,8 +478,24 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
   const bomResult =  bom.map(e => e.toJSON())
   if(bomResult.length == 0) return res.json({ message: '该订单无工艺BOM，或工艺BOM未存档，暂时无法排产', code: 401 })
   
+  const uniqueCycleIds = new Set();
+  bomResult.forEach(boms => {
+    boms.children.forEach(child => {
+      const cycleId = child.equipment.cycle.id;
+      uniqueCycleIds.add(cycleId);
+    })
+  })
+  const idCycleArray = Array.from(uniqueCycleIds)
+  // 工艺BOM中的制程是否与生产制程一一对应
+  let isCycle = false
+  for(const item of cycles){
+    if(!idCycleArray.includes(item.id)){
+      isCycle = true
+      break;
+    }
+  }
+  if(isCycle) return res.json({ code: 401, message: '生产制程与工艺BOM不匹配，请检查' })
 
-  
   let progress = []
   let childProgress = []
   bomResult.forEach(item => {

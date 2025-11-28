@@ -36,6 +36,10 @@ const routes = [
           title: '常量设置',
           parent: '系统设置',
           menu: true,
+          buttons: [
+            { code: 'constact:add', label: '新增' },
+            { code: 'constact:edit', label: '修改' },
+          ]
         }
       },
       {

@@ -17,6 +17,7 @@ export default defineComponent({
     let temCycleList = ref([]) // 这个制程的数据是临时存的,用来修改预排交期时,做比对
     let specialDates = ref(new Set());
     let loading = ref(false)
+    let baseApi = ref([])
 
     // 查询tableData下的工序长度，确定表格中的工序显示的数量
     const maxBomLength = computed(() => {
@@ -46,7 +47,8 @@ export default defineComponent({
               start_date: item.start_date,
               delivery_time: item.notice?.delivery_time || ''
             }))
-            await getProgressCycle(base)
+            baseApi.value = base
+            await getProgressCycle()
           }else{
             loading.value = false
           }
@@ -57,8 +59,8 @@ export default defineComponent({
         if (!tableData.value.length) loading.value = false;
       }
     }
-    const getProgressCycle = async (base) => {
-      const jsonStr = JSON.stringify(base)
+    const getProgressCycle = async () => {
+      const jsonStr = JSON.stringify(baseApi.value)
       try {
         const res = await request.post('/api/get_progress_cycle', { base: jsonStr })
         if(res.code == 200){
@@ -159,7 +161,11 @@ export default defineComponent({
       const res = await request.put('/api/set_production_date', { params, type });
       if(res && res.code == 200){
         ElMessage.success('修改成功');
-        getProgressBase();
+        if(type == 'start_date'){
+          getProgressBase();
+        }else{
+          getProgressCycle();
+        }
       }
     }
     // 更新制程组的最短交货时间
@@ -169,7 +175,7 @@ export default defineComponent({
         sort_date
       }
       await request.put('/api/process_cycle', params);
-      getProgressBase();
+      getProgressCycle();
     }
     // 检查日期是否为特殊日期
     const isSpecialDate = (date) => {
@@ -440,7 +446,10 @@ export default defineComponent({
                         </VxeColgroup>
                         <VxeColgroup>
                           {{
-                            header: () => <ElInput v-model={ e.sort_date } style="width: 70px" onBlur={ () => sortDateBlur(e) } />,
+                            header: () => {
+                              const data = ref(e)
+                              return <ElInput v-model={ data.value.sort_date } style="width: 70px" onBlur={ () => sortDateBlur(e) } />
+                            },
                             default: () => <VxeColumn title="完成数量" width="120" />
                           }}
                         </VxeColgroup>

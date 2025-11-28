@@ -261,11 +261,11 @@ export default defineComponent({
                   <ElTableColumn prop="delivery_time" label="交货日期" width="120" />
                   <ElTableColumn prop="created_at" label="创建日期" width="120" />
                   <ElTableColumn label="操作" width="200" fixed="right">
-                    {(scope) => (
+                    {({ row }) => (
                       <>
-                        <ElButton size="small" type="warning" v-permission={ 'ProductNotice:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
-                        <ElButton size="small" type="primary" v-permission={ 'ProductNotice:date' } onClick={ () => handleScheduling(scope.row) }>排产</ElButton>
-                        <ElButton size="small" type="danger" v-permission={ 'ProductNotice:finish' } onClick={ () => handleFinish(scope.row) }>结案</ElButton>
+                        <ElButton size="small" type="warning" v-permission={ 'ProductNotice:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
+                        { row.is_notice == 1 ? <ElButton size="small" type="primary" v-permission={ 'ProductNotice:date' } onClick={ () => handleScheduling(row) }>排产</ElButton> : '' }
+                        <ElButton size="small" type="danger" v-permission={ 'ProductNotice:finish' } onClick={ () => handleFinish(row) }>结案</ElButton>
                       </>
                     )}
                   </ElTableColumn>
