@@ -1,9 +1,9 @@
 import { defineComponent, onMounted, ref, reactive, nextTick } from 'vue'
 import request from '@/utils/request';
-import MySelect from '@/components/tables/mySelect.vue';
 import { reportOperationLog } from '@/utils/log';
 import { getPageHeight } from '@/utils/tool';
 import HeadForm from '@/components/form/HeadForm';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
@@ -11,6 +11,7 @@ export default defineComponent({
     const formCard = ref(null)
     const pagin = ref(null)
     const formHeight = ref(0);
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const rules = reactive({
       rece_time: [
         { required: true, message: '请选择接单日期', trigger: 'blur' },
@@ -84,7 +85,10 @@ export default defineComponent({
           ...search.value
         },
       });
-      tableData.value = res.data;
+      tableData.value = res.data.map(e => {
+        e.unit = e.unit ? Number(e.unit) : ''
+        return e
+      });
       total.value = res.total;
     };
     // 获取客户信息列表
@@ -223,6 +227,7 @@ export default defineComponent({
     const productChange = (value) => {
       const item = productList.value.find(o => o.id == value)
       form.value.product_req = item.production_requirements
+      form.value.unit = item.unit ? Number(item.unit) : ''
     }
     // 分页相关
     function pageSizeChange(val) {
@@ -296,7 +301,9 @@ export default defineComponent({
                   <ElTableColumn prop="product.other_features" label="其他特性" width="100" />
                   <ElTableColumn prop="product_req" label="产品要求" width="140" />
                   <ElTableColumn prop="order_number" label="订单数量" width="100" />
-                  <ElTableColumn prop="unit" label="单位" width="80" />
+                  <ElTableColumn label="单位" width="80">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="delivery_time" label="预拟交期" width="120" />
                   <ElTableColumn prop="goods_address" label="送货地点" width="120" />
                   <ElTableColumn label="是否已生成通知单" width="140">
@@ -360,7 +367,9 @@ export default defineComponent({
                   <ElInput v-model={ form.value.order_number } placeholder="请输入订单数量" />
                 </ElFormItem>
                 <ElFormItem label="单位" prop="unit">
-                  <ElInput v-model={ form.value.unit } placeholder="请输入单位" />
+                  <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择单位">
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="预拟交期" prop="delivery_time">
                   <ElDatePicker v-model={ form.value.delivery_time } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="请选择预拟交期" />

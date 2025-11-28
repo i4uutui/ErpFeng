@@ -1,14 +1,12 @@
 import { defineComponent, onMounted, reactive, ref, nextTick, computed } from 'vue'
 import { useStore } from '@/stores';
-import { getRandomString, PreciseMath, numberToChinese, getNoLast, getPageHeight, isEmptyValue } from '@/utils/tool'
+import { getRandomString, PreciseMath, numberToChinese, getPageHeight, isEmptyValue } from '@/utils/tool'
 import { reportOperationLog } from '@/utils/log';
 import { getItem } from '@/assets/js/storage';
 import request from '@/utils/request';
 import dayjs from "dayjs"
 import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
-import html2pdf from 'html2pdf.js';
-import WinPrint from '@/components/print/winPrint';
 import HeadForm from '@/components/form/HeadForm';
 
 export default defineComponent({
@@ -43,6 +41,7 @@ export default defineComponent({
       type: '', // 常量类型
       plan_id: '', // 客户id or 制程id
       plan: '', // 客户 or 制程
+      notice_id: '',
       sale_id: '',
       item_id: '',
       code: '',
@@ -51,6 +50,7 @@ export default defineComponent({
       other_features: '',
       quantity: '',
       buy_price: '',
+      price: ''
     })
     let dialogVisible = ref(false)
     let constObj = ref({})
@@ -59,6 +59,7 @@ export default defineComponent({
     let customerList = ref([]) // 供应商列表
     let cycleList = ref([]) // 制程列表
     let productList = ref([]) // 材料编码
+    let noticeList = ref([])
     let saleList = ref([])
     let tableData = ref([])
     let allSelect = ref([])
@@ -100,6 +101,7 @@ export default defineComponent({
       await getHouseList() // 获取仓库名称
       await filterQuery()
       await getSaleOrder()
+      await getProductNotice() //获取生产通知单
 
       getPrinters()
     })
@@ -124,7 +126,7 @@ export default defineComponent({
     }
     // 获取常量
     const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['productIn', 'productOut', 'house'] })
+      const res = await request.post('/api/get_warehouse_type', { type: ['productIn', 'productOut', 'house'] })
       constType.value = res.data
 
       const transformedData = {};
@@ -165,6 +167,11 @@ export default defineComponent({
     const getSaleOrder = async () => {
       const res = await request.get('/api/getSaleOrder')
       saleList.value = res.data
+    }
+    // 获取生产通知单
+    const getProductNotice = async () => {
+      const res = await request.get('/api/getProductNotice')
+      noticeList.value = res.data
     }
     // 反审批
     const handleBackApproval = async (row) => {
@@ -309,6 +316,7 @@ export default defineComponent({
         type: e.type, // 常量类型
         plan_id: e.plan_id, // 供应商id or 制程id
         plan: e.plan, // 供应商 or 制程
+        notice_id: e.notice_id,
         item_id: e.item_id,
         sale_id: e.sale_id,
         code: e.code,
@@ -317,6 +325,7 @@ export default defineComponent({
         other_features: e.other_features,
         quantity: e.quantity,
         buy_price: e.buy_price,
+        price: e.price,
         approval: e.approval?.length ? e.approval.map(e => e.id) : []
       }
       if(e.status == 2){
@@ -330,6 +339,11 @@ export default defineComponent({
         if (valid){
           if(!edit.value){
             const obj = JSON.parse(JSON.stringify(form.value))
+            if((obj.type == 10 || obj.type == 13 || obj.type == 14) && obj.notice_id){
+              obj.notice = { id: obj.notice_id, notice: noticeList.value.find(o => o.id == obj.notice_id).notice }
+            }else{
+              obj.notice_id = null
+            }
             const quantity = Number(obj.quantity)
             if(!(quantity || quantity > 0)){
               return ElMessage.error('非法数量，请输入正整数的数量')
@@ -380,7 +394,7 @@ export default defineComponent({
     }
     // 批量出入库单确认
     const handleProcurementAll = () => {
-      const json = allSelect.value.filter(e => e.status && e.status == 1 && e.is_buying == 1)
+      const json = allSelect.value.filter(e => e.status && e.status == 1 && e.is_buying == 1 && e.apply_id == user.id)
       if(!json.length) return ElMessage.error('暂无可操作确认的数据')
       function isAllTypesSame(array) {
         const firstType = array[0].operate;
@@ -439,16 +453,25 @@ export default defineComponent({
     const typeChange = (value) => {
       form.value.plan_id = ''
       form.value.plan = ''
-      if(value != 4){
-        form.value.buy_price = ''
-      }
       form.value.sale_id = ''
+      form.value.item_id = ''
+      // 只有指定入库类型才需要生产通知单
+      if([11, 12, 15, 16].includes(value)){
+        form.value.notice_id = null
+      }
+      if(![13, 14].includes(value)){
+        form.value.plan_id = null
+      }
+      if(value != 14){
+        form.value.sale_id = null
+      }
     }
     const saleChange = (value) => {
       const item = saleList.value.find(o => o.id == value)
       form.value.plan_id = item.customer_id
       form.value.item_id = item.product_id
       form.value.quantity = item.order_number
+      form.value.buy_price = item.quot.product_price
       planChange(item.customer_id, 'customer_abbreviation')
       productChange(item.product_id)
     }
@@ -491,6 +514,7 @@ export default defineComponent({
           plan_id: '',
           plan: '',
           sale_id: '',
+          notice_id: '',
           item_id: '',
           code: '',
           name: '',
@@ -498,6 +522,7 @@ export default defineComponent({
           other_features: '',
           quantity: '',
           buy_price: '',
+          price: ''
         }
       }, 200);
     }
@@ -545,6 +570,15 @@ export default defineComponent({
           return { color: 'red' }
         }
       }
+    }
+    // 选择生产通知单后返回的数据
+    const noticeChange = async (value) => {
+      // const row = noticeList.value.find(o => o.id == value)
+      // const sale_id = row.sale_id
+      // const res = await request.get('/api/getSaleOrder', { params: { sale_id } })
+      // if(res.code ==  200){
+      //   console.log(res.data);
+      // }
     }
     // const onPrint = async () => {
     //   const list = allSelect.value.length ? allSelect.value : tableData.value
@@ -598,7 +632,7 @@ export default defineComponent({
                         <ElButton type="primary" onClick={ () => setStatusAllData() } style={{ width: '100px' }}> 批量提交 </ElButton>
                       </ElFormItem>
                       {
-                        approval.findIndex(e => e.user_id == user.id) >= 0 ? 
+                        !isEmptyValue(approvalUser) ? 
                         <ElFormItem>
                           <ElButton type="primary" onClick={ () => setApprovalAllData() } style={{ width: '100px' }}> 批量审批 </ElButton>
                         </ElFormItem> : 
@@ -677,6 +711,7 @@ export default defineComponent({
                       }
                     }}
                   </ElTableColumn>
+                  <ElTableColumn prop="notice.notice" label="生产通知单" width="100" />
                   <ElTableColumn prop="house_name" label="仓库名称" width="100" />
                   <ElTableColumn label="出入库" width="80">
                     {({row}) => <span>{operateValue[row.operate]}</span>}
@@ -692,11 +727,18 @@ export default defineComponent({
                   </ElTableColumn>
                   <ElTableColumn prop="model_spec" label="规格&型号" width="110" />
                   <ElTableColumn prop="other_features" label="其他特性" width="110" />
-                  <ElTableColumn prop="buy_price" label="单价(元)" width="110">
+                  <ElTableColumn label="销售单价(元)" width="110">
                     {({row}) => <span>{ row.buy_price ? row.buy_price : 0 }</span>}
                   </ElTableColumn>
+                  <ElTableColumn label="内部单价(元)" width="110">
+                    {({row}) => <span>{ row.price ? row.price : 0 }</span>}
+                  </ElTableColumn>
                   <ElTableColumn label="总价(元)" width="110">
-                    {({row}) => <span>{ row.status ? row.total_price : PreciseMath.mul(row.buy_price, row.quantity) }</span>}
+                    {({row}) => {
+                      if(!isEmptyValue(row)){
+                        return <span>{ row.approval ? row.total_price : row.buy_price ? PreciseMath.mul(row.buy_price, row.quantity) : '' }</span>
+                      }
+                    }}
                   </ElTableColumn>
                   <ElTableColumn prop="apply_name" label="申请人" width="90" />
                   <ElTableColumn prop="apply_time" label="申请时间" width="110" />
@@ -741,7 +783,7 @@ export default defineComponent({
                           if(row.status == undefined){
                             dom.push(<ElButton size="small" type="danger" onClick={ () => handleDelete(row, $index) }>删除</ElButton>)
                           }
-                          if(row.status == 1 && row.is_buying == 1){
+                          if(row.status == 1 && row.is_buying == 1 && row.apply_id == user.id){
                             dom.push(<ElButton size="small" type="primary"  v-permission={ 'ProductHouseScription:buy' } onClick={ () => handleProcurement(row) }>出入库单确认</ElButton>)
                           }
                           return dom
@@ -750,73 +792,6 @@ export default defineComponent({
                     }}
                   </ElTableColumn>
                 </ElTable>
-                <div class="printTable" id='totalTable2'>
-                  <div id="printTable">
-                    <div class="No">编码：{ printNo.value }</div>
-                    <table class="print-table">
-                      <thead>
-                        <tr>
-                          <th colspan="9" class="title-cell">
-                            <div class="popTitle" style={{ textAlign: 'center', fontSize: '36px' }}>{ tableData.value.length ? `${operateValue[tableData.value[0].operate]}单` : '' }</div>
-                          </th>
-                        </tr>
-                        <tr>
-                          <th colspan="9" class="header-cell">
-                            <div class="flex row-between print-header">
-                              <div>仓库类别：成品仓</div>
-                              <div>仓库名称：{ tableData.value.length ? tableData.value[0].house_name : '' }</div>
-                              <div>统计周期：{ dateTime.value[0] } 至 {dateTime.value[1]}</div>
-                            </div>
-                          </th>
-                        </tr>
-                        <tr class="table-header">
-                          <th>序号</th>
-                          <th>状态</th>
-                          <th>供应商/制程</th>
-                          <th>物料编码</th>
-                          <th>物料名称</th>
-                          <th>规格型号</th>
-                          <th>数量</th>
-                          <th>单价</th>
-                          <th>总价</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(allSelect.value.length ? allSelect.value : tableData.value).map((e, index) => {
-                          const tr = <tr class="table-row">
-                            <td>{ index + 1 }</td>
-                            <td>{ e.status >= 0 ? statusType[e.status] : '' }</td>
-                            <td>{ e.plan }</td>
-                            <td>{ e.code }</td>
-                            <td>{ e.name }</td>
-                            <td>{ e.model_spec }</td>
-                            <td>{ e.quantity }</td>
-                            <td>{ e.buy_price ? e.buy_price : 0 }</td>
-                            <td>{ e.approval ? e.total_price : PreciseMath.mul(e.buy_price, e.quantity) }</td>
-                          </tr>
-                          return tr
-                        })}
-                        <tr class="table-row">
-                          <td>统计</td>
-                          <td colSpan={ 5 }>人民币大写：{ numberToChinese(getTotalNumber('total_price')) }</td>
-                          <td>{ getTotalNumber('quantity') }</td>
-                          <td>/</td>
-                          <td>{ getTotalNumber('total_price') }</td>
-                        </tr>
-                        <tr class="header-cell">
-                          <td colspan="9">
-                            <div class="flex row-between print-header">
-                              <div>核准：</div>
-                              <div>审查：</div>
-                              <div>制表：{ user.name }</div>
-                              <div>日期：{ nowDate.value }</div>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
               </>
             )
           }}
@@ -850,6 +825,14 @@ export default defineComponent({
                   <></>
                 }
                 {
+                  form.value.type == 10 || form.value.type == 13 || form.value.type == 14 ?
+                  <ElFormItem label="生产通知单" prop="notice_id">
+                    <ElSelect v-model={ form.value.notice_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产通知单" onChange={ (value) => noticeChange(value) }>
+                      {noticeList.value.map((o, index) => <ElOption value={ o.id } label={ o.notice } key={ index } />)}
+                    </ElSelect>
+                  </ElFormItem> : ''
+                }
+                {
                   form.value.type == 13 || form.value.type == 14 ? 
                   <ElFormItem label="客户" prop="plan_id">
                     <ElSelect v-model={ form.value.plan_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择客户" onChange={ (row) => planChange(row, 'customer_abbreviation') }>
@@ -858,14 +841,6 @@ export default defineComponent({
                       ))}
                     </ElSelect>
                   </ElFormItem> :
-                  // form.value.type == 7 ? 
-                  // <ElFormItem label="制程" prop="plan_id">
-                  //   <ElSelect v-model={ form.value.plan_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择制程" onChange={ (row) => planChange(row, 'name') }>
-                  //     {cycleList.value.map((e, index) => e && (
-                  //       <ElOption value={ e.id } label={ e.name } key={ index } />
-                  //     ))}
-                  //   </ElSelect>
-                  // </ElFormItem> :
                   <></>
                 }
                 <ElFormItem label="产品编码" prop="item_id">
@@ -876,7 +851,7 @@ export default defineComponent({
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="产品名称">
-                  <ElSelect class="disabled" v-model={ form.value.item_id } multiple={false} disabled filterable remote remote-show-suffix valueKey="id" placeholder="请选择产品名称" onChange={ (row) => productChange(row) }>
+                  <ElSelect class="disabled" v-model={ form.value.item_id } multiple={false} disabled filterable remote remote-show-suffix valueKey="id" placeholder="请选择产品名称">
                     {productList.value.map((e, index) => e && (
                       <ElOption value={ e.id } label={ e.product_name } key={ index } />
                     ))}
@@ -885,8 +860,11 @@ export default defineComponent({
                 <ElFormItem label="数量" prop="quantity">
                   <ElInput v-model={ form.value.quantity } placeholder="请输入数量" />
                 </ElFormItem>
-                <ElFormItem label="单价" prop="buy_price">
-                  <ElInput v-model={ form.value.buy_price } placeholder="请输入单价" />
+                <ElFormItem label="销售单价" prop="buy_price">
+                  <ElInput v-model={ form.value.buy_price } placeholder="请输入销售单价" />
+                </ElFormItem>
+                <ElFormItem label="内部单价" prop="price">
+                  <ElInput v-model={ form.value.price } type="number" placeholder="请输入内部单价" />
                 </ElFormItem>
               </ElForm>
             ),

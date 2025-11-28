@@ -2,6 +2,7 @@ import { defineComponent, ref, onMounted, reactive, nextTick } from 'vue'
 import request from '@/utils/request';
 import { reportOperationLog } from '@/utils/log';
 import { getPageHeight } from '@/utils/tool';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
@@ -9,6 +10,7 @@ export default defineComponent({
     const formCard = ref(null)
     const pagin = ref(null)
     const formHeight = ref(0);
+    const constType = ref(getItem('constant').filter(o => o.type == 'employeeInfo'))
     const rules = reactive({
       employee_id: [
         { required: true, message: '请输入员工工号', trigger: 'blur' },
@@ -42,7 +44,6 @@ export default defineComponent({
     let pageSize = ref(20);
     let total = ref(0);
     let edit = ref(0)
-    let constType = ref([])
 
     onMounted(() => {
       nextTick(async () => {
@@ -51,7 +52,6 @@ export default defineComponent({
 
       getProcessCycle()
       fetchProductList()
-      getConstType()
     })
 
     // 获取列表
@@ -70,13 +70,6 @@ export default defineComponent({
       const res = await request.get('/api/getProcessCycle')
       if(res.code == 200){
         processCycle.value = res.data
-      }
-    }
-    // 获取常量
-    const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: 'employeeInfo' })
-      if(res.code == 200){
-        constType.value = res.data
       }
     }
     const handleSubmit = async (formEl) => {

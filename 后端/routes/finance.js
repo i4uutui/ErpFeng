@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubRateWage, Op, SubProductCode, SubPartCode, SubProcessCode, SubProcessBomChild, SubEmployeeInfo, SubWarehouseApply, SubNoEncoding, SubMaterialMent, SubSaleOrder, subOutscriptionOrder, SubProductNotice, SubProcessBom, SubProcessCycle, SubSupplierInfo, SubCustomerInfo, SubProgressBase, SubProgressWork } = require('../models')
+const { SubRateWage, Op, SubProductCode, SubPartCode, SubProcessCode, SubProcessBomChild, SubEmployeeInfo, SubWarehouseApply, SubNoEncoding, SubMaterialMent, SubSaleOrder, subOutscriptionOrder, SubProductNotice, SubProcessBom, SubProcessCycle, SubSupplierInfo, SubCustomerInfo, SubProgressBase, SubProgressWork, SubWarehouseOrder, SubMaterialOrder } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -174,10 +174,9 @@ router.post('/getReceivablePrice', authMiddleware, async (req, res) => {
   if(supplier_abbreviation) whereOjb.supplier_abbreviation = { [Op.like]: `%${supplier_abbreviation}%` }
 
   let includeObj = [
-    { model: SubNoEncoding, as: 'print', attributes: ['id', 'no', 'print_type'] },
-    { model: SubNoEncoding, as: 'buyPrint', attributes: ['id', 'no', 'print_type'] },
-    { model: SubMaterialMent, as: 'buy', attributes: ['id', 'print_id'], include: [ { model: SubNoEncoding, as: 'print', attributes: ['id', 'no', 'print_type'] } ] },
+    { model: SubMaterialMent, as: 'buy', attributes: ['id', 'print_id'], include: [ { model: SubMaterialOrder, as: 'ment', attributes: ['id', 'no'] } ] },
     { model: SubSaleOrder, as: 'sale', attributes: ['id', 'customer_order'] },
+    { model: SubWarehouseOrder, as: 'apply', attributes: ['no'] }
   ]
   if(type == 14){
     includeObj.push({ model: SubCustomerInfo, as: 'customer', where: whereOjb, attributes: ['id', 'customer_code', 'customer_abbreviation'] })
@@ -187,7 +186,7 @@ router.post('/getReceivablePrice', authMiddleware, async (req, res) => {
 
   const { count, rows } = await SubWarehouseApply.findAndCountAll({
     where,
-    attributes: ['id', 'print_id', 'company_id', 'buyPrint_id', 'sale_id', 'ware_id', 'house_id', 'operate', 'type', 'house_name', 'plan_id', 'plan', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'quantity', 'buy_price', 'total_price', 'created_at'],
+    attributes: ['id', 'print_id', 'company_id', 'procure_id', 'sale_id', 'ware_id', 'house_id', 'operate', 'type', 'house_name', 'plan', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'quantity', 'buy_price', 'total_price', 'created_at'],
     include: includeObj,
     order: [['created_at', 'DESC']],
     distinct: true,
@@ -244,7 +243,7 @@ router.post('/getOutSourcingPrice', authMiddleware, async (req, res) => {
 
   const { count, rows } = await SubWarehouseApply.findAndCountAll({
     where,
-    attributes: ['id', 'print_id', 'company_id', 'buyPrint_id', 'sale_id', 'ware_id', 'house_id', 'operate', 'type', 'house_name', 'plan_id', 'plan', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'quantity', 'buy_price', 'total_price', 'created_at'],
+    attributes: ['id', 'print_id', 'company_id', 'procure_id', 'sale_id', 'ware_id', 'house_id', 'operate', 'type', 'house_name', 'plan_id', 'plan', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'quantity', 'buy_price', 'total_price', 'created_at'],
     include: [
       { model: SubNoEncoding, as: 'print', attributes: ['id', 'no', 'print_type'] },
       { model: SubNoEncoding, as: 'buyPrint', attributes: ['id', 'no', 'print_type'] },

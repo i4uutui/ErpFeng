@@ -19,6 +19,12 @@ const SubWarehouseOrder = sequelize.define('SubWarehouseOrder', {
     allowNull: true,
     comment: ' 发布的用户 id'
   },
+  operate: {
+    type: DataTypes.INTEGER(1),
+    allowNull: true,
+    defaultValue: null,
+    comment: '1:入库 2:出库'
+  },
   ware_id: {
     type: DataTypes.INTEGER,
     allowNull: true,

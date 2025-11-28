@@ -120,6 +120,45 @@ const routes = [
           ]
         }
       },
+      // 系统设置
+      {
+        path: '/setting/ConstUser',
+        name: 'ConstUser',
+        component: () => import('@/views/Setting/ConstUser.jsx'),
+        meta: {
+          title: '常量设置',
+          parent: '系统设置',
+          menu: true,
+        }
+      },
+      {
+        path: '/setting/customer-info',
+        name: 'CustomerInfo',
+        component: () => import('@/views/Setting/CustomerInfo.jsx'),
+        meta: {
+          title: '客户资料',
+          parent: '系统设置',
+          menu: true,
+          buttons: [
+            { code: 'CustomerInfo:add', label: '新增' },
+            { code: 'CustomerInfo:edit', label: '修改' },
+          ]
+        }
+      },
+{
+        path: '/setting/supplier-info',
+        name: 'SupplierInfo',
+        component: () => import('@/views/Setting/SupplierInfo.jsx'),
+        meta: {
+          title: '供应商资料',
+          parent: '系统设置',
+          menu: true,
+          buttons: [
+            { code: 'SupplierInfo:add', label: '新增' },
+            { code: 'SupplierInfo:edit', label: '修改' },
+          ]
+        }
+      },
       // 基础资料
       {
         path: '/basic/product-code',
@@ -197,21 +236,6 @@ const routes = [
         }
       },
       // 订单管理
-      {
-        path: '/order/customer-info',
-        name: 'CustomerInfo',
-        component: () => import('@/views/Order/CustomerInfo.jsx'),
-        meta: {
-          title: '客户资料',
-          parent: '订单管理',
-          menu: true,
-          buttons: [
-            { code: 'CustomerInfo:add', label: '新增' },
-            { code: 'CustomerInfo:edit', label: '修改' },
-            // { code: 'CustomerInfo:delete', label: '删除' },
-          ]
-        }
-      },
       {
         path: '/order/sales-order',
         name: 'SalesOrder',
@@ -327,21 +351,7 @@ const routes = [
           ]
         }
       },
-      // // 采购管理
-      {
-        path: '/purchase/supplier-info',
-        name: 'SupplierInfo',
-        component: () => import('@/views/Purchase/SupplierInfo.jsx'),
-        meta: {
-          title: '供应商资料',
-          parent: '采购管理',
-          menu: true,
-          buttons: [
-            { code: 'SupplierInfo:add', label: '新增' },
-            { code: 'SupplierInfo:edit', label: '修改' },
-          ]
-        }
-      },
+      // 采购管理
       {
         path: '/purchase/material-quote',
         name: 'MaterialQuote',

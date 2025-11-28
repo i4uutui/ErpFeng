@@ -1,7 +1,7 @@
 const express = require('express');
 const dayjs = require('dayjs')
 const router = express.Router();
-const { Op, SubDateInfo, SubApprovalUser, SubProductNotice, SubProductionProgress, SubSaleOrder, SubWarehouseApply, SubProgressBase } = require('../models')
+const { Op, SubDateInfo, SubApprovalUser, SubProductNotice, SubSaleOrder, SubWarehouseApply, SubProgressBase, SubProgressCycle, SubProcessCycle, SubProgressTotal, SubConstUser } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { PreciseMath, getSaleCancelIds } = require('../middleware/tool');
 
@@ -215,6 +215,10 @@ router.post('/order_total', authMiddleware, async (req, res) => {
     }
   })
 
-  res.json({ code: 200, data: { saleLeng, noticeLeng, progressLeng, inventory } })
+  // 延期预警
+  const progressResult = await SubProgressTotal.findOne({ where: { company_id }, raw: true })
+  const progressTotal = progressResult ? progressResult.number : 0
+
+  res.json({ code: 200, data: { saleLeng, noticeLeng, progressLeng, inventory, progressTotal } })
 })
 module.exports = router;

@@ -10,6 +10,8 @@ export default defineComponent({
     let dialogVisible = ref(false)
     let form = ref({
       inv_unit: '',
+      unit: '',
+      buy_price: '',
       price: ''
     })
     let isPartId = ref(false) // 临时
@@ -31,7 +33,7 @@ export default defineComponent({
       await getMaterialList()
       await getPartList()
       await getProductList()
-      await fetchWareList()
+      // await fetchWareList()
     })
     
     // 仓库列表
@@ -48,7 +50,7 @@ export default defineComponent({
     }
     // 获取仓库类型列表
     const getWareTypeList = async () => {
-      const res = await request.post('/api/getConstType', { type: 'house' })
+      const res = await request.post('/api/get_warehouse_type', { type: 'house' })
       wareType.value = res.data
       wareActive.value = res.data[0].id
       menuWareIndex.value = res.data[0].id
@@ -76,7 +78,8 @@ export default defineComponent({
           if(res && res.code == 200){
             ElMessage.success('操作成功');
             dialogVisible.value = false;
-
+            fetchWareList()
+            
             reportOperationLog({
               operationType: 'update',
               module: '仓库进出存',
@@ -140,6 +143,9 @@ export default defineComponent({
       currentPage.value = val;
       fetchWareList();
     }
+    const getTypeName = (value) => {
+      return value == 3 ? '销售' : '采购'
+    }
     
     return() => (
       <>
@@ -157,16 +163,13 @@ export default defineComponent({
               <ElTable data={ tableData.value } border stripe height={`calc(100vh - 280px)`} style={{ width: "100%" }}>
                 <ElTableColumn prop="code" label="物料编码" width="90" />
                 <ElTableColumn prop="name" label="物料名称" width="90" />
-                <ElTableColumn prop="model_spec" label="规格&型号" width="90" />
+                <ElTableColumn prop="model_spec" label="规格&型号" width="110" />
                 <ElTableColumn prop="other_features" label="其他特性" width="90" />
+                <ElTableColumn prop="unit" label={ `${ getTypeName(menuWareIndex.value) }单位` } width="90" />
                 <ElTableColumn prop="inv_unit" label="库存单位" width="90" />
-                <ElTableColumn prop="initial" label="期初数量" width="90" />
-                <ElTableColumn prop="number_in" label="入库数量" width="90" />
-                <ElTableColumn prop="number_out" label="出库数量" width="90" />
-                <ElTableColumn prop="number_new" label="最新库存" width="90" />
+                <ElTableColumn prop="quantity" label="最新库存" width="90" />
                 <ElTableColumn prop="price" label="内部单价" width="90" />
-                <ElTableColumn prop="price_total" label="存货金额" width="90" />
-                <ElTableColumn prop="price_out" label="出库金额" width="90" />
+                <ElTableColumn prop="buy_price" label={ `${ getTypeName(menuWareIndex.value) }单价` } width="90" />
                 <ElTableColumn prop="last_in_time" label="最后入库时间" width="120" />
                 <ElTableColumn prop="last_out_time" label="最后出库时间" width="120" />
                 <ElTableColumn label="操作" width="100" fixed="right">
@@ -191,11 +194,17 @@ export default defineComponent({
                 <ElFormItem label="物料名称">
                   <ElInput v-model={ form.value.name } disabled={ true } />
                 </ElFormItem>
-                <ElFormItem label="库存单位" prop="inv_unit">
-                  <ElInput v-model={ form.value.inv_unit } placeholder="请输入库存单位" />
+                <ElFormItem label={ `${ getTypeName(form.value.ware_id) }单价` } prop="buy_price">
+                  <ElInput v-model={ form.value.buy_price } placeholder={ `请输入${ getTypeName(form.value.ware_id) }单价` } />
                 </ElFormItem>
                 <ElFormItem label="内部单价" prop="price">
                   <ElInput v-model={ form.value.price } placeholder="请输入内部单价" />
+                </ElFormItem>
+                <ElFormItem label={ `${ getTypeName(form.value.ware_id) }单位` } prop="unit">
+                  <ElInput v-model={ form.value.unit } placeholder={ `请输入${ getTypeName(form.value.ware_id) }单位` } />
+                </ElFormItem>
+                <ElFormItem label="库存单位" prop="inv_unit">
+                  <ElInput v-model={ form.value.inv_unit } placeholder="请输入库存单位" />
                 </ElFormItem>
               </ElForm>
             ),

@@ -40,7 +40,7 @@ export default defineComponent({
       tableData.value = res.data;
     };
     const getWareTypeList = async () => {
-      const res = await request.post('/api/getConstType', { type: 'house' })
+      const res = await request.post('/api/get_warehouse_type', { type: 'house' })
       wareType.value = res.data
     }
     const handleSubmit = async (formEl) => {
@@ -138,7 +138,7 @@ export default defineComponent({
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改仓库' : '新增仓库' } width='745' center draggable onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改仓库' : '新增仓库' } width='750' center draggable onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules } label-width="80">

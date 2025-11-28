@@ -1,9 +1,9 @@
 import { defineComponent, onMounted, ref, reactive, nextTick } from 'vue'
 import request from '@/utils/request';
-import MySelect from '@/components/tables/mySelect.vue';
 import { reportOperationLog } from '@/utils/log';
 import { getPageHeight } from '@/utils/tool';
 import HeadForm from '@/components/form/HeadForm';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
@@ -11,6 +11,9 @@ export default defineComponent({
     const formCard = ref(null)
     const pagin = ref(null)
     const formHeight = ref(0);
+    const method = ref(getItem('constant').filter(o => o.type == 'payInfo'))
+    const payTime = ref(getItem('constant').filter(o => o.type == 'payTime'))
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const rules = reactive({
       sale_id: [
         { required: true, message: '请选择销售订单', trigger: 'blur' },
@@ -32,8 +35,6 @@ export default defineComponent({
       other_transaction_terms: '',
       other_text: ''
     })
-    let method = ref([])
-    let payTime = ref([])
     let saleList = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
@@ -55,7 +56,6 @@ export default defineComponent({
       })
       fetchProductList()
       getSaleOrder()
-      getConstType()
     })
 
     // 获取列表
@@ -74,14 +74,6 @@ export default defineComponent({
       const res = await request.get('/api/getSaleOrder')
       if(res.code == 200){
         saleList.value = res.data
-      }
-    }
-    // 获取常量
-    const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['payInfo', 'payTime'] })
-      if(res.code == 200){
-        method.value = res.data.filter(o => o.type == 'payInfo')
-        payTime.value = res.data.filter(o => o.type == 'payTime')
       }
     }
     const handleSubmit = async (formEl) => {
@@ -226,7 +218,9 @@ export default defineComponent({
                   <ElTableColumn prop="product.other_features" label="其他特性" width="100" />
                   <ElTableColumn prop="sale.customer_order" label="客户订单号" width="120" />
                   <ElTableColumn prop="sale.order_number" label="订单数量" width="100" />
-                  <ElTableColumn prop="sale.unit" label="单位" width="100" />
+                  <ElTableColumn label="单位" width="100">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.sale.unit)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="product_price" label="产品单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
                   <ElTableColumn label="交易方式" width="120">

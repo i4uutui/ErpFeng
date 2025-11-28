@@ -30,6 +30,7 @@ app.use('/api', require('./routes/home')); // 首页
 app.use('/api', require('./routes/finance')); // 财务管理
 app.use('/api', require('./routes/operationLog')); // 操作日志
 app.use('/api', require('./routes/subAdmin'));
+app.use('/api', require('./routes/subSetting')); // 系统设置
 app.use('/api', require('./routes/subUser')); // 用户管理
 app.use('/api', require('./routes/subBasic')); // 基础资料
 app.use('/api', require('./routes/subOrder')); // 订单管理

@@ -5,7 +5,7 @@ const isSameOrBefore = require('dayjs/plugin/isSameOrBefore');
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 const router = express.Router();
-const { SubProductionProgress, SubProductNotice, SubProductCode, SubSaleOrder, SubPartCode, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessBom, SubOperationHistory, SubRateWage, Op, SubProductionCycle, SubProductionProcess, SubProcessCycleChild, SubDateInfo, SubCustomerInfo, SubProgressBase, SubProgressCycle, SubProgressWork } = require('../models');
+const { SubProductionProgress, SubProductNotice, SubProductCode, SubSaleOrder, SubPartCode, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, SubProcessBom, SubOperationHistory, SubRateWage, Op, SubProductionCycle, SubProductionProcess, SubProcessCycleChild, SubDateInfo, SubCustomerInfo, SubProgressBase, SubProgressCycle, SubProgressWork, SubProgressTotal } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const EmployeeAuth = require('../middleware/EmployeeAuth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
@@ -45,95 +45,6 @@ router.get('/get_progress_base', authMiddleware, async (req, res) => {
 })
 
 // 获取进度表制程和工序的数据
-// router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
-//   const { base } = req.body
-//   const { company_id } = req.user;
-
-//   const baseJSON = JSON.parse(base)
-//   if(!baseJSON.length) return res.json({ code: 401, message: '数据出错' })
-
-//   const progress_id = baseJSON.map(e => e.id)
-  
-//   const [ cycle, work, dates ] = await Promise.all([
-//     SubProcessCycle.findAll({
-//       where: {
-//         company_id,
-//         sort: { [Op.gt]: 0 }
-//       },
-//       attributes: ['id', 'name', 'sort', 'sort_date'],
-//       order: [['sort', 'ASC'], ['cycle', 'progress_id', 'ASC']],
-//       include: [
-//         { model: SubProgressCycle, as: 'cycle', attributes: ['id', 'notice_id', 'progress_id', 'cycle_id', 'end_date', 'load', 'order_number'], where: { progress_id } },
-//         { model: SubEquipmentCode, as: 'equipment', attributes: ['id', 'efficiency'], }
-//       ]
-//     }),
-//     SubProgressWork.findAll({
-//       where: {
-//         company_id,
-//         progress_id
-//       },
-//       attributes: ['id', 'progress_id', 'notice_id', 'bom_id', 'child_id', 'all_work_time', 'load', 'finish', 'order_number'],
-//       include: [
-//         {
-//           model: SubProcessBomChild,
-//           as: 'children',
-//           attributes: ['id', 'process_index', 'process_id', 'time', 'price', 'points', 'equipment_id'],
-//           include: [
-//             { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
-//             {
-//               model: SubEquipmentCode,
-//               as: 'equipment',
-//               attributes: ['id', 'equipment_code', 'equipment_name'],
-//               include: [
-//                 { model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }
-//               ]
-//             }
-//           ]
-//         }
-//       ],
-//       order: [
-//         ['progress_id', 'ASC'],
-//         ['children', 'process_index', 'ASC']
-//       ]
-//     }),
-//     // 用户设置的假期
-//     SubDateInfo.findAll({
-//       where: { company_id },
-//       attributes: ['date']
-//     })
-//   ])
-
-//   const dateInfo = dates.map(e => {
-//     const item = e.toJSON()
-//     return item.date
-//   })
-//   const cycles = cycle.map(e => {
-//     const item = e.toJSON()
-//     item.maxLoad = e.equipment.reduce((total, current) => {
-//       const value = current.efficiency && typeof current.efficiency === 'number' ? current.efficiency : 0;
-//       return total + value;
-//     }, 0)
-//     return item
-//   })
-
-//   const works = work.map(e => e.toJSON())
-//   works.forEach(item => {
-//     item.all_work_time = (PreciseMath.mul(Number(item.order_number), Number(item.children.time)) / 60 / 60).toFixed(1)
-//   })
-//   // // 获取日期列表(deliveryTimes先获取客户交期的数组)
-//   const deliveryTimes = [...new Set(baseJSON.map(e => e.delivery_time))]
-//   const date_more = getDateInfo(deliveryTimes)
-//   // // 处理工序的每日负荷
-//   const cased = setProgressLoad(baseJSON, cycles, works, dateInfo)
-//   // // 处理制程日总负荷
-//   const callLoad = setCycleLoad(cycles, cased)
-//   // // 处理页面头部的日期
-//   const newCycles = setDateMore(baseJSON, callLoad, dateInfo, date_more)
-  
-//   const data = { cycles: newCycles, works: cased, date_more }
-  
-//   res.json({ code: 200, data })
-// })
 router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
   try {
     const { base: baseStr } = req.body;
@@ -267,6 +178,29 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
     // 5. 制程总负荷计算优化
     const callLoad = setCycleLoad(processedCycles, cased);
     const newCycles = setDateMore(baseJSON, callLoad, dateInfo, date_more);
+    
+    // 记录newCycles里面的big有多少个true
+    const cyclesBigs = newCycles.reduce((counts, cycle) => {
+      // 遍历当前cycle的所有dateData条目
+      Object.values(cycle.dateData).forEach(data => {
+        if (data.big) {
+          counts.trueCount++;
+        } else {
+          counts.falseCount++;
+        }
+      });
+      return counts;
+    }, { trueCount: 0, falseCount: 0 })
+    
+    const total = await SubProgressTotal.findOne({ where: { company_id }, raw: true })
+    
+    if(total){
+      if(total.number != cyclesBigs.trueCount){
+        await SubProgressTotal.update({ number: cyclesBigs.trueCount, company_id }, { where: { id: total.id } })
+      }
+    }else{
+      await SubProgressTotal.create({ number: cyclesBigs.trueCount, company_id })
+    }
 
     // 6. 响应数据精简
     res.json({ 
@@ -296,19 +230,6 @@ router.post('/get_progress_work', authMiddleware, async (req, res) => {
 
   res.json({ code: 200, data })
 })
-// 进度表页面刷新数据接口
-// router.post('/set_progress_refresh', authMiddleware, async (req, res) => {
-//   const { company_id } = req.user;
-
-//   const noticeIds = await getSaleCancelIds('notice_id', { company_id })
-
-//   const result = await SubProgressWork.findAll({
-//     where: {
-//       company_id,
-//       notice_id: { [Op.notIn]: noticeIds },
-//     }
-//   })
-// })
 
 router.post('/set_out_number', authMiddleware, async (req, res) => {
   const { id, house_number, order_number } = req.body
@@ -340,8 +261,6 @@ router.post('/set_out_number', authMiddleware, async (req, res) => {
   if(bomChild && bomChild.length){
     const bomChildResult = bomChild.map(e => {
       const item = e.toJSON()
-      console.log(item);
-      console.log(row);
       if(row.bom_id == item.bom_id){
         const n = item.finish ? PreciseMath.sub(order_number, item.finish) : order_number
         item.order_number = handleHouseNumber ? PreciseMath.sub(n, handleHouseNumber) : n

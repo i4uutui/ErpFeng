@@ -1,10 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const dayjs = require('dayjs')
-const { SubWarehouseContent, SubWarehouseApply, SubApprovalStep, SubApprovalUser, Op, SubProductNotice, SubWarehouseOrder, SubWarehouseCycle } = require('../models')
+const Decimal = require('decimal.js');
+const { SubWarehouseContent, SubWarehouseApply, SubApprovalStep, SubApprovalUser, Op, SubProductNotice, SubWarehouseOrder, SubWarehouseCycle, SubWarehouseType } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { isInteger, PreciseMath } = require('../middleware/tool')
+
+/**
+ * @swagger
+ * /api/get_warehouse_type:
+ *   post:
+ *     summary: 获取仓库类型或出入库类型
+ *     tags:
+ *       - 仓库管理(WareHouse)
+ */
+router.post('/get_warehouse_type', authMiddleware, async (req, res) => {
+  const { type } = req.body
+  const { id: userId, company_id } = req.user;
+
+  const where = {}
+  if(type) where.type = type
+  const result = await SubWarehouseType.findAll({ where, raw: true })
+
+  res.json({ code: 200, data: result })
+})
 
 /**
  * @swagger
@@ -36,24 +56,29 @@ router.post('/queryWarehouse', authMiddleware, async (req, res) => {
 
   if(!item_id) return res.json({ message: '请选择物料', code: 401 })
   if(!house_id) return res.json({ message: '请选择仓库', code: 401 })
-  const itemValue = await SubWarehouseContent.findOne({
-    where: {
-      company_id,
-      item_id,
-      house_id
+  try {
+    const itemValue = await SubWarehouseContent.findOne({
+      where: {
+        company_id,
+        item_id,
+        house_id
+      }
+    })
+    if((operate == 1 && type == 6) || operate == 2){ // 如果入库且为盘银入库或者出库
+      if(!itemValue) return res.json({ message: '仓库中并无此物料，请检查后再操作', code: 401 })
     }
-  })
-  if((operate == 1 && type == 6) || operate == 2){ // 如果入库且为盘银入库或者出库
-    if(!itemValue) return res.json({ message: '仓库中并无此物料，请检查后再操作', code: 401 })
+    if(operate == 2 && itemValue){  // 如果出库且有数据
+      const items = itemValue.toJSON()
+      const houseQuantity = items.quantity ? Number(items.quantity) : 0
+      
+      if(houseQuantity <= 0) return res.json({ message: '此物料已无库存，请检查后再操作', code: 401 })
+      if(!isInteger(quantity) && Number(quantity) <= 0) return res.json({ message: '请输入大于0数量', code: 401 })
+      if(Number(quantity) > houseQuantity) return res.json({ message: '库存不足，请检查后再操作', code: 401 })
+    }
+    return res.json({ data: null, code: 200 })
+  } catch (error) {
+    console.log(error);
   }
-  if(operate == 2 && itemValue){  // 如果出库且有数据
-    const items = itemValue.toJSON()
-    const num = Number(items.number_new)
-    if(num <= 0) return res.json({ message: '此物料已无库存，请检查后再操作', code: 401 })
-    if(!isInteger(quantity) && Number(quantity) <= 0) return res.json({ message: '请输入大于0数字', code: 401 })
-    if(Number(quantity) > num) return res.json({ message: '库存不足，请检查后再操作', code: 401 })
-  }
-  return res.json({ data: null, code: 200 })
 })
 
 /**
@@ -116,7 +141,8 @@ router.post('/warehouse_apply', authMiddleware, async (req, res) => {
   const result = await SubWarehouseApply.findAll({
     where: where,
     include: [
-      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'material_warehouse', company_id, type: source_type }, separate: true, }
+      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'material_warehouse', company_id, type: source_type }, separate: true, },
+      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice'] }
     ],
     order: [
       ['created_at', 'DESC']
@@ -163,7 +189,7 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
   const yesIdList = [];
 
   const dataValue = data.map(e => {
-    const { id, buy_price = 0, quantity = 0, plan_id = null, buyPrint_id = null, sale_id = null, ...rest } = e
+    const { id, buy_price = 0, price = 0, quantity = 0, plan_id = null, procure_id = null, sale_id = null, notice_id = null, ...rest } = e
     const total_price = buy_price && quantity ? PreciseMath.mul(quantity, buy_price) : 0
 
     const record = {
@@ -173,9 +199,10 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
       user_id: userId,
       total_price,
       plan_id: plan_id ? plan_id : null,
+      notice_id: notice_id,
       buy_price: buy_price ? buy_price : 0,
       quantity: quantity ? quantity : 0,
-      buyPrint_id: null,
+      procure_id,
       sale_id: sale_id ? sale_id : null,
       apply_id: userId,
       apply_name: name,
@@ -191,7 +218,7 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
     return record
   })
   
-  const updateFields = ['company_id', 'user_id', 'total_price', 'plan_id', 'buy_price', 'quantity', 'buyPrint_id', 'sale_id', 'apply_id', 'apply_name', 'apply_time', 'status']
+  const updateFields = ['company_id', 'user_id', 'total_price', 'plan_id', 'notice_id', 'buy_price', 'quantity', 'procure_id', 'sale_id', 'apply_id', 'apply_name', 'apply_time', 'status']
   try {
     const [noResult, yesResult] = await Promise.all([
       noIdList.length
@@ -286,7 +313,7 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.put('/wareHouse_order', authMiddleware, async (req, res) => {
-  const { id, ware_id, house_id, house_name, operate, type, plan_id, plan, item_id, code, name, model_spec, other_features, quantity, buy_price, buyPrint_id, sale_id } = req.body;
+  const { id, ware_id, house_id, house_name, operate, type, plan_id, plan, item_id, code, name, model_spec, other_features, quantity, buy_price, procure_id, sale_id } = req.body;
   const { id: userId, company_id } = req.user;
 
   const result = await SubWarehouseApply.findByPk(id)
@@ -295,7 +322,7 @@ router.put('/wareHouse_order', authMiddleware, async (req, res) => {
   
   const total_price = PreciseMath.mul(quantity, buy_price)
   const obj = {
-    ware_id, house_id, house_name, operate, type, plan_id, plan, item_id, code, name, model_spec, other_features, quantity, buy_price, total_price, buyPrint_id, sale_id, company_id,
+    ware_id, house_id, house_name, operate, type, plan_id, plan, item_id, code, name, model_spec, other_features, quantity, buy_price, total_price, procure_id, sale_id, company_id,
     user_id: userId
   }
   const updateResult = await SubWarehouseApply.update(obj, {
@@ -336,7 +363,7 @@ router.get('/get_wareHouser', authMiddleware, async (req, res) => {
       house_id,
       is_deleted: 1
     },
-    attributes: ['id', 'code', 'name', 'model_spec', 'other_features', 'ware_id', 'house_id', 'item_id', 'unit', 'inv_unit', 'initial', 'number_in', 'number_out', 'number_new', 'price', 'price_total', 'price_in', 'price_out', 'last_in_time', 'last_out_time'],
+    attributes: ['id', 'user_id', 'company_id', 'ware_id', 'house_id', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'buy_price', 'price', 'quantity', 'inv_unit', 'unit', 'last_in_time', 'last_out_time'],
     order: [
       ['id', 'DESC'],
     ],
@@ -382,7 +409,7 @@ router.get('/get_wareHouser', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.put('/set_wareHouser', authMiddleware, async (req, res) => {
-  const { inv_unit, price, id } = req.body;
+  const { inv_unit, unit, price, buy_price, id } = req.body;
   const { id: userId, company_id } = req.user;
 
   // 验证物料是否存在
@@ -390,12 +417,8 @@ router.put('/set_wareHouser', authMiddleware, async (req, res) => {
   if (!product) {
     return res.json({ message: '物料不存在', code: 401 });
   }
-  const result = product.toJSON()
-  const price_total = price ? PreciseMath.mul(price, result.number_new) : 0
-  const price_out = price ? PreciseMath.mul(price, result.number_out) : 0
-
   await product.update({
-    inv_unit, price, price_total, price_out, company_id,
+    inv_unit, unit, price, buy_price, company_id,
     user_id: userId
   }, { where: { id } })
   
@@ -428,17 +451,21 @@ router.post('/handleMaterialIsBuying', authMiddleware, async (req, res) => {
   if (subMaterialMents.length !== ids.length) {
     const validIds = subMaterialMents.map(item => item.id);
     const invalidIds = ids.filter(id => !validIds.includes(id));
-    return res.json({ 
-      code: 401, 
-      message: `部分出入库作业不存在或已生成采购单，请检查` 
-    });
+    return res.json({ code: 401, message: `部分出入库作业不存在或已生成采购单，请检查` });
   }
+
+  function isAllTypesSame(array) {
+    const firstType = array[0].operate;
+    return array.every(item => item.operate === firstType);
+  }
+  if(!isAllTypesSame(subMaterialMents)) return res.json({ code: 401, message: `请将出/入库单分开确认` });
 
   const supplierGroups = subMaterialMents.reduce((result, item) => {
     const groupKey = item.house_id;
     if (!result[groupKey]) {
       // 初始化分组：存储仓库信息 + 关联的出入库作业IDs
       result[groupKey] = {
+        operate: item.operate,
         ware_id: item.ware_id,
         house_id: item.house_id,
         subMaterialIds: [item.id], // 关联的出入库作业ID数组
@@ -452,7 +479,7 @@ router.post('/handleMaterialIsBuying', authMiddleware, async (req, res) => {
     return result;
   }, {});
   const groups = Object.values(supplierGroups);
-  
+
   // 批量创建出入库单
   const purchaseOrders = await SubWarehouseOrder.bulkCreate(groups,
     { returning: true } // 返回创建后的完整数据（包含自动生成的id）
@@ -497,10 +524,10 @@ router.get('/getWareHouseList', authMiddleware, async (req, res) => {
       company_id,
       ware_id
     },
-    attributes: ['id', 'ware_id', 'house_id', 'no', 'created_at'],
+    attributes: ['id', 'operate', 'ware_id', 'house_id', 'no', 'created_at'],
     include: [
       { model: SubWarehouseCycle, as: 'house', attributes: ['id', 'ware_id', 'name'] },
-      { model: SubWarehouseApply, as: 'order', attributes: ['id', 'operate', 'type', 'plan', 'code', 'name', 'quantity', 'model_spec', 'other_features', 'buy_price', 'total_price', 'apply_name', 'apply_time'] }
+      { model: SubWarehouseApply, as: 'order', attributes: ['id', 'procure_id', 'operate', 'type', 'plan', 'code', 'name', 'quantity', 'model_spec', 'other_features', 'buy_price', 'total_price', 'apply_name', 'apply_time', 'order_id'] }
     ],
     order: [['no', 'ASC']],
     distinct: true,
@@ -519,6 +546,34 @@ router.get('/getWareHouseList', authMiddleware, async (req, res) => {
     pageSize: parseInt(pageSize),
     code: 200 
   });
+})
+
+/**
+ * @swagger
+ * /api/getWareHouseMaterialPrice:
+ *   post:
+ *     summary: 获取仓库中某个材料的内部价格
+ *     tags:
+ *       - 仓库管理(WareHouse)
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ */
+router.get('/getWareHouseMaterialPrice', authMiddleware, async (req, res) => {
+  const { id } = req.query
+  const { id: userId, company_id } = req.user;
+
+  const result = await SubWarehouseContent.findOne({
+    where: { item_id: id, company_id },
+    attributes: ['price', 'buy_price'],
+    raw: true
+  })
+  if(result){
+    res.json({ code: 200, data: { price: Number(result.price), buy_price: Number(result.buy_price) } })
+  }else{
+    res.json({ code: 200, data: null })
+  }
 })
 
 module.exports = router;

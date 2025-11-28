@@ -23,7 +23,7 @@ const SubWarehouseApply = sequelize.define('SubWarehouseApply', {
     allowNull: true,
     comment: '打印的id'
   },
-  buyPrint_id: {
+  procure_id: {
     type: DataTypes.INTEGER(30),
     allowNull: true,
     comment: '采购单号ID'
@@ -75,6 +75,12 @@ const SubWarehouseApply = sequelize.define('SubWarehouseApply', {
     defaultValue: null,
     comment: '供应商 or 制程'
   },
+  notice_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: null,
+    comment: '生产通知单id'
+  },
   item_id: {
     type: DataTypes.INTEGER,
     allowNull: true,
@@ -115,7 +121,13 @@ const SubWarehouseApply = sequelize.define('SubWarehouseApply', {
     type: DataTypes.DECIMAL(10, 1),
     allowNull: true,
     defaultValue: null,
-    comment: '采购单价'
+    comment: '采购/销售单价'
+  },
+  price: {
+    type: DataTypes.DECIMAL(10, 1),
+    allowNull: true,
+    defaultValue: null,
+    comment: '内部单价'
   },
   total_price: {
     type: DataTypes.DECIMAL(10, 1),

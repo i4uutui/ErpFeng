@@ -290,7 +290,7 @@ export default defineComponent({
     }
     // 批量采购单确认
     const handleProcurementAll = () => {
-      const json = allSelect.value.filter(e => e.status && e.status == 1 && e.is_buying == 1)
+      const json = allSelect.value.filter(e => e.status && e.status == 1 && e.is_buying == 1 && e.apply_id == user.id)
       if(!json.length) return ElMessage.error('暂无可操作确认的数据')
       const ids = json.map(e => e.id)
 
@@ -515,7 +515,7 @@ export default defineComponent({
                         <ElButton type="primary" onClick={ setStatusAllData } style={{ width: '100px' }}> 批量提交 </ElButton>
                       </ElFormItem>
                       {
-                        approval.findIndex(e => e.user_id == user.id) >= 0 ? 
+                        !isEmptyValue(approvalUser) ? 
                         <ElFormItem>
                           <ElButton type="primary" onClick={ () => setApprovalAllData() } style={{ width: '100px' }}> 批量审批 </ElButton>
                         </ElFormItem> : 
@@ -640,7 +640,7 @@ export default defineComponent({
                           if(row.status == undefined){
                             dom.push(<ElButton size="small" type="danger" onClick={ () => handleDelete(row, $index) }>删除</ElButton>)
                           }
-                          if(row.status == 1 && row.is_buying == 1){
+                          if(row.status == 1 && row.is_buying == 1 && row.apply_id == user.id){
                             dom.push(<ElButton size="small" type="primary"  v-permission={ 'OutscriptionOrder:buy' } onClick={ () => handleProcurement(row) }>加工单确认</ElButton>)
                           }
                           return dom

@@ -231,7 +231,7 @@ router.get('/material_code', authMiddleware, async (req, res) => {
 
 // 添加材料编码
 router.post('/material_code', authMiddleware, async (req, res) => {
-  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, remarks } = req.body;
+  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, category } = req.body;
   const { id: userId, company_id } = req.user;
   
   const rows = await SubMaterialCode.findAll({
@@ -242,8 +242,8 @@ router.post('/material_code', authMiddleware, async (req, res) => {
   })
   if(rows.length != 0) return res.json({ message: '编码不能重复', code: 401 })
   
-  SubMaterialCode.create({
-    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, remarks, company_id,
+  await SubMaterialCode.create({
+    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, category, company_id,
     user_id: userId
   })
   
@@ -252,7 +252,7 @@ router.post('/material_code', authMiddleware, async (req, res) => {
 
 // 更新材料编码接口
 router.put('/material_code', authMiddleware, async (req, res) => {
-  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, remarks, id } = req.body;
+  const { material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, category, id } = req.body;
   const { id: userId, company_id, type } = req.user;
   
   // 验证材料是否存在
@@ -262,7 +262,7 @@ router.put('/material_code', authMiddleware, async (req, res) => {
   if(type != 1) return res.json({ code: 401, message: '编码禁止修改' })
   
   await SubMaterialCode.update({
-    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, remarks, company_id,
+    material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, category, company_id,
     user_id: userId
   }, { where: { id } })
   

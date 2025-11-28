@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, subOutscriptionOrder, SubMaterialMent, Op, SubNoEncoding, SubMaterialBom, SubMaterialBomChild, SubMaterialQuote, SubOutsourcingQuote, SubMaterialOrder } = require('../models');
+const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, subOutscriptionOrder, SubMaterialMent, Op, SubNoEncoding, SubMaterialBom, SubMaterialBomChild, SubMaterialQuote, SubOutsourcingQuote, SubMaterialOrder, SubConstUser } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { getSaleCancelIds } = require('../middleware/tool');
@@ -18,7 +18,7 @@ const { getSaleCancelIds } = require('../middleware/tool');
  *           type: string
  */
 router.get('/getSaleOrder', authMiddleware, async (req, res) => {
-  const { customer_order, is_sale, my_id, id } = req.query;
+  const { customer_order, is_sale, my_id, sale_id, id } = req.query;
   const { company_id } = req.user;
 
   const saleIds = await getSaleCancelIds('sale_id', { company_id })
@@ -39,11 +39,13 @@ router.get('/getSaleOrder', authMiddleware, async (req, res) => {
     }
     whereObj[Op.or] = orConditions;
   }
+  if(sale_id) whereObj.sale_id = sale_id
   const config = {
     where: whereObj,
     include: [
       { model: SubProductCode, as: 'product' },
-      { model: SubCustomerInfo, as: 'customer'}
+      { model: SubCustomerInfo, as: 'customer'},
+      { model: SubProductQuotation, as: 'quot', attributes: ['id', 'product_price'] }
     ],
     order: [['created_at', 'DESC']],
     distinct: true,
@@ -319,6 +321,7 @@ router.get('/getProductNotice', authMiddleware, async (req, res) => {
   const config = {
     where: {
       is_deleted: 1,
+      is_finish: 1,
       company_id,
       sale_id: { [Op.notIn]: saleIds },
       ...noticeWhere
@@ -429,33 +432,6 @@ router.get('/getProcessCycle', authMiddleware, async (req, res) => {
   })
   const cycleRows = rows.map(e => e.toJSON())
   res.json({ data: cycleRows, code: 200 })
-})
-/**
- * @swagger
- * /api/getConstType:
- *   post:
- *     summary: 获取常量
- *     tags:
- *       - 常用列表(GetList)
- *     parameters:
- *       - name: type
- *         schema:
- *           type: string
- */
-router.post('/getConstType', authMiddleware, async (req, res) => {
-  const { type } = req.body
-  const { company_id } = req.user;
-  
-  if(!type) return res.json({ message: '缺少常量类型', code: 401 })
-
-  const rows = await SubConstType.findAll({
-    where: {
-      type
-    },
-    attributes: ['id', 'name', 'type']
-  })
-  const typeRows = rows.map(e => e.toJSON())
-  res.json({ data: typeRows, code: 200 })
 })
 /**
  * @swagger
@@ -730,6 +706,22 @@ router.get('/getMaterialOrderList', authMiddleware, async (req, res) => {
   const data = result.map(e => e.toJSON())
 
   res.json({ code: 200, data })
+})
+
+/**
+ * @swagger
+ * /api/getMaterialOrderList:
+ *   get:
+ *     summary: 获取常量列表(所有)
+ *     tags:
+ *       - 常用列表(GetList)
+ */
+router.get('/getConstUser', authMiddleware, async (req, res) => {
+  const { company_id } = req.user;
+
+  const result = await SubConstUser.findAll({ where: { company_id, status: 1 }, raw: true })
+
+  res.json({ code: 200, data: result })
 })
 
 module.exports = router;  

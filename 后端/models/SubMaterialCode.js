@@ -54,10 +54,10 @@ const SubMaterialCode = sequelize.define('SubMaterialCode', {
     allowNull: true,
     comment: '采购单位'
   },
-  remarks: {
-    type: DataTypes.TEXT,
+  category: {
+    type: DataTypes.STRING(5),
     allowNull: true,
-    comment: '备注'
+    comment: '材料类别'
   },
   is_deleted: {
     type: DataTypes.INTEGER(1),

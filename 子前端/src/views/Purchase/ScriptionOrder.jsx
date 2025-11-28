@@ -22,6 +22,7 @@ export default defineComponent({
     const formRef = ref(null);
     const formCard = ref(null)
     const formHeight = ref(0);
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const rules = ref({
       supplier_id: [
         { required: true, message: '请选择供应商编码', trigger: 'blur' }
@@ -119,7 +120,11 @@ export default defineComponent({
     // 获取数据列表
     const fetchProductList = async () => {
       const res = await request.get('/api/material_ment', { params: search.value });
-      tableData.value = res.data;
+      tableData.value = res.data.map(e => {
+        e.unit = e.unit ? Number(e.unit) : e.unit
+        e.usage_unit = e.usage_unit ? Number(e.usage_unit) : e.usage_unit
+        return e
+      });
 
       // 打印的时候用的
       if(!res.data.length) return
@@ -195,6 +200,8 @@ export default defineComponent({
                 form.value.material_name = item.material_name
                 form.value.model_spec = item.model
                 form.value.other_features = item.other_features
+                form.value.unit = item.purchase_unit
+                form.value.usage_unit = item.usage_unit
                 break;
               }
             }
@@ -352,7 +359,7 @@ export default defineComponent({
     }
     // 批量采购单确认
     const handleProcurementAll = () => {
-      const json = allSelect.value.filter(e => e.status && e.status == 1 && e.is_buying == 1)
+      const json = allSelect.value.filter(e => e.status && e.status == 1 && e.is_buying == 1 && e.apply_id == user.id)
       if(!json.length) return ElMessage.error('暂无可操作确认的数据')
       const ids = json.map(e => e.id)
 
@@ -660,7 +667,7 @@ export default defineComponent({
                         <ElButton type="primary" onClick={ setStatusAllData } style={{ width: '100px' }}> 批量提交 </ElButton>
                       </ElFormItem>
                       {
-                        approval.findIndex(e => e.user_id == user.id) >= 0 ? 
+                        !isEmptyValue(approvalUser) ? 
                         <ElFormItem>
                           <ElButton type="primary" onClick={ () => setApprovalAllData() } style={{ width: '100px' }}> 批量审批 </ElButton>
                         </ElFormItem> : 
@@ -742,8 +749,12 @@ export default defineComponent({
                   <ElTableColumn prop="material_name" label="材料名称" width='100' />
                   <ElTableColumn prop="model_spec" label="型号&规格" width='100' />
                   <ElTableColumn prop="other_features" label="其它特性" width='100' />
-                  <ElTableColumn prop="unit" label="采购单位" width='100' />
-                  <ElTableColumn prop="usage_unit" label="使用单位" width='100' />
+                  <ElTableColumn label="采购单位" width='100'>
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
+                  </ElTableColumn>
+                  <ElTableColumn label="使用单位" width='100'>
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.usage_unit)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="price" label="采购单价" width='100' />
                   <ElTableColumn prop="number" label="采购数量" width='100' />
                   <ElTableColumn prop="delivery_time" label="交货时间" width='110' />
@@ -790,7 +801,7 @@ export default defineComponent({
                           if(row.status == undefined){
                             dom.push(<ElButton size="small" type="danger" onClick={ () => handleDelete(row, $index) }>删除</ElButton>)
                           }
-                          if(row.status == 1 && row.is_buying == 1){
+                          if(row.status == 1 && row.is_buying == 1 && row.apply_id == user.id){
                             dom.push(<ElButton size="small" type="primary"  v-permission={ 'ScriptionOrder:buy' } onClick={ () => handleProcurement(row) }>采购单确认</ElButton>)
                           }
                           return dom
@@ -863,14 +874,15 @@ export default defineComponent({
                   <ElInput v-model={ form.value.price } placeholder="请输入采购单价" />
                 </ElFormItem>
                 <ElFormItem label="采购单位" prop="unit">
-                  <ElInput v-model={ form.value.unit } placeholder="请输入采购单位" />
+                  <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择采购单位">
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="使用单位" prop="usage_unit">
-                  <ElInput v-model={ form.value.usage_unit } placeholder="请输入使用单位" />
+                  <ElSelect v-model={ form.value.usage_unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择使用单位">
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
-                {/* <ElFormItem label="预计数量" prop="order_number">
-                  <ElInput v-model={ form.value.order_number } disabled placeholder="请输入预计数量" />
-                </ElFormItem> */}
                 <ElFormItem label="采购数量" prop="number">
                   <ElInput v-model={ form.value.number } placeholder="请输入采购数量" />
                 </ElFormItem>

@@ -89,18 +89,18 @@ export default defineComponent({
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
-                  <ElTableColumn prop="created_at" label="日期" />
-                  <ElTableColumn prop="supplier.supplier_code" label="供应商编码" />
-                  <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" />
-                  <ElTableColumn prop="buyPrint.no" label="采购单号" width="160" />
-                  <ElTableColumn prop="print.no" label="入库单号" width="160" />
-                  <ElTableColumn prop="code" label="材料编码" />
-                  <ElTableColumn prop="name" label="材料名称" />
-                  <ElTableColumn prop="model_spec" label="规格&型号" width="160" />
+                  <ElTableColumn prop="created_at" label="日期" width="110" />
+                  <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width="140" />
+                  <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width="140" />
+                  <ElTableColumn prop="buy.ment.no" label="采购单号" width="160" />
+                  <ElTableColumn prop="apply.no" label="入库单号" width="160" />
+                  <ElTableColumn prop="code" label="材料编码" width="130" />
+                  <ElTableColumn prop="name" label="材料名称" width="130" />
+                  <ElTableColumn prop="model_spec" label="规格&型号" />
                   <ElTableColumn prop="other_features" label="其它性能" />
-                  <ElTableColumn prop="quantity" label="入库数量" />
-                  <ElTableColumn prop="buy_price" label="入库单价" />
-                  <ElTableColumn prop="total_price" label="总价" />
+                  <ElTableColumn prop="quantity" label="入库数量" width="110" />
+                  <ElTableColumn prop="buy_price" label="入库单价" width="110" />
+                  <ElTableColumn prop="total_price" label="总价" width="130" />
                 </ElTable>
                 <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>

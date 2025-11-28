@@ -223,7 +223,7 @@ export default defineComponent({
                     {({ row }) => (
                       <>
                         { row.status == 0 ? <ElButton size="small" type="primary" v-permission={ 'pieceRate:confirm' } onClick={ () => handleConfirm(row) }>确认</ElButton> : '' }
-                        { <ElButton size="small" type="warning" v-permission={ 'pieceRate:edit' } onClick={ () => handleUplate(row) }>修改</ElButton> }
+                        { row.status == 0 ? <ElButton size="small" type="warning" v-permission={ 'pieceRate:edit' } onClick={ () => handleUplate(row) }>修改</ElButton> : '' }
                       </>
                     )}
                   </ElTableColumn>

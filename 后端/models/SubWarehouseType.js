@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize');
 
-const SubConstType = sequelize.define('SubConstType', {
+const SubWarehouseType = sequelize.define('SubWarehouseType', {
   id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
@@ -10,7 +10,7 @@ const SubConstType = sequelize.define('SubConstType', {
     comment: '自增主键ID'
   },
   type: {
-    type: DataTypes.STRING(50),
+    type: DataTypes.STRING(20),
     allowNull: false,
     unique: true,
     comment: ' 编码 '
@@ -22,12 +22,12 @@ const SubConstType = sequelize.define('SubConstType', {
   },
 }, {
   sequelize,
-  modelName: 'sub_const_type',
-  tableName: 'sub_const_type',
+  modelName: 'sub_warehouse_type',
+  tableName: 'sub_warehouse_type',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
-  comment: '常量类型表'
+  comment: '仓库类型表'
 })
 
-module.exports = SubConstType;
+module.exports = SubWarehouseType;

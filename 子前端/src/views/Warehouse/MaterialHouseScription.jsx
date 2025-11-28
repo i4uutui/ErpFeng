@@ -1,20 +1,16 @@
-import { defineComponent, onMounted, reactive, ref, nextTick, computed } from 'vue'
-import { useStore } from '@/stores';
-import { getRandomString, PreciseMath, numberToChinese, getNoLast, getPageHeight, isEmptyValue } from '@/utils/tool'
+import { defineComponent, onMounted, reactive, ref, nextTick } from 'vue'
+import { getRandomString, PreciseMath, getPageHeight, isEmptyValue } from '@/utils/tool'
 import { reportOperationLog } from '@/utils/log';
 import { getItem } from '@/assets/js/storage';
 import request from '@/utils/request';
 import dayjs from "dayjs"
 import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
-import html2pdf from 'html2pdf.js';
-import WinPrint from '@/components/print/winPrint';
 import HeadForm from '@/components/form/HeadForm';
 import deepClone from '@/utils/deepClone';
 
 export default defineComponent({
   setup(){
-    const store = useStore()
     const statusType = reactive({
       0: '待审批',
       1: '已通过',
@@ -35,7 +31,14 @@ export default defineComponent({
     const formHeight = ref(0);
     const formCard = ref(null)
     const formRef = ref(null)
-    const rules = ref({})
+    const rules = ref({
+      procure_id: [
+        { required: true, message: '请选择采购单', trigger: 'blur' },
+      ],
+      quantity: [
+        { required: true, message: '请输入数量', trigger: 'blur' },
+      ],
+    })
     let form = ref({
       ware_id: 1,
       house_id: '',
@@ -44,7 +47,8 @@ export default defineComponent({
       type: '', // 常量类型
       plan_id: '', // 供应商id or 制程id
       plan: '', // 供应商 or 制程
-      buyPrint_id: '', // 采购单号的ID
+      procure_id: '', // 采购单号的ID
+      notice_id: '',
       item_id: '',
       code: '',
       name: '',
@@ -52,6 +56,7 @@ export default defineComponent({
       other_features: '',
       quantity: '',
       buy_price: '',
+      price: ''
     })
     let dialogVisible = ref(false)
     let constObj = ref({})
@@ -62,6 +67,7 @@ export default defineComponent({
     let materialList = ref([]) // 材料编码
     let materialBuy = ref([]) // 采购单列表
     let outBuy = ref([]) // 委外单列表
+    let noticeList = ref([])
     let tableData = ref([])
     let allSelect = ref([])
     let edit = ref('')
@@ -77,11 +83,6 @@ export default defineComponent({
     let dateTime = ref([])
     // 用来打印用的
     let printers = ref([]) //打印机列表
-    let printDataIds = ref([]) // 需要打印的数据的id
-    let printVisible = ref(false)
-    let setPdfBlobUrl = ref('')
-
-    const printNo = computed(() => store.printNo)
 
     onMounted(async () => {
       nowDate.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
@@ -102,6 +103,7 @@ export default defineComponent({
       await getHouseList() // 获取仓库名称
       await filterQuery()
       await getMaterialOrderList() // 获取采购单列表
+      await getProductNotice() //获取生产通知单
 
       getPrinters()
     })
@@ -133,7 +135,7 @@ export default defineComponent({
     }
     // 获取常量
     const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['materialIn', 'materialOut', 'house'] })
+      const res = await request.post('/api/get_warehouse_type', { type: ['materialIn', 'materialOut', 'house'] })
       constType.value = res.data
 
       const transformedData = {};
@@ -167,6 +169,11 @@ export default defineComponent({
       houseList.value = res.data
       form.value.house_id = res.data[0].id
       form.value.house_name = res.data[0].name
+    }
+    // 获取生产通知单
+    const getProductNotice = async () => {
+      const res = await request.get('/api/getProductNotice')
+      noticeList.value = res.data
     }
     // 反审批
     const handleBackApproval = async (row) => {
@@ -311,7 +318,8 @@ export default defineComponent({
         type: e.type, // 常量类型
         plan_id: e.plan_id, // 供应商id or 制程id
         plan: e.plan, // 供应商 or 制程
-        buyPrint_id: e.buyPrint_id, //采购单号的ID
+        procure_id: e.procure_id, //采购单号的ID
+        notice_id: e.notice_id,
         item_id: e.item_id,
         code: e.code,
         name: e.name,
@@ -319,6 +327,7 @@ export default defineComponent({
         other_features: e.other_features,
         quantity: e.quantity,
         buy_price: e.buy_price,
+        price: e.price,
         status: e.status,
         approval: e.approval?.length ? e.approval.map(e => e.id) : []
       }
@@ -333,6 +342,11 @@ export default defineComponent({
         if (valid){
           if(!edit.value){
             const obj = JSON.parse(JSON.stringify(form.value))
+            if((obj.type == 4 || obj.type == 7 || obj.type == 8) && obj.notice_id){
+              obj.notice = { id: obj.notice_id, notice: noticeList.value.find(o => o.id == obj.notice_id).notice }
+            }else{
+              obj.notice_id = null
+            }
             const quantity = Number(obj.quantity)
             if(!(quantity || quantity > 0)){
               return ElMessage.error('非法数量，请输入正整数的数量')
@@ -340,10 +354,8 @@ export default defineComponent({
             const res = await request.post('/api/queryWarehouse', obj) // 用来做检查的接口
             if(res.code != 200) return
             obj.id = getRandomString() // 临时ID
-            console.log(obj);
             tableData.value = [obj, ...tableData.value]
             dialogVisible.value = false;
-            
           }else{
             if(form.value.approval){
               // 修改
@@ -377,6 +389,9 @@ export default defineComponent({
       edit.value = row.id;
       dialogVisible.value = true;
       form.value = { ...row };
+      if(row.procure_id){ // 用于采购入库的
+        buyChange(row.procure_id)
+      }
     }
     const handleAdd = (value) => {
       edit.value = 0
@@ -392,10 +407,14 @@ export default defineComponent({
     const typeChange = (value) => {
       form.value.plan_id = ''
       form.value.plan = ''
-      if(value != 4){
-        form.value.buy_price = ''
+      // 只有指定入库类型才需要生产通知单
+      if([5, 6, 9].includes(value)){
+        form.value.notice_id = null
       }
-      form.value.buyPrint_id = ''
+      // 如果非采购入库，清空采购入库
+      if(value != 4){
+        form.value.procure_id = ''
+      }
     }
     const outChange = async (value) => {
       const res = await request.get('/api/getOutsourcingOrder', { params: { print_id: value } })
@@ -421,6 +440,9 @@ export default defineComponent({
       form.value.item_id = material.id
       form.value.quantity = material.number
       form.value.buy_price = material.price
+      form.value.code = material.material_code
+      form.value.name = material.material_name
+      form.value.other_features = material.other_features
     }
     // 出入库单确认接口调用
     const handlePurchaseIsBuying = async (ids) => {
@@ -433,7 +455,7 @@ export default defineComponent({
     }
     // 批量出入库单确认
     const handleProcurementAll = () => {
-      const json = allSelect.value.filter(e => e.status && e.status == 1 && e.is_buying == 1)
+      const json = allSelect.value.filter(e => e.status && e.status == 1 && e.is_buying == 1 && e.apply_id == user.id)
       if(!json.length) return ElMessage.error('暂无可操作确认的数据')
       function isAllTypesSame(array) {
         const firstType = array[0].operate;
@@ -480,7 +502,7 @@ export default defineComponent({
     }
     const materialChange = (value) => {
       const obj = materialList.value.find(e => e.id == value)
-      if(form.value.buyPrint_id){
+      if(form.value.procure_id){
         form.value.quantity = obj.number
         form.value.buy_price = obj.price
         return
@@ -489,6 +511,21 @@ export default defineComponent({
       form.value.name = obj.material_name
       form.value.model_spec = obj.model
       form.value.other_features = obj.other_features
+      // 从仓库中将价格带出来
+      const type = form.value.type
+      if(type != 4){
+        getWareHouseMaterialPrice(value)
+      }
+    }
+    const getWareHouseMaterialPrice = async (id) => {
+      const res = await request.get('/api/getWareHouseMaterialPrice', { params: { id } })
+      if(res.code == 200){
+        form.value.price = res.data.price ? Number(res.data.price) : ''
+        form.value.buy_price = res.data.buy_price ? Number(res.data.buy_price) : ''
+      }
+    }
+    const handleDelete = (row, index) => {
+      tableData.value.splice(index, 1)
     }
     const formOperateSelect = async (value) => {
       typeId.value = '' // 重新选择出入库后，重置出入库方式
@@ -517,7 +554,8 @@ export default defineComponent({
           type: '',
           plan_id: '',
           plan: '',
-          buyPrint_id: '',
+          procure_id: '',
+          notice_id: '',
           item_id: '',
           code: '',
           name: '',
@@ -525,6 +563,7 @@ export default defineComponent({
           other_features: '',
           quantity: '',
           buy_price: '',
+          price: ''
         }
       }, 200);
     }
@@ -573,41 +612,6 @@ export default defineComponent({
         }
       }
     }
-    // const onPrint = async () => {
-    //   const list = allSelect.value.length ? allSelect.value : tableData.value
-    //   if(!list.length) return ElMessage.error('请选择需要打印的数据')
-    //   const canPrintData = list.filter(o => o.status != undefined && o.status == 1)
-    //   if(!canPrintData.length) return ElMessage.error('暂无可打印的数据或未审核通过')
-
-    //   const printType = getPrintType()
-    //   await getNoLast(printType)
-    //   const ids = canPrintData.map(e => e.id)
-    //   printDataIds.value = ids
-      
-    //   const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
-    //   const opt = {
-    //     margin: 10,
-    //     filename: 'table-print.pdf',
-    //     image: { type: 'jpeg', quality: 0.98 },
-    //     pagebreak: {
-    //       mode: ['avoid-all', 'css', 'avoid']
-    //     },
-    //     html2canvas: { scale: 2 }, // 保证清晰度
-    //     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-    //   };
-    //   // 生成 PDF 并转为 Blob
-    //   html2pdf().from(printTable).set(opt).output('blob').then(async pdfBlob => {
-    //     let urlTwo = URL.createObjectURL(pdfBlob);
-    //     setPdfBlobUrl.value = urlTwo
-    //     printVisible.value = true
-    //   }); 
-    // }
-    // const getPrintType = () => {
-    //   if(tableData.value.length){
-    //     return tableData.value[0].operate == 1 ? 'MR' : 'MC'
-    //   }
-    //   return ''
-    // }
 
     return() => (
       <>
@@ -628,7 +632,7 @@ export default defineComponent({
                         <ElButton type="primary" onClick={ () => setStatusAllData() } style={{ width: '100px' }}> 批量提交 </ElButton>
                       </ElFormItem>
                       {
-                        approval.findIndex(e => e.user_id == user.id) >= 0 ? 
+                        !isEmptyValue(approvalUser) ? 
                         <ElFormItem>
                           <ElButton type="primary" onClick={ () => setApprovalAllData() } style={{ width: '100px' }}> 批量审批 </ElButton>
                         </ElFormItem> : 
@@ -712,6 +716,7 @@ export default defineComponent({
                       }
                     }}
                   </ElTableColumn>
+                  <ElTableColumn prop="notice.notice" label="生产通知单" width="100" />
                   <ElTableColumn prop="house_name" label="仓库名称" width="100" />
                   <ElTableColumn label="出入库" width="80">
                     {({row}) => <span>{operateValue[row.operate]}</span>}
@@ -727,17 +732,25 @@ export default defineComponent({
                   </ElTableColumn>
                   <ElTableColumn prop="model_spec" label="规格&型号" width="110" />
                   <ElTableColumn prop="other_features" label="其他特性" width="110" />
-                  <ElTableColumn prop="buy_price" label="单价(元)" width="110">
+                  <ElTableColumn label="采购单价(元)" width="110">
                     {({row}) => <span>{ row.buy_price ? row.buy_price : 0 }</span>}
                   </ElTableColumn>
+                  <ElTableColumn label="内部单价(元)" width="110">
+                    {({row}) => <span>{ row.price ? row.price : 0 }</span>}
+                  </ElTableColumn>
                   <ElTableColumn label="总价(元)" width="110">
-                    {({row}) => <span>{ row.approval ? row.total_price : PreciseMath.mul(row.buy_price, row.quantity) }</span>}
+                    {({row}) => {
+                      if(!isEmptyValue(row)){
+                        return <span>{ row.approval ? row.total_price : row.buy_price ? PreciseMath.mul(row.buy_price, row.quantity) : '' }</span>
+                      }
+                    }}
                   </ElTableColumn>
                   <ElTableColumn prop="apply_name" label="申请人" width="90" />
                   <ElTableColumn prop="apply_time" label="申请时间" width="110" />
                   <ElTableColumn label="操作" width="210" fixed="right">
                     {{
-                      default: ({ row }) => {
+                      default: (scope, $index) => {
+                        const row = scope.row
                         if(!isEmptyValue(row)){
                           let dom = []
                           // 查询当前用户是否有审批权限
@@ -776,7 +789,7 @@ export default defineComponent({
                           if(row.status == undefined){
                             dom.push(<ElButton size="small" type="danger" onClick={ () => handleDelete(row, $index) }>删除</ElButton>)
                           }
-                          if(row.status == 1 && row.is_buying == 1){
+                          if(row.status == 1 && row.is_buying == 1 && row.apply_id == user.id){
                             dom.push(<ElButton size="small" type="primary"  v-permission={ 'MaterialHouseScription:buy' } onClick={ () => handleProcurement(row) }>出入库单确认</ElButton>)
                           }
                           return dom
@@ -785,73 +798,6 @@ export default defineComponent({
                     }}
                   </ElTableColumn>
                 </ElTable>
-                <div class="printTable" id='totalTable2'>
-                  <div id="printTable">
-                    <div class="No">编码：{ printNo.value }</div>
-                    <table class="print-table">
-                      <thead>
-                        <tr>
-                          <th colspan="9" class="title-cell">
-                            <div class="popTitle" style={{ textAlign: 'center', fontSize: '36px' }}>{ tableData.value.length ? `${operateValue[tableData.value[0].operate]}单` : '' }</div>
-                          </th>
-                        </tr>
-                        <tr>
-                          <th colspan="9" class="header-cell">
-                            <div class="flex row-between print-header">
-                              <div>仓库类别：材料仓</div>
-                              <div>仓库名称：{ tableData.value.length ? tableData.value[0].house_name : '' }</div>
-                              <div>统计周期：{ dateTime.value[0] } 至 {dateTime.value[1]}</div>
-                            </div>
-                          </th>
-                        </tr>
-                        <tr class="table-header">
-                          <th>序号</th>
-                          <th>状态</th>
-                          <th>供应商/制程</th>
-                          <th>物料编码</th>
-                          <th>物料名称</th>
-                          <th>规格型号</th>
-                          <th>数量</th>
-                          <th>单价</th>
-                          <th>总价</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(allSelect.value.length ? allSelect.value : tableData.value).map((e, index) => {
-                          const tr = <tr class="table-row">
-                            <td>{ index + 1 }</td>
-                            <td>{ e.status >= 0 ? statusType[e.status] : '' }</td>
-                            <td>{ e.plan }</td>
-                            <td>{ e.code }</td>
-                            <td>{ e.name }</td>
-                            <td>{ e.model_spec }</td>
-                            <td>{ e.quantity }</td>
-                            <td>{ e.buy_price ? e.buy_price : 0 }</td>
-                            <td>{ e.approval ? e.total_price : PreciseMath.mul(e.buy_price, e.quantity) }</td>
-                          </tr>
-                          return tr
-                        })}
-                        <tr class="table-row">
-                          <td>统计</td>
-                          <td colSpan={ 5 }>人民币大写：{ numberToChinese(getTotalNumber('total_price')) }</td>
-                          <td>{ getTotalNumber('quantity') }</td>
-                          <td>/</td>
-                          <td>{ getTotalNumber('total_price') }</td>
-                        </tr>
-                        <tr class="header-cell">
-                          <td colspan="9">
-                            <div class="flex row-between print-header">
-                              <div>核准：</div>
-                              <div>审查：</div>
-                              <div>制表：{ user.name }</div>
-                              <div>日期：{ nowDate.value }</div>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
               </>
             )
           }}
@@ -876,16 +822,24 @@ export default defineComponent({
                 </ElFormItem>
                 {
                   form.value.type == 4 ? 
-                  <ElFormItem label="采购单" prop="buyPrint_id">
-                    <ElSelect v-model={ form.value.buyPrint_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择采购单号" onChange={ (row) => buyChange(row) }>
+                  <ElFormItem label="采购单" prop="procure_id">
+                    <ElSelect v-model={ form.value.procure_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择采购单号" onChange={ (row) => buyChange(row) }>
                       {materialBuy.value.map((o, index) => <ElOption value={ o.id } label={ o.no } key={ index } />)}
                     </ElSelect>
                   </ElFormItem> : ''
                 }
                 {
+                  form.value.type == 4 || form.value.type == 7 || form.value.type == 8 ?
+                  <ElFormItem label="生产通知单" prop="notice_id">
+                    <ElSelect v-model={ form.value.notice_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产通知单">
+                      {noticeList.value.map((o, index) => <ElOption value={ o.id } label={ o.notice } key={ index } />)}
+                    </ElSelect>
+                  </ElFormItem> : ''
+                }
+                {
                   form.value.type == 8 ? 
-                  <ElFormItem label="委外加工单" prop="buyPrint_id">
-                    <ElSelect v-model={ form.value.buyPrint_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择委外加工单" onChange={ (row) => outChange(row) }>
+                  <ElFormItem label="委外加工单" prop="procure_id">
+                    <ElSelect v-model={ form.value.procure_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择委外加工单" onChange={ (row) => outChange(row) }>
                       {outBuy.value.map((o, index) => <ElOption value={ o.id } label={ o.no } key={ index } />)}
                     </ElSelect>
                   </ElFormItem> : ''
@@ -912,12 +866,12 @@ export default defineComponent({
                 <ElFormItem label="材料编码" prop="item_id">
                   <ElSelect v-model={ form.value.item_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料编码" onChange={ (row) => materialChange(row) }>
                     {materialList.value.map((e, index) => e && (
-                      <ElOption value={ e.id } label={ e.material_code } disabled={ form.value.buyPrint_id ? !e.is_houser : false } key={ index } />
+                      <ElOption value={ e.id } label={ e.material_code } disabled={ form.value.procure_id ? !e.is_houser : false } key={ index } />
                     ))}
                   </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="材料名称">
-                  <ElSelect class="disabled" v-model={ form.value.item_id } multiple={false} disabled filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料名称" onChange={ (row) => materialChange(row) }>
+                  <ElSelect class="disabled" v-model={ form.value.item_id } multiple={false} disabled filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料名称">
                     {materialList.value.map((e, index) => e && (
                       <ElOption value={ e.id } label={ e.material_name } key={ index } />
                     ))}
@@ -926,8 +880,11 @@ export default defineComponent({
                 <ElFormItem label="数量" prop="quantity">
                   <ElInput v-model={ form.value.quantity } placeholder="请输入数量" />
                 </ElFormItem>
-                <ElFormItem label="单价" prop="buy_price">
-                  <ElInput v-model={ form.value.buy_price } type="number" placeholder="请输入单价" />
+                <ElFormItem label="采购单价" prop="buy_price">
+                  <ElInput v-model={ form.value.buy_price } type="number" placeholder="请输入采购单价" />
+                </ElFormItem>
+                <ElFormItem label="内部单价" prop="price">
+                  <ElInput v-model={ form.value.price } type="number" placeholder="请输入内部单价" />
                 </ElFormItem>
               </ElForm>
             ),

@@ -8,16 +8,17 @@ export default defineComponent({
     const formCard = ref(null)
     const pagin = ref(null)
     const formHeight = ref(0);
+    const invoice = ref(getItem('constant').filter(o => o.type == 'invoice'))
+    const payTime = ref(getItem('constant').filter(o => o.type == 'payTime'))
+    const supplyMethod =  ref(getItem('constant').filter(o => o.type == 'supplyMethod'))
+    const method = ref(getItem('constant').filter(o => o.type == 'payInfo'))
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     let search = ref({
       supplier_code: '',
       supplier_abbreviation: '',
       material_code: '',
       material_name: '',
     })
-    let invoice = ref([])
-    let payTime = ref([])
-    let supplyMethod = ref([])
-    let method = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(20);
@@ -114,7 +115,9 @@ export default defineComponent({
                   <ElTableColumn prop="material.other_features" label="其他特性" width="100" />
                   <ElTableColumn prop="price" label="采购单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
-                  <ElTableColumn prop="unit" label="采购单位" width="100" />
+                  <ElTableColumn label="采购单位" width="100">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn label="送货方式" width="100">
                     {({row}) => <span>{ supplyMethod.value.find(e => e.id == row.delivery)?.name }</span>}
                   </ElTableColumn>

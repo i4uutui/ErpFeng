@@ -29,7 +29,7 @@ export default defineComponent({
     let pageSize = ref(20);
     let total = ref(0);
 
-    onMounted(() => {
+    onMounted(async () => {
       nextTick(async () => {
         formHeight.value = await getPageHeight([pagin.value]);
       })
@@ -40,8 +40,8 @@ export default defineComponent({
       const lastYearEnd = today.endOf('day').format('YYYY-MM-DD HH:mm:ss')
       dateTime.value = [lastYearStart, lastYearEnd]
       
-      getGurchaseOrder()
-      getConstType()
+      await getConstType()
+      await getGurchaseOrder()
     })
 
     const getGurchaseOrder = async () => {
@@ -61,7 +61,7 @@ export default defineComponent({
     }
     // 获取常量
     const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['productIn', 'productOut'] })
+      const res = await request.post('/api/get_warehouse_type', { type: ['productIn', 'productOut'] })
       constTypeList.value = res.data
     }
     // 用户主动多选，然后保存到allSelect
@@ -137,9 +137,6 @@ export default defineComponent({
                   <ElTableColumn type="expand" width="1">
                     {({ row }) => (
                       <ElTable data={ row.order } border stripe>
-                        <ElTableColumn label="出入库" width="80">
-                          {({row}) => <span>{operateValue[row.operate]}</span>}
-                        </ElTableColumn>
                         <ElTableColumn label="出入库方式" width="100">
                           {({row}) => <span>{constTypeList.value.find(o => o.id == row.type).name}</span>}
                         </ElTableColumn>
@@ -163,6 +160,9 @@ export default defineComponent({
                     )}
                   </ElTableColumn>
                   {/* <ElTableColumn type="selection" width="55" /> */}
+                  <ElTableColumn label="出入库">
+                    {({row}) => <span>{operateValue[row.operate]}</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="no" label="出入库单号" />
                   <ElTableColumn label="仓库类型">
                     {({row}) => <span>成品仓</span>}

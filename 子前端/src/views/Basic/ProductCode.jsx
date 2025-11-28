@@ -11,6 +11,7 @@ export default defineComponent({
     const formCard = ref(null)
     const pagin = ref(null)
     const formHeight = ref(0);
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const user = reactive(getItem('user'))
     const rules = reactive({
       product_code: [
@@ -81,7 +82,10 @@ export default defineComponent({
           ...search.value
         },
       });
-      tableData.value = res.data;
+      tableData.value = res.data.map(e => {
+        e.unit = e.unit ? Number(e.unit) : ''
+        return e
+      });
       total.value = res.total;
     };
     const handleSubmit = async (formEl) => {
@@ -234,7 +238,9 @@ export default defineComponent({
                   {/* <ElTableColumn prop="specification" label="规格" /> */}
                   <ElTableColumn prop="other_features" label="其它特性" />
                   <ElTableColumn prop="component_structure" label="产品结构" />
-                  <ElTableColumn prop="unit" label="单位" width="100" />
+                  <ElTableColumn label="单位" width="100">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="production_requirements" label="生产要求" />
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
@@ -270,7 +276,9 @@ export default defineComponent({
                   <ElInput v-model={ form.value.specification } placeholder="请输入规格" />
                 </ElFormItem> */}
                 <ElFormItem label="单位" prop="unit">
-                  <ElInput v-model={ form.value.unit } placeholder="请输入单位" />
+                  <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择单位">
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="其它特性" prop="other_features">
                   <ElInput v-model={ form.value.other_features } placeholder="请输入其它特性" />

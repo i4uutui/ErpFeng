@@ -36,6 +36,8 @@ export default defineComponent({
           ElMessage.success('登录成功');
           router.push('/');
 
+          // 获取常量信息
+          getConstUser()
           reportOperationLog({
             operationType: 'login',
             module: '登录',
@@ -45,6 +47,13 @@ export default defineComponent({
         })
       });
     };
+    // 获取常量所有列表数据
+    const getConstUser = async () => {
+      const res = await request.get('/api/getConstUser')
+      if(res.code == 200){
+        setItem('constant', res.data)
+      }
+    }
 
     return() => (
       <div class="login-container">

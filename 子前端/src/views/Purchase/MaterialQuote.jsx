@@ -3,12 +3,18 @@ import request from '@/utils/request';
 import MySelect from '@/components/tables/mySelect.vue';
 import { reportOperationLog } from '@/utils/log';
 import { getPageHeight } from '@/utils/tool';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
     const formRef = ref(null);
     const formCard = ref(null)
     const formHeight = ref(0);
+    const invoice = ref(getItem('constant').filter(o => o.type == 'invoice'))
+    const payTime = ref(getItem('constant').filter(o => o.type == 'payTime'))
+    const supplyMethod =  ref(getItem('constant').filter(o => o.type == 'supplyMethod'))
+    const method = ref(getItem('constant').filter(o => o.type == 'payInfo'))
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const rules = reactive({
       supplier_id: [
         { required: true, message: '请选择供应商编码', trigger: 'blur' },
@@ -45,10 +51,6 @@ export default defineComponent({
       invoice: ''
     })
     let supplierList = ref([])
-    let invoice = ref([])
-    let payTime = ref([])
-    let supplyMethod = ref([])
-    let method = ref([])
     let materialList = ref([])
     let tableData = ref([])
     let edit = ref(-1)
@@ -59,23 +61,12 @@ export default defineComponent({
       })
       getMaterialCode()
       getSupplierInfo()
-      getConstType()
     })
 
     const getSupplierInfo = async () => {
       const res = await request.get('/api/getSupplierInfo')
       if(res.code == 200){
         supplierList.value = res.data
-      }
-    }
-    // 获取常量
-    const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['invoice', 'supplyMethod', 'payTime', 'payInfo'] })
-      if(res.code == 200){
-        invoice.value = res.data.filter(o => o.type == 'invoice')
-        payTime.value = res.data.filter(o => o.type == 'payTime')
-        supplyMethod.value =  res.data.filter(o => o.type == 'supplyMethod')
-        method.value = res.data.filter(o => o.type == 'payInfo')
       }
     }
     const getMaterialCode = async () => {
@@ -220,6 +211,7 @@ export default defineComponent({
     const materialChange = (value) => {
       const row = materialList.value.find(o => o.id == value)
       form.value.material_name = row.material_name
+      form.value.unit = row.purchase_unit ? Number(row.purchase_unit) : ''
     }
     const goArchive = () => {
       window.open('/#/purchase/material-quote-archive', '_blank')
@@ -257,7 +249,9 @@ export default defineComponent({
                   <ElTableColumn prop="material.other_features" label="其他特性" width="100" />
                   <ElTableColumn prop="price" label="采购单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
-                  <ElTableColumn prop="unit" label="采购单位" width="100" />
+                  <ElTableColumn label="采购单位" width="100">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn label="送货方式" width="100">
                     {({row}) => <span>{ supplyMethod.value.find(e => e.id == row.delivery)?.name }</span>}
                   </ElTableColumn>
@@ -318,7 +312,9 @@ export default defineComponent({
                   <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
                 </ElFormItem>
                 <ElFormItem label="采购单位" prop="unit">
-                  <ElInput v-model={ form.value.unit } placeholder="请输入采购单位" />
+                  <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择采购单位">
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="送货方式" prop="delivery">
                   <ElSelect v-model={ form.value.delivery } multiple={ false } filterable remote remote-show-suffix placeholder="请选择送货方式">

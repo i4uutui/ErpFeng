@@ -3,6 +3,7 @@ import request from '@/utils/request';
 import { reportOperationLog } from '@/utils/log';
 import { getPageHeight } from '@/utils/tool';
 import HeadForm from '@/components/form/HeadForm';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
@@ -10,6 +11,8 @@ export default defineComponent({
     const formCard = ref(null)
     const pagin = ref(null)
     const formHeight = ref(0);
+    const method = ref(getItem('constant').filter(o => o.type == 'payInfo'))
+    const payTime = ref(getItem('constant').filter(o => o.type == 'payTime'))
     const rules = reactive({
       customer_code: [
         { required: true, message: '请输入客户编码', trigger: 'blur' },
@@ -62,8 +65,6 @@ export default defineComponent({
     let pageSize = ref(20);
     let total = ref(0);
     let edit = ref(0)
-    let method = ref([])
-    let payTime = ref([])
     let search = ref({
       customer_code: '',
       customer_abbreviation: ''
@@ -74,7 +75,6 @@ export default defineComponent({
         formHeight.value = await getPageHeight([formCard.value, pagin.value]);
       })
       fetchProductList()
-      getConstType()
     })
 
     // 获取列表
@@ -89,14 +89,6 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
-    // 获取常量
-    const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['payInfo', 'payTime'] })
-      if(res.code == 200){
-        method.value = res.data.filter(o => o.type == 'payInfo')
-        payTime.value = res.data.filter(o => o.type == 'payTime')
-      }
-    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {

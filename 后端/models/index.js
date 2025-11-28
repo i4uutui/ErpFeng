@@ -10,7 +10,9 @@ const SubApprovalStep = require('./SubApprovalStep.js') // 审批步骤配置表
 const SubApprovalUser = require('./SubApprovalUser.js') // 流程控制用户表
 const SubProcessCycle = require('./SubProcessCycle.js') // 生产制程表
 const SubProgressCycle = require('./SubProgressCycle.js') // 生产制程子表
-const SubConstType = require('./SubConstType.js') // 仓库类型
+const SubConstType = require('./SubConstType.js') // 常量类型表
+const SubConstUser = require('./SubConstUser.js') // 用户设置的变量表
+const SubWarehouseType = require('./SubWarehouseType.js') // 仓库类型表
 const SubWarehouseCycle = require('./SubWarehouseCycle.js') // 仓库类型表
 const SubWarehouseContent = require('./SubWarehouseContent.js') // 仓库列表数据表
 const SubWarehouseApply = require('./SubWarehouseApply.js') // 出库入库申请表
@@ -44,6 +46,7 @@ const SubMaterialMent = require('./SubMaterialMent.js') // 采购作业
 const SubMaterialOrder = require('./SubMaterialOrder.js') // 采购单
 const subOutscriptionOrder = require('./subOutscriptionOrder.js') // 委外作业单
 const SubOutsourcingOrder = require('./SubOutsourcingOrder.js') // 委外加工单
+const SubProgressTotal = require('./SubProgressTotal.js') // 用来统计进度表首页的延期预警
 
 AdUser.belongsTo(AdCompanyInfo, { foreignKey: 'company_id', as: 'company' })
 AdUser.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
@@ -57,7 +60,7 @@ SubProcessCycle.hasMany(SubEquipmentCode, { foreignKey: 'cycle_id', as: 'equipme
 SubProcessCode.belongsTo(SubEquipmentCode, { foreignKey: 'equipment_id', as: 'equipment' })
 SubEmployeeInfo.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
 
-SubWarehouseCycle.belongsTo(SubConstType, { foreignKey: 'ware_id', as: 'ware' })
+SubWarehouseCycle.belongsTo(SubWarehouseType, { foreignKey: 'ware_id', as: 'ware' })
 
 SubSaleOrder.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubSaleOrder.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
@@ -65,6 +68,7 @@ SubProductCode.hasMany(SubSaleOrder, { foreignKey: 'product_id', as: 'order' })
 SubCustomerInfo.hasMany(SubSaleOrder, { foreignKey: 'customer_id', as: 'order' })
 
 SubProductQuotation.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
+SubSaleOrder.hasOne(SubProductQuotation, { foreignKey: 'sale_id', as: 'quot' })
 SubProductQuotation.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubProductQuotation.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 
@@ -116,12 +120,12 @@ SubRateWage.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' 
 
 SubWarehouseApply.belongsTo(SubSaleOrder, { foreignKey: 'sale_id', as: 'sale' })
 SubWarehouseApply.belongsTo(SubNoEncoding, { foreignKey: 'print_id', as: 'print' })
-SubWarehouseApply.belongsTo(SubNoEncoding, { foreignKey: 'buyPrint_id', as: 'buyPrint' })
-SubWarehouseApply.belongsTo(SubMaterialMent, { foreignKey: 'buyPrint_id', as: 'buy' })
-SubMaterialMent.belongsTo(SubNoEncoding, { foreignKey: 'print_id', as: 'print' })
-SubWarehouseApply.belongsTo(subOutscriptionOrder, { foreignKey: 'buyPrint_id', targetKey: 'print_id', as: 'sourcing' })
+SubWarehouseApply.belongsTo(SubNoEncoding, { foreignKey: 'procure_id', as: 'buyPrint' })
+SubWarehouseApply.belongsTo(SubMaterialMent, { foreignKey: 'procure_id', as: 'buy' })
+SubWarehouseApply.belongsTo(subOutscriptionOrder, { foreignKey: 'procure_id', targetKey: 'print_id', as: 'sourcing' })
 SubWarehouseApply.belongsTo(SubCustomerInfo, { foreignKey: 'plan_id', as: 'customer' })
 SubWarehouseApply.belongsTo(SubSupplierInfo, { foreignKey: 'plan_id', as: 'supplier' })
+SubWarehouseApply.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
 
 SubSaleOrder.hasOne(SubSaleCancel, { foreignKey: 'sale_id', as: 'saleCancel' })
 
@@ -140,6 +144,9 @@ SubOutsourcingOrder.hasMany(subOutscriptionOrder, { foreignKey: 'order_id', as: 
 
 SubWarehouseOrder.belongsTo(SubWarehouseCycle, { foreignKey: 'house_id', as: 'house' })
 SubWarehouseOrder.hasMany(SubWarehouseApply, { foreignKey: 'order_id', as: 'order' })
+SubWarehouseApply.belongsTo(SubWarehouseOrder, { foreignKey: 'order_id', as: 'apply' })
+
+SubConstUser.belongsTo(SubConstType, { foreignKey: 'type', targetKey: 'type', as: 'constType' });
 
 module.exports = {
   Op,
@@ -154,6 +161,8 @@ module.exports = {
   SubProcessCycle,
   SubProgressCycle,
   SubConstType,
+  SubConstUser,
+  SubWarehouseType,
   SubWarehouseCycle,
   SubWarehouseContent,
   SubWarehouseApply,
@@ -186,7 +195,8 @@ module.exports = {
   SubMaterialMent,
   SubMaterialOrder,
   subOutscriptionOrder,
-  SubOutsourcingOrder
+  SubOutsourcingOrder,
+  SubProgressTotal
 }
 
 

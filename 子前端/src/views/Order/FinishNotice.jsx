@@ -2,12 +2,14 @@ import { defineComponent, onMounted, ref, reactive, nextTick } from 'vue'
 import request from '@/utils/request';
 import { getPageHeight } from '@/utils/tool';
 import HeadForm from '@/components/form/HeadForm';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
     const formCard = ref(null)
     const pagin = ref(null)
     const formHeight = ref(0);
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(20);
@@ -105,7 +107,9 @@ export default defineComponent({
                   <ElTableColumn prop="product.other_features" label="其它特性" width="100" />
                   <ElTableColumn prop="sale.product_req" label="产品要求" width="140" />
                   <ElTableColumn prop="sale.order_number" label="订单数量" width="100" />
-                  <ElTableColumn prop="sale.unit" label="单位" width="80" />
+                  <ElTableColumn label="单位" width="100">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.sale.unit)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="delivery_time" label="交货日期" width="120" />
                   <ElTableColumn prop="updated_at" label="结案日期" width="120" />
                 </ElTable>

@@ -2,11 +2,12 @@ const express = require('express');
 const router = express.Router();
 const dayjs = require('dayjs')
 const pool = require('../config/database');
-const { AdUser, AdOrganize, SubProcessCycle, SubWarehouseApply, SubWarehouseCycle, SubApprovalUser, SubOperationHistory, SubApprovalStep, SubWarehouseContent, Op, SubConstType } = require('../models')
+const { AdUser, AdOrganize, SubProcessCycle, SubWarehouseApply, SubWarehouseCycle, SubApprovalUser, SubOperationHistory, SubApprovalStep, SubWarehouseContent, Op, SubWarehouseType } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
-const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
-const { PreciseMath, processStockOut } = require('../middleware/tool')
+const { formatArrayTime } = require('../middleware/formatTime');
+const { PreciseMath } = require('../middleware/tool');
+const { default: Decimal } = require('decimal.js');
 
 /**
  * @swagger
@@ -560,7 +561,7 @@ router.get('/warehouse_cycle', authMiddleware, async (req, res) => {
     },
     attributes: ['id', 'name', 'ware_id', 'created_at'],
     include: [
-      { model: SubConstType, as: 'ware', attributes: ['id', 'name'], where: { type: 'house' } }
+      { model: SubWarehouseType, as: 'ware', attributes: ['id', 'name'], where: { type: 'house' } }
     ],
     order: [['created_at', 'DESC']],
   })
@@ -705,6 +706,26 @@ router.post('/approval_flow', authMiddleware, async (req, res) => {
   }
   res.json({ code: 200, data: null });
 });
+
+// Decimal数字相加/减
+function precise(a, b, value) {
+  // 处理空值，默认视为 0
+  const validA = a ?? 0;
+  const validB = b ?? 0;
+
+  // 确保传入的参数被转换为 Decimal 实例
+  const decimalA = new Decimal(validA);
+  const decimalB = new Decimal(validB);
+  
+  // 相加并返回结果
+  if(value == 'add'){
+    return decimalA.add(decimalB).toNumber();
+  }
+  if(value == 'sub'){
+    return decimalA.sub(decimalB).toNumber();
+  }
+}
+
 /**
  * @swagger
  * /api/approval_flow:
@@ -742,6 +763,7 @@ router.post('/handleApproval', authMiddleware, async (req, res) => {
     ],
   })
   const warehouse = result.map(e => e.toJSON())
+
   let approval = []
   let approvalData = [] // 储存需要放入库存的数据
   const dataValue = warehouse.map(e => {
@@ -763,6 +785,7 @@ router.post('/handleApproval', authMiddleware, async (req, res) => {
     }
     return e
   })
+  // 处理将数据放入仓库中
   if(approvalData.length){
     // 获取仓库列表数据
     const wareData = await SubWarehouseContent.findAll({
@@ -779,39 +802,28 @@ router.post('/handleApproval', authMiddleware, async (req, res) => {
     approvalData.forEach(async e => {
       const wareItem = wareValue.find(o => o.item_id == e.item_id)
       if(wareItem){ // 仓库里面有数据
-        // 期初入库（非正常入库）
-        if(e.type == 5 || e.type == 11){
-          wareItem.initial = PreciseMath.add(wareItem.initial, e.quantity)
-          // 最新库存
-          wareItem.number_new = PreciseMath.add(wareItem.initial, wareItem.number_in)
-          // 存货金额
-          wareItem.price_total = wareItem.price ? PreciseMath.mul(wareItem.price, wareItem.number_new) : 0
-          wareItem.last_in_time = dayjs().toDate()
+        // 内部单价
+        wareItem.price = e.price ? e.price : wareItem.price ? wareItem.price : 0
+        // 采购/销售单价
+        wareItem.buy_price = e.buy_price ? e.buy_price : wareItem.buy_price ? wareItem.buy_price : 0
+
+        const quantitys = (value) => {
+          wareItem.quantity = wareItem.quantity ? precise(wareItem.quantity, e.quantity, value) : e.quantity ? e.quantity : 0
+          const type = {
+            'add': 'last_in_time',
+            'sub': 'last_out_time'
+          }
+          wareItem[type] = dayjs().toDate()
         }
-        // 4采购入库/10生产入库13退货入库 /6 and 12盘银入库（加）
-        if(e.type == 4 || e.type == 10 || e.type == 13 || e.type == 6 || e.type == 12){
-          wareItem.number_in = PreciseMath.add(wareItem.number_in, e.quantity)
-          // 最新库存
-          wareItem.number_new = PreciseMath.add(wareItem.initial, wareItem.number_in)
-          // 存货金额
-          wareItem.price_total = wareItem.price ? PreciseMath.mul(wareItem.price, wareItem.number_new) : 0
-          wareItem.last_in_time = dayjs().toDate()
+        // 材料 - 采购入库 || 期初入库 || 盘盈入库
+        // 成品 - 生产入库 || 期初入库 || 盘盈入库 || 退货入库
+        if([4, 5, 6, 10, 11, 12, 13].includes(e.type)){
+          quantitys('add')
         }
-        // 出库
-        if(e.type == 7 || e.type == 8 || e.type == 9 || e.type == 14 || e.type == 15 || e.type == 16){
-          // 出库减库存
-          const stock = await processStockOut({ number_in: wareItem.number_in, initial: wareItem.initial }, e.quantity)
-          if(stock == false) return res.json({ code: 401, message: '库存不足' })
-          wareItem.number_in = stock.number_in
-          wareItem.initial = stock.initial
-          // 减掉库存后最新库存
-          wareItem.number_new = PreciseMath.add(wareItem.initial, wareItem.number_in)
-          // 最新出库数量
-          wareItem.number_out = PreciseMath.add(wareItem.number_out, e.quantity)
-          // 出库后存货金额
-          wareItem.price_total = wareItem.price ? PreciseMath.mul(wareItem.price, wareItem.number_new) : 0
-          wareItem.price_out = wareItem.price ? PreciseMath.sub(wareItem.price, wareItem.number_out) : 0
-          wareItem.last_out_time = dayjs().toDate()
+        // 材料 - 生产领料 || 委外领料 || 盘亏出库
+        // 成品 - 成品出货 || 报废出库 || 盘亏出库
+        if([7, 8, 9, 14, 15, 16].includes(e.type)){
+          quantitys('sub')
         }
         wareList.push(wareItem)
       }else{ // 仓库没有数据，暂时先保存起来，待会再处理
@@ -836,16 +848,11 @@ router.post('/handleApproval', authMiddleware, async (req, res) => {
             name: item.name,
             model_spec: item.model_spec,
             other_features: item.other_features,
+            buy_price: Number(item.buy_price),
+            price: Number(item.price),
+            quantity: Number(item.quantity),
             unit: '',
             inv_unit: '',
-            initial: 0,
-            number_in: 0,
-            number_out: 0,
-            price_total: 0,
-            price: 0,
-            number_new: 0,
-            price_in: 0,
-            price_out: 0,
             last_in_time: dayjs().toDate(),
             last_out_time: null
           };
@@ -854,24 +861,23 @@ router.post('/handleApproval', authMiddleware, async (req, res) => {
         // 判断type属于哪一组
         if ([5, 11].includes(type)) {
           // type等于5或11
-          grouped[item_id].initial = PreciseMath.add(grouped[item_id].initial, quantity);
+          grouped[item_id].initial = precise(grouped[item_id].initial, quantity, 'add');
         } else if ([4, 10, 13, 6, 12].includes(type)) {
           // type等于4或10或13或6或12
-          grouped[item_id].number_in = PreciseMath.add(grouped[item_id].number_in, quantity);
+          grouped[item_id].number_in = precise(grouped[item_id].number_in, quantity, 'add');
         }
       });
       return Object.values(grouped).map(item => {
         if (item.initial > 0 || item.number_in > 0) {
           // 最新库存
-          item.number_new = PreciseMath.add(item.initial, item.number_in);
+          item.number_new = precise(item.initial, item.number_in, 'add');
         }
         return item;
       });
     }
     const regend = [...processArray(dataArr), ...wareList]
-
     await SubWarehouseContent.bulkCreate(regend, {
-      updateOnDuplicate: [ 'user_id', 'company_id', 'ware_id', 'house_id', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'unit', 'inv_unit', 'initial', 'number_in', 'number_out', 'price_total', 'price', 'number_new', 'price_in', 'price_out', 'last_in_time', 'last_out_time' ]
+      updateOnDuplicate: [ 'user_id', 'company_id', 'ware_id', 'house_id', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'buy_price', 'price', 'quantity', 'inv_unit', 'unit', 'last_in_time', 'last_out_time' ]
     })
   }
   if(!approval.length) return res.json({ message: '暂无可审核的数据', code: 401 })

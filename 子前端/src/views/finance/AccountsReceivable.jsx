@@ -94,7 +94,7 @@ export default defineComponent({
                   <ElTableColumn prop="customer.customer_code" label="客户编码" />
                   <ElTableColumn prop="customer.customer_abbreviation" label="客户名称" />
                   <ElTableColumn prop="sale.customer_order" label="客户订单" />
-                  <ElTableColumn prop="print.no" label="送货单号" width="160" />
+                  <ElTableColumn prop="apply.no" label="送货单号" width="160" />
                   <ElTableColumn prop="code" label="产品编码" />
                   <ElTableColumn prop="name" label="产品名称" />
                   <ElTableColumn prop="model_spec" label="规格&型号" width="160" />

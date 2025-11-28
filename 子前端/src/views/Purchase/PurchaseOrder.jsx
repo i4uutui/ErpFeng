@@ -14,6 +14,7 @@ export default defineComponent({
     const expandableTable = ref(null)
     const formCard = ref(null)
     const pagin = ref(null)
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const user = getItem('user')
     const formHeight = ref(0);
     const printNo = computed(() => store.printNo)
@@ -121,8 +122,12 @@ export default defineComponent({
                         <ElTableColumn prop="material_name" label="材料名称" />
                         <ElTableColumn prop="model_spec" label="型号&规格" />
                         <ElTableColumn prop="other_features" label="其它特性" />
-                        <ElTableColumn prop="unit" label="采购单位" />
-                        <ElTableColumn prop="usage_unit" label="使用单位" />
+                        <ElTableColumn label="采购单位">
+                          {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
+                        </ElTableColumn>
+                        <ElTableColumn label="使用单位">
+                          {({row}) => <span>{ calcUnit.value.find(e => e.id == row.usage_unit)?.name }</span>}
+                        </ElTableColumn>
                         <ElTableColumn prop="price" label="采购单价" />
                         <ElTableColumn prop="number" label="采购数量" />
                         <ElTableColumn prop="delivery_time" label="交货时间" />

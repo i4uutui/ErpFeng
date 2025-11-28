@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { AdAdmin, AdCompanyInfo, AdUser, Op } = require('../models')
+const { AdAdmin, AdCompanyInfo, AdUser, Op, SubConstUser } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -246,6 +246,32 @@ router.post('/user', async (req, res) => {
   const parent_id = 0
   
   await AdUser.create({ username, password: hashedPassword, status, company_id, type, parent_id })
+
+  const arr = [
+    { type: 'employeeInfo', name: '个人计件', company_id: company_id },
+    { type: 'employeeInfo', name: '团体计件', company_id: company_id },
+    { type: 'employeeInfo', name: '计时', company_id: company_id },
+    { type: 'employeeInfo', name: '月薪', company_id: company_id },
+    { type: 'payInfo', name: '现金', company_id: company_id },
+    { type: 'payInfo', name: '支票', company_id: company_id },
+    { type: 'payInfo', name: '存兑', company_id: company_id },
+    { type: 'payTime', name: '货到付款', company_id: company_id },
+    { type: 'payTime', name: '月结30天', company_id: company_id },
+    { type: 'payTime', name: '月结60天', company_id: company_id },
+    { type: 'payTime', name: '月结90天', company_id: company_id },
+    { type: 'payTime', name: '其他', company_id: company_id },
+    { type: 'supplyMethod', name: '送货上门', company_id: company_id },
+    { type: 'supplyMethod', name: '自提取货', company_id: company_id },
+    { type: 'supplyMethod', name: '三方物流', company_id: company_id },
+    { type: 'supplierType', name: '原材料供应', company_id: company_id },
+    { type: 'supplierType', name: '易耗材供应', company_id: company_id },
+    { type: 'supplierType', name: '设备供应', company_id: company_id },
+    { type: 'supplierType', name: '委外加工', company_id: company_id },
+    { type: 'invoice', name: '不含税', company_id: company_id },
+    { type: 'invoice', name: '普通发票', company_id: company_id },
+    { type: 'invoice', name: '增值发票', company_id: company_id },
+  ]
+  await SubConstUser.bulkCreate(arr, { updateOnDuplicate: ['type', 'name', 'company_id'] })
   
   res.json({ data: '添加成功', code: 200 });
 });

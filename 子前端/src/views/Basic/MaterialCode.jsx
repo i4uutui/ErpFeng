@@ -11,6 +11,8 @@ export default defineComponent({
     const formCard = ref(null)
     const pagin = ref(null)
     const formHeight = ref(0);
+    const materialType = ref(getItem('constant').filter(o => o.type == 'materialType'))
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const user = reactive(getItem('user'))
     const rules = reactive({
       material_code: [
@@ -18,6 +20,9 @@ export default defineComponent({
       ],
       material_name: [
         { required: true, message: '请输入材料名称', trigger: 'blur' },
+      ],
+      category: [
+        { required: true, message: '请选择材料类别', trigger: 'blur' },
       ],
       model: [
         { required: true, message: '请输入型号', trigger: 'blur' },
@@ -69,7 +74,12 @@ export default defineComponent({
           ...search.value
         },
       });
-      tableData.value = res.data;
+      tableData.value = res.data.map(e => {
+        e.category = e.category ? Number(e.category) : ''
+        e.usage_unit = e.usage_unit ? Number(e.usage_unit) : ''
+        e.purchase_unit = e.purchase_unit ? Number(e.purchase_unit) : ''
+        return e
+      });
       total.value = res.total;
     };
     const handleSubmit = async (formEl) => {
@@ -210,12 +220,18 @@ export default defineComponent({
                 <ElTable data={ tableData.value } border stripe height={ `calc(100vh - ${formHeight.value + 224}px)` } style={{ width: "100%" }}>
                   <ElTableColumn prop="material_code" label="材料编码" width="120" />
                   <ElTableColumn prop="material_name" label="材料名称" />
+                  <ElTableColumn label="材料类别">
+                    {({row}) => <span>{ materialType.value.find(e => e.id == row.category)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="model" label="型号&规格" width="180" />
                   {/* <ElTableColumn prop="specification" label="规格" /> */}
                   <ElTableColumn prop="other_features" label="其它特性" />
-                  <ElTableColumn prop="usage_unit" label="使用单位" />
-                  <ElTableColumn prop="purchase_unit" label="采购单位" />
-                  <ElTableColumn prop="remarks" label="备注" />
+                  <ElTableColumn label="使用单位">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.usage_unit)?.name }</span>}
+                  </ElTableColumn>
+                  <ElTableColumn label="采购单位">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.purchase_unit)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn label="操作" width="140" fixed="right">
                     {(scope) => (
                       <>
@@ -240,6 +256,11 @@ export default defineComponent({
                 <ElFormItem label="材料名称" prop="material_name">
                   <ElInput v-model={ form.value.material_name } placeholder="请输入材料名称" />
                 </ElFormItem>
+                <ElFormItem label="材料类别" prop="category">
+                  <ElSelect v-model={ form.value.category } multiple={ false } filterable remote remote-show-suffix placeholder="请选择材料类别">
+                    {materialType.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
                 <ElFormItem label="型号&规格" prop="model">
                   <ElInput v-model={ form.value.model } placeholder="请输入型号&规格" />
                 </ElFormItem>
@@ -247,16 +268,17 @@ export default defineComponent({
                   <ElInput v-model={ form.value.specification } placeholder="请输入规格" />
                 </ElFormItem> */}
                 <ElFormItem label="使用单位" prop="usage_unit">
-                  <ElInput v-model={ form.value.usage_unit } placeholder="请输入使用单位" />
+                  <ElSelect v-model={ form.value.usage_unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择使用单位">
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="采购单位" prop="purchase_unit">
-                  <ElInput v-model={ form.value.purchase_unit } placeholder="请输入采购单位" />
+                  <ElSelect v-model={ form.value.purchase_unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择采购单位">
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="其它特性" prop="other_features">
                   <ElInput v-model={ form.value.other_features } placeholder="请输入其它特性" />
-                </ElFormItem>
-                <ElFormItem label="材料类别" prop="remarks">
-                  <ElInput v-model={ form.value.remarks } placeholder="请输入材料类别" />
                 </ElFormItem>
               </ElForm>
             ),

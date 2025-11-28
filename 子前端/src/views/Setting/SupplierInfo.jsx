@@ -2,6 +2,7 @@ import { defineComponent, ref, onMounted, reactive, nextTick } from 'vue'
 import request from '@/utils/request';
 import { reportOperationLog } from '@/utils/log';
 import { getPageHeight } from '@/utils/tool';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
@@ -9,6 +10,10 @@ export default defineComponent({
     const formCard = ref(null)
     const pagin = ref(null)
     const formHeight = ref(0);
+    const method = ref(getItem('constant').filter(o => o.type == 'payInfo'))
+    const payTime = ref(getItem('constant').filter(o => o.type == 'payTime'))
+    const supplyMethod =  ref(getItem('constant').filter(o => o.type == 'supplyMethod'))
+    const supplierType = ref(getItem('constant').filter(o => o.type == 'supplierType'))
     const rules = reactive({
       supplier_code: [
         { required: true, message: '请输入供应商编码', trigger: 'blur' },
@@ -56,10 +61,6 @@ export default defineComponent({
       other_transaction_terms: '',
       other_text: ''
     })
-    let method = ref([])
-    let payTime = ref([])
-    let supplyMethod = ref([])
-    let supplierType = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(20);
@@ -71,7 +72,6 @@ export default defineComponent({
         formHeight.value = await getPageHeight([formCard.value, pagin.value]);
       })
       fetchProductList()
-      getConstType()
     })
 
     // 获取列表
@@ -89,16 +89,6 @@ export default defineComponent({
       tableData.value = data;
       total.value = res.total;
     };
-    // 获取常量
-    const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['payInfo', 'payTime', 'supplyMethod', 'supplierType'] })
-      if(res.code == 200){
-        method.value = res.data.filter(o => o.type == 'payInfo')
-        payTime.value = res.data.filter(o => o.type == 'payTime')
-        supplyMethod.value =  res.data.filter(o => o.type == 'supplyMethod')
-        supplierType.value = res.data.filter(o => o.type == 'supplierType')
-      }
-    }
     const handleSubmit = async (formEl) => {
       if (!formEl) return
       await formEl.validate(async (valid, fields) => {

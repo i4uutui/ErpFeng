@@ -75,7 +75,7 @@ export default defineComponent({
               <div class="flex w100 row-between">
                 <div>延期预警：</div>
                 <div>
-                  <span class="f26" style={{ color: '#409eff' }}>0</span>
+                  <span class="f26" style={{ color: data.value.progressTotal > 0 ? 'red' : '#409eff' }}>{ data.value.progressTotal }</span>
                   <span>项</span>
                 </div>
               </div>

@@ -4,6 +4,7 @@ import MySelect from '@/components/tables/mySelect.vue';
 import { reportOperationLog } from '@/utils/log';
 import { getPageHeight } from '@/utils/tool';
 import HeadForm from '@/components/form/HeadForm';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
@@ -11,6 +12,7 @@ export default defineComponent({
     const formCard = ref(null)
     const pagin = ref(null)
     const formHeight = ref(0);
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const rules = reactive({
       sale_id: [
         { required: true, message: '请选择销售单号', trigger: 'blur' },
@@ -253,7 +255,9 @@ export default defineComponent({
                   <ElTableColumn prop="product.other_features" label="其它特性" width="100" />
                   <ElTableColumn prop="sale.product_req" label="产品要求" width="140" />
                   <ElTableColumn prop="sale.order_number" label="订单数量" width="100" />
-                  <ElTableColumn prop="sale.unit" label="单位" width="80" />
+                  <ElTableColumn label="单位" width="100">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.sale.unit)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="delivery_time" label="交货日期" width="120" />
                   <ElTableColumn prop="created_at" label="创建日期" width="120" />
                   <ElTableColumn label="操作" width="200" fixed="right">
