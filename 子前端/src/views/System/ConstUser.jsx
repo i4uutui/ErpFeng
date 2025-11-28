@@ -2,6 +2,7 @@ import { defineComponent, ref, onMounted, nextTick } from 'vue'
 import request from '@/utils/request';
 import { getPageHeight } from '@/utils/tool';
 import { setItem } from '@/assets/js/storage';
+import HeadForm from '@/components/form/HeadForm';
 
 export default defineComponent({
   setup(){
@@ -21,6 +22,9 @@ export default defineComponent({
     let typeList = ref([])
     let tableData = ref([])
     let dialogVisible = ref(false)
+    let search = ref({
+      name: ''
+    })
     let form = ref({
       name: '',
       type: '',
@@ -46,9 +50,9 @@ export default defineComponent({
     const getFetchList = async () => {
       const res = await request.get('/api/const_user', {
         params: {
-          type: form.value.type,
           page: currentPage.value,
           pageSize: pageSize.value,
+          ...search.value
         }
       })
       if(res.code == 200){
@@ -152,26 +156,44 @@ export default defineComponent({
         <ElCard>
           {{
             header: () => (
-              <div class="clearfix" ref={ formCard }>
-                <ElButton style="margin-top: -5px" type="primary" onClick={ handleAdd } >
-                  新增常量
-                </ElButton>
-              </div>
+              <HeadForm headerWidth="150px" ref={ formCard }>
+                {{
+                  left: () => (
+                    <ElFormItem v-permission={ 'constact:add' }>
+                      <ElButton type="primary" onClick={ handleAdd } >
+                        新增常量
+                      </ElButton>
+                    </ElFormItem>
+                  ),
+                  center: () => (
+                    <>
+                      <ElFormItem label="常量名称：">
+                        <ElInput v-model={ search.value.name } placeholder="请输入常量名称" />
+                      </ElFormItem>
+                    </>
+                  ),
+                  right: () => (
+                    <ElFormItem>
+                      <ElButton type="primary" onClick={ getFetchList }>查询</ElButton>
+                    </ElFormItem>
+                  )
+                }}
+              </HeadForm>
             ),
             default: () => (
               <>
                 <ElTable data={ tableData.value } border stripe height={`calc(100vh - 304px)`} style={{ width: "100%" }}>
                   <ElTableColumn prop="constType.name" label="常量类型" />
                   <ElTableColumn prop="name" label="常量名称" />
-                  <ElTableColumn label="是否开启">
+                  {/* <ElTableColumn label="是否开启">
                     {({row}) => {
                       return <ElSwitch v-model={ row.status } active-value={ 1 } inactive-value={ 0 } onChange={ (value) => switchChange(value, row) } />
                     }}
-                  </ElTableColumn>
+                  </ElTableColumn> */}
                   <ElTableColumn label="操作" width="100">
                     {(scope) => (
                       <>
-                        <ElButton size="small" type="warning" v-permission={ 'WarehouseRate:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
+                        <ElButton size="small" type="warning" v-permission={ 'constact:edit' } onClick={ () => handleUplate(scope.row) }>修改</ElButton>
                       </>
                     )}
                   </ElTableColumn>
@@ -195,9 +217,9 @@ export default defineComponent({
                 <ElFormItem label="常量名称">
                   <ElInput v-model={ form.value.name } />
                 </ElFormItem>
-                <ElFormItem label="是否开启">
+                {/* <ElFormItem label="是否开启">
                   <ElSwitch v-model={ form.value.status } active-value={ 1 } inactive-value={ 0 } />
-                </ElFormItem>
+                </ElFormItem> */}
               </ElForm>
             ),
             footer: () => (

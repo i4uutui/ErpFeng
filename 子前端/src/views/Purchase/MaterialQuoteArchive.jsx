@@ -2,6 +2,7 @@ import { defineComponent, ref, onMounted, nextTick } from 'vue'
 import request from '@/utils/request';
 import { getPageHeight } from '@/utils/tool';
 import HeadForm from '@/components/form/HeadForm';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
@@ -29,7 +30,6 @@ export default defineComponent({
         formHeight.value = await getPageHeight([formCard.value, pagin.value]);
       })
       fetchProductList()
-      getConstType()
     })
 
     // 获取列表
@@ -44,16 +44,6 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
-    // 获取常量
-    const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['invoice', 'supplyMethod', 'payTime', 'payInfo'] })
-      if(res.code == 200){
-        invoice.value = res.data.filter(o => o.type == 'invoice')
-        payTime.value = res.data.filter(o => o.type == 'payTime')
-        supplyMethod.value =  res.data.filter(o => o.type == 'supplyMethod')
-        method.value = res.data.filter(o => o.type == 'payInfo')
-      }
-    }
     // 分页相关
     function pageSizeChange(val) {
       currentPage.value = 1;

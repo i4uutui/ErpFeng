@@ -34,8 +34,8 @@ router.get('/sale_order', authMiddleware, async (req, res) => {
       { model: SubSaleCancel, as: 'saleCancel', attributes: ['id', 'sale_id'] }
     ],
     order: [
-      ['product', 'product_name', 'DESC'],
-      ['created_at', 'DESC']
+      ['product', 'product_name', 'ASC'],
+      ['id', 'ASC']
     ],
     distinct: true,
     limit: parseInt(pageSize),

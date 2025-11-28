@@ -16,6 +16,7 @@ export default defineComponent({
     const pagin = ref(null)
     const user = getItem('user')
     const formHeight = ref(0);
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const printNo = computed(() => store.printNo)
     const nowDate = ref()
     let allSelect = ref([])
@@ -122,7 +123,9 @@ export default defineComponent({
                         <ElTableColumn prop="processChildren.process.process_code" label="工艺编码" />
                         <ElTableColumn prop="processChildren.process.process_name" label="工艺名称" />
                         <ElTableColumn prop="ment" label="加工要求" />
-                        <ElTableColumn prop="unit" label="单位" />
+                        <ElTableColumn label="单位" width="100">
+                          {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
+                        </ElTableColumn>
                         <ElTableColumn prop="number" label="委外数量" />
                         <ElTableColumn prop="price" label="加工单价" />
                         <ElTableColumn prop="transaction_currency" label="交易币别" />

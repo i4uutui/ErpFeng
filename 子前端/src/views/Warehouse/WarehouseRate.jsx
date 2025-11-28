@@ -2,11 +2,13 @@ import { defineComponent, onMounted, ref, reactive } from 'vue'
 import request from '@/utils/request';
 import '@/assets/css/WarehouseRate.scss'
 import { reportOperationLog } from '@/utils/log';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup() {
     const formRef = ref(null);
     const rules = reactive({})
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     let dialogVisible = ref(false)
     let form = ref({
       inv_unit: '',
@@ -163,10 +165,14 @@ export default defineComponent({
               <ElTable data={ tableData.value } border stripe height={`calc(100vh - 280px)`} style={{ width: "100%" }}>
                 <ElTableColumn prop="code" label="物料编码" width="90" />
                 <ElTableColumn prop="name" label="物料名称" width="90" />
-                <ElTableColumn prop="model_spec" label="规格&型号" width="110" />
+                <ElTableColumn prop="model_spec" label="型号&规格" width="110" />
                 <ElTableColumn prop="other_features" label="其他特性" width="90" />
-                <ElTableColumn prop="unit" label={ `${ getTypeName(menuWareIndex.value) }单位` } width="90" />
-                <ElTableColumn prop="inv_unit" label="库存单位" width="90" />
+                <ElTableColumn label={ `${ getTypeName(menuWareIndex.value) }单位` } width="90">
+                  {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
+                </ElTableColumn>
+                <ElTableColumn label="库存单位" width="90">
+                  {({row}) => <span>{ calcUnit.value.find(e => e.id == row.inv_unit)?.name }</span>}
+                </ElTableColumn>
                 <ElTableColumn prop="quantity" label="最新库存" width="90" />
                 <ElTableColumn prop="price" label="内部单价" width="90" />
                 <ElTableColumn prop="buy_price" label={ `${ getTypeName(menuWareIndex.value) }单价` } width="90" />
@@ -201,10 +207,14 @@ export default defineComponent({
                   <ElInput v-model={ form.value.price } placeholder="请输入内部单价" />
                 </ElFormItem>
                 <ElFormItem label={ `${ getTypeName(form.value.ware_id) }单位` } prop="unit">
-                  <ElInput v-model={ form.value.unit } placeholder={ `请输入${ getTypeName(form.value.ware_id) }单位` } />
+                  <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder={ `请选择${ getTypeName(form.value.ware_id) }单位` }>
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="库存单位" prop="inv_unit">
-                  <ElInput v-model={ form.value.inv_unit } placeholder="请输入库存单位" />
+                  <ElSelect v-model={ form.value.inv_unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择库存单位">
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
               </ElForm>
             ),

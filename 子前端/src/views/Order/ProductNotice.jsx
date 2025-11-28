@@ -183,7 +183,7 @@ export default defineComponent({
     }
     const noticeChange = (value) => {
       const item = saleList.value.find(o => o.id == value)
-      form.value.delivery_time = item.goods_time
+      form.value.delivery_time = item.delivery_time
     }
     // 分页相关
     function pageSizeChange(val) {
@@ -288,7 +288,7 @@ export default defineComponent({
                   <ElInput v-model={ form.value.notice } placeholder="请输入生产订单号" />
                 </ElFormItem>
                 <ElFormItem label="交货日期" prop="delivery_time">
-                  <ElDatePicker v-model={ form.value.delivery_time } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="请选择交货日期" />
+                  <ElDatePicker v-model={ form.value.delivery_time } clearable={ false } value-format="YYYY-MM-DD" type="date" placeholder="请选择交货日期" style={{ width: "100%" }} />
                 </ElFormItem>
               </ElForm>
             ),

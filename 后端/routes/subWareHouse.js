@@ -536,7 +536,11 @@ router.get('/getWareHouseList', authMiddleware, async (req, res) => {
   })
 
   const totalPages = Math.ceil(count / pageSize);
-  const result = rows.map(e => e.toJSON())
+  const result = rows.map(e => {
+    const item = e.toJSON()
+    item.order = formatArrayTime(item.order)
+    return item
+  })
 
   res.json({ 
     data: formatArrayTime(result), 

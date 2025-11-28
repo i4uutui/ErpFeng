@@ -96,7 +96,7 @@ export default defineComponent({
                   <ElTableColumn prop="apply.no" label="入库单号" width="160" />
                   <ElTableColumn prop="code" label="材料编码" width="130" />
                   <ElTableColumn prop="name" label="材料名称" width="130" />
-                  <ElTableColumn prop="model_spec" label="规格&型号" />
+                  <ElTableColumn prop="model_spec" label="型号&规格" />
                   <ElTableColumn prop="other_features" label="其它性能" />
                   <ElTableColumn prop="quantity" label="入库数量" width="110" />
                   <ElTableColumn prop="buy_price" label="入库单价" width="110" />

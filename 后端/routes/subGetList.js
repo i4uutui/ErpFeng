@@ -361,7 +361,7 @@ router.get('/getProcessBom', authMiddleware, async (req, res) => {
     attributes: ['id', 'archive', 'product_id', 'part_id'],
     include: [
       { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'] },
-      { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
+      { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code', 'unit'] },
     ],
     order: [
       ['id', 'DESC'],
@@ -462,7 +462,7 @@ router.get('/getOutsourcingQuote', authMiddleware, async (req, res) => {
         attributes: ['id', 'product_id', 'part_id', 'archive'],
         include: [
           { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing', 'model', 'specification'] },
-          { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
+          { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code', 'unit'] },
         ]
       },
       {

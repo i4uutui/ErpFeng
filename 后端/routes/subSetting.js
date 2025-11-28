@@ -27,12 +27,15 @@ router.get('/get_const_type', authMiddleware, async (req, res) => {
  *       - 系统设置(Setting)
  */
 router.get('/const_user', authMiddleware, async (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query
+  const { page = 1, pageSize = 10, name } = req.query
   const offset = (page - 1) * pageSize;
   const { company_id } = req.user;
 
+  let where = { company_id }
+  if(name) where.name = { [Op.like]: `%${name}%` }
+
   const { count, rows } = await SubConstUser.findAndCountAll({
-    where: { company_id },
+    where,
     attributes: ['id', 'type', 'name', 'status'],
     order: [
       ['constType', 'type', 'ASC'],

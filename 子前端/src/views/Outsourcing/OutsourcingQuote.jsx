@@ -4,6 +4,7 @@ import MySelect from '@/components/tables/mySelect.vue';
 import { getPageHeight } from '@/utils/tool';
 import HeadForm from '@/components/form/HeadForm';
 import { reportOperationLog } from '@/utils/log';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup(){
@@ -11,6 +12,9 @@ export default defineComponent({
     const formCard = ref(null)
     const pagin = ref(null)
     const formHeight = ref(0);
+    const method = ref(getItem('constant').filter(o => o.type == 'payInfo'))
+    const payTime = ref(getItem('constant').filter(o => o.type == 'payTime'))
+    const invoice = ref(getItem('constant').filter(o => o.type == 'invoice'))
     const rules = reactive({
       supplier_id: [
         { required: true, message: '请选择供应商编码', trigger: 'blur' }
@@ -49,12 +53,9 @@ export default defineComponent({
     let edit = ref(0)
     let supplierList = ref([])
     let noticeList = ref([])
-    let invoice = ref([])
     let bomList = ref([]) // 工艺Bom列表
     let procedure = ref([]) // 工序列表
     let allSelect = ref([]) // 用户选择的列表
-    let method = ref([])
-    let payTime = ref([])
     let search = ref({
       supplier_code: '',
       supplier_abbreviation: '',
@@ -70,8 +71,6 @@ export default defineComponent({
       fetchProductList()
       getSupplierInfo()
       getProductNotice()
-      getConstType()
-      // getProcessBomList()
     })
     
     // 获取列表
@@ -86,15 +85,6 @@ export default defineComponent({
       tableData.value = res.data;
       total.value = res.total;
     };
-    // 获取常量
-    const getConstType = async () => {
-      const res = await request.post('/api/getConstType', { type: ['payInfo', 'payTime', 'invoice'] })
-      if(res.code == 200){
-        method.value = res.data.filter(o => o.type == 'payInfo')
-        payTime.value = res.data.filter(o => o.type == 'payTime')
-        invoice.value = res.data.filter(o => o.type == 'invoice')
-      }
-    }
     const getSupplierInfo = async () => {
       const res = await request.get('/api/getSupplierInfo')
       if(res.code == 200){

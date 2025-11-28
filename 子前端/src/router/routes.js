@@ -27,14 +27,24 @@ const routes = [
       //     menu: false
       //   }
       // },
-      // 系统管理
+      // 系统设置
+      {
+        path: '/system/ConstUser',
+        name: 'SystemConstUser',
+        component: () => import('@/views/System/ConstUser.jsx'),
+        meta: {
+          title: '常量设置',
+          parent: '系统设置',
+          menu: true,
+        }
+      },
       {
         path: '/system/employee-info',
         name: 'EmployeeInfo',
         component: () => import('@/views/system/EmployeeInfo.jsx'),
         meta: {
           title: '员工信息',
-          parent: '系统管理',
+          parent: '系统设置',
           menu: true,
           buttons: [
             { code: 'EmployeeInfo:add', label: '新增' },
@@ -49,7 +59,7 @@ const routes = [
         component: () => import('@/views/System/UserManagement.jsx'),
         meta: {
           title: '用户管理',
-          parent: '系统管理',
+          parent: '系统设置',
           menu: true,
           // buttons: [
           //   { code: 'user:add', label: '新增' },
@@ -64,7 +74,7 @@ const routes = [
         component: () => import('@/views/System/Trajectory.jsx'),
         meta: {
           title: '用户轨迹',
-          parent: '系统管理',
+          parent: '系统设置',
           menu: true,
         }
       },
@@ -74,7 +84,7 @@ const routes = [
         component: () => import('@/views/System/ApprovalStep.jsx'),
         meta: {
           title: '审核管理',
-          parent: '系统管理',
+          parent: '系统设置',
           menu: true,
           buttons: [
             { code: 'ApprovalStep:add', label: '新增' },
@@ -88,7 +98,7 @@ const routes = [
       //   component: () => import('@/views/System/OrganizeManagement.jsx'),
       //   meta: {
       //     title: '组织架构',
-      //     parent: '系统管理',
+      //     parent: '系统设置',
       //     menu: true
       //   }
       // },
@@ -98,64 +108,11 @@ const routes = [
         component: () => import('@/views/System/ProcessCycle.jsx'),
         meta: {
           title: '生产制程',
-          parent: '系统管理',
+          parent: '系统设置',
           menu: true,
           buttons: [
             { code: 'ProcessCycle:add', label: '新增' },
             { code: 'ProcessCycle:edit', label: '修改' },
-          ]
-        }
-      },
-      {
-        path: '/system/WarehouseType',
-        name: 'WarehouseType',
-        component: () => import('@/views/System/WarehouseType.jsx'),
-        meta: {
-          title: '仓库建立',
-          parent: '系统管理',
-          menu: true,
-          buttons: [
-            { code: 'Warehouse:add', label: '新增' },
-            { code: 'Warehouse:edit', label: '修改' },
-          ]
-        }
-      },
-      // 系统设置
-      {
-        path: '/setting/ConstUser',
-        name: 'ConstUser',
-        component: () => import('@/views/Setting/ConstUser.jsx'),
-        meta: {
-          title: '常量设置',
-          parent: '系统设置',
-          menu: true,
-        }
-      },
-      {
-        path: '/setting/customer-info',
-        name: 'CustomerInfo',
-        component: () => import('@/views/Setting/CustomerInfo.jsx'),
-        meta: {
-          title: '客户资料',
-          parent: '系统设置',
-          menu: true,
-          buttons: [
-            { code: 'CustomerInfo:add', label: '新增' },
-            { code: 'CustomerInfo:edit', label: '修改' },
-          ]
-        }
-      },
-{
-        path: '/setting/supplier-info',
-        name: 'SupplierInfo',
-        component: () => import('@/views/Setting/SupplierInfo.jsx'),
-        meta: {
-          title: '供应商资料',
-          parent: '系统设置',
-          menu: true,
-          buttons: [
-            { code: 'SupplierInfo:add', label: '新增' },
-            { code: 'SupplierInfo:edit', label: '修改' },
           ]
         }
       },
@@ -235,7 +192,35 @@ const routes = [
           ]
         }
       },
+      {
+        path: '/basic/WarehouseType',
+        name: 'WarehouseType',
+        component: () => import('@/views/Basic/WarehouseType.jsx'),
+        meta: {
+          title: '仓库建立',
+          parent: '基础资料',
+          menu: true,
+          buttons: [
+            { code: 'Warehouse:add', label: '新增' },
+            { code: 'Warehouse:edit', label: '修改' },
+          ]
+        }
+      },
       // 订单管理
+      {
+        path: '/order/customer-info',
+        name: 'CustomerInfo',
+        component: () => import('@/views/Order/CustomerInfo.jsx'),
+        meta: {
+          title: '客户资料',
+          parent: '订单管理',
+          menu: true,
+          buttons: [
+            { code: 'CustomerInfo:add', label: '新增' },
+            { code: 'CustomerInfo:edit', label: '修改' },
+          ]
+        }
+      },
       {
         path: '/order/sales-order',
         name: 'SalesOrder',
@@ -352,6 +337,20 @@ const routes = [
         }
       },
       // 采购管理
+      {
+        path: '/purchase/supplier-info',
+        name: 'SupplierInfo',
+        component: () => import('@/views/Purchase/SupplierInfo.jsx'),
+        meta: {
+          title: '供应商资料',
+          parent: '采购管理',
+          menu: true,
+          buttons: [
+            { code: 'SupplierInfo:add', label: '新增' },
+            { code: 'SupplierInfo:edit', label: '修改' },
+          ]
+        }
+      },
       {
         path: '/purchase/material-quote',
         name: 'MaterialQuote',

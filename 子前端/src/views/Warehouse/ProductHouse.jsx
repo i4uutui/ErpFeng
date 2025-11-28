@@ -146,7 +146,7 @@ export default defineComponent({
                         <ElTableColumn prop="quantity" label="数量">
                           {({row}) => <span>{ row.quantity ? row.quantity : 0 }</span>}
                         </ElTableColumn>
-                        <ElTableColumn prop="model_spec" label="规格&型号" width="110" />
+                        <ElTableColumn prop="model_spec" label="型号&规格" width="110" />
                         <ElTableColumn prop="other_features" label="其他特性" width="110" />
                         <ElTableColumn prop="buy_price" label="单价(元)" width="110">
                           {({row}) => <span>{ row.buy_price ? row.buy_price : 0 }</span>}

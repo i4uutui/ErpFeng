@@ -7,7 +7,6 @@ import request from '@/utils/request';
 import dayjs from "dayjs"
 import "@/assets/css/print.scss"
 import "@/assets/css/landscape.scss"
-import html2pdf from 'html2pdf.js';
 import WinPrint from '@/components/print/winPrint';
 import HeadForm from '@/components/form/HeadForm';
 
@@ -29,6 +28,7 @@ export default defineComponent({
     const formRef = ref(null);
     const formCard = ref(null)
     const formHeight = ref(0);
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const rules = reactive({
       supplier_id: [
         { required: true, message: '请选择供应商编码', trigger: 'blur' }
@@ -370,6 +370,7 @@ export default defineComponent({
       form.value.price = row.price
       form.value.transaction_currency = row.transaction_currency
       form.value.transaction_terms = row.transaction_terms
+      form.value.unit = row.processBom.part.unit ? Number(row.processBom.part.unit) : ''
     }
     // 单个提交本地数据进行审批
     const handleStatusData = async (row) => {
@@ -593,7 +594,9 @@ export default defineComponent({
                     {({row}) => row.process_bom_children_id == 0 ? '全部工序' : row.processChildren.process.process_name}
                   </ElTableColumn>
                   <ElTableColumn prop="ment" label="加工要求" width='100' />
-                  <ElTableColumn prop="unit" label="单位" width='80' />
+                  <ElTableColumn label="单位" width="100">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="number" label="委外数量" width='100' />
                   <ElTableColumn prop="price" label="加工单价" width='90' />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width='90' />
@@ -708,7 +711,9 @@ export default defineComponent({
                   <ElInput v-model={ form.value.number } placeholder="请输入委外数量" />
                 </ElFormItem>
                 <ElFormItem label="单位" prop="unit">
-                  <ElInput v-model={ form.value.unit } placeholder="请输入单位" />
+                  <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择单位">
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="加工要求" prop="ment">
                   <ElInput v-model={ form.value.ment } placeholder="请输入加工要求" />

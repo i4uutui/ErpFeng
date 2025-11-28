@@ -174,7 +174,6 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
       Array.from(worksMap.values()).flat(), 
       dateInfo // 传入Set而非数组，加速查询
     );
-
     // 5. 制程总负荷计算优化
     const callLoad = setCycleLoad(processedCycles, cased);
     const newCycles = setDateMore(baseJSON, callLoad, dateInfo, date_more);

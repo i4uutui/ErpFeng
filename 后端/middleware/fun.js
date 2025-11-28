@@ -73,7 +73,7 @@ const setProgressLoad = (base, cycles, works, dateInfo) => {
 			if (!baseItem) return;
 
 			// 获取对应的cycle组（sort_date来源）
-			const cycleGroup = cycleGroupMap.get(cycleId);
+			const cycleGroup = cycleGroupMap.get(cycleId);  ///////////////////////////////
 			if (!cycleGroup) return;
 
 			// 获取对应的cycle明细（end_date来源）
@@ -122,7 +122,6 @@ const setProgressLoad = (base, cycles, works, dateInfo) => {
 			}
 
 			const load = allWorkTime / validDays;
-
 			// 返回更新后的数据（保留原始结构，只更新load）
 			return { ...work, load: load.toFixed(1) }; // 保留2位小数，可根据需求调整
 		} catch (error) {
@@ -163,12 +162,16 @@ const setCycleLoad = (cycles, works) => {
 // dateInfo：特殊日期数组，date_more日期列表
 const setDateMore = (base, cycles, dateInfo, date_more) => {
 	const endDateObj = dayjs(date_more[date_more.length - 1])
+
+	const validCycles = cycles.filter(cycleGroup => {
+		// 仅保留 sort_date 有有效值的项
+		return cycleGroup.sort_date !== undefined && cycleGroup.sort_date !== null;
+	});
 	// 为每个cycle添加dateData统计
-	const updatedCycles = cycles.map(cycleGroup => {
+	const updatedCycles = validCycles.map(cycleGroup => {
 		// 构建dateData对象，初始所有日期对应空值
 		const dateData = {};
 		// 制程周期如果没有填 ，则跳过
-		if(cycleGroup.sort_date == undefined || cycleGroup.sort_date == null) return
 		date_more.forEach(date => {
 			let obj = {
 				maxLong: 0,
