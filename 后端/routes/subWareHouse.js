@@ -201,6 +201,7 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
       plan_id: plan_id ? plan_id : null,
       notice_id: notice_id,
       buy_price: buy_price ? buy_price : 0,
+      price: price ? price : 0,
       quantity: quantity ? quantity : 0,
       procure_id,
       sale_id: sale_id ? sale_id : null,

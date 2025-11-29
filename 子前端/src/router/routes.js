@@ -92,7 +92,7 @@ const routes = [
           menu: true,
           buttons: [
             { code: 'ApprovalStep:add', label: '新增' },
-            { code: 'ApprovalStep:delete', label: '新增' },
+            { code: 'ApprovalStep:delete', label: '删除' },
           ]
         }
       },

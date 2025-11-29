@@ -69,7 +69,7 @@ export default defineComponent({
         const head = [ `供应商：${row.supplier_abbreviation}`, `产品编码：${row.product_code}`, `产品名称：${row.product_name}`, `生产订单：${row.notice}`, ]
         const head2 = [['序号', '部件编码', '部件名称', '工艺编码', '工艺名称', '加工要求', '单位', '委外数量', '加工单价', '币别', '要求交期']]
         const body = row.order.map((e, index) => {
-          const arr = [index + 1, e.processBom.part.part_code, e.processBom.part.part_name, e.processChildren.process.process_code, e.processChildren.process.process_name, e.ment, e.unit, e.number, e.price,e.transaction_currency,e.delivery_time]
+          const arr = [index + 1, e.processBom.part.part_code, e.processBom.part.part_name, e.processChildren.process.process_code, e.processChildren.process.process_name, e.ment, calcUnit.value.find(o => o.id == e.unit)?.name, e.number, e.price,e.transaction_currency,e.delivery_time]
           return arr
         })
         const data = {

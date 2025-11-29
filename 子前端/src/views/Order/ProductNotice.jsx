@@ -131,6 +131,7 @@ export default defineComponent({
         request.post('/api/set_production_progress', { id: row.id }).then(res => {
           if(res && res.code == 200){
             ElMessage.success('操作成功');
+            fetchProductList()
             reportOperationLog({
               operationType: 'paichang',
               module: '生产通知单',

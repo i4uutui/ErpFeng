@@ -28,7 +28,7 @@ export default defineComponent({
       form.value.steps = res.data
     }
     const getUser = async () => {
-      const res = await request.get('/api/user', { params: { page: 1, pageSize: 100 } })
+      const res = await request.get('/api/getUser')
       users.value = res.data;
     }
     // 新增步骤

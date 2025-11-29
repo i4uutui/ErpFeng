@@ -582,8 +582,8 @@ export default defineComponent({
       form.value.supplier_code = row.supplier.supplier_code
       form.value.supplier_abbreviation = row.supplier.supplier_abbreviation
       form.value.price = row.price
-      form.value.unit = row.unit
-      form.value.usage_unit = row.usage_unit
+      form.value.unit = Number(row.unit)
+      form.value.usage_unit = Number(row.material.usage_unit)
     }
     // 材料编码选择后返回的数据
     const materialChange = (value) => {

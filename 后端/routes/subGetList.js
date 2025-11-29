@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, subOutscriptionOrder, SubMaterialMent, Op, SubNoEncoding, SubMaterialBom, SubMaterialBomChild, SubMaterialQuote, SubOutsourcingQuote, SubMaterialOrder, SubConstUser } = require('../models');
+const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, subOutscriptionOrder, SubMaterialMent, Op, SubNoEncoding, SubMaterialBom, SubMaterialBomChild, SubMaterialQuote, SubOutsourcingQuote, SubMaterialOrder, SubConstUser, AdUser } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { getSaleCancelIds } = require('../middleware/tool');
@@ -661,7 +661,7 @@ router.get('/getMaterialQuote', authMiddleware, async (req, res) => {
     attributes: ['id', 'supplier_id', 'material_id', 'price', 'unit', 'delivery', 'packaging', 'transaction_currency', 'other_transaction_terms', 'invoice'],
     include: [
       { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_code', 'supplier_abbreviation'] },
-      { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name'] }
+      { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name', 'usage_unit'] }
     ],
     order: [['created_at', 'DESC']],
   })
@@ -723,5 +723,44 @@ router.get('/getConstUser', authMiddleware, async (req, res) => {
 
   res.json({ code: 200, data: result })
 })
+
+/**
+ * @swagger
+ * /api/user:
+ *   get:
+ *     summary: 获取后台所有用户列表
+ *     tags:
+ *       - 常用列表(GetList)
+ *     parameters:
+ *       - name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - name: pageSize
+ *         schema:
+ *           type: integer
+ *           default: 10
+ */
+router.get('/getUser', authMiddleware, async (req, res) => {
+  const { company_id, id: userId } = req.user;
+  // 查询当前页的数据
+  const rows = await AdUser.findAll({
+    where: {
+      is_deleted: 1,
+      type: { [Op.ne]: 1 },
+      company_id,
+    },
+    attributes: ['id', 'name', 'cycle_id', 'parent_id', 'username', 'parent_id', 'status', 'power', 'created_at'],
+    order: [['created_at', 'DESC']],
+    raw: true,
+  })
+
+
+  // 返回所需信息
+  res.json({ 
+    data: formatArrayTime(rows), 
+    code: 200
+  });
+});
 
 module.exports = router;  

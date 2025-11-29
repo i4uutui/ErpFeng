@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubMaterialBom, SubMaterialCode, SubMaterialBomChild, SubPartCode, SubProductCode, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, Op, sequelize } = require('../models');
+const { SubMaterialBom, SubMaterialCode, SubMaterialBomChild, SubPartCode, SubProductCode, SubProcessBom, SubProcessBomChild, SubProcessCode, SubEquipmentCode, SubProcessCycle, Op, col } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const MainDataService = require('../middleware/qrcodeService');
@@ -151,53 +151,59 @@ router.get('/process_bom', authMiddleware, async (req, res) => {
   if(product_code) whereObj.product_code = { [Op.like]: `%${product_code}%` }
   if(product_name) whereObj.product_name = { [Op.like]: `%${product_name}%` }
   if(drawing) whereObj.drawing = { [Op.like]: `%${drawing}%` }
-  const { count, rows } = await SubProcessBom.findAndCountAll({
-    where: {
-      is_deleted: 1,
-      company_id,
-      archive
-    },
-    attributes: ['id', 'archive', 'product_id', 'part_id', 'sort'],
-    include: [
-      { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'], where: whereObj },
-      { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
-      {
-        model: SubProcessBomChild,
-        as: 'children',
-        attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'points'],
-        include: [
-          { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
-          {
-            model: SubEquipmentCode,
-            as: 'equipment',
-            attributes: ['id', 'equipment_code', 'equipment_name'],
-            include: [
-              { model: SubProcessCycle, as: 'cycle' }
-            ]
-          }
-        ]
-      }
-    ],
-    order: [
-      ['sort', 'ASC'],
-      ['children', 'process_index', 'ASC']
-    ],
-    distinct: true,
-    limit: parseInt(pageSize),
-    offset
-  })
-  const totalPages = Math.ceil(count / pageSize)
-  const fromData = rows.map(item => item.dataValues)
+  
+  try {
+    const { count, rows } = await SubProcessBom.findAndCountAll({
+      where: {
+        is_deleted: 1,
+        company_id,
+        archive
+      },
+      attributes: ['id', 'archive', 'product_id', 'part_id', 'sort'],
+      include: [
+        { model: SubProductCode, as: 'product', attributes: ['id', 'product_name', 'product_code', 'drawing'], where: whereObj },
+        { model: SubPartCode, as: 'part', attributes: ['id', 'part_name', 'part_code'] },
+        {
+          model: SubProcessBomChild,
+          as: 'children',
+          attributes: ['id', 'process_bom_id', 'process_id', 'equipment_id', 'process_index', 'time', 'price', 'points'],
+          include: [
+            { model: SubProcessCode, as: 'process', attributes: ['id', 'process_code', 'process_name'] },
+            {
+              model: SubEquipmentCode,
+              as: 'equipment',
+              attributes: ['id', 'equipment_code', 'equipment_name'],
+              include: [
+                { model: SubProcessCycle, as: 'cycle' }
+              ]
+            }
+          ]
+        }
+      ],
+      order: [
+        ['product_id', 'DESC'],
+        ['sort', 'ASC'],
+        ['children', 'process_index', 'ASC'],
+      ],
+      distinct: true,
+      limit: parseInt(pageSize),
+      offset
+    })
+    const totalPages = Math.ceil(count / pageSize)
+    const fromData = rows.map(item => item.dataValues)
 
-  // 返回所需信息
-  res.json({ 
-    data: formatArrayTime(fromData), 
-    total: count, 
-    totalPages, 
-    currentPage: parseInt(page), 
-    pageSize: parseInt(pageSize),
-    code: 200 
-  });
+    // 返回所需信息
+    res.json({ 
+      data: formatArrayTime(fromData), 
+      total: count, 
+      totalPages, 
+      currentPage: parseInt(page), 
+      pageSize: parseInt(pageSize),
+      code: 200 
+    });
+  } catch (error) {
+    console.log(error);
+  }
 })
 // 添加工艺BOM
 router.post('/process_bom', authMiddleware, async (req, res) => {

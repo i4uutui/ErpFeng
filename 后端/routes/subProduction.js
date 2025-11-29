@@ -123,7 +123,6 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
         // indexHints: [{ type: 'USE', values: ['idx_sub_progress_work_company_progress'] }]
       })
     ]);
-
     // 单独查询假期（数据量通常较小，可缓存）
     const dates = await SubDateInfo.findAll({
       where: { company_id },
@@ -172,12 +171,13 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
       baseJSON, 
       processedCycles, 
       Array.from(worksMap.values()).flat(), 
-      dateInfo // 传入Set而非数组，加速查询
+      dateInfo
     );
+    
     // 5. 制程总负荷计算优化
     const callLoad = setCycleLoad(processedCycles, cased);
     const newCycles = setDateMore(baseJSON, callLoad, dateInfo, date_more);
-    
+
     let cyclesBigs = 0
     newCycles.forEach(item => {
       const { maxLoad, cycle } = item;

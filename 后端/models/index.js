@@ -1,4 +1,4 @@
-const { Op } = require('sequelize');
+const { Op, col } = require('sequelize');
 const sequelize = require('../config/sequelize.js')
 
 const AdAdmin = require('./AdAdmin.js') // 产品报价信息表
@@ -150,6 +150,7 @@ SubConstUser.belongsTo(SubConstType, { foreignKey: 'type', targetKey: 'type', as
 
 module.exports = {
   Op,
+  col,
   sequelize,
   AdAdmin,
   AdCompanyInfo,

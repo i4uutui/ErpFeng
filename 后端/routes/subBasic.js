@@ -72,7 +72,7 @@ router.put('/products_code', authMiddleware, async (req, res) => {
   if (!product) {
     return res.json({ message: '产品不存在', code: 401 });
   }
-  if(type != 1) return res.json({ code: 401, message: '编码禁止修改' })
+  // if(type != 1) return res.json({ code: 401, message: '编码禁止修改' })
   
   await product.update({
     product_code, product_name, drawing, model, specification, other_features, component_structure, unit, production_requirements, company_id,
@@ -164,7 +164,7 @@ router.put('/part_code', authMiddleware, async (req, res) => {
   const part = await SubPartCode.findByPk(id);
   if (!part) return res.status(404).json({ message: '部件不存在' });
   
-  if(type != 1) return res.json({ code: 401, message: '编码禁止修改' })
+  // if(type != 1) return res.json({ code: 401, message: '编码禁止修改' })
   
   await part.update({
     part_code, part_name, model, specification, other_features, unit, production_requirements, remarks, company_id,
@@ -259,7 +259,7 @@ router.put('/material_code', authMiddleware, async (req, res) => {
   const material = await SubMaterialCode.findByPk(id);
   if (!material) return res.json({ message: '材料不存在', code: 401 });
   
-  if(type != 1) return res.json({ code: 401, message: '编码禁止修改' })
+  // if(type != 1) return res.json({ code: 401, message: '编码禁止修改' })
   
   await SubMaterialCode.update({
     material_code, material_name, model, specification, other_features, usage_unit, purchase_unit, category, company_id,
@@ -354,7 +354,7 @@ router.put('/process_code', authMiddleware, async (req, res) => {
   const process = await SubProcessCode.findByPk(id);
   if (!process) return res.json({ message: '工艺不存在', code: 401 });
   
-  if(type != 1) return res.json({ code: 401, message: '编码禁止修改' })
+  // if(type != 1) return res.json({ code: 401, message: '编码禁止修改' })
   
   await process.update({
     process_code, process_name, remarks, equipment_id, company_id,
@@ -453,7 +453,7 @@ router.put('/equipment_code', authMiddleware, async (req, res) => {
   const equipment = await SubEquipmentCode.findByPk(id);
   if (!equipment) return res.json({ message: '设备不存在', code: 401 });
   
-  if(type !== 1) return res.json({ code: 401, message: '编码禁止修改' })
+  // if(type !== 1) return res.json({ code: 401, message: '编码禁止修改' })
   
   await equipment.update({
     equipment_code, equipment_name, quantity, cycle_id, working_hours, efficiency, available, remarks, company_id,

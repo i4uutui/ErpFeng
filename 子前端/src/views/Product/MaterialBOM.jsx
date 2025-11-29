@@ -31,7 +31,7 @@ export default defineComponent({
       part_id: '',
       sort: 0,
       children: [
-        { material_id: '', number: '', sort: 1 }
+        { material_id: '', number: 1, sort: 1 }
       ]
     })
     let productsList = ref([])
@@ -256,7 +256,7 @@ export default defineComponent({
         part_id: '',
         sort: 0,
         children: [
-          { material_id: '', number: '', sort: 1 }
+          { material_id: '', number: 1, sort: 1 }
         ]
       }
     }

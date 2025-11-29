@@ -24,7 +24,6 @@ const getDateInfo = (endDates) => {
 }
 
 const setProgressLoad = (base, cycles, works, dateInfo) => {
-	// console.log(dateInfo);
 	// 转为Set，提高查询效率
 	const specialDateSet = new Set(dateInfo.map(date => dayjs(date).format("YYYY-MM-DD")));
 	// 步骤1：预处理数据 - 创建映射关系，提高查询效率
@@ -42,7 +41,6 @@ const setProgressLoad = (base, cycles, works, dateInfo) => {
 			cycleItemMap.set(key, cycleItem);
 		});
 	});
-
 	// 工具函数：计算两个日期之间的有效天数（剔除特殊日期）
 	const getValidDays = (start, end) => {
 		let validDays = 0;
@@ -81,6 +79,7 @@ const setProgressLoad = (base, cycles, works, dateInfo) => {
 			const cycleItem = cycleItemMap.get(cycleItemKey);
 			if (!cycleItem) return;
 
+			// if(!baseItem.start_date) return;
 			// 2.2 处理起始时间（规则：base.start_date在今天之后则用base.start_date，否则用今天）
 			const today = dayjs().startOf("day"); // 今天0点
 			const baseStartDate = dayjs(baseItem.start_date).startOf("day");
@@ -163,12 +162,8 @@ const setCycleLoad = (cycles, works) => {
 const setDateMore = (base, cycles, dateInfo, date_more) => {
 	const endDateObj = dayjs(date_more[date_more.length - 1])
 
-	const validCycles = cycles.filter(cycleGroup => {
-		// 仅保留 sort_date 有有效值的项
-		return cycleGroup.sort_date !== undefined && cycleGroup.sort_date !== null;
-	});
 	// 为每个cycle添加dateData统计
-	const updatedCycles = validCycles.map(cycleGroup => {
+	const updatedCycles = cycles.map(cycleGroup => {
 		// 构建dateData对象，初始所有日期对应空值
 		const dateData = {};
 		// 制程周期如果没有填 ，则跳过

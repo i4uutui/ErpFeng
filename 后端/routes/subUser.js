@@ -513,7 +513,6 @@ router.post('/process_cycle', authMiddleware, async (req, res) => {
 router.put('/process_cycle', authMiddleware, async (req, res) => {
   const { name, sort_date, sort, id } = req.body;
   const { id: userId, company_id } = req.user;
-  
   // 验证是否存在
   const processCycle = await SubProcessCycle.findByPk(id);
   if (!processCycle) {
@@ -522,7 +521,13 @@ router.put('/process_cycle', authMiddleware, async (req, res) => {
   
   let cycleWhere = {}
   if(name) cycleWhere.name = name
-  if(sort_date) cycleWhere.sort_date = sort_date
+  if(sort_date || sort_date == '' || sort_date == 0){
+    if(sort_date == ''){
+      cycleWhere.sort_date = null
+    }else{
+      cycleWhere.sort_date = sort_date
+    }
+  }
   await processCycle.update({
     ...cycleWhere,
     user_id: userId,

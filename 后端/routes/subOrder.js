@@ -485,13 +485,20 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
       uniqueCycleIds.add(cycleId);
     })
   })
-  const idCycleArray = Array.from(uniqueCycleIds)
+  const idCycleArray = cycles.map(e => e.id)
+  const idBomCycleArray = Array.from(uniqueCycleIds)
   // 工艺BOM中的制程是否与生产制程一一对应
   let isCycle = false
-  for(const item of cycles){
-    if(!idCycleArray.includes(item.id)){
+  // for(const item of cycles){
+  //   if(!idCycleArray.includes(item.id)){
+  //     isCycle = true
+  //     break;
+  //   }
+  // }
+  for(const item of idBomCycleArray){
+    if(!idCycleArray.includes(item)){
       isCycle = true
-      break;
+      break
     }
   }
   if(isCycle) return res.json({ code: 401, message: '生产制程与工艺BOM不匹配，请检查' })
