@@ -167,15 +167,15 @@ export default defineComponent({
                 <ElTableColumn prop="name" label="物料名称" width="90" />
                 <ElTableColumn prop="model_spec" label="型号&规格" width="110" />
                 <ElTableColumn prop="other_features" label="其他特性" width="90" />
-                <ElTableColumn label={ `${ getTypeName(menuWareIndex.value) }单位` } width="90">
-                  {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
-                </ElTableColumn>
-                <ElTableColumn label="库存单位" width="90">
-                  {({row}) => <span>{ calcUnit.value.find(e => e.id == row.inv_unit)?.name }</span>}
-                </ElTableColumn>
                 <ElTableColumn prop="quantity" label="最新库存" width="90" />
                 <ElTableColumn prop="price" label="内部单价" width="90" />
                 <ElTableColumn prop="buy_price" label={ `${ getTypeName(menuWareIndex.value) }单价` } width="90" />
+                <ElTableColumn label="库存单位" width="90">
+                  {({row}) => <span>{ calcUnit.value.find(e => e.id == row.inv_unit)?.name }</span>}
+                </ElTableColumn>
+                <ElTableColumn label={ `${ getTypeName(menuWareIndex.value) }单位` } width="90">
+                  {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
+                </ElTableColumn>
                 <ElTableColumn prop="last_in_time" label="最后入库时间" width="120" />
                 <ElTableColumn prop="last_out_time" label="最后出库时间" width="120" />
                 <ElTableColumn label="操作" width="100" fixed="right">

@@ -9,6 +9,7 @@ export default defineComponent({
   setup(){
     const formCard = ref(null)
     const formHeight = ref(0);
+    let printLoading = ref(false) // 打印加载状态
     let tableData = ref([])
     let noticeList = ref([])
     let notice_id = ref('')
@@ -42,6 +43,7 @@ export default defineComponent({
     const onPrint = async () => {
       const list = tableData.value
       if(!list.length) return ElMessage.error('请选择需要打印的数据')
+      printLoading.value = true
       const body = list.map((e, index) => {
         return {
           part_code: e.part_code,
@@ -58,7 +60,8 @@ export default defineComponent({
       const delivery_time = `客户交期：${tableData.value[0]?.notice.delivery_time}`
       const head = [notice, product_code, product_name, drawing, delivery_time]
       
-      setPrint(head, body)
+      await setPrint(head, body)
+      printLoading.value = false
     }
     
     return() => (
@@ -74,10 +77,7 @@ export default defineComponent({
                   </ElSelect>
                 </div>
                 <div class="pr10">
-                  {/* <ElButton style="margin-top: -5px" type="primary" onClick={ () => fetchProductList() }>
-                    查询
-                  </ElButton> */}
-                  <ElButton style="margin-top: -5px" type="primary" v-permission={ 'WorkOrder:print' } onClick={ () => onPrint() }>
+                  <ElButton loading={ printLoading.value } type="primary" v-permission={ 'WorkOrder:print' } onClick={ () => onPrint() }>
                     打印
                   </ElButton>
                 </div>

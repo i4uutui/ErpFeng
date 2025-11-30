@@ -19,6 +19,7 @@ export default defineComponent({
     const pagin = ref(null)
     const user = getItem('user')
     const formHeight = ref(0);
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const printNo = computed(() => store.printNo)
     const nowDate = ref()
     let dateTime = ref([])
@@ -86,9 +87,9 @@ export default defineComponent({
           await getGurchaseOrder()
         }
         const head = [ `仓库类别：成品仓`, `仓库名称：${ row.house.name }`, `统计周期：${ dateTime.value[0] } 至 ${dateTime.value[1]}`]
-        const head2 = [['序号', '客户/制程', '物料编码', '物料名称', '规格型号', '数量', '单价', '总价']]
+        const head2 = [['序号', '客户/制程', '物料编码', '物料名称', '规格型号', '数量', '单价', '单位', '总价']]
         const body = row.order.map((e, index) => {
-          const arr = [index + 1, e.plan, e.code, e.name, e.model_spec, e.quantity, e.buy_price ? e.buy_price : 0, e.approval ? e.total_price : PreciseMath.mul(e.buy_price, e.quantity)]
+          const arr = [index + 1, e.plan, e.code, e.name, e.model_spec, e.quantity, e.buy_price ? e.buy_price : 0, calcUnit.value.find(o => o.id == e.unit)?.name, e.approval ? e.total_price : PreciseMath.mul(e.buy_price, e.quantity)]
           return arr
         })
         const data = {

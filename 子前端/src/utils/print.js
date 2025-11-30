@@ -1,15 +1,16 @@
-import { addFont } from '@/utils/font/sourcehan-normal'
 import { jsPDF } from 'jspdf'
 import { autoTable } from 'jspdf-autotable'
+import { getFontModule } from './preload-font';
 
-const setPrint = (head, head2, body, data, foot) => {
+const setPrint = async (head, head2, body, data, foot) => {
   const pdf = new jsPDF({
     orientation: 'landscape', // 横向
     unit: 'mm',
     format: 'a4',
   });
 
-  addFont(pdf)
+  const { addFont } = await getFontModule()
+  addFont(pdf);
 
   const setTable = {
     theme: 'grid',

@@ -75,6 +75,43 @@ export default defineComponent({
         materialList.value = res.data
       }
     }
+    // 单个存档
+    const handleRowArchive = async ({ row }) => {
+      if(!tableData.value.length) return ElMessage.error('暂无数据可存档！');
+      ElMessageBox.confirm('是否确认存档', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(async () => {
+        const data = {
+          supplier_id: row.supplier_id,
+          supplier_abbreviation: row.supplier_abbreviation,
+          material_id: row.material_id,
+          price: row.price,
+          delivery: row.delivery,
+          packaging: row.packaging, 
+          transaction_currency: row.transaction_currency, 
+          unit: row.unit,
+          transaction_method: row.transaction_method,
+          other_transaction_terms: row.other_transaction_terms,
+          other_text: row.other_text,
+          invoice: row.invoice ? row.invoice : null
+        }
+        const res = await request.post('/api/material_quote', { data: [data] });
+        if(res && res.code == 200){
+          ElMessage.success('存档成功');
+          tableData.value = []
+
+          reportOperationLog({
+            operationType: 'keyup',
+            module: '原材料报价',
+            desc: `存档原材料报价`,
+            data: { newData: { data: data } }
+          })
+        }
+      }).catch(() => {})
+    }
+    // 批量存档
     const handleArchive = async () => {
       if(!tableData.value.length) return ElMessage.error('暂无数据可存档！');
       ElMessageBox.confirm('是否确认存档', '提示', {
@@ -277,6 +314,9 @@ export default defineComponent({
                       <>
                         <ElButton size="small" type="warning" onClick={ () => handleUplate(scope) }>修改</ElButton>
                         <ElButton size="small" type="danger" onClick={ () => handleDelete(scope) }>删除</ElButton>
+                        <ElButton size="small" type="primary" v-permission={ 'MaterialQuote:archive' } onClick={ () => handleRowArchive(scope) } >
+                          存档
+                        </ElButton>
                       </>
                     )}
                   </ElTableColumn>

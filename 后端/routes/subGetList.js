@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, subOutscriptionOrder, SubMaterialMent, Op, SubNoEncoding, SubMaterialBom, SubMaterialBomChild, SubMaterialQuote, SubOutsourcingQuote, SubMaterialOrder, SubConstUser, AdUser } = require('../models');
+const { SubProductCode, SubCustomerInfo, SubPartCode, SubMaterialCode, SubSaleOrder, SubProductQuotation, SubProcessCode, SubEquipmentCode, SubSupplierInfo, SubProductNotice, SubProcessBom, SubProcessBomChild, SubProcessCycle, SubConstType, subOutscriptionOrder, SubMaterialMent, Op, SubNoEncoding, SubMaterialBom, SubMaterialBomChild, SubMaterialQuote, SubOutsourcingQuote, SubMaterialOrder, SubConstUser, AdUser, SubOutsourcingOrder } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { getSaleCancelIds } = require('../middleware/tool');
@@ -329,7 +329,15 @@ router.get('/getProductNotice', authMiddleware, async (req, res) => {
     order: [['created_at', 'DESC']],
     include: [
       { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name'] },
-      { model: SubSaleOrder, as: 'sale', attributes: ['id', 'order_number', 'delivery_time'] },
+      {
+        model: SubSaleOrder,
+        as: 'sale',
+        attributes: ['id', 'order_number', 'delivery_time', 'unit'],
+        include: [
+          { model: SubProductQuotation, as: 'quot', attributes: ['id', 'sale_id', 'customer_id', 'product_id', 'notice', 'product_price', 'transaction_currency', 'transaction_method', 'other_transaction_terms', 'other_text'] }
+        ]
+      },
+      { model: SubCustomerInfo, as: 'customer', attributes: ['id', 'customer_code', 'customer_abbreviation'] }
     ]
   }
   const rows = await SubProductNotice.findAll(config);
@@ -522,38 +530,6 @@ router.get('/getMaterialMent', authMiddleware, async (req, res) => {
 });
 /**
  * @swagger
- * /api/getOutsourcingOrder:
- *   get:
- *     summary: 委外加工单列表
- *     tags:
- *       - 常用列表(GetList)
- */
-router.get('/getOutsourcingOrder', authMiddleware, async (req, res) => {
-  const { company_id, print_id } = req.user;
-  
-  const whereObj = {}
-  if(print_id) whereObj.print_id = print_id
-  const rows = await subOutscriptionOrder.findAll({
-    where: {
-      is_deleted: 1,
-      company_id,
-      ...whereObj
-    },
-    include: [
-      { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_abbreviation', 'supplier_code'] }
-    ],
-    order: [['created_at', 'DESC']],
-  })
-  const fromData = rows.map(item => item.dataValues)
-  
-  // 返回所需信息
-  res.json({ 
-    data: formatArrayTime(fromData), 
-    code: 200 
-  });
-});
-/**
- * @swagger
  * /api/getNoEncoding:
  *   get:
  *     summary: 获取打印单号
@@ -710,7 +686,7 @@ router.get('/getMaterialOrderList', authMiddleware, async (req, res) => {
 
 /**
  * @swagger
- * /api/getMaterialOrderList:
+ * /api/getConstUser:
  *   get:
  *     summary: 获取常量列表(所有)
  *     tags:
@@ -762,5 +738,36 @@ router.get('/getUser', authMiddleware, async (req, res) => {
     code: 200
   });
 });
+
+/**
+ * @swagger
+ * /api/getOutList:
+ *   get:
+ *     summary: 获取委外加工单列表
+ *     tags:
+ *       - 常用列表(GetList)
+ */
+router.get('/getOutList', authMiddleware, async (req, res) => {
+  const { company_id, id: userId } = req.user;
+
+  const result = await SubOutsourcingOrder.findAll({
+    where: {
+      company_id,
+      no: {
+        [Op.ne]: null,
+        [Op.ne]: ''
+      }
+    },
+    attributes: ['id', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'no'],
+    include: [
+      { model: subOutscriptionOrder, as: 'order', attributes: ['id', 'notice_id', 'quote_id', 'supplier_id', 'process_bom_id', 'process_bom_children_id', 'unit', 'price', 'number', 'transaction_currency', 'ment', 'delivery_time', 'transaction_terms'] }
+    ]
+  })
+
+  const data = result.map(e => e.toJSON())
+
+  res.json({ code: 200, data })
+})
+
 
 module.exports = router;  

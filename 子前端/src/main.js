@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import router from "./router";
 import permissionDirective from "./utils/permission";
 import Print from "vue3-print-nb";
+import { preloadFont } from "./utils/preload-font";
 
 import "@/assets/css/reset.css";
 import "@/assets/css/common.css";
@@ -26,3 +27,7 @@ app.use(Print);
 app.use(permissionDirective); // 注册权限指令
 
 app.mount("#app");
+
+setTimeout(() => {
+  preloadFont(); // 此时开始加载，不阻塞页面首次渲染
+}, 1000);

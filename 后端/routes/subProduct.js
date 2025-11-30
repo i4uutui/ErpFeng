@@ -36,6 +36,7 @@ router.get('/material_bom', authMiddleware, async (req, res) => {
       }
     ],
     order: [
+      ['product_id', 'DESC'],
       ['sort', 'ASC'],
       ['children', 'process_index', 'ASC']
     ],

@@ -489,12 +489,6 @@ router.post('/set_production_progress', authMiddleware, async (req, res) => {
   const idBomCycleArray = Array.from(uniqueCycleIds)
   // 工艺BOM中的制程是否与生产制程一一对应
   let isCycle = false
-  // for(const item of cycles){
-  //   if(!idCycleArray.includes(item.id)){
-  //     isCycle = true
-  //     break;
-  //   }
-  // }
   for(const item of idBomCycleArray){
     if(!idCycleArray.includes(item)){
       isCycle = true

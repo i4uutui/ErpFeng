@@ -19,6 +19,7 @@ export default defineComponent({
     const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const printNo = computed(() => store.printNo)
     const nowDate = ref()
+    let printLoading = ref(false) // 打印加载状态
     let allSelect = ref([])
     let tableData = ref([])
     let currentPage = ref(1);
@@ -58,6 +59,7 @@ export default defineComponent({
     // 打印
     const onPrint = async (row) => {
       if(row.order && row.order.length){
+        printLoading.value = true
         let no = ref('')
         if(row.no){
           no.value = row.no
@@ -79,7 +81,8 @@ export default defineComponent({
         const foot = [
           '核准：', '审查：', `制表：${user.name}`, `日期：${nowDate.value}`
         ]
-        setPrint(head, head2, body, data, foot)
+        await setPrint(head, head2, body, data, foot)
+        printLoading.value = false
       }else{
         ElMessage.error('暂无可打印的数据')
       }
@@ -150,7 +153,7 @@ export default defineComponent({
                     {{
                       default: ({ row }) => (
                         <>
-                          <ElButton size="small" type="primary" v-permission={ 'PurchaseOrder:print' } onClick={ () => onPrint(row) }>打印</ElButton>
+                          <ElButton size="small" loading={ printLoading.value } type="primary" v-permission={ 'PurchaseOrder:print' } onClick={ () => onPrint(row) }>打印</ElButton>
                         </>
                       )
                     }}

@@ -111,6 +111,18 @@ const SubWarehouseApply = sequelize.define('SubWarehouseApply', {
     defaultValue: null,
     comment: '其他特性'
   },
+  unit: {
+    type: DataTypes.INTEGER(20),
+    allowNull: true,
+    defaultValue: null,
+    comment: '采购/销售单位'
+  },
+  inv_unit: {
+    type: DataTypes.INTEGER(20),
+    allowNull: true,
+    defaultValue: null,
+    comment: '库存单位'
+  },
   quantity: {
     type: DataTypes.INTEGER(20),
     allowNull: true,
@@ -118,19 +130,19 @@ const SubWarehouseApply = sequelize.define('SubWarehouseApply', {
     comment: '数量'
   },
   buy_price: {
-    type: DataTypes.DECIMAL(10, 1),
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     defaultValue: null,
     comment: '采购/销售单价'
   },
   price: {
-    type: DataTypes.DECIMAL(10, 1),
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     defaultValue: null,
     comment: '内部单价'
   },
   total_price: {
-    type: DataTypes.DECIMAL(10, 1),
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     defaultValue: null,
     comment: '总价'

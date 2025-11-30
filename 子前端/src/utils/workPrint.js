@@ -1,6 +1,6 @@
-import { addFont } from "@/utils/font/sourcehan-normal";
 import { jsPDF } from "jspdf";
 import { autoTable } from "jspdf-autotable";
+import { getFontModule } from "./preload-font";
 
 // 配置项：每行显示的图片数量
 const IMAGES_PER_ROW = 8;
@@ -17,12 +17,14 @@ const TEXT_HEIGHT = 6;
 // 配置项：图片与下方文字的间距
 const IMAGE_TEXT_SPACING = 2;
 
-const setPrint = (head, body) => {
+const setPrint = async (head, body) => {
 	const pdf = new jsPDF({
 		orientation: "landscape", // 横向
 		unit: "mm",
 		format: "a4",
 	});
+	
+	const { addFont } = await getFontModule()
 	addFont(pdf);
 
 	const columns = [

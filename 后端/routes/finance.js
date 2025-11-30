@@ -243,7 +243,7 @@ router.post('/getOutSourcingPrice', authMiddleware, async (req, res) => {
 
   const { count, rows } = await SubWarehouseApply.findAndCountAll({
     where,
-    attributes: ['id', 'print_id', 'company_id', 'procure_id', 'sale_id', 'ware_id', 'house_id', 'operate', 'type', 'house_name', 'plan_id', 'plan', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'quantity', 'buy_price', 'total_price', 'created_at'],
+    attributes: ['procure_id', 'sale_id', 'ware_id', 'house_id', 'operate', 'type', 'house_name', 'plan_id', 'plan', 'notice_id', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'unit', 'inv_unit', 'quantity', 'buy_price', 'price', 'total_price', 'order_id', 'is_buying', 'status'],
     include: [
       { model: SubNoEncoding, as: 'print', attributes: ['id', 'no', 'print_type'] },
       { model: SubNoEncoding, as: 'buyPrint', attributes: ['id', 'no', 'print_type'] },

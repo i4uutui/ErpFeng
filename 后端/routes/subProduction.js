@@ -177,7 +177,7 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
     // 5. 制程总负荷计算优化
     const callLoad = setCycleLoad(processedCycles, cased);
     const newCycles = setDateMore(baseJSON, callLoad, dateInfo, date_more);
-
+    
     let cyclesBigs = 0
     newCycles.forEach(item => {
       const { maxLoad, cycle } = item;
@@ -208,7 +208,7 @@ router.post('/get_progress_cycle', authMiddleware, async (req, res) => {
       await SubProgressTotal.create({ number: cyclesBigs, company_id })
     }
 
-    // 6. 响应数据精简
+    // 6. 响应数据
     res.json({ 
       code: 200, 
       data: { 

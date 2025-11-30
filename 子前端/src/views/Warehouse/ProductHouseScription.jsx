@@ -32,6 +32,7 @@ export default defineComponent({
     const formHeight = ref(0);
     const formCard = ref(null)
     const formRef = ref(null)
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const rules = ref({})
     let form = ref({
       ware_id: 3,
@@ -50,7 +51,9 @@ export default defineComponent({
       other_features: '',
       quantity: '',
       buy_price: '',
-      price: ''
+      price: '',
+      unit: '',
+      inv_unit: ''
     })
     let dialogVisible = ref(false)
     let constObj = ref({})
@@ -288,7 +291,7 @@ export default defineComponent({
     }
     // 批量提交审批
     const setStatusAllData = async () => {
-      const json = allSelect.value.length ? allSelect.value.filter(o => !o.approval || o.status == 2) : tableData.value.filter(o => !o.approval || o.status == 2)
+      const json = allSelect.value.length ? allSelect.value.filter(o => !o.approval || o.status == 2) : tableData.value.filter(o => !o.approval || o.status == 2 || o.status == 3)
       if(json.length == 0){
         ElMessage.error('暂无可提交的数据')
       }
@@ -326,9 +329,12 @@ export default defineComponent({
         quantity: e.quantity,
         buy_price: e.buy_price,
         price: e.price,
+        unit: e.unit,
+        inv_unit: e.inv_unit,
+        status: e.status,
         approval: e.approval?.length ? e.approval.map(e => e.id) : []
       }
-      if(e.status == 2){
+      if(e.status == 2 || e.status == 3){
         obj.id = e.id
       }
       return obj
@@ -486,6 +492,9 @@ export default defineComponent({
       form.value.name = obj.product_name
       form.value.model_spec = obj.model
       form.value.other_features = obj.other_features
+      form.value.unit = obj.unit ? Number(obj.unit) : form.value.unit ? Number(form.value.unit) : ''
+      getWareHouseMaterialPrice(value)
+      getWareHouseMaterialUnit(value)
     }
     const formOperateSelect = async (value) => {
       typeId.value = '' // 重新选择出入库后，重置出入库方式
@@ -573,45 +582,28 @@ export default defineComponent({
     }
     // 选择生产通知单后返回的数据
     const noticeChange = async (value) => {
-      // const row = noticeList.value.find(o => o.id == value)
-      // const sale_id = row.sale_id
-      // const res = await request.get('/api/getSaleOrder', { params: { sale_id } })
-      // if(res.code ==  200){
-      //   console.log(res.data);
-      // }
+      const row = noticeList.value.find(o => o.id == value)
+      form.value.sale_id = row.sale_id
+      form.value.plan_id = row.customer_id
+      form.value.item_id = row.product_id
+      form.value.quantity = row.sale.order_number
+      form.value.buy_price = row.sale.quot.product_price
+      form.value.unit = Number(row.sale.unit)
+      getWareHouseMaterialPrice(row.product_id)
+      getWareHouseMaterialUnit(row.product_id)
     }
-    // const onPrint = async () => {
-    //   const list = allSelect.value.length ? allSelect.value : tableData.value
-    //   if(!list.length) return ElMessage.error('请选择需要打印的数据')
-    //   const canPrintData = list.filter(o => o.status != undefined && o.status == 1)
-    //   if(!canPrintData.length) return ElMessage.error('暂无可打印的数据或未审核通过')
-      
-    //   const printType = getPrintType()
-    //   await getNoLast(printType)
-    //   const ids = canPrintData.map(e => e.id)
-    //   printDataIds.value = ids
-      
-    //   const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
-    //   const opt = {
-    //     margin: 10,
-    //     filename: 'table-print.pdf',
-    //     image: { type: 'jpeg', quality: 0.98 },
-    //     html2canvas: { scale: 2 }, // 保证清晰度
-    //     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-    //   };
-    //   // 生成 PDF 并转为 Blob
-    //   html2pdf().from(printTable).set(opt).output('blob').then(async pdfBlob => {
-    //     let urlTwo = URL.createObjectURL(pdfBlob);
-    //     setPdfBlobUrl.value = urlTwo
-    //     printVisible.value = true
-    //   }); 
-    // }
-    // const getPrintType = () => {
-    //   if(tableData.value.length){
-    //     return tableData.value[0].operate == 1 ? 'PR' : 'PC'
-    //   }
-    //   return ''
-    // }
+    const getWareHouseMaterialPrice = async (id) => {
+      const res = await request.get('/api/getWareHouseMaterialPrice', { params: { id } })
+      if(res.code == 200){
+        form.value.price = res.data?.price ? Number(res.data.price) : ''
+      }
+    }
+    const getWareHouseMaterialUnit = async (id) => {
+      const res = await request.get('/api/getWareHouseMaterialUnit', { params: { id } })
+      if(res.code == 200){
+        form.value.inv_unit = res.data?.inv_unit ? Number(res.data.inv_unit) : ''
+      }
+    }
 
     return() => (
       <>
@@ -733,6 +725,12 @@ export default defineComponent({
                   <ElTableColumn label="内部单价(元)" width="110">
                     {({row}) => <span>{ row.price ? row.price : 0 }</span>}
                   </ElTableColumn>
+                  <ElTableColumn label="库存单位" width="90">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.inv_unit)?.name }</span>}
+                  </ElTableColumn>
+                  <ElTableColumn label="销售单位" width="90">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn label="总价(元)" width="110">
                     {({row}) => {
                       if(!isEmptyValue(row)){
@@ -815,7 +813,15 @@ export default defineComponent({
                   </ElSelect>
                 </ElFormItem>
                 {
-                  form.value.type == 14 ? <ElFormItem label="销售订单" prop="sale_id">
+                  form.value.type == 10 || form.value.type == 13 || form.value.type == 14 ?
+                  <ElFormItem label="生产通知单" prop="notice_id">
+                    <ElSelect v-model={ form.value.notice_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产通知单" onChange={ (value) => noticeChange(value) }>
+                      {noticeList.value.map((o, index) => <ElOption value={ o.id } label={ o.notice } key={ index } />)}
+                    </ElSelect>
+                  </ElFormItem> : ''
+                }
+                {
+                  form.value.type == 10 || form.value.type == 13 || form.value.type == 14 ? <ElFormItem label="销售订单" prop="sale_id">
                     <ElSelect v-model={ form.value.sale_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择销售订单" onChange={ (row) => saleChange(row) }>
                       {saleList.value.map((e, index) => e && (
                         <ElOption value={ e.id } label={ e.customer_order } key={ index } />
@@ -823,14 +829,6 @@ export default defineComponent({
                     </ElSelect>
                   </ElFormItem> :
                   <></>
-                }
-                {
-                  form.value.type == 10 || form.value.type == 13 || form.value.type == 14 ?
-                  <ElFormItem label="生产通知单" prop="notice_id">
-                    <ElSelect v-model={ form.value.notice_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择生产通知单" onChange={ (value) => noticeChange(value) }>
-                      {noticeList.value.map((o, index) => <ElOption value={ o.id } label={ o.notice } key={ index } />)}
-                    </ElSelect>
-                  </ElFormItem> : ''
                 }
                 {
                   form.value.type == 13 || form.value.type == 14 ? 
@@ -865,6 +863,16 @@ export default defineComponent({
                 </ElFormItem>
                 <ElFormItem label="内部单价" prop="price">
                   <ElInput v-model={ form.value.price } type="number" placeholder="请输入内部单价" />
+                </ElFormItem>
+                <ElFormItem label="销售单位" prop="unit">
+                  <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder='请选择销售单位'>
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="库存单位" prop="inv_unit">
+                  <ElSelect v-model={ form.value.inv_unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择库存单位">
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
               </ElForm>
             ),

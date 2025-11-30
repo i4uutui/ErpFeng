@@ -31,10 +31,8 @@ export default defineComponent({
     const formHeight = ref(0);
     const formCard = ref(null)
     const formRef = ref(null)
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const rules = ref({
-      procure_id: [
-        { required: true, message: '请选择采购单', trigger: 'blur' },
-      ],
       quantity: [
         { required: true, message: '请输入数量', trigger: 'blur' },
       ],
@@ -56,7 +54,9 @@ export default defineComponent({
       other_features: '',
       quantity: '',
       buy_price: '',
-      price: ''
+      price: '',
+      unit: '',
+      inv_unit: ''
     })
     let dialogVisible = ref(false)
     let constObj = ref({})
@@ -104,6 +104,7 @@ export default defineComponent({
       await filterQuery()
       await getMaterialOrderList() // 获取采购单列表
       await getProductNotice() //获取生产通知单
+      await getOutList() // 委外加工单
 
       getPrinters()
     })
@@ -174,6 +175,13 @@ export default defineComponent({
     const getProductNotice = async () => {
       const res = await request.get('/api/getProductNotice')
       noticeList.value = res.data
+    }
+    // 获取委外加工单列表
+    const getOutList = async () => {
+      const res = await request.get('/api/getOutList')
+      if(res.code == 200){
+        outBuy.value = res.data
+      }
     }
     // 反审批
     const handleBackApproval = async (row) => {
@@ -290,7 +298,7 @@ export default defineComponent({
     }
     // 批量提交审批
     const setStatusAllData = async () => {
-      const json = allSelect.value.length ? allSelect.value.filter(o => !o.approval || o.status == 2) : tableData.value.filter(o => !o.approval || o.status == 2)
+      const json = allSelect.value.length ? allSelect.value.filter(o => !o.approval || o.status == 2 || o.status == 3) : tableData.value.filter(o => !o.approval || o.status == 2)
       if(json.length == 0){
         return ElMessage.error('暂无可提交的数据')
       }
@@ -328,10 +336,12 @@ export default defineComponent({
         quantity: e.quantity,
         buy_price: e.buy_price,
         price: e.price,
+        unit: e.unit,
+        inv_unit: e.inv_unit,
         status: e.status,
         approval: e.approval?.length ? e.approval.map(e => e.id) : []
       }
-      if(e.status == 2){
+      if(e.status == 2 || e.status == 3){
         obj.id = e.id
       }
       return obj
@@ -389,9 +399,9 @@ export default defineComponent({
       edit.value = row.id;
       dialogVisible.value = true;
       form.value = { ...row };
-      if(row.procure_id){ // 用于采购入库的
-        buyChange(row.procure_id)
-      }
+      // if(row.procure_id){ // 用于采购入库的
+      //   buyChange(row.procure_id)
+      // }
     }
     const handleAdd = (value) => {
       edit.value = 0
@@ -416,13 +426,6 @@ export default defineComponent({
         form.value.procure_id = ''
       }
     }
-    const outChange = async (value) => {
-      const res = await request.get('/api/getOutsourcingOrder', { params: { print_id: value } })
-      const data = res.data
-      planChange(data[0].supplier.id, 'supplier_abbreviation')
-      form.value.plan_id = data[0].supplier.id
-      form.value.buy_price = data[0].price
-    }
     // 获取出入库单列表
     const buyChange = async (id) => {
       const res = await request.get('/api/getMaterialOrderList', { params: { id } })
@@ -443,6 +446,9 @@ export default defineComponent({
       form.value.code = material.material_code
       form.value.name = material.material_name
       form.value.other_features = material.other_features
+      form.value.unit = Number(material.unit)
+      getWareHouseMaterialUnit(material.material_id, 'cg')
+      getWareHouseMaterialPrice(material.material_id, 'cg')
     }
     // 出入库单确认接口调用
     const handlePurchaseIsBuying = async (ids) => {
@@ -516,12 +522,28 @@ export default defineComponent({
       if(type != 4){
         getWareHouseMaterialPrice(value)
       }
+      if(!form.value.procure_id){
+        getWareHouseMaterialUnit(value)
+      }
     }
-    const getWareHouseMaterialPrice = async (id) => {
+    // cg的意思是，假如选择了采购单后，cg就会有值，有值的情况下，不需要将unit传进去
+    const getWareHouseMaterialPrice = async (id, cg) => {
       const res = await request.get('/api/getWareHouseMaterialPrice', { params: { id } })
       if(res.code == 200){
-        form.value.price = res.data.price ? Number(res.data.price) : ''
-        form.value.buy_price = res.data.buy_price ? Number(res.data.buy_price) : ''
+        form.value.price = res.data?.price ? Number(res.data.price) : ''
+        if(form.value.type != 4){
+          form.value.buy_price = res.data?.buy_price ? Number(res.data.buy_price) : ''
+        }
+      }
+    }
+    // cg的意思是，假如选择了采购单后，cg就会有值，有值的情况下，不需要将unit传进去
+    const getWareHouseMaterialUnit = async (id, cg) => {
+      const res = await request.get('/api/getWareHouseMaterialUnit', { params: { id } })
+      if(res.code == 200){
+        if(form.value.type != 4){
+          form.value.unit = res.data?.unit ? Number(res.data.unit) : ''
+        }
+        form.value.inv_unit = res.data?.inv_unit ? Number(res.data.inv_unit) : ''
       }
     }
     const handleDelete = (row, index) => {
@@ -738,6 +760,12 @@ export default defineComponent({
                   <ElTableColumn label="内部单价(元)" width="110">
                     {({row}) => <span>{ row.price ? row.price : 0 }</span>}
                   </ElTableColumn>
+                  <ElTableColumn label="库存单位" width="90">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.inv_unit)?.name }</span>}
+                  </ElTableColumn>
+                  <ElTableColumn label="采购单位" width="90">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn label="总价(元)" width="110">
                     {({row}) => {
                       if(!isEmptyValue(row)){
@@ -880,11 +908,25 @@ export default defineComponent({
                 <ElFormItem label="数量" prop="quantity">
                   <ElInput v-model={ form.value.quantity } placeholder="请输入数量" />
                 </ElFormItem>
-                <ElFormItem label="采购单价" prop="buy_price">
-                  <ElInput v-model={ form.value.buy_price } type="number" placeholder="请输入采购单价" />
-                </ElFormItem>
+                {
+                  form.value.type == 4 ? <ElFormItem label="采购单价" prop="buy_price">
+                    <ElInput v-model={ form.value.buy_price } type="number" placeholder="请输入采购单价" />
+                  </ElFormItem> : ''
+                }
                 <ElFormItem label="内部单价" prop="price">
                   <ElInput v-model={ form.value.price } type="number" placeholder="请输入内部单价" />
+                </ElFormItem>
+                {
+                  form.value.type == 4 ? <ElFormItem label="采购单位" prop="unit">
+                    <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder='请选择采购单位'>
+                      {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                    </ElSelect>
+                  </ElFormItem> : ''
+                }
+                <ElFormItem label="库存单位" prop="inv_unit">
+                  <ElSelect v-model={ form.value.inv_unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择库存单位">
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
               </ElForm>
             ),

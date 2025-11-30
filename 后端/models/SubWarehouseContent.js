@@ -61,13 +61,13 @@ const SubWarehouseContent = sequelize.define('SubWarehouseContent', {
     comment: '其他特性'
   },
   buy_price: {
-    type: DataTypes.DECIMAL(10, 1),
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
     defaultValue: null,
     comment: '采购/销售单价'
   },
   price: {
-    type: DataTypes.DECIMAL(10, 1),
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
     defaultValue: 0.0,
     comment: '内部单价'

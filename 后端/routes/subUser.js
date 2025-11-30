@@ -807,10 +807,15 @@ router.post('/handleApproval', authMiddleware, async (req, res) => {
     approvalData.forEach(async e => {
       const wareItem = wareValue.find(o => o.item_id == e.item_id)
       if(wareItem){ // 仓库里面有数据
+        const setWareItem = (value) => e[value] ? e[value] : wareItem[value] ? wareItem[value] : null
         // 内部单价
-        wareItem.price = e.price ? e.price : wareItem.price ? wareItem.price : 0
+        wareItem.price = setWareItem('price')
         // 采购/销售单价
-        wareItem.buy_price = e.buy_price ? e.buy_price : wareItem.buy_price ? wareItem.buy_price : 0
+        wareItem.buy_price = setWareItem('buy_price')
+        // 采购/销售单位
+        wareItem.unit = setWareItem('unit')
+        // 库存单位
+        wareItem.inv_unit = setWareItem('inv_unit')
 
         const quantitys = (value) => {
           wareItem.quantity = wareItem.quantity ? precise(wareItem.quantity, e.quantity, value) : e.quantity ? e.quantity : 0
@@ -856,8 +861,8 @@ router.post('/handleApproval', authMiddleware, async (req, res) => {
             buy_price: Number(item.buy_price),
             price: Number(item.price),
             quantity: Number(item.quantity),
-            unit: '',
-            inv_unit: '',
+            unit: item.unit,
+            inv_unit: item.unit,
             last_in_time: dayjs().toDate(),
             last_out_time: null
           };
@@ -934,35 +939,12 @@ router.post('/approval_backFlow', authMiddleware, async (req, res) => {
     }
   })
   const wareData = ware.toJSON()
-  // 期初入库（非正常入库）
-  if(dataValue.type == 5 || dataValue.type == 11){
-    wareData.initial = PreciseMath.sub(wareData.initial, dataValue.quantity)
-    // 最新库存
-    wareData.number_new = PreciseMath.add(wareData.initial, wareData.number_in)
-    // 存货金额
-    wareData.price_total = wareData.price ? PreciseMath.mul(wareData.price, wareData.number_new) : 0
-  }
-  // 4采购入库/10生产入库13退货入库 /6 and 12盘银入库（加）
-  if(dataValue.type == 4 || dataValue.type == 10 || dataValue.type == 13 || dataValue.type == 6 || dataValue.type == 12){
-    wareData.number_in = PreciseMath.sub(wareData.number_in, dataValue.quantity)
-    // 最新库存
-    wareData.number_new = PreciseMath.add(wareData.initial, wareData.number_in)
-    // 存货金额
-    wareData.price_total = wareData.price ? PreciseMath.mul(wareData.price, wareData.number_new) : 0
-  }
-  // 出库
-  if(dataValue.type == 7 || dataValue.type == 8 || dataValue.type == 9 || dataValue.type == 14 || dataValue.type == 15 || dataValue.type == 16){
-    wareData.number_in = PreciseMath.add(wareData.number_in, dataValue.quantity)
-    // 最新库存
-    wareData.number_new = PreciseMath.add(wareData.initial, wareData.number_in)
-    // 存货金额
-    wareData.price_total = wareData.price ? PreciseMath.mul(wareData.price, wareData.number_new) : 0
-  }
+  wareData.quantity = PreciseMath.sub(wareData.quantity, dataValue.quantity)
 
   await SubWarehouseApply.update({
     user_id: dataValue.user_id,
     company_id: dataValue.company_id,
-    status: 0,
+    status: 3,
     step: 0
   },{
     where: {
@@ -973,12 +955,8 @@ router.post('/approval_backFlow', authMiddleware, async (req, res) => {
     updateOnDuplicate: ['company_id', 'status']
   })
   await SubWarehouseContent.update({
-    initial: wareData.initial,
-    number_new: wareData.number_new,
-    number_in: wareData.number_in,
-    price_total: wareData.price_total,
+    quantity: wareData.quantity,
     company_id: wareData.company_id,
-    user_id: wareData.user_id
   }, {
     where: {
       id: wareData.id
