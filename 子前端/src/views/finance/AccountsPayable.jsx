@@ -1,14 +1,16 @@
 import { defineComponent, ref, onMounted, nextTick } from 'vue'
 import request from '@/utils/request';
 import dayjs from "dayjs"
-import { getPageHeight } from '@/utils/tool';
+import { getPageHeight, PreciseMath } from '@/utils/tool';
 import HeadForm from '@/components/form/HeadForm';
+import { getItem } from '@/assets/js/storage';
 
 export default defineComponent({
   setup() {
     const formCard = ref(null)
     const pagin = ref(null)
     const formHeight = ref(0);
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     let tableData = ref([])
     let currentPage = ref(1);
     let pageSize = ref(20);
@@ -96,11 +98,21 @@ export default defineComponent({
                   <ElTableColumn prop="apply.no" label="入库单号" width="160" />
                   <ElTableColumn prop="code" label="材料编码" width="130" />
                   <ElTableColumn prop="name" label="材料名称" width="130" />
-                  <ElTableColumn prop="model_spec" label="型号&规格" />
-                  <ElTableColumn prop="other_features" label="其它性能" />
+                  <ElTableColumn prop="model_spec" label="型号&规格" width="110" />
+                  <ElTableColumn prop="other_features" label="其它性能" width="110" />
+                  <ElTableColumn prop="buy_price" label="采购单价" width="110" />
+                  {/* <ElTableColumn prop="price" label="内部单价" width="110" /> */}
+                  <ElTableColumn label="采购单位" width="110">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
+                  </ElTableColumn>
+                  <ElTableColumn prop="pay_quantity" label="交易数量" width="110" />
+                  <ElTableColumn label="使用单位" width="110">
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.inv_unit)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="quantity" label="入库数量" width="110" />
-                  <ElTableColumn prop="buy_price" label="入库单价" width="110" />
-                  <ElTableColumn prop="total_price" label="总价" width="130" />
+                  <ElTableColumn label="交易金额" width="130">
+                    {({row}) => PreciseMath.mul(row.buy_price, row.pay_quantity).toFixed(2)}
+                  </ElTableColumn>
                 </ElTable>
                 <ElPagination ref={ pagin } layout="prev, pager, next, jumper, total" currentPage={ currentPage.value } pageSize={ pageSize.value } total={ total.value } defaultPageSize={ pageSize.value } style={{ justifyContent: 'center', paddingTop: '10px' }} onUpdate:currentPage={ (page) => currentPageChange(page) } onUupdate:pageSize={ (size) => pageSizeChange(size) } />
               </>

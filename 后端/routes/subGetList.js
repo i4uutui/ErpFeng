@@ -328,7 +328,7 @@ router.get('/getProductNotice', authMiddleware, async (req, res) => {
     },
     order: [['created_at', 'DESC']],
     include: [
-      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name'] },
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing', 'model', 'specification', 'other_features', 'component_structure', 'unit', 'production_requirements'] },
       {
         model: SubSaleOrder,
         as: 'sale',
@@ -612,7 +612,7 @@ router.get('/getMaterialBomChildren', authMiddleware, async (req, res) => {
     },
     attributes: ['id', 'material_bom_id', 'material_id', 'is_buy'],
     include: [
-      { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name', 'model', 'specification', 'other_features'] }
+      { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name', 'model', 'specification', 'other_features', 'usage_unit', 'purchase_unit'] }
     ]
   })
   const data = rows.map(e => e.toJSON())

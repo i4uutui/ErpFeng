@@ -188,7 +188,7 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
   const noIdList = [];
   const yesIdList = [];
   const dataValue = data.map(e => {
-    const { id, buy_price = 0, price = 0, quantity = 0, plan_id = null, procure_id = null, sale_id = null, notice_id = null, inv_unit = null, unit = null, ...rest } = e
+    const { id, buy_price = 0, price = 0, quantity = 0, pay_quantity = null, plan_id = null, procure_id = null, sale_id = null, notice_id = null, inv_unit = null, unit = null, ...rest } = e
     const total_price = buy_price && quantity ? PreciseMath.mul(quantity, buy_price) : 0
 
     const record = {
@@ -202,6 +202,7 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
       buy_price: buy_price ? buy_price : 0,
       price: price ? price : 0,
       quantity: quantity ? quantity : 0,
+      pay_quantity: pay_quantity ? pay_quantity : null,
       inv_unit,
       unit,
       procure_id,
@@ -219,8 +220,7 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
     }
     return record
   })
-  
-  const updateFields = ['company_id', 'user_id', 'total_price', 'plan_id', 'notice_id', 'buy_price', 'quantity', 'procure_id', 'unit', 'inv_unit', 'sale_id', 'apply_id', 'apply_name', 'apply_time', 'status']
+  const updateFields = ['company_id', 'user_id', 'total_price', 'plan_id', 'notice_id', 'buy_price', 'quantity', 'pay_quantity', 'procure_id', 'unit', 'inv_unit', 'sale_id', 'apply_id', 'apply_name', 'apply_time', 'status']
   try {
     const [noResult, yesResult] = await Promise.all([
       noIdList.length
@@ -315,7 +315,7 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.put('/wareHouse_order', authMiddleware, async (req, res) => {
-  const { id, ware_id, house_id, house_name, operate, type, plan_id, plan, item_id, code, name, model_spec, other_features, quantity, buy_price, unit, inv_unit, procure_id, sale_id } = req.body;
+  const { id, ware_id, house_id, house_name, operate, type, plan_id, plan, item_id, code, name, model_spec, other_features, quantity, pay_quantity, buy_price, unit, inv_unit, procure_id, sale_id } = req.body;
   const { id: userId, company_id } = req.user;
 
   const result = await SubWarehouseApply.findByPk(id)
@@ -324,7 +324,7 @@ router.put('/wareHouse_order', authMiddleware, async (req, res) => {
   
   const total_price = PreciseMath.mul(quantity, buy_price)
   const obj = {
-    ware_id, house_id, house_name, operate, type, plan_id, plan, item_id, code, name, model_spec, other_features, quantity, buy_price, unit, inv_unit, total_price, procure_id, sale_id, company_id,
+    ware_id, house_id, house_name, operate, type, plan_id, plan, item_id, code, name, model_spec, other_features, quantity, pay_quantity, buy_price, unit, inv_unit, total_price, procure_id, sale_id, company_id,
     user_id: userId
   }
   const updateResult = await SubWarehouseApply.update(obj, {
@@ -371,17 +371,10 @@ router.get('/get_wareHouser', authMiddleware, async (req, res) => {
     ],
     distinct: true,
     limit: parseInt(pageSize),
-    offset
+    offset,
   })
   const totalPages = Math.ceil(count / pageSize)
-  const fromData = rows.map(e => {
-    const item = e.toJSON()
-    item.price = Number(item.price)
-    item.price_total = Number(item.price_total)
-    item.price_in = Number(item.price_in)
-    item.price_out = Number(item.price_out)
-    return item
-  })
+  const fromData = rows.map(e => e.toJSON())
   // 返回所需信息
   res.json({ 
     data: formatArrayTime(fromData), 
@@ -529,7 +522,7 @@ router.get('/getWareHouseList', authMiddleware, async (req, res) => {
     attributes: ['id', 'operate', 'ware_id', 'house_id', 'no', 'created_at'],
     include: [
       { model: SubWarehouseCycle, as: 'house', attributes: ['id', 'ware_id', 'name'] },
-      { model: SubWarehouseApply, as: 'order', attributes: ['id', 'procure_id', 'operate', 'type', 'plan', 'code', 'name', 'quantity', 'model_spec', 'other_features', 'buy_price', 'total_price', 'apply_name', 'apply_time', 'order_id', 'unit', 'inv_unit'] }
+      { model: SubWarehouseApply, as: 'order', attributes: ['id', 'procure_id', 'operate', 'type', 'plan', 'code', 'name', 'quantity', 'pay_quantity', 'model_spec', 'other_features', 'buy_price', 'total_price', 'apply_name', 'apply_time', 'order_id', 'unit', 'inv_unit'] }
     ],
     order: [['no', 'ASC']],
     distinct: true,

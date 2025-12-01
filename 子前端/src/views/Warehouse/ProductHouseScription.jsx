@@ -585,10 +585,15 @@ export default defineComponent({
       const row = noticeList.value.find(o => o.id == value)
       form.value.sale_id = row.sale_id
       form.value.plan_id = row.customer_id
+      form.value.plan = row.customer.customer_abbreviation
       form.value.item_id = row.product_id
       form.value.quantity = row.sale.order_number
       form.value.buy_price = row.sale.quot.product_price
       form.value.unit = Number(row.sale.unit)
+      form.value.code = row.product.product_code
+      form.value.name = row.product.product_name
+      form.value.model_spec = row.product.model
+      form.value.other_features = row.product.other_features
       getWareHouseMaterialPrice(row.product_id)
       getWareHouseMaterialUnit(row.product_id)
     }
@@ -712,8 +717,8 @@ export default defineComponent({
                     {({row}) => <span>{constObj.value[row.type]}</span>}
                   </ElTableColumn>
                   <ElTableColumn prop="plan" label="客户/制程" width="120" />
-                  <ElTableColumn prop="code" label="物料编码" width="90" />
-                  <ElTableColumn prop="name" label="物料名称" width="100" />
+                  <ElTableColumn prop="code" label="产品编码" width="90" />
+                  <ElTableColumn prop="name" label="产品名称" width="100" />
                   <ElTableColumn prop="quantity" label="数量">
                     {({row}) => <span>{ row.quantity ? row.quantity : 0 }</span>}
                   </ElTableColumn>
@@ -725,7 +730,7 @@ export default defineComponent({
                   <ElTableColumn label="内部单价(元)" width="110">
                     {({row}) => <span>{ row.price ? row.price : 0 }</span>}
                   </ElTableColumn>
-                  <ElTableColumn label="库存单位" width="90">
+                  <ElTableColumn label="使用单位" width="90">
                     {({row}) => <span>{ calcUnit.value.find(e => e.id == row.inv_unit)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn label="销售单位" width="90">
@@ -869,8 +874,8 @@ export default defineComponent({
                     {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="库存单位" prop="inv_unit">
-                  <ElSelect v-model={ form.value.inv_unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择库存单位">
+                <ElFormItem label="使用单位" prop="inv_unit">
+                  <ElSelect v-model={ form.value.inv_unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择使用单位">
                     {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>

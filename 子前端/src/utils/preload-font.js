@@ -10,10 +10,10 @@ export const preloadFont = () => {
   loadPromise = import("@/utils/font/sourcehan-normal").then(module => {
       fontLoaded = true;
       fontModule = module;
-      console.log("字体文件预加载完成");
+      // console.log("字体文件预加载完成");
       return module;
     }).catch(err => {
-      console.error("字体文件预加载失败：", err);
+      // console.error("字体文件预加载失败：", err);
       loadPromise = null; // 失败后允许重试
       throw err;
     });

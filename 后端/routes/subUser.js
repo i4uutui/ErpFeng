@@ -861,6 +861,7 @@ router.post('/handleApproval', authMiddleware, async (req, res) => {
             buy_price: Number(item.buy_price),
             price: Number(item.price),
             quantity: Number(item.quantity),
+            pay_quantity: item.pay_quantity ? Number(item.pay_quantity) : null,
             unit: item.unit,
             inv_unit: item.unit,
             last_in_time: dayjs().toDate(),
@@ -887,7 +888,7 @@ router.post('/handleApproval', authMiddleware, async (req, res) => {
     }
     const regend = [...processArray(dataArr), ...wareList]
     await SubWarehouseContent.bulkCreate(regend, {
-      updateOnDuplicate: [ 'user_id', 'company_id', 'ware_id', 'house_id', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'buy_price', 'price', 'quantity', 'inv_unit', 'unit', 'last_in_time', 'last_out_time' ]
+      updateOnDuplicate: [ 'user_id', 'company_id', 'ware_id', 'house_id', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'buy_price', 'price', 'quantity', 'pay_quantity', 'inv_unit', 'unit', 'last_in_time', 'last_out_time' ]
     })
   }
   if(!approval.length) return res.json({ message: '暂无可审核的数据', code: 401 })

@@ -200,8 +200,8 @@ export default defineComponent({
                 form.value.material_name = item.material_name
                 form.value.model_spec = item.model
                 form.value.other_features = item.other_features
-                form.value.unit = item.purchase_unit
-                form.value.usage_unit = item.usage_unit
+                form.value.unit = Number(item.purchase_unit)
+                form.value.usage_unit = Number(item.usage_unit)
                 break;
               }
             }

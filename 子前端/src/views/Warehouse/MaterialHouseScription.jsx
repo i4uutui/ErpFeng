@@ -32,11 +32,7 @@ export default defineComponent({
     const formCard = ref(null)
     const formRef = ref(null)
     const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
-    const rules = ref({
-      quantity: [
-        { required: true, message: '请输入数量', trigger: 'blur' },
-      ],
-    })
+    const rules = ref({})
     let form = ref({
       ware_id: 1,
       house_id: '',
@@ -53,6 +49,7 @@ export default defineComponent({
       model_spec: '',
       other_features: '',
       quantity: '',
+      pay_quantity: '',
       buy_price: '',
       price: '',
       unit: '',
@@ -334,6 +331,7 @@ export default defineComponent({
         model_spec: e.model_spec,
         other_features: e.other_features,
         quantity: e.quantity,
+        pay_quantity: e.pay_quantity,
         buy_price: e.buy_price,
         price: e.price,
         unit: e.unit,
@@ -359,6 +357,10 @@ export default defineComponent({
             }
             const quantity = Number(obj.quantity)
             if(!(quantity || quantity > 0)){
+              return ElMessage.error('非法数量，请输入正整数的数量')
+            }
+            const payQuantity = Number(obj.pay_quantity)
+            if(!(payQuantity || payQuantity > 0)){
               return ElMessage.error('非法数量，请输入正整数的数量')
             }
             const res = await request.post('/api/queryWarehouse', obj) // 用来做检查的接口
@@ -447,6 +449,10 @@ export default defineComponent({
       form.value.name = material.material_name
       form.value.other_features = material.other_features
       form.value.unit = Number(material.unit)
+      form.value.inv_unit = Number(material.usage_unit)
+      if(Number(material.unit) == Number(material.usage_unit)){
+        form.value.pay_quantity = material.number
+      }
       getWareHouseMaterialUnit(material.material_id, 'cg')
       getWareHouseMaterialPrice(material.material_id, 'cg')
     }
@@ -530,10 +536,10 @@ export default defineComponent({
     const getWareHouseMaterialPrice = async (id, cg) => {
       const res = await request.get('/api/getWareHouseMaterialPrice', { params: { id } })
       if(res.code == 200){
-        form.value.price = res.data?.price ? Number(res.data.price) : ''
         if(form.value.type != 4){
           form.value.buy_price = res.data?.buy_price ? Number(res.data.buy_price) : ''
         }
+        form.value.price = form.value.price ? form.value.price : res.data?.price ? Number(res.data.price) : ''
       }
     }
     // cg的意思是，假如选择了采购单后，cg就会有值，有值的情况下，不需要将unit传进去
@@ -543,7 +549,7 @@ export default defineComponent({
         if(form.value.type != 4){
           form.value.unit = res.data?.unit ? Number(res.data.unit) : ''
         }
-        form.value.inv_unit = res.data?.inv_unit ? Number(res.data.inv_unit) : ''
+        form.value.inv_unit = form.value.inv_unit ? form.value.inv_unit : res.data?.inv_unit ? Number(res.data.inv_unit) : ''
       }
     }
     const handleDelete = (row, index) => {
@@ -584,6 +590,7 @@ export default defineComponent({
           model_spec: '',
           other_features: '',
           quantity: '',
+          pay_quantity: '',
           buy_price: '',
           price: ''
         }
@@ -747,8 +754,8 @@ export default defineComponent({
                     {({row}) => <span>{constObj.value[row.type]}</span>}
                   </ElTableColumn>
                   <ElTableColumn prop="plan" label="供应商/制程" width="120" />
-                  <ElTableColumn prop="code" label="物料编码" width="90" />
-                  <ElTableColumn prop="name" label="物料名称" width="100" />
+                  <ElTableColumn prop="code" label="材料编码" width="90" />
+                  <ElTableColumn prop="name" label="材料名称" width="100" />
                   <ElTableColumn prop="quantity" label="数量">
                     {({row}) => <span>{ row.quantity ? row.quantity : 0 }</span>}
                   </ElTableColumn>
@@ -760,7 +767,7 @@ export default defineComponent({
                   <ElTableColumn label="内部单价(元)" width="110">
                     {({row}) => <span>{ row.price ? row.price : 0 }</span>}
                   </ElTableColumn>
-                  <ElTableColumn label="库存单位" width="90">
+                  <ElTableColumn label="使用单位" width="90">
                     {({row}) => <span>{ calcUnit.value.find(e => e.id == row.inv_unit)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn label="采购单位" width="90">
@@ -905,9 +912,11 @@ export default defineComponent({
                     ))}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="数量" prop="quantity">
-                  <ElInput v-model={ form.value.quantity } placeholder="请输入数量" />
-                </ElFormItem>
+                {
+                  form.value.type != 4 ? <ElFormItem label="数量" prop="quantity">
+                    <ElInput v-model={ form.value.quantity } placeholder="请输入数量" />
+                  </ElFormItem> : ''
+                }
                 {
                   form.value.type == 4 ? <ElFormItem label="采购单价" prop="buy_price">
                     <ElInput v-model={ form.value.buy_price } type="number" placeholder="请输入采购单价" />
@@ -917,17 +926,32 @@ export default defineComponent({
                   <ElInput v-model={ form.value.price } type="number" placeholder="请输入内部单价" />
                 </ElFormItem>
                 {
-                  form.value.type == 4 ? <ElFormItem label="采购单位" prop="unit">
-                    <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder='请选择采购单位'>
-                      {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
-                    </ElSelect>
-                  </ElFormItem> : ''
-                }
-                <ElFormItem label="库存单位" prop="inv_unit">
-                  <ElSelect v-model={ form.value.inv_unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择库存单位">
+                  form.value.type != 4 ? <ElFormItem label="使用单位" prop="inv_unit">
+                  <ElSelect v-model={ form.value.inv_unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择使用单位">
                     {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
-                </ElFormItem>
+                </ElFormItem> : ''
+                }
+                {
+                  form.value.type == 4 ? <div>
+                    <ElFormItem label="采购单位">
+                      <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder='请选择采购单位'>
+                        {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                      </ElSelect>
+                    </ElFormItem>
+                    <ElFormItem label="交易数量">
+                      <ElInput v-model={ form.value.pay_quantity } placeholder="请输入交易数量" />
+                    </ElFormItem>
+                    <ElFormItem label="使用单位">
+                      <ElSelect v-model={ form.value.inv_unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择使用单位">
+                        {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                      </ElSelect>
+                    </ElFormItem>
+                    <ElFormItem label="入库数量">
+                      <ElInput v-model={ form.value.quantity } placeholder="请输入入库数量" />
+                    </ElFormItem>
+                  </div> : ''
+                }
               </ElForm>
             ),
             footer: () => (

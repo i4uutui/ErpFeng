@@ -186,7 +186,7 @@ router.post('/getReceivablePrice', authMiddleware, async (req, res) => {
 
   const { count, rows } = await SubWarehouseApply.findAndCountAll({
     where,
-    attributes: ['id', 'print_id', 'company_id', 'procure_id', 'sale_id', 'ware_id', 'house_id', 'operate', 'type', 'house_name', 'plan', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'quantity', 'buy_price', 'total_price', 'created_at'],
+    attributes: ['id', 'print_id', 'company_id', 'procure_id', 'sale_id', 'ware_id', 'house_id', 'operate', 'type', 'house_name', 'plan', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'quantity', 'pay_quantity', 'buy_price', 'price', 'unit', 'inv_unit', 'total_price', 'created_at'],
     include: includeObj,
     order: [['created_at', 'DESC']],
     distinct: true,
