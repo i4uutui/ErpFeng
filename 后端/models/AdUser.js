@@ -55,6 +55,12 @@ const AdUser = sequelize.define("AdUser", {
     defaultValue: 1,
     comment: ' 账户状态：1 - 正常，0 - 禁用 '
   },
+  purchase_v: {
+    type: DataTypes.INTEGER(2),
+    allowNull: true,
+    defaultValue: 1,
+    comment: ' 采购单的版本号：1基础版，2bom表版 '
+  },
   is_deleted: {
     type: DataTypes.INTEGER(3),
     allowNull: true,

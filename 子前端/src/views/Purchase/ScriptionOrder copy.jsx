@@ -1,30 +1,24 @@
 import { defineComponent, onMounted, reactive, ref, computed, nextTick } from 'vue'
-import { useStore } from '@/stores';
-import { getRandomString, getNoLast, getPageHeight, isEmptyValue } from '@/utils/tool'
+import { getRandomString, getPageHeight, isEmptyValue } from '@/utils/tool'
 import { reportOperationLog } from '@/utils/log';
 import { getItem } from '@/assets/js/storage';
 import request from '@/utils/request';
-import dayjs from "dayjs"
-import "@/assets/css/print.scss"
-import "@/assets/css/landscape.scss"
-import html2pdf from 'html2pdf.js';
-import WinPrint from '@/components/print/winPrint';
 import HeadForm from '@/components/form/HeadForm';
 
 export default defineComponent({
   setup() {
-    const store = useStore()
     const statusType = reactive({
       0: '待审批',
       1: '已通过',
-      2: '已拒绝'
+      2: '已拒绝',
+      3: '已反审'
     })
-    const statusList = ref([{ id: 0, name: '待审批' }, { id: 1, name: '已通过' }, { id: 2, name: '已拒绝' }])
+    const statusList = ref([{ id: 0, name: '待审批' }, { id: 1, name: '已通过' }, { id: 2, name: '已拒绝' }, { id: 3, name: '已反审' }])
     const user = getItem('user')
-    const nowDate = ref()
     const formRef = ref(null);
     const formCard = ref(null)
     const formHeight = ref(0);
+    const calcUnit = ref(getItem('constant').filter(o => o.type == 'calcUnit'))
     const rules = ref({
       supplier_id: [
         { required: true, message: '请选择供应商编码', trigger: 'blur' }
@@ -88,41 +82,30 @@ export default defineComponent({
     let materialQuote = ref([]) // 报价单列表
     let materialBomList = ref([]) // 材料BOM表列表
     // 用来打印用的
-    let printers = ref([]) //打印机列表
-    let printDataIds = ref([]) // 需要打印的数据的id
-    let printVisible = ref(false)
-    let setPdfBlobUrl = ref('')
     let supplierName = ref('')
     let productName = ref('')
     let productCode = ref('')
     let noticeNumber = ref('')
-    let mergedTable = ref([]) // 打印前合并后的数据
 
-    const printNo = computed(() => store.printNo)
-    
     onMounted(() => {
       nextTick(async () => {
         formHeight.value = await getPageHeight([formCard.value]);
       })
-      nowDate.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
-      getPrinters() // 获取打印机列表
 
       fetchProductList() // 获取数据列表
       getSupplierInfo() // 供应商编码列表
       getProductNotice() // 获取生产通知单列表
       getMaterialQuote() // 获取报价单列表
-      // getMaterialBom() // 获取材料BOM
     })
     
-    // 获取打印机列表
-    const getPrinters = async () => {
-      const res = await request.get('/api/printers')
-      printers.value = res.data
-    }
     // 获取数据列表
     const fetchProductList = async () => {
       const res = await request.get('/api/material_ment', { params: search.value });
-      tableData.value = res.data;
+      tableData.value = res.data.map(e => {
+        e.unit = e.unit ? Number(e.unit) : e.unit
+        e.usage_unit = e.usage_unit ? Number(e.usage_unit) : e.usage_unit
+        return e
+      });
 
       // 打印的时候用的
       if(!res.data.length) return
@@ -198,6 +181,8 @@ export default defineComponent({
                 form.value.material_name = item.material_name
                 form.value.model_spec = item.model
                 form.value.other_features = item.other_features
+                form.value.unit = Number(item.purchase_unit)
+                form.value.usage_unit = Number(item.usage_unit)
                 break;
               }
             }
@@ -247,8 +232,8 @@ export default defineComponent({
                 fetchProductList();
                 reportOperationLog({
                   operationType: 'update',
-                  module: '采购单',
-                  desc: `修改采购单，供应商编码：${myForm.supplier_code}，生产订单号：${myForm.notice}，产品编码：${myForm.product_code}，材料编码：${myForm.material_code}`,
+                  module: '采购作业',
+                  desc: `修改采购作业，供应商编码：${myForm.supplier_code}，生产订单号：${myForm.notice}，产品编码：${myForm.product_code}，材料编码：${myForm.material_code}`,
                   data: { newData: myForm }
                 })
               }
@@ -284,8 +269,8 @@ export default defineComponent({
           const str = `供应商编码：${row.supplier_code}，生产订单号：${row.notice}，产品编码：${row.product_code}，材料编码：${row.material_code}`
           reportOperationLog({
             operationType: 'backApproval',
-            module: '采购单',
-            desc: `反审批了采购单，${str}`,
+            module: '采购作业',
+            desc: `反审批了采购作业，${str}`,
             data: { newData: row.id }
           })
         }
@@ -315,8 +300,8 @@ export default defineComponent({
         const appValue = action == 1 ? '通过' : '拒绝'
         reportOperationLog({
           operationType: 'approval',
-          module: '采购单',
-          desc: `审批${appValue}了采购单，它们有：${str}`,
+          module: '采购作业',
+          desc: `审批${appValue}了采购作业，它们有：${str}`,
           data: { newData: { data, type: 'purchase_order' } }
         })
       }
@@ -338,11 +323,56 @@ export default defineComponent({
         })
         reportOperationLog({
           operationType: 'keyApproval',
-          module: '采购单',
-          desc: `采购单提交审核：${str}`,
+          module: '采购作业',
+          desc: `采购作业提交审核：${str}`,
           data: { newData: { data, type: 'purchase_order' } }
         })
       }
+    }
+    // 采购单确认接口调用
+    const handlePurchaseIsBuying = async (ids) => {
+      if(!ids.length) return ElMessage.error('请选择采购作业')
+      const res = await request.post('/api/handlePurchaseIsBuying', { ids })
+      if(res.code == 200){
+        ElMessage.success('采购单确认成功')
+        fetchProductList();
+      }
+    }
+    // 批量采购单确认
+    const handleProcurementAll = () => {
+      const json = allSelect.value.filter(e => e.status && e.status == 1 && e.is_buying == 1 && e.apply_id == user.id)
+      if(!json.length) return ElMessage.error('暂无可操作确认的数据')
+      const ids = json.map(e => e.id)
+
+      ElMessageBox.confirm('是否确认采购单？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        cancelButtonClass: 'el-button--warning',
+        type: 'warning',
+        distinguishCancelAndClose: true,
+      }).then(() => {
+        handlePurchaseIsBuying(ids)
+      }).catch((action) => {
+        
+      })
+    }
+    // 单个采购单确认
+    const handleProcurement = (row) => {
+      if(!row.status || row.status != 1) return ElMessage.error("该作业未审批通过，请提交审批")
+      if(row.is_buying != 1) return ElMessage.error('不能重复生成采购单')
+      const ids = [row.id]
+    
+      ElMessageBox.confirm('是否确认采购单？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        cancelButtonClass: 'el-button--warning',
+        type: 'warning',
+        distinguishCancelAndClose: true,
+      }).then(() => {
+        handlePurchaseIsBuying(ids)
+      }).catch((action) => {
+        
+      })
     }
     // 权限用户单个处理审批
     const handleApproval = async (row) => {
@@ -359,7 +389,7 @@ export default defineComponent({
     }
     // 权限用户审批时，弹窗询问是否确认
     const handleApprovalDialog = (data) => {
-      ElMessageBox.confirm('是否确认审批？', '提示', {
+      ElMessageBox.confirm('是否通过审批？', '提示', {
         confirmButtonText: '通过',
         cancelButtonText: '否绝',
         cancelButtonClass: 'el-button--warning',
@@ -375,13 +405,17 @@ export default defineComponent({
     }
     // 单个提交本地数据进行审批
     const handleStatusData = async (row) => {
+      for(let key in row){
+        if(row[key] === '' || row[key] === undefined || row[key] === null){
+          row[key] = null
+        }
+      }
       const data = getFormData(row)
       setApiData([data])
     }
     // 批量提交本地数据进行审批
     const setStatusAllData = () => {
-      const json = allSelect.value.filter(o => !o.approval || o.status == 2)
-      console.log(json);
+      const json = allSelect.value.filter(o => !o.approval || o.status == 2 || o.status == 3)
       if(json.length == 0){
         return ElMessage.error('暂无可提交的数据')
       }
@@ -421,12 +455,12 @@ export default defineComponent({
         delivery_time: e.delivery_time,
         approval: e.approval?.length ? e.approval.map(e => e.id) : []
       }
-      if(e.status == 2){
+      if(e.status == 2 || e.status == 3){
         obj.id = e.id
       }
       return obj
     }
-    // 修改采购单
+    // 修改采购作业
     const handleUplate = (row) => {
       edit.value = row.id;
       dialogVisible.value = true;
@@ -436,7 +470,7 @@ export default defineComponent({
       getMaterialBom(row.product_id !== 0 ? row.product_id : '')
       getMaterialBomChildren(row.material_bom_id)
     }
-    // 新增采购单
+    // 新增采购作业
     const addOutSourcing = () => {
       edit.value = -1;
       dialogVisible.value = true;
@@ -472,12 +506,6 @@ export default defineComponent({
         order_number: '',
         number: '',
         delivery_time: '',
-      }
-    }
-    // 待审批/已拒绝时，文字变成红色
-    const handleRowStyle = ({ row }) => {
-      if(row.status == 0 || row.status == 2){
-        return { color: 'red' }
       }
     }
     // 用户主动多选，然后保存到allSelect
@@ -535,8 +563,8 @@ export default defineComponent({
       form.value.supplier_code = row.supplier.supplier_code
       form.value.supplier_abbreviation = row.supplier.supplier_abbreviation
       form.value.price = row.price
-      form.value.unit = row.unit
-      form.value.usage_unit = row.usage_unit
+      form.value.unit = Number(row.unit)
+      form.value.usage_unit = Number(row.material.usage_unit)
     }
     // 材料编码选择后返回的数据
     const materialChange = (value) => {
@@ -587,33 +615,21 @@ export default defineComponent({
       // 步骤3：将 Map 的值转换为最终数组（按插入顺序排列）
       return Array.from(mergedMap.values());
     }
-    // 执行打印
-    const onPrint = async () => {
-      const list = allSelect.value.length ? allSelect.value : tableData.value
-      if(!list.length) return ElMessage.error('请选择需要打印的数据')
-      const canPrintData = list.filter(o => o.status != undefined && o.status == 1)
-      if(!canPrintData.length) return ElMessage.error('暂无可打印的数据或未审核通过')
-      // 相同的供应商相同的材料，需要合并
-      mergedTable.value = setMerged(canPrintData)
-      
-      await getNoLast('ES')
-      const ids = canPrintData.map(e => e.id)
-      printDataIds.value = ids
-
-      const printTable = document.getElementById('printTable'); // 对应页面中表格的 ID
-      const opt = {
-        margin: 10,
-        filename: 'table-print.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 }, // 保证清晰度
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-      };
-      // 生成 PDF 并转为 Blob
-      html2pdf().from(printTable).set(opt).output('blob').then(async pdfBlob => {
-        let urlTwo = URL.createObjectURL(pdfBlob);
-        setPdfBlobUrl.value = urlTwo
-        printVisible.value = true
-      }); 
+    // 待审批/已拒绝时，文字变成红色
+    const handleRowStyle = ({ row }) => {
+      // 查询当前用户是否有审批权限
+      const isApproval = !!approvalUser && !!row.approval;
+      // 获取当前这条数据中，当前用户的审批步骤
+      const rowApproval = row.approval?.find(o => o.user_id == approvalUser?.user_id)
+      if(isApproval){
+        if(row.status == 0 && row.step + 1 == rowApproval.step && rowApproval.status == 0){
+          return { color: 'red' }
+        }
+      }else{
+        if(row.status == 0 || row.status == 2 || row.status == 3){
+          return { color: 'red' }
+        }
+      }
     }
     
     return() => (
@@ -625,21 +641,21 @@ export default defineComponent({
                 {{
                   left: () => (
                     <>
-                      <ElFormItem v-permission={ 'PurchaseOrder:add' }>
-                        <ElButton type="primary" onClick={ addOutSourcing } style={{ width: '100px' }}> 新增采购单 </ElButton>
+                      <ElFormItem v-permission={ 'ScriptionOrder:add' }>
+                        <ElButton type="primary" onClick={ addOutSourcing } style={{ width: '100px' }}> 新增采购作业 </ElButton>
                       </ElFormItem>
-                      <ElFormItem v-permission={ 'PurchaseOrder:set' }>
+                      <ElFormItem v-permission={ 'ScriptionOrder:set' }>
                         <ElButton type="primary" onClick={ setStatusAllData } style={{ width: '100px' }}> 批量提交 </ElButton>
                       </ElFormItem>
                       {
-                        approval.findIndex(e => e.user_id == user.id) >= 0 ? 
+                        !isEmptyValue(approvalUser) ? 
                         <ElFormItem>
                           <ElButton type="primary" onClick={ () => setApprovalAllData() } style={{ width: '100px' }}> 批量审批 </ElButton>
                         </ElFormItem> : 
                         <></>
                       }
-                      <ElFormItem v-permission={ 'PurchaseOrder:print' }>
-                        <ElButton type="primary" onClick={ () => onPrint() } style={{ width: '100px' }}> 采购单打印 </ElButton>
+                      <ElFormItem v-permission={ 'ScriptionOrder:buy' }>
+                        <ElButton type="primary" onClick={ () => handleProcurementAll() } style={{ width: '100px' }}> 批量确认 </ElButton>
                       </ElFormItem>
                     </>
                   ),
@@ -684,7 +700,10 @@ export default defineComponent({
                   <ElTableColumn label="状态" width='80'>
                     {({row}) => {
                       if(!isEmptyValue(row)){
-                        if(row.status == 1) return <span>{ statusType[row.status] }</span>
+                        if(row.is_buying == 0){
+                          return '已采购'
+                        }
+                        if(row.status == 1 || row.status == 3) return <span>{ statusType[row.status] }</span>
                         
                         // 判断当前用户是否有权限和审批记录，否则直接返回默认状态文案
                         const hasApprovalPerm = !!approvalUser && !!row.approval
@@ -711,8 +730,12 @@ export default defineComponent({
                   <ElTableColumn prop="material_name" label="材料名称" width='100' />
                   <ElTableColumn prop="model_spec" label="型号&规格" width='100' />
                   <ElTableColumn prop="other_features" label="其它特性" width='100' />
-                  <ElTableColumn prop="unit" label="采购单位" width='100' />
-                  <ElTableColumn prop="usage_unit" label="使用单位" width='100' />
+                  <ElTableColumn label="采购单位" width='100'>
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
+                  </ElTableColumn>
+                  <ElTableColumn label="使用单位" width='100'>
+                    {({row}) => <span>{ calcUnit.value.find(e => e.id == row.usage_unit)?.name }</span>}
+                  </ElTableColumn>
                   <ElTableColumn prop="price" label="采购单价" width='100' />
                   <ElTableColumn prop="number" label="采购数量" width='100' />
                   <ElTableColumn prop="delivery_time" label="交货时间" width='110' />
@@ -723,39 +746,44 @@ export default defineComponent({
                       default: ({ row, $index }) => {
                         if(!isEmptyValue(row)){
                           let dom = []
-                          const isRowStatus = row.status === undefined || (row.status == 2 && row.user_id == user.id);
+
                           // 查询当前用户是否有审批权限
                           const isApproval = !!approvalUser && !!row.approval;
-                          // 如果有审批权限，获取当前这条数据中，该用户的审批步骤
+                          // 如果当前用户有审批权限，获取当前这条数据中，该用户的审批步骤
                           const rowApproval = isApproval ? row.approval.find(o => o.user_id === approvalUser.user_id) : null;
-
-                          // 当前这条数据状态为undefined或2：显示修改、提交按钮
+                          // 查询这条数据相对当前用户来说，状态是否可以修改
+                          const { apply_id, is_buying, status } = row;
+                          const isUserApplied = apply_id === user.id && is_buying === 1;
+                          const isStatusValid = status === 2 || status === 3;
+                          const isRowStatus = status === undefined || (isUserApplied && isStatusValid);
+                          
                           if(isRowStatus){
-                            dom.push(<>
-                              <ElButton size="small" type="warning" v-permission={ 'PurchaseOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
-                              <ElButton size="small" type="primary" v-permission={ 'PurchaseOrder:set' } onClick={ () => handleStatusData(row) }>提交</ElButton>
-                            </>)
+                            dom.push(
+                              <>
+                                <ElButton size="small" type="warning" v-permission={ 'ScriptionOrder:edit' } onClick={ () => handleUplate(row) }>修改</ElButton>
+                                <ElButton size="small" type="primary" v-permission={ 'ScriptionOrder:set' } onClick={ () => handleStatusData(row) }>提交</ElButton>
+                              </>
+                            )
                           }
-                          // 有权限且有审批记录,处理审批相关按钮
-                          if(isApproval){
-                            const renderApprovalButton = () => {
-                              // 判断当前这条数据的步骤是否与用户的步骤相对应，true则有审批按钮
-                              if (rowApproval && row.status === 0 && row.step + 1 === rowApproval.step && rowApproval.status === 0) {
-                                return <ElButton size="small" type="primary" onClick={() => handleApproval(row)}>审批</ElButton>;
-                              }
-                              if(row.status === 2) return
-                              return <ElButton size="small" type="primary" disabled>{rowApproval?.status === 1 ? '已审批' : '待审批'}</ElButton>
+                          if(isApproval && row.is_buying === 1){
+                            if(rowApproval && row.status === 0 && row.step + 1 === rowApproval.step && rowApproval.status == 0){
+                              dom.push(<ElButton size="small" type="primary" onClick={() => handleApproval(row)}>审批</ElButton>)
                             }
-                            dom.push(renderApprovalButton());
-
-                            if(row.status === 1){
-                              dom.push(
-                                <ElButton size="small" type="primary" onClick={() => handleBackApproval(row)}>反审批</ElButton>
-                              );
+                            if(rowApproval && row.status === 1 || (row.status === 0 && rowApproval.status === 1)){
+                              dom.push(<ElButton size="small" type="primary" onClick={() => handleBackApproval(row)}>反审批</ElButton>)
+                            }
+                            if(rowApproval && row.status == 0 && rowApproval.status == 0 && row.step + 1 !== rowApproval.step){
+                              dom.push(<ElButton size="small" type="primary" disabled>待审批</ElButton>)
+                            }
+                            if(rowApproval && row.status == 0 && rowApproval.status == 1 && row.step + 1 !== rowApproval.step){
+                              dom.push(<ElButton size="small" type="primary" disabled>已审批</ElButton>)
                             }
                           }
-                          if(isEmptyValue(row.status)){
+                          if(row.status == undefined){
                             dom.push(<ElButton size="small" type="danger" onClick={ () => handleDelete(row, $index) }>删除</ElButton>)
+                          }
+                          if(row.status == 1 && row.is_buying == 1 && row.apply_id == user.id){
+                            dom.push(<ElButton size="small" type="primary"  v-permission={ 'ScriptionOrder:buy' } onClick={ () => handleProcurement(row) }>采购单确认</ElButton>)
                           }
                           return dom
                         }
@@ -763,81 +791,11 @@ export default defineComponent({
                     }}
                   </ElTableColumn>
                 </ElTable>
-                <ElDialog v-model={ printVisible.value } title="打印预览" width="900px" destroyOnClose>
-                  {{
-                    default: () => (
-                      <WinPrint printType="ES" url={ setPdfBlobUrl.value } printList={ printers.value } onClose={ () => printVisible.value = false } dataIds={ printDataIds.value } />
-                    ),
-                  }}
-                </ElDialog>
-                <div class="printTable" id='totalTable2'>
-                  <div id="printTable">
-                    <div class="No">编码：{ printNo.value }</div>
-                    <table class="print-table">
-                      <thead>
-                        <tr>
-                          <th colspan="10" class="title-cell">
-                            <div class="popTitle" style={{ textAlign: 'center', fontSize: '36px' }}>采购单</div>
-                          </th>
-                        </tr>
-                        <tr>
-                          <th colspan="10" class="header-cell">
-                            <div class="flex row-between print-header">
-                              <div>供应商：{ supplierName.value }</div>
-                              <div>产品编码：{ productName.value }</div>
-                              <div>产品名称：{ productCode.value }</div>
-                              <div>生产订单：{ noticeNumber.value }</div>
-                            </div>
-                          </th>
-                        </tr>
-                        <tr class="table-header">
-                          <th>序号</th>
-                          <th>状态</th>
-                          <th>材料编码</th>
-                          <th>材料名称</th>
-                          <th>型号&规格</th>
-                          <th>其它特性</th>
-                          <th>采购单位</th>
-                          <th>采购单价</th>
-                          <th>采购数量</th>
-                          <th>交货时间</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {mergedTable.value.map((e, index) => {
-                          const tr = <tr class="table-row">
-                            <td>{ index + 1 }</td>
-                            <td>{ statusType[e.status] }</td>
-                            <td>{ e.material_code }</td>
-                            <td>{ e.material_name }</td>
-                            <td>{ e.model_spec }</td>
-                            <td>{ e.other_features }</td>
-                            <td>{ e.unit }</td>
-                            <td>{ e.price }</td>
-                            <td>{ e.number }</td>
-                            <td>{ e.delivery_time }</td>
-                          </tr>
-                          return tr
-                        })}
-                        <tr class="header-cell">
-                          <td colspan="10">
-                            <div class="flex row-between print-header">
-                              <div>核准：</div>
-                              <div>审查：</div>
-                              <div>制表：{ user.name }</div>
-                              <div>日期：{ nowDate.value }</div>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
               </>
             )
           }}
         </ElCard>
-        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改采购单' : '新增采购单' } width='785' center draggable onClose={ () => handleClose() }>
+        <ElDialog v-model={ dialogVisible.value } title={ edit.value ? '修改采购作业' : '新增采购作业' } width='785' center draggable onClose={ () => handleClose() }>
           {{
             default: () => (
               <ElForm class="ml30" model={ form.value } ref={ formRef } inline={ true } rules={ rules.value } label-width="95">
@@ -876,7 +834,7 @@ export default defineComponent({
                     })}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="材料名称" prop="material_id">
+                <ElFormItem label="材料名称">
                   <el-input v-model={ form.value.material_name } readonly placeholder="请选择材料名称"></el-input>
                 </ElFormItem>
                 <ElFormItem label="供应商编码" prop="supplier_id">
@@ -884,7 +842,7 @@ export default defineComponent({
                     {supplierInfo.value.map((e, index) => <ElOption value={ e.id } label={ e.supplier_code } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
-                <ElFormItem label="供应商名称" prop="supplier_id">
+                <ElFormItem label="供应商名称">
                   <el-input v-model={ form.value.supplier_abbreviation } readonly placeholder="请选择供应商名称"></el-input>
                 </ElFormItem>
                 <ElFormItem label="型号&规格" prop="model_spec">
@@ -897,14 +855,15 @@ export default defineComponent({
                   <ElInput v-model={ form.value.price } placeholder="请输入采购单价" />
                 </ElFormItem>
                 <ElFormItem label="采购单位" prop="unit">
-                  <ElInput v-model={ form.value.unit } placeholder="请输入采购单位" />
+                  <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择采购单位">
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
                 <ElFormItem label="使用单位" prop="usage_unit">
-                  <ElInput v-model={ form.value.usage_unit } placeholder="请输入使用单位" />
+                  <ElSelect v-model={ form.value.usage_unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择使用单位">
+                    {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
+                  </ElSelect>
                 </ElFormItem>
-                {/* <ElFormItem label="预计数量" prop="order_number">
-                  <ElInput v-model={ form.value.order_number } disabled placeholder="请输入预计数量" />
-                </ElFormItem> */}
                 <ElFormItem label="采购数量" prop="number">
                   <ElInput v-model={ form.value.number } placeholder="请输入采购数量" />
                 </ElFormItem>

@@ -24,13 +24,19 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
     comment: '报价单ID'
   },
   material_bom_id: {
-    type: DataTypes.STRING(20),
+    type: DataTypes.INTEGER(11),
     allowNull: true,
     defaultValue: null,
     comment: '材料BOM ID'
   },
+  seq_id: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    defaultValue: null,
+    comment: '工序 ID'
+  },
   print_id: {
-    type: DataTypes.INTEGER(30),
+    type: DataTypes.INTEGER(11),
     allowNull: true,
     defaultValue: null,
     comment: '打印的id'
@@ -40,12 +46,6 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
     allowNull: true,
     defaultValue: null,
     comment: '生产订单ID'
-  },
-  notice: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    defaultValue: null,
-    comment: '生产订单'
   },
   supplier_id: {
     type: DataTypes.INTEGER(11),
@@ -66,7 +66,7 @@ const SubMaterialMent = sequelize.define('SubMaterialMent', {
     comment: '供应商名称'
   },
   product_id: {
-    type: DataTypes.STRING(50),
+    type: DataTypes.INTEGER(11),
     allowNull: true,
     defaultValue: null,
     comment: '产品Id'

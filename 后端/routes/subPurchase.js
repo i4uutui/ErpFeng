@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const dayjs = require('dayjs')
-const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialMent, SubApprovalUser, SubApprovalStep, SubNoEncoding, Op, subOutscriptionOrder, SubWarehouseApply, SubMaterialBomChild, SubMaterialOrder, sequelize } = require('../models')
+const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialMent, SubApprovalUser, SubApprovalStep, SubNoEncoding, Op, subOutscriptionOrder, SubWarehouseApply, SubMaterialBomChild, SubMaterialOrder, sequelize, SubMaterialBom, SubPartCode } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { print, getPrinters, getDefaultPrinter } = require("pdf-to-printer");
@@ -232,7 +232,7 @@ router.put('/material_quote', authMiddleware, async (req, res) => {
  */
 router.get('/material_ment', authMiddleware, async (req, res) => {
   const { notice, supplier_code, supplier_abbreviation, product_code, product_name, status } = req.query;
-  const { company_id } = req.user;
+  const { id: userId, company_id } = req.user;
 
   const noticeIds = await getSaleCancelIds('notice_id', { company_id })
   
@@ -247,13 +247,33 @@ router.get('/material_ment', authMiddleware, async (req, res) => {
   const hasOtherValues = otherFields.some(field => field !== undefined && field !== '');
   
   if (status !== undefined && status !== '') {
-    whereMent.status = status;
+    // 前端指定了status值
+    if (status == 4) {
+      // 查status=4时，仅能查自己提交的
+      whereMent.status = 4;
+      whereMent.apply_id = userId;
+    } else {
+      // 查其他status（0/1/2/3），正常过滤
+      whereMent.status = status;
+    }
   } else {
+    // 前端未指定status
     if (!hasOtherValues) {
-      whereMent.status = [0, 2, 3];
+      // 无其他查询条件时，默认查 [0,2,3] + 自己的4
+      whereMent[Op.or] = [
+        { status: [0, 2, 3] },
+        { status: 4, apply_id: userId }
+      ];
+    } else {
+      // 有其他查询条件时，查「所有非4状态」 + 自己的4
+      whereMent[Op.or] = [
+        { status: { [Op.ne]: 4 } },
+        { status: 4, apply_id: userId }
+      ];
     }
   }
 
+  let transaction = await sequelize.transaction()
   const rows = await SubMaterialMent.findAll({
     where: {
       is_deleted: 1,
@@ -261,11 +281,17 @@ router.get('/material_ment', authMiddleware, async (req, res) => {
       notice_id: { [Op.notIn]: noticeIds },
       ...whereMent
     },
+    attributes: ['id', 'notice_id', 'material_bom_id', 'seq_id', 'quote_id', 'delivery_time', 'product_id', 'material_id', 'material_code', 'material_name', 'supplier_id', 'model_spec', 'other_features', 'price', 'unit', 'usage_unit', 'number', 'is_buying', 'apply_id', 'apply_name', 'apply_time', 'status', 'step'],
     include: [
-      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'purchase_order', company_id }, separate: true, }
+      { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'purchase_order', company_id }, separate: true, },
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name'] },
+      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice'] },
+      { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_code', 'supplier_abbreviation'] }
     ],
     order: [['created_at', 'DESC']],
+    transaction
   })
+  await transaction.commit()
   const fromData = rows.map(item => item.toJSON());
   
   // 返回所需信息
@@ -274,6 +300,261 @@ router.get('/material_ment', authMiddleware, async (req, res) => {
     code: 200 
   });
 });
+/**
+ * @swagger
+ * /api/add_material_row:
+ *   post:
+ *     summary: 新增采购单作业
+ *     tags:
+ *       - 采购单(Purchase)
+ */
+router.post('/add_material_row', authMiddleware, async (req, res) => {
+  const { notice_id, material_bom_id, seq_id = null, quote_id = null, delivery_time = null, product_id = null, material_id = null, material_code, material_name, supplier_id = null, model_spec, other_features, price = null, unit = null, usage_unit = null, number = null } = req.body
+  const { id: userId, company_id, name } = req.user;
+
+  const transaction = await sequelize.transaction()
+  const childData = {
+    material_bom_id: material_bom_id || null,
+    seq_id: seq_id || null,
+    material_id: material_id || null,
+  }
+  const submitData = {
+    notice_id: notice_id || null,
+    quote_id: quote_id || null,
+    delivery_time: delivery_time || null,
+    product_id: product_id || null,
+    supplier_id: supplier_id || null,
+    model_spec,
+    other_features,
+    material_code,
+    material_name,
+    price: price || null,
+    unit: unit || null,
+    usage_unit: usage_unit || null,
+    number: number || null,
+    company_id,
+    user_id: userId,
+    apply_id: userId,
+    apply_name: name,
+    apply_time: null,
+    status: 4,
+    step: 0,
+    ...childData
+  };
+  await SubMaterialMent.create(submitData, { transaction })
+  await SubMaterialBomChild.update({
+    is_buy: 1,
+    ...childData
+  }, { where: { id: seq_id }, transaction })
+  await transaction.commit();
+
+  res.json({ code: 200, message: '新增成功' })
+})
+/**
+ * @swagger
+ * /api/add_material_more:
+ *   post:
+ *     summary: 新增采购单作业2.0
+ *     tags:
+ *       - 采购单(Purchase)
+ */
+router.post('/add_material_more', authMiddleware, async (req, res) => {
+  const { notice_id, material_bom_id, seq_id = null, quote_id = null, delivery_time = null, product_id = null, material_id = null, material_code, material_name, supplier_id = null, model_spec, other_features, price = null, unit = null, usage_unit = null, number = null } = req.body
+  const { id: userId, company_id, name } = req.user;
+
+  const transaction = await sequelize.transaction()
+  if(notice_id != 0){
+    const product = await SubMaterialBom.findByPk(material_bom_id)
+    const boms = await SubMaterialBom.findAll({
+      where: { company_id, product_id: product.product_id },
+      attributes: ['id', 'product_id', 'part_id'],
+      include: [
+        { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name'] },
+        { model: SubPartCode, as: 'part', attributes: ['id', 'part_code', 'part_name'] },
+        {
+          model: SubMaterialBomChild,
+          as: 'children',
+          attributes: ['id', 'material_bom_id', 'material_id', 'number', 'is_buy'],
+          include: [
+            { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name', 'model', 'other_features', 'usage_unit'] }
+          ]
+        }
+      ],
+      order: [['created_at', 'DESC']],
+    })
+    const notice = await SubProductNotice.findByPk(notice_id)
+
+    const data = boms.flatMap(e => {
+      const item = e.toJSON()
+      return item.children.map(child => {
+        return {
+          notice_id,
+          material_bom_id,
+          seq_id: child.id,
+          quote_id: null,
+          delivery_time: notice.delivery_time,
+          product_id: item.product_id,
+          material_id: child.material_id,
+          material_code: child.material.material_code,
+          material_name: child.material.material_name,
+          supplier_id: null,
+          model_spec: child.material.model,
+          other_features: child.material.other_features,
+          price: null,
+          unit: null,
+          usage_unit: child.material.usage_unit,
+          number: child.number,
+          company_id,
+          user_id: userId,
+          apply_id: userId,
+          apply_name: name,
+          apply_time: null,
+          status: 4,
+          step: 0,
+        }
+      })
+    })
+    try {
+      const seqIds = data.map(e => e.seq_id)
+      const updataArr = ['notice_id', 'material_bom_id', 'seq_id', 'quote_id', 'delivery_time', 'product_id', 'material_id', 'material_code', 'material_name', 'supplier_id', 'model_spec', 'other_features', 'price', 'unit', 'usage_unit', 'number', 'company_id', 'user_id', 'apply_id', 'apply_name', 'apply_time', 'status', 'step']
+      await SubMaterialMent.bulkCreate(data, { updateOnDuplicate: updataArr, transaction })
+      await SubMaterialBomChild.update({
+        is_buy: 1
+      }, { where: { id: { [Op.in]: seqIds } }, transaction })
+      await transaction.commit();
+
+      res.json({ code: 200, message: '新增成功' })
+    } catch (error) {
+      if(transaction) await transaction.rollback();
+      console.log(error);
+    }
+  }else{
+    const childData = {
+      material_bom_id: material_bom_id || null,
+      seq_id: seq_id || null,
+      material_id: material_id || null,
+    }
+    const submitData = {
+      notice_id: notice_id || null,
+      quote_id: quote_id || null,
+      delivery_time: delivery_time || null,
+      product_id: product_id || null,
+      supplier_id: supplier_id || null,
+      model_spec,
+      other_features,
+      material_code,
+      material_name,
+      price: price || null,
+      unit: unit || null,
+      usage_unit: usage_unit || null,
+      number: number || null,
+      company_id,
+      user_id: userId,
+      apply_id: userId,
+      apply_name: name,
+      apply_time: null,
+      status: 4,
+      step: 0,
+      ...childData
+    };
+    await SubMaterialMent.create(submitData, { transaction })
+    await SubMaterialBomChild.update({
+      is_buy: 1,
+      ...childData
+    }, { where: { id: seq_id }, transaction })
+    await transaction.commit();
+
+    res.json({ code: 200, message: '新增成功' })
+  }
+})
+/**
+ * @swagger
+ * /api/material_ment:
+ *   put:
+ *     summary: 修改采购单
+ *     tags:
+ *       - 采购单(Purchase)
+ */
+router.put('/material_ment', authMiddleware, async (req, res) => {
+  const { notice_id, material_bom_id, seq_id = null, quote_id = null, delivery_time = null, product_id = null, material_id = null, material_code, material_name, supplier_id = null, model_spec, other_features, price = null, unit = null, usage_unit = null, number = null, id } = req.body;
+  const { id: userId, company_id } = req.user;
+
+  const result = await SubMaterialMent.findByPk(id)
+  if(!result) res.json({ message: '未找到该采购单信息', code: 401 })
+  
+  const obj = {
+    notice_id: notice_id || null,
+    quote_id: quote_id || null,
+    material_bom_id: material_bom_id || null,
+    seq_id: seq_id || null,
+    material_id: material_id || null,
+    delivery_time: delivery_time || null,
+    product_id: product_id || null,
+    supplier_id: supplier_id || null,
+    model_spec,
+    other_features,
+    material_code,
+    material_name,
+    price: price || null,
+    unit: unit || null,
+    usage_unit: usage_unit || null,
+    number: number || null,
+    user_id: userId,
+    apply_time: result.apply_time,
+  }
+  const transaction = await sequelize.transaction()
+  try {
+    if(result.seq_id != seq_id){
+      const isBuyArr = [{ is_buy: 0, id: result.seq_id }, { is_buy: 1, id: seq_id }]
+      await SubMaterialBomChild.bulkCreate(isBuyArr, { updateOnDuplicate: ['is_buy'], transaction })
+    }
+    await SubMaterialMent.update(obj, {
+      where: { id },
+      transaction
+    })
+    await transaction.commit()
+  } catch (error) {
+    if(transaction) await transaction.rollback();
+    console.log(error);
+  }
+
+  res.json({ message: '修改成功', code: 200 });
+})
+/**
+ * @swagger
+ * /api/material_ment:
+ *   delete:
+ *     summary: 删除采购单
+ *     tags:
+ *       - 采购单(Purchase)
+ */
+router.delete('/del_material_row', authMiddleware, async (req, res) => {
+  const { id } = req.params;
+  const { company_id } = req.user
+
+  const transaction = await sequelize.transaction()
+
+  // 验证产品是否存在
+  const ment = await SubMaterialMent.findByPk(id);
+  if (!ment) {
+    return res.json({ message: '采购作业不存在', code: 401 });
+  }
+  try {
+    await SubMaterialMent.update({
+      is_deleted: 0
+    }, { where: { id, is_deleted: 1, company_id }, transaction })
+
+    await SubMaterialBomChild.update({
+      is_buy: 0
+    }, { where: { id: ment.seq_id }, transaction })
+    await transaction.commit()
+    res.json({ message: '删除成功', code: 200 });
+  } catch (error) {
+    if(transaction) await transaction.rollback();
+    console.log(error);
+  }
+})
+
 /**
  * @swagger
  * /api/add_material_ment:
@@ -291,9 +572,9 @@ router.get('/material_ment', authMiddleware, async (req, res) => {
  */
 router.post('/add_material_ment', authMiddleware, async (req, res) => {
   const { data, type } = req.body;
-  const { id: userId, company_id, name } = req.user;
+  const { id: userId, company_id } = req.user;
 
-  if(!data.length) return res.json({ code: 401, message: '请选择订单数据' })
+  if(!data.length) return res.json({ code: 401, message: '请选择采购作业' })
 
   const stepList = await SubApprovalStep.findAll({
     where: { is_deleted: 1, company_id, type },
@@ -301,78 +582,48 @@ router.post('/add_material_ment', authMiddleware, async (req, res) => {
     raw: true,
   })
   if(!stepList.length) return res.json({ code: 401, message: '未配置审批流程，请先联系管理员' })
-
+  
   const now = dayjs().toDate();
-  const noIdList = [];
-  const yesIdList = [];
-  for (const e of data) {
-    Object.assign(e, {
-      company_id,
-      user_id: userId,
-      apply_id: userId,
-      apply_name: name,
-      apply_time: now,
-      status: 0,
-    });
-    (e.id ? yesIdList : noIdList).push(e);
-  }
-
-  const updateFields = [
-    'company_id', 'user_id', 'apply_id', 'apply_name', 'apply_time', 'status',
-    'quote_id', 'material_bom_id', 'notice_id', 'notice', 'supplier_id',
-    'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code',
-    'product_name', 'material_id', 'material_code', 'material_name',
-    'model_spec', 'other_features', 'unit', 'price', 'order_number',
-    'number', 'delivery_time'
-  ];
-  const [noResult, yesResult] = await Promise.all([
-    noIdList.length
-      ? SubMaterialMent.bulkCreate(noIdList, { updateOnDuplicate: updateFields })
-      : [],
-    yesIdList.length
-      ? SubMaterialMent.bulkCreate(yesIdList, { updateOnDuplicate: updateFields })
-      : []
-  ]);
-    
-
-  const childValue = data.map(e => ({
-    material_bom_id: e.material_bom_id,
-    material_id: e.material_id,
-    is_buy: 1,
-    id: e.material_bom_children_id
-  }));
-
-  const childPromise = SubMaterialBomChild.bulkCreate(childValue, {
-    updateOnDuplicate: ['is_buy'],
-  });
-  // 因为步骤有id，所以先修改有id的数据
-  const yesApprovalList = yesIdList.flatMap(item => item.approval || []).map(id => ({
-    id, status: 0
-  }));
-  const approvalPromise = yesApprovalList.length
-      ? SubApprovalUser.bulkCreate(yesApprovalList, {
-          updateOnDuplicate: ['status']
-        })
-      : Promise.resolve();
-  await Promise.all([childPromise, approvalPromise]);
-
-  const resData = noResult.flatMap(e => {
+  const mentResult = await SubMaterialMent.findAll({
+    where: {
+      id: data,
+      company_id
+    },
+    attributes: ['id', 'status', 'apply_time']
+  })
+  const mentData = mentResult.map(e => {
     const item = e.toJSON()
-    return stepList.map(o => {
-      const { id, ...newData } = o;
-      return {
-        ...newData,
-        source_id: item.id, 
-        user_time: null,
-        status: 0,
-      };
-    })
+    item.status = 0
+    item.apply_time = now
+    return item
   })
-  await SubApprovalUser.bulkCreate(resData, {
-    updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status']
-  })
+  let transaction
+  try {
+    transaction = await sequelize.transaction()
+    await SubMaterialMent.bulkCreate(mentData, { updateOnDuplicate: ['status', 'apply_time'], transaction })
 
-  res.json({ message: '提交成功', code: 200 });
+    const resData = data.flatMap(e => {
+      return stepList.map(o => {
+        const { id, ...newData } = o;
+        return {
+          ...newData,
+          source_id: e,
+          user_time: null,
+          status: 0,
+        }
+      })
+    })
+    
+    await SubApprovalUser.bulkCreate(resData, {
+      updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status'],
+      transaction
+    })
+    await transaction.commit()
+    res.json({ message: '提交成功', code: 200 });
+  } catch (error) {
+    if(transaction) await transaction.rollback();
+    console.log(error);
+  }
 })
 /**
  * @swagger
@@ -449,19 +700,19 @@ router.post('/handlePurchaseApproval', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.post('/handlePurchaseIsBuying', authMiddleware, async (req, res) => {
-  const { ids } = req.body
+  const { data } = req.body
   const { id: userId, company_id } = req.user;
 
-  if(!ids.length) return res.json({ code: 401, message: '请选择采购作业' })
+  if(!data.length) return res.json({ code: 401, message: '请选择采购作业' })
 
   const subMaterialMents = await SubMaterialMent.findAll({
-    where: { id: ids, company_id, is_buying: 1 },
+    where: { id: data, company_id, is_buying: 1 },
     raw: true
   })
   // 校验：选中的采购作业是否存在（避免无效ID）
-  if (subMaterialMents.length !== ids.length) {
+  if (subMaterialMents.length !== data.length) {
     const validIds = subMaterialMents.map(item => item.id);
-    const invalidIds = ids.filter(id => !validIds.includes(id));
+    const invalidIds = data.filter(id => !validIds.includes(id));
     return res.json({ 
       code: 401, 
       message: `部分采购作业不存在或已生成采购单，请检查` 
@@ -564,35 +815,6 @@ router.post('/handlePurchaseBackFlow', authMiddleware, async (req, res) => {
 
   res.json({ code: 200, message: '操作成功' })
 })
-/**
- * @swagger
- * /api/material_ment:
- *   put:
- *     summary: 修改采购单
- *     tags:
- *       - 采购单(Purchase)
- */
-router.put('/material_ment', authMiddleware, async (req, res) => {
-  const { quote_id, material_bom_id, notice_id, notice, supplier_id, supplier_code, supplier_abbreviation, product_id, product_code, product_name, material_id, material_code, material_name, model_spec, other_features, unit, price, order_number, number, delivery_time, id } = req.body;
-  const { id: userId, company_id } = req.user;
-
-  const result = await SubMaterialMent.findByPk(id)
-  if(!result) res.json({ message: '未找到该采购单信息', code: 401 })
-  
-  const obj = {
-    quote_id, material_bom_id, notice_id, notice, supplier_id, supplier_code, supplier_abbreviation, product_id, product_code, product_name, material_id, material_code, material_name, model_spec, other_features, unit, price, order_number, number, delivery_time, company_id,
-    user_id: userId
-  }
-  const updateResult = await SubMaterialMent.update(obj, {
-    where: {
-      id
-    }
-  })
-  if(updateResult.length == 0) return res.json({ message: '数据不存在，或已被删除', code: 401})
-
-  res.json({ message: '修改成功', code: 200 });
-})
-
 /**
  * @swagger
  * /api/get_gurchase_order:

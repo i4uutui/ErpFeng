@@ -21,7 +21,35 @@ router.post('/get_warehouse_type', authMiddleware, async (req, res) => {
 
   const where = {}
   if(type) where.type = type
-  const result = await SubWarehouseType.findAll({ where, raw: true })
+  const result = await SubWarehouseType.findAll({
+    where,
+    attributes: ['id', 'type', 'name'],
+  })
+
+  res.json({ code: 200, data: result })
+})
+
+/**
+ * @swagger
+ * /api/get_warehouseList:
+ *   get:
+ *     summary: 获取仓库列表
+ *     tags:
+ *       - 仓库管理(WareHouse)
+ */
+router.get('/get_warehouseList', authMiddleware, async (req, res) => {
+  const { type } = req.query
+  const { id: userId, company_id } = req.user;
+
+  const where = {}
+  if(type) where.type = type
+  const result = await SubWarehouseType.findAll({
+    where,
+    attributes: ['id', 'type', 'name'],
+    include: [
+      { model: SubWarehouseCycle, as: 'cycle', where: { company_id }, attributes: ['id', 'ware_id', 'name'] }
+    ]
+  })
 
   res.json({ code: 200, data: result })
 })
@@ -601,6 +629,83 @@ router.get('/getWareHouseMaterialUnit', authMiddleware, async (req, res) => {
   }else{
     res.json({ code: 200, data: null })
   }
+})
+
+/**
+ * @swagger
+ * /api/getWareHouseInventory:
+ *   post:
+ *     summary: 仓库盘点
+ *     tags:
+ *       - 仓库管理(WareHouse)
+ *     parameters:
+ *       - name: id
+ *         schema:
+ *           type: int
+ */
+router.post('/getWareHouseInventory', authMiddleware, async (req, res) => {
+  const { ware_id, house_id, operateId, typeId, item_id, dateTime } = req.body
+  const { id: userId, company_id } = req.user;
+
+  const where = {
+    company_id,
+    house_id,
+  }
+  if(ware_id) where.ware_id = ware_id
+  if(operateId) where.operate = operateId
+  if(typeId) where.type = typeId
+  if(item_id) where.item_id = item_id
+  const [houseApply, houseContent] = await Promise.all([
+    SubWarehouseApply.findAll({
+      where: {
+        ...where,
+        created_at: {
+          [Op.between]: [new Date(dateTime[0]), new Date(dateTime[1])]
+        }
+      },
+      attributes: ['id', 'house_id', 'ware_id', 'operate', 'type', 'house_name', 'plan_id', 'plan', 'notice_id', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'quantity', 'price', 'inv_unit']
+    }),
+    SubWarehouseContent.findAll({
+      where,
+      attributes: ['id', 'house_id', 'item_id', 'quantity']
+    })
+  ])
+  const data = houseApply.map(e => e.toJSON())
+  const data2 = houseContent.map(e => e.toJSON())
+
+  const quantityMap = data2.reduce((map, item) => {
+    map[item.item_id] = item.quantity;
+    return map;
+  }, {});
+  const resultArr = data.map(item => {
+    return {
+      ...item, // 保留原字段
+      pan: quantityMap[item.item_id] ?? null // 无匹配则赋值null，可改为0/''等
+    };
+  });
+
+  const grouped = resultArr.reduce((acc, curr) => {
+    const key = curr.item_id;
+    if (!acc[key]) {
+      acc[key] = {...curr, quantity_in: 0, quantity_out: 0};
+    }
+
+    if (curr.operate === 1) {
+      acc[key].quantity_in += curr.quantity;
+    } else if (curr.operate === 2) {
+      acc[key].quantity_out += curr.quantity;
+    }
+    if(!typeId){
+      acc[key].type = ''
+    }
+
+    acc[key].price = curr.price;
+
+    return acc;
+  }, {});
+  const dataValue = Object.values(grouped);
+
+  res.json({ code: 200, data: dataValue })
 })
 
 module.exports = router;

@@ -38,7 +38,7 @@ router.get('/user', authMiddleware, async (req, res) => {
       id: { [Op.not]: userId },
       company_id,
     },
-    attributes: ['id', 'name', 'cycle_id', 'parent_id', 'username', 'parent_id', 'status', 'power', 'created_at'],
+    attributes: ['id', 'name', 'cycle_id', 'parent_id', 'username', 'parent_id', 'status', 'purchase_v', 'power', 'created_at'],
     include: [
       { model: AdOrganize, as: 'organize', where: { is_deleted: 1 }, required: false },
       { model: SubProcessCycle, as: 'cycle', attributes: ['id', 'name'] }
@@ -95,7 +95,7 @@ router.get('/user', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.post('/user', authMiddleware, async (req, res) => {
-  const { username, password, name,cycle_id, power, status } = req.body;
+  const { username, password, name,cycle_id, power, status, purchase_v } = req.body;
   
   const { id: parent_id, company_id } = req.user
 
@@ -117,7 +117,7 @@ router.post('/user', authMiddleware, async (req, res) => {
   const type = 2
   
   AdUser.create({
-    username, name, cycle_id, power, status, parent_id, company_id, type,
+    username, name, cycle_id, power, status, purchase_v, parent_id, company_id, type,
     password: hashedPassword
   })
   
@@ -152,7 +152,7 @@ router.post('/user', authMiddleware, async (req, res) => {
  *           type: int
  */
 router.put('/user', authMiddleware, async (req, res) => {
-  const { username, password, name, cycle_id, power, status, id } = req.body;
+  const { username, password, name, cycle_id, power, status, purchase_v, id } = req.body;
   
   const { id: parent_id, company_id } = req.user
   
@@ -183,7 +183,7 @@ router.put('/user', authMiddleware, async (req, res) => {
 
   // 更新管理员信息
   await AdUser.update({
-    username, name, cycle_id, power, type, company_id, parent_id, status,
+    username, name, cycle_id, power, type, company_id, parent_id, status, purchase_v,
     password: passwordToUpdate
   }, { where: { id } })
   

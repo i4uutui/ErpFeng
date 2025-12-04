@@ -61,6 +61,7 @@ SubProcessCode.belongsTo(SubEquipmentCode, { foreignKey: 'equipment_id', as: 'eq
 SubEmployeeInfo.belongsTo(SubProcessCycle, { foreignKey: 'cycle_id', as: 'cycle' })
 
 SubWarehouseCycle.belongsTo(SubWarehouseType, { foreignKey: 'ware_id', as: 'ware' })
+SubWarehouseType.hasMany(SubWarehouseCycle, { foreignKey: 'ware_id', as: 'cycle' })
 
 SubSaleOrder.belongsTo(SubCustomerInfo, { foreignKey: 'customer_id', as: 'customer' })
 SubSaleOrder.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
@@ -95,8 +96,6 @@ SubEquipmentCode.hasOne(SubProcessBomChild, { foreignKey: 'equipment_id' })
 
 SubMaterialQuote.belongsTo(SubMaterialCode, { foreignKey: 'material_id', as: 'material' })
 SubMaterialQuote.belongsTo(SubSupplierInfo, { foreignKey: 'supplier_id', as: 'supplier' })
-// SubMaterialQuote.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
-// SubMaterialQuote.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 
 SubOutsourcingQuote.belongsTo(SubSupplierInfo, { foreignKey: 'supplier_id', as: 'supplier' })
 SubOutsourcingQuote.belongsTo(SubProcessBom, { foreignKey: 'process_bom_id', as: 'processBom' })
@@ -136,6 +135,10 @@ SubProcessBomChild.hasOne(SubProgressWork, { foreignKey: 'child_id', as: 'work' 
 SubProgressWork.belongsTo(SubProcessBomChild, { foreignKey: 'child_id', as: 'children' })
 SubProgressBase.belongsTo(SubProcessBom, { foreignKey: 'bom_id', as: 'bom' })
 
+SubMaterialMent.belongsTo(SubSupplierInfo, { foreignKey: 'supplier_id', as: 'supplier' })
+SubMaterialMent.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
+SubMaterialMent.belongsTo(SubMaterialQuote, { foreignKey: 'quote_id', as: 'quote' })
+SubMaterialMent.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 SubMaterialMent.belongsTo(SubMaterialOrder, { foreignKey: 'order_id', as: 'ment' })
 SubMaterialOrder.hasMany(SubMaterialMent, { foreignKey: 'order_id', as: 'order' })
 

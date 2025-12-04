@@ -77,6 +77,7 @@ export default defineComponent({
           if(!edit.value){
             form.value.attr = 2
             form.value.company = user.value.company
+            form.value.purchase_v = user.value.purchase_v
             const formValue = {
               ...form.value,
               power: JSON.stringify(form.value.power)
@@ -97,6 +98,7 @@ export default defineComponent({
               cycle_id: form.value.cycle_id,
               power: JSON.stringify(form.value.power),
               status: form.value.status,
+              purchase_v: form.value.purchase_v,
               uid: user.value.id,
               company: user.value.company,
               attr: 2
@@ -150,6 +152,7 @@ export default defineComponent({
       form.value.uid = row.uid;
       form.value.company = row.company;
       form.value.cycle_id = row.cycle_id
+      form.value.purchase_v = row.purchase_v
       
       if(rules.password){
         delete rules.password

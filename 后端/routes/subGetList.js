@@ -597,6 +597,46 @@ router.get('/getMaterialBom', authMiddleware, async (req, res) => {
 })
 /**
  * @swagger
+ * /api/getMaterialBom2:
+ *   get:
+ *     summary: 获取材料BOM列表2.0
+ *     tags:
+ *       - 常用列表(GetList)
+ */
+router.get('/getMaterialBom2', authMiddleware, async (req, res) => {
+  const { product_id } = req.query;
+  const { company_id } = req.user;
+
+  const where = {
+    company_id,
+    archive: 0,
+    is_deleted: 1,
+  }
+  if(product_id) where.product_id = product_id
+  const rows = await SubMaterialBom.findAll({
+    where,
+    attributes: ['id', 'product_id', 'part_id'],
+    include: [
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name'] },
+      { model: SubPartCode, as: 'part', attributes: ['id', 'part_code', 'part_name'] },
+    ],
+    order: [['created_at', 'DESC']],
+  })
+
+  const resultObj = {};
+  rows.forEach(e => {
+    const item = e.toJSON()
+    const { product_id } = item;
+    if(!resultObj[product_id]){
+      resultObj[product_id] = item;
+      resultObj[product_id].name = `${item.product.product_code}:${item.product.product_name}`
+    }
+  });
+  const data = Object.values(resultObj)
+  res.json({ code: 200, data })
+})
+/**
+ * @swagger
  * /api/getMaterialBomChildren:
  *   get:
  *     summary: 获取材料BOM子数据

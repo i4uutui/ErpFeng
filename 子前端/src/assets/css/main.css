@@ -94,3 +94,37 @@
 :root{
   --el-fill-color-light: #e7e7e7;
 }
+
+.menus{
+  width: 150px;
+}
+.menus .item{
+
+}
+.menus .item .title{
+  font-size: var(--el-menu-item-font-size);
+  font-weight: bold;
+  display: block;
+  height: 46px;
+  line-height: 46px;
+}
+.menus .item .itemMenu{
+
+}
+.menus .item .itemMenu .li{
+  padding-left: 18px;
+  font-weight: lighter;
+  font-size: var(--el-menu-item-font-size);
+  height: 46px;
+  line-height: 46px;
+}
+.menus .item .itemMenu .li .title{
+  font-weight: lighter;
+}
+.menus .item .itemMenu .li .title.active{
+  color: var(--el-menu-active-color);
+}
+.menus .item .itemMenu .li:hover{
+  background-color: var(--el-menu-hover-bg-color);
+  cursor: pointer;
+}
