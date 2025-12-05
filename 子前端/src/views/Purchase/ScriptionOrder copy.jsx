@@ -730,7 +730,7 @@ export default defineComponent({
                   <ElTableColumn prop="material_name" label="材料名称" width='100' />
                   <ElTableColumn prop="model_spec" label="型号&规格" width='100' />
                   <ElTableColumn prop="other_features" label="其它特性" width='100' />
-                  <ElTableColumn label="采购单位" width='100'>
+                  <ElTableColumn label="交易单位" width='100'>
                     {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn label="使用单位" width='100'>
@@ -854,8 +854,8 @@ export default defineComponent({
                 <ElFormItem label="采购单价" prop="price">
                   <ElInput v-model={ form.value.price } placeholder="请输入采购单价" />
                 </ElFormItem>
-                <ElFormItem label="采购单位" prop="unit">
-                  <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择采购单位">
+                <ElFormItem label="交易单位" prop="unit">
+                  <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择交易单位">
                     {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>

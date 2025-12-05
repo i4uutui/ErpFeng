@@ -105,7 +105,7 @@ export default defineComponent({
                   <ElTableColumn prop="material.other_features" label="其他特性" width="100" />
                   <ElTableColumn prop="price" label="采购单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
-                  <ElTableColumn label="采购单位" width="100">
+                  <ElTableColumn label="交易单位" width="100">
                     {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn label="送货方式" width="100">

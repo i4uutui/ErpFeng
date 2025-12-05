@@ -69,7 +69,7 @@ export default defineComponent({
           await getGurchaseOrder()
         }
         const head = [ `供应商：${row.supplier_abbreviation}`, `产品编码：${row.product_code}`, `产品名称：${row.product_name}`, `生产订单：${row.notice}`, ]
-        const head2 = [['序号', '材料编码', '材料名称', '型号&规格', '其它特性', '采购单位', '采购单价', '采购数量', '交货时间']]
+        const head2 = [['序号', '材料编码', '材料名称', '型号&规格', '其它特性', '交易单位', '采购单价', '采购数量', '交货时间']]
         const body = row.order.map((e, index) => {
           const arr = [index + 1, e.material_code, e.material_name, e.model_spec, e.other_features, calcUnit.value.find(o => o.id == e.unit)?.name, e.price, e.number, e.delivery_time]
           return arr
@@ -125,7 +125,7 @@ export default defineComponent({
                         <ElTableColumn prop="material_name" label="材料名称" />
                         <ElTableColumn prop="model_spec" label="型号&规格" />
                         <ElTableColumn prop="other_features" label="其它特性" />
-                        <ElTableColumn label="采购单位">
+                        <ElTableColumn label="交易单位">
                           {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
                         </ElTableColumn>
                         <ElTableColumn label="使用单位">

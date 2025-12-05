@@ -505,7 +505,7 @@ const routes = [
         name: 'WarehouseRate',
         component: () => import('@/views/Warehouse/WarehouseRate.jsx'),
         meta: {
-          title: '仓库进出存',
+          title: '库存&盘点',
           parent: '仓库管理',
           menu: true,
           buttons: [
@@ -518,7 +518,7 @@ const routes = [
         name: 'MaterialHouseScription',
         component: () => import('@/views/Warehouse/MaterialHouseScription.jsx'),
         meta: {
-          title: '材料出入库作业',
+          title: '材料进出存作业',
           parent: '仓库管理',
           menu: true,
           buttons: [
@@ -548,7 +548,7 @@ const routes = [
         name: 'ProductHouseScription',
         component: () => import('@/views/Warehouse/ProductHouseScription.jsx'),
         meta: {
-          title: '成品出入库作业',
+          title: '成品进出存作业',
           parent: '仓库管理',
           menu: true,
           buttons: [

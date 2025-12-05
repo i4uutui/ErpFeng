@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const dayjs = require('dayjs')
-const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialMent, SubApprovalUser, SubApprovalStep, SubNoEncoding, Op, subOutscriptionOrder, SubWarehouseApply, SubMaterialBomChild, SubMaterialOrder, sequelize, SubMaterialBom, SubPartCode } = require('../models')
+const { SubSupplierInfo, SubMaterialQuote, SubMaterialCode, SubProductNotice, SubProductCode, SubMaterialMent, SubApprovalUser, SubApprovalStep, SubNoEncoding, Op, subOutscriptionOrder, SubWarehouseApply, SubMaterialBomChild, SubMaterialOrder, sequelize, SubMaterialBom, SubPartCode, SubSaleOrder } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { print, getPrinters, getDefaultPrinter } = require("pdf-to-printer");
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { getSaleCancelIds } = require('../middleware/tool');
+const { getSaleCancelIds, PreciseMath } = require('../middleware/tool');
 
 // 配置 multer
 const storage = multer.diskStorage({
@@ -284,7 +284,7 @@ router.get('/material_ment', authMiddleware, async (req, res) => {
     attributes: ['id', 'notice_id', 'material_bom_id', 'seq_id', 'quote_id', 'delivery_time', 'product_id', 'material_id', 'material_code', 'material_name', 'supplier_id', 'model_spec', 'other_features', 'price', 'unit', 'usage_unit', 'number', 'is_buying', 'apply_id', 'apply_name', 'apply_time', 'status', 'step'],
     include: [
       { model: SubApprovalUser, as: 'approval', attributes: [ 'user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status', 'id' ], order: [['step', 'ASC']], where: { type: 'purchase_order', company_id }, separate: true, },
-      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name'] },
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name', 'drawing'] },
       { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice'] },
       { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_code', 'supplier_abbreviation'] }
     ],
@@ -376,13 +376,22 @@ router.post('/add_material_more', authMiddleware, async (req, res) => {
           as: 'children',
           attributes: ['id', 'material_bom_id', 'material_id', 'number', 'is_buy'],
           include: [
-            { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name', 'model', 'other_features', 'usage_unit'] }
+            { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name', 'model', 'other_features', 'usage_unit', 'purchase_unit'] }
           ]
         }
       ],
       order: [['created_at', 'DESC']],
     })
-    const notice = await SubProductNotice.findByPk(notice_id)
+    const notice = await SubProductNotice.findOne({
+      where: {
+        company_id,
+        id: notice_id
+      },
+      attributes: ['delivery_time', 'sale_id'],
+      include: [
+        { model: SubSaleOrder, as: 'sale', attributes: ['order_number'] }
+      ]
+    })
 
     const data = boms.flatMap(e => {
       const item = e.toJSON()
@@ -401,9 +410,9 @@ router.post('/add_material_more', authMiddleware, async (req, res) => {
           model_spec: child.material.model,
           other_features: child.material.other_features,
           price: null,
-          unit: null,
+          unit: child.material.purchase_unit,
           usage_unit: child.material.usage_unit,
-          number: child.number,
+          number: PreciseMath.mul(child.number, notice.sale.order_number),
           company_id,
           user_id: userId,
           apply_id: userId,

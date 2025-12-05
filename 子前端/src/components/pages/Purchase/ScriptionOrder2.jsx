@@ -4,6 +4,7 @@ import { reportOperationLog } from '@/utils/log';
 import { getItem } from '@/assets/js/storage';
 import request from '@/utils/request';
 import HeadForm from '@/components/form/HeadForm';
+import deepClone from '@/utils/deepClone';
 
 export default defineComponent({
   setup() {
@@ -86,7 +87,10 @@ export default defineComponent({
     // 获取数据列表
     const fetchProductList = async () => {
       const res = await request.get('/api/material_ment', { params: search.value });
-      tableData.value = res.data
+      tableData.value = res.data.map(e => {
+        e.notice_id = e.notice_id ? e.notice_id : 0
+        return e
+      })
     }
     // 获取生产通知单
     const getProductNotice = async () => {
@@ -377,7 +381,7 @@ export default defineComponent({
     }
     // 修改弹窗
     const handleUplate = (row) => {
-      form.value = row
+      form.value = deepClone(row)
       edit.value = false
       dialogVisible.value = true
       if(row.notice_id == 0){
@@ -389,6 +393,7 @@ export default defineComponent({
         getProductsList(row.product_id)
         getMaterialBomChildren(row.material_bom_id)
       }
+      console.log(form.value);
     }
     // 新增
     const addOutSourcing = () => {
@@ -418,12 +423,6 @@ export default defineComponent({
         number: '',
       }
     }
-    // 监听form表单中的notice_id
-    watch(() => form.value.notice_id, (newValue, oldValue) => {
-      if(oldValue == 0){
-        reseForm()
-      }
-    })
     // 生产订单选中后返回的数据
     const noticeChange = (value) => {
       if(value == 0){
@@ -446,6 +445,7 @@ export default defineComponent({
         getMaterialCode(value)
         getMaterialBom()
       }else{
+        reseForm()
         if(rules.value.material_id && rules.value.material_id.length){
           delete rules.value.material_id
         }
@@ -635,17 +635,18 @@ export default defineComponent({
                     }}
                   </ElTableColumn>
                   <ElTableColumn label="生产订单号" width='100'>
-                    {({row}) => row.notice_id == 0 ? '非管控材料' : row.notice.notice}
+                    {({row}) => row.notice_id || row.notice_id > 0 ? row.notice.notice : '非管控材料'}
                   </ElTableColumn>
                   <ElTableColumn prop="supplier.supplier_code" label="供应商编码" width='100' />
                   <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" width='100' />
                   <ElTableColumn prop="product.product_code" label="产品编码" width='100' />
                   <ElTableColumn prop="product.product_name" label="产品名称" width='120' />
+                  <ElTableColumn prop="product.drawing" label="工程图号" width='120' />
                   <ElTableColumn prop="material_code" label="材料编码" width='100' />
                   <ElTableColumn prop="material_name" label="材料名称" width='100' />
                   <ElTableColumn prop="model_spec" label="型号&规格" width='100' />
                   <ElTableColumn prop="other_features" label="其它特性" width='100' />
-                  <ElTableColumn label="采购单位" width='100'>
+                  <ElTableColumn label="交易单位" width='100'>
                     {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn label="使用单位" width='100'>
@@ -779,8 +780,8 @@ export default defineComponent({
                 <ElFormItem label="采购单价" prop="price">
                   <ElInput disabled={ edit.value && form.value.notice_id != 0 } v-model={ form.value.price } placeholder="请输入采购单价" />
                 </ElFormItem>
-                <ElFormItem label="采购单位" prop="unit">
-                  <ElSelect disabled={ edit.value && form.value.notice_id != 0 } v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择采购单位">
+                <ElFormItem label="交易单位" prop="unit">
+                  <ElSelect disabled={ edit.value && form.value.notice_id != 0 } v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择交易单位">
                     {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>

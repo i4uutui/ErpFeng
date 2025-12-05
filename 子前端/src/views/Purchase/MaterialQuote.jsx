@@ -32,7 +32,7 @@ export default defineComponent({
         { required: true, message: '请输入交易币别', trigger: 'blur' },
       ],
       unit: [
-        { required: true, message: '请输入采购单位', trigger: 'blur' }
+        { required: true, message: '请输入交易单位', trigger: 'blur' }
       ]
     })
     let dialogVisible = ref(false)
@@ -286,7 +286,7 @@ export default defineComponent({
                   <ElTableColumn prop="material.other_features" label="其他特性" width="100" />
                   <ElTableColumn prop="price" label="采购单价" width="100" />
                   <ElTableColumn prop="transaction_currency" label="交易币别" width="100" />
-                  <ElTableColumn label="采购单位" width="100">
+                  <ElTableColumn label="交易单位" width="100">
                     {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
                   </ElTableColumn>
                   <ElTableColumn label="送货方式" width="100">
@@ -351,8 +351,8 @@ export default defineComponent({
                 <ElFormItem label="交易币别" prop="transaction_currency">
                   <ElInput v-model={ form.value.transaction_currency } placeholder="请输入交易币别" />
                 </ElFormItem>
-                <ElFormItem label="采购单位" prop="unit">
-                  <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择采购单位">
+                <ElFormItem label="交易单位" prop="unit">
+                  <ElSelect v-model={ form.value.unit } multiple={ false } filterable remote remote-show-suffix placeholder="请选择交易单位">
                     {calcUnit.value.map((e, index) => <ElOption value={ e.id } label={ e.name } key={ index } />)}
                   </ElSelect>
                 </ElFormItem>
