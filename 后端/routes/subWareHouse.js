@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const dayjs = require('dayjs')
 const Decimal = require('decimal.js');
-const { SubWarehouseContent, SubWarehouseApply, SubApprovalStep, SubApprovalUser, Op, SubProductNotice, SubWarehouseOrder, SubWarehouseCycle, SubWarehouseType } = require('../models')
+const { SubWarehouseContent, SubWarehouseApply, SubApprovalStep, SubApprovalUser, Op, SubProductNotice, SubWarehouseOrder, SubWarehouseCycle, SubWarehouseType, SubMaterialBom, SubMaterialBomChild, SubMaterialCode, sequelize } = require('../models')
 const authMiddleware = require('../middleware/auth');
 const { formatArrayTime, formatObjectTime } = require('../middleware/formatTime');
 const { isInteger, PreciseMath } = require('../middleware/tool')
@@ -23,7 +23,8 @@ router.post('/get_warehouse_type', authMiddleware, async (req, res) => {
   if(type) where.type = type
   const result = await SubWarehouseType.findAll({
     where,
-    attributes: ['id', 'type', 'name'],
+    attributes: ['id', 'type', 'name', 'sort'],
+    order: [[ 'sort', 'ASC' ]]
   })
 
   res.json({ code: 200, data: result })
@@ -61,22 +62,6 @@ router.get('/get_warehouseList', authMiddleware, async (req, res) => {
  *     summary: 临时查询仓库是否有数据，数量等等
  *     tags:
  *       - 仓库管理(WareHouse)
- *     parameters:
- *       - name: house_id
- *         schema:
- *           type: int
- *       - name: operate
- *         schema:
- *           type: int
- *       - name: type
- *         schema:
- *           type: int
- *       - name: item_id
- *         schema:
- *           type: int
- *       - name: quantity
- *         schema:
- *           type: int
  */
 router.post('/queryWarehouse', authMiddleware, async (req, res) => {
   const { house_id, operate, type, item_id, quantity } = req.body
@@ -116,28 +101,6 @@ router.post('/queryWarehouse', authMiddleware, async (req, res) => {
  *     summary: 出入库列表
  *     tags:
  *       - 仓库管理(WareHouse)
- *     parameters:
- *       - name: house_id
- *         schema:
- *           type: int
- *       - name: operate
- *         schema:
- *           type: int
- *       - name: type
- *         schema:
- *           type: int
- *       - name: item_id
- *         schema:
- *           type: int
- *       - name: plan_id
- *         schema:
- *           type: int
- *       - name: status
- *         schema:
- *           type: int
- *       - name: apply_time
- *         schema:
- *           type: array
  */
 router.post('/warehouse_apply', authMiddleware, async (req, res) => {
   const { ware_id, house_id, operate, type, plan_id, item_id, status, apply_time, source_type } = req.body
@@ -146,23 +109,45 @@ router.post('/warehouse_apply', authMiddleware, async (req, res) => {
   let whereObj = {}
   if(house_id) whereObj.house_id = house_id
   if(operate) whereObj.operate = operate
-  if(type) whereObj.type = type
+  if(type && type.length) whereObj.type = type
   if(plan_id) whereObj.plan_id = plan_id
   if(item_id) whereObj.item_id = item_id
-  if(status === '' || status === undefined) whereObj.status = [0, 2, 3]
-  if(house_id || operate || plan_id || item_id){
-    delete whereObj.status
+
+  const otherFields = [house_id, operate, plan_id, item_id];
+  const hasOtherValues = otherFields.some(field => field !== undefined && field !== '');
+
+  if (status !== undefined && status !== '') {
+    // 前端指定了status值
+    if (status == 4) {
+      // 查status=4时，仅能查自己提交的
+      whereObj.status = 4;
+      whereObj.apply_id = userId;
+    } else {
+      // 查其他status（0/1/2/3），正常过滤
+      whereObj.status = status;
+    }
+  } else {
+    // 前端未指定status
+    if (!hasOtherValues) {
+      // 无其他查询条件时，默认查 [0,2,3] + 自己的4
+      whereObj[Op.or] = [
+        { status: [0, 2, 3] },
+        { status: 4, apply_id: userId }
+      ];
+    } else {
+      // 有其他查询条件时，查「所有非4状态」 + 自己的4
+      whereObj[Op.or] = [
+        { status: { [Op.ne]: 4 } },
+        { status: 4, apply_id: userId }
+      ];
+    }
   }
-  if(status !== '' && status !== undefined) whereObj.status = status
-  
-  const hasWhereData = Object.keys(whereObj).length > 0;
-  if(!hasWhereData) return res.json({ message: '请至少选择一个筛选条件', code: 401 })
 
   const where = {
     company_id,
     ware_id,
     ...whereObj,
-    apply_time: {
+    created_at: {
       [Op.between]: [new Date(apply_time[0]), new Date(apply_time[1])] // 使用 between 筛选范围
     }
   }
@@ -183,6 +168,194 @@ router.post('/warehouse_apply', authMiddleware, async (req, res) => {
     length: fromData.length, 
     code: 200 
   });
+})
+/**
+ * @swagger
+ * /api/add_ware_data:
+ *   post:
+ *     summary: 新增出入库作业数据
+ *     tags:
+ *       - 仓库管理(WareHouse)
+ */
+router.post('/add_ware_data', authMiddleware, async (req, res) => {
+  const { procure_id = null, sale_id = null, ware_id = null, house_id = null, operate = null, type = null, material_bom_id = null, house_name = null, plan_id = null, plan = null, notice_id = null, item_id = null, code = null, name = null, model_spec = null, other_features = null, quantity = null, pay_quantity = null, buy_price = null, price = null, inv_unit = null, unit = null } = req.body
+  const { id: userId, company_id, name: userName } = req.user;
+
+  const transaction = await sequelize.transaction()
+  if(type == 18){
+    const product = await SubMaterialBom.findByPk(material_bom_id)
+    if(!product) return res.json({ code: 401, message: '该材料bom不存在，请检查' })
+    const boms = await SubMaterialBom.findAll({
+      where: { company_id, product_id: product.product_id },
+      attributes: ['id', 'product_id', 'part_id'],
+      include: [
+        {
+          model: SubMaterialBomChild,
+          as: 'children',
+          attributes: ['id', 'material_bom_id', 'material_id', 'number', 'is_buy'],
+          include: [
+            { model: SubMaterialCode, as: 'material', attributes: ['id', 'material_code', 'material_name', 'model', 'other_features', 'usage_unit', 'purchase_unit'] }
+          ]
+        }
+      ],
+      order: [['created_at', 'DESC']],
+    })
+    const bomResult = boms.map(e => e.toJSON())
+    const itemIds = bomResult.flatMap(e => {
+      return e.children.map(e => e.material_id)
+    })
+    const children = bomResult.flatMap(e => e.children.map(child => child))
+    const content = await SubWarehouseContent.findAll({
+      where: { item_id: itemIds, ware_id: 1, house_id, company_id },
+      raw: true
+    })
+    const contentMap = new Map();
+    content.forEach(item => {
+      contentMap.set(item.item_id, {
+        buy_price: Number(item.buy_price || 0),
+        price: Number(item.price || 0),
+        quantity: Number(item.quantity || 0)
+      });
+    });
+    const data = children.filter(e => contentMap.has(e.material_id)).map(e => {
+      const contItem = contentMap.get(e.material_id);
+      const totalPrice = PreciseMath.mul(contItem.quantity, contItem.buy_price);
+      return {
+        company_id,
+        user_id: userId,
+        procure_id: procure_id || null,
+        sale_id: sale_id || null,
+        ware_id: ware_id || null,
+        house_id: house_id || null,
+        operate: operate || null,
+        type: 17,
+        house_name,
+        plan_id: plan_id || null,
+        plan,
+        notice_id: notice_id || null,
+        item_id: e.material_id || null,
+        code: e.material?.material_code,
+        name: e.material?.material_name,
+        model_spec: e.material?.model,
+        other_features: e.material?.other_features,
+        quantity: quantity || null,
+        pay_quantity: pay_quantity || null,
+        buy_price: contItem.buy_price || null,
+        price: contItem.price || null,
+        total_price: totalPrice || null,
+        inv_unit: e.material?.usage_unit ? Number(e.material.usage_unit) : null,
+        unit: e.material?.purchase_unit ? Number(e.material.purchase_unit) : null,
+        is_buying: 1,
+        apply_id: userId,
+        apply_name: userName,
+        step: 0,
+        status: 4,
+      };
+    })
+    try {
+      const updata = ['company_id', 'user_id', 'procure_id', 'sale_id', 'ware_id', 'house_id', 'operate', 'type', 'house_name', 'plan_id', 'plan', 'notice_id', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'quantity', 'pay_quantity', 'buy_price', 'price', 'total_price', 'inv_unit', 'unit', 'is_buying', 'apply_id', 'apply_name', 'step', 'status']
+      await SubWarehouseApply.bulkCreate(data, { updateOnDuplicate: updata, transaction })
+      await transaction.commit();
+
+      res.json({ code: 200, message: '新增成功' })
+    } catch (error) {
+      if(transaction) await transaction.rollback();
+      console.log(error);
+    }
+  }else{
+    const isType = Number(type)
+    // 入库操作
+    if([4,5,6,10,11,12,13].includes(isType)){
+      const total_price = buy_price && quantity ? PreciseMath.mul(quantity, buy_price) : 0
+      const obj = {
+        company_id,
+        user_id: userId,
+        procure_id: procure_id || null,
+        sale_id: sale_id || null,
+        ware_id: ware_id || null,
+        house_id: house_id || null,
+        operate: operate || null,
+        type: type || null,
+        house_name,
+        plan_id: plan_id || null,
+        plan,
+        notice_id: notice_id || null,
+        item_id: item_id || null,
+        code,
+        name,
+        model_spec,
+        other_features,
+        quantity: quantity || null,
+        pay_quantity: pay_quantity || null,
+        buy_price: buy_price || null,
+        price: price || null,
+        total_price: total_price || null,
+        inv_unit: inv_unit || null,
+        unit: unit || null,
+        is_buying: 1,
+        apply_id: userId,
+        apply_name: userName,
+        step: 0,
+        status: 4
+      }
+      try {
+        await SubWarehouseApply.create(obj, { transaction })
+        await transaction.commit();
+
+        res.json({ code: 200, message: '新增成功' })
+      } catch (error) {
+        if(transaction) await transaction.rollback();
+        console.log(error);
+      }
+    }else{
+      const content = await SubWarehouseContent.findOne({
+        where: { item_id, company_id },
+        raw: true
+      })
+      if(!content && content.quantity <= 0) return res.json({ code: 401, message: '库存不足，请检查后再操作' })
+
+      const obj = {
+        company_id,
+        user_id: userId,
+        procure_id: procure_id || null,
+        sale_id: sale_id || null,
+        ware_id: ware_id || null,
+        house_id: house_id || null,
+        operate: operate || null,
+        type: type || null,
+        house_name,
+        plan_id: plan_id || null,
+        plan,
+        notice_id: notice_id || null,
+        item_id: item_id || null,
+        code,
+        name,
+        model_spec,
+        other_features,
+        quantity: quantity || null,
+        pay_quantity: pay_quantity || content.pay_quantity || null,
+        buy_price: buy_price || content.buy_price || null,
+        price: price || content.price || null,
+        inv_unit: inv_unit || content.inv_unit || null,
+        unit: unit || content.unit || null,
+        is_buying: 1,
+        apply_id: userId,
+        apply_name: userName,
+        step: 0,
+        status: 4
+      }
+      obj.total_price = obj.buy_price && obj.quantity ? PreciseMath.mul(obj.quantity, obj.buy_price) : 0
+      try {
+        await SubWarehouseApply.create(obj, { transaction })
+        await transaction.commit();
+
+        res.json({ code: 200, message: '新增成功' })
+      } catch (error) {
+        if(transaction) await transaction.rollback();
+        console.log(error);
+      }
+    }
+  }
 })
 /**
  * @swagger
@@ -213,78 +386,43 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
   if(!stepList.length) return res.json({ code: 401, message: '未配置审批流程，请先联系管理员' })
   
   const now = dayjs().toDate()
-  const noIdList = [];
-  const yesIdList = [];
-  const dataValue = data.map(e => {
-    const { id, buy_price = 0, price = 0, quantity = 0, pay_quantity = null, plan_id = null, procure_id = null, sale_id = null, notice_id = null, inv_unit = null, unit = null, ...rest } = e
-    const total_price = buy_price && quantity ? PreciseMath.mul(quantity, buy_price) : 0
-
-    const record = {
-      ...rest,
-      id,
-      company_id,
-      user_id: userId,
-      total_price,
-      plan_id: plan_id ? plan_id : null,
-      notice_id: notice_id,
-      buy_price: buy_price ? buy_price : 0,
-      price: price ? price : 0,
-      quantity: quantity ? quantity : 0,
-      pay_quantity: pay_quantity ? pay_quantity : null,
-      inv_unit,
-      unit,
-      procure_id,
-      sale_id: sale_id ? sale_id : null,
-      apply_id: userId,
-      apply_name: name,
-      apply_time: now,
-      status: 0
-    }
-    
-    if (id){
-      yesIdList.push(record)
-    }else{
-      noIdList.push(record)
-    }
-    return record
+  const mentResult = await SubWarehouseApply.findAll({
+    where: {
+      id: data,
+      company_id
+    },
+    attributes: ['id', 'status', 'apply_time']
   })
-  const updateFields = ['company_id', 'user_id', 'total_price', 'plan_id', 'notice_id', 'buy_price', 'quantity', 'pay_quantity', 'procure_id', 'unit', 'inv_unit', 'sale_id', 'apply_id', 'apply_name', 'apply_time', 'status']
+  const mentData = mentResult.map(e => {
+    const item = e.toJSON()
+    item.status = 0
+    item.apply_time = now
+    return item
+  })
+  let transaction
   try {
-    const [noResult, yesResult] = await Promise.all([
-      noIdList.length
-        ? SubWarehouseApply.bulkCreate(noIdList, { updateOnDuplicate: updateFields })
-        : [],
-      yesIdList.length
-        ? SubWarehouseApply.bulkCreate(yesIdList, { updateOnDuplicate: updateFields })
-        : []
-    ]);
+    transaction = await sequelize.transaction()
+    await SubWarehouseApply.bulkCreate(mentData, { updateOnDuplicate: ['status', 'apply_time'], transaction })
 
-    // 因为步骤有id，所以先修改有id的数据
-    const yesApprovalList = yesIdList.flatMap(item => item.approval || []).map(id => ({
-      id, status: 0
-    }));
-    if(yesApprovalList.length){
-      await SubApprovalUser.bulkCreate(yesApprovalList, { updateOnDuplicate: ['status'] })
-    }
-
-    // 创建审批流程
-    const resData = noResult.flatMap(e => {
-      const item = e.toJSON()
+    const resData = data.flatMap(e => {
       return stepList.map(o => {
         const { id, ...newData } = o;
         return {
           ...newData,
-          source_id: item.id, 
+          source_id: e,
           user_time: null,
           status: 0,
-        };
+        }
       })
     })
     await SubApprovalUser.bulkCreate(resData, {
-      updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status']
+      updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status'],
+      transaction
     })
+    await transaction.commit()
     res.json({ message: '提交成功', code: 200 });
   } catch (error) {
+    if(transaction) await transaction.rollback();
     console.log(error);
   }
 })

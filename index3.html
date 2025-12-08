@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .progress-table {
+      /* width: 50%; */
+      border-collapse: collapse;
+      margin: 20px auto;
+    }
+    .progress-table, .progress-th, .progress-td {
+      border: 1px solid #ddd;
+    }
+    .progress-th, .progress-td {
+      padding: 8px;
+      text-align: left;
+    }
+    .progress-table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .progress-th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+
+<body>
+  <div style="width: 100%; overflow: auto;">
+    <table class="progress-table">
+      <thead>
+        <tr>
+          <th class="progress-th" rowspan="2">生产订单号</th>
+          <th class="progress-th" rowspan="2">客户名称</th>
+          <th class="progress-th" rowspan="2">客户订单号</th>
+          <th class="progress-th" rowspan="2">接单日期</th>
+          <th class="progress-th" rowspan="2">产品编码</th>
+          <th class="progress-th" rowspan="2">产品名称</th>
+          <th class="progress-th" rowspan="2">工程图号</th>
+          <th class="progress-th" rowspan="2">生产特别要求</th>
+          <th class="progress-th" rowspan="2">订单数量</th>
+          <th class="progress-th" rowspan="2">委外/库存数量</th>
+          <th class="progress-th" rowspan="2">生产数量</th>
+          <th class="progress-th" rowspan="2">客户交期</th>
+          <th class="progress-th" rowspan="2">部件编码</th>
+          <th class="progress-th" rowspan="2">部件名称</th>
+          <th class="progress-th" rowspan="2">预计生产起始时间</th>
+
+          <th class="progress-th">外协组</th>
+          <th class="progress-th">最短周期</th>
+          <th class="progress-th"><input type="text" style="width: 100px;"></th>
+          <th class="progress-th">外协组</th>
+          <th class="progress-th">最短周期</th>
+          <th class="progress-th"><input type="text" style="width: 100px;"></th>
+
+          <th class="progress-th" colspan="8">工序-1</th>
+        </tr>
+        <tr>
+          <th class="progress-th">预排交期</th>
+          <th class="progress-th">制程日总负荷</th>
+          <th class="progress-th">完成数量</th>
+          <th class="progress-th">预排交期</th>
+          <th class="progress-th">制程日总负荷</th>
+          <th class="progress-th">完成数量</th>
+
+          <th class="progress-th">工艺编码</th>
+          <th class="progress-th">工艺名称</th>
+          <th class="progress-th">设备名称</th>
+          <th class="progress-th">生产制程</th>
+          <th class="progress-th">全部工时(H)</th>
+          <th class="progress-th">每日负荷(H)</th>
+          <th class="progress-th">累计完成</th>
+          <th class="progress-th">订单尾数</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 120px;">DD2511001</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 120px;">旭欧</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 120px;">CGO12511001</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 110px;">2025-11-28</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 120px;">WA-A00001</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 120px;">0611铝车架</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 100px;">0611</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 110px;"></div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 100px;">18000</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 100px;"></div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 100px;">18000</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 110px;">2025-12-28</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 110px;">X001</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 100px;">车首管</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 130px;">2025-11-29</div>
+          </td>
+
+          <td class="progress-td">
+            <div class="table-cell" style="width: 130px;">2025-11-29</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 110px;">111</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 110px;">222</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 130px;">2025-11-29</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 110px;">111</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 110px;">222</div>
+          </td>
+
+          <td class="progress-td">
+            <div class="table-cell" style="width: 100px;">PA001</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 100px;">打字</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 100px;">打字机</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 100px;">备料组</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 100px;">75.0</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 100px;">75</div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 100px;"></div>
+          </td>
+          <td class="progress-td">
+            <div class="table-cell" style="width: 100px;">18000</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+
+</html>

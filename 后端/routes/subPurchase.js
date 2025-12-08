@@ -401,7 +401,7 @@ router.post('/add_material_more', authMiddleware, async (req, res) => {
           material_bom_id,
           seq_id: child.id,
           quote_id: null,
-          delivery_time: notice.delivery_time,
+          delivery_time: null,
           product_id: item.product_id,
           material_id: child.material_id,
           material_code: child.material.material_code,
@@ -423,10 +423,21 @@ router.post('/add_material_more', authMiddleware, async (req, res) => {
         }
       })
     })
+    const result = Object.values(
+      data.reduce((acc, curr) => {
+        const key = curr.material_id;
+        if (!acc[key]) {
+          acc[key] = { ...curr };
+        } else {
+          acc[key].number += curr.number;
+        }
+        return acc;
+      }, {})
+    );
     try {
-      const seqIds = data.map(e => e.seq_id)
+      const seqIds = result.map(e => e.seq_id)
       const updataArr = ['notice_id', 'material_bom_id', 'seq_id', 'quote_id', 'delivery_time', 'product_id', 'material_id', 'material_code', 'material_name', 'supplier_id', 'model_spec', 'other_features', 'price', 'unit', 'usage_unit', 'number', 'company_id', 'user_id', 'apply_id', 'apply_name', 'apply_time', 'status', 'step']
-      await SubMaterialMent.bulkCreate(data, { updateOnDuplicate: updataArr, transaction })
+      await SubMaterialMent.bulkCreate(result, { updateOnDuplicate: updataArr, transaction })
       await SubMaterialBomChild.update({
         is_buy: 1
       }, { where: { id: { [Op.in]: seqIds } }, transaction })

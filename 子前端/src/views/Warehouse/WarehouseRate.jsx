@@ -45,7 +45,6 @@ export default defineComponent({
     })
     
     onMounted(() => {
-      // 获取最近一年的日期
       const currentDate = dayjs();
       const firstDay = currentDate.startOf('month').format('YYYY-MM-DD HH:mm:ss');
       const lastDay = currentDate.endOf('month').format('YYYY-MM-DD HH:mm:ss');

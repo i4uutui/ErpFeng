@@ -323,7 +323,7 @@ export default defineComponent({
     }
     // 权限用户单个处理审批
     const handleApproval = async (row) => {
-      if([2,3,4].includes(row.status)) return ElMessage.error('该采购作业未提交审批，无法审批')
+      if([2,3,4].includes(row.status)) return ElMessage.error('该作业未提交审批，无法审批')
       if(row.status == 1) return ElMessage.error('该作业已经审批通过')
       handleApprovalDialog([row.id])
     }

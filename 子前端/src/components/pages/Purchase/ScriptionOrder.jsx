@@ -426,7 +426,7 @@ export default defineComponent({
         ]
         getProductsList(row.product_id)
         form.value.number = row.sale.order_number
-        form.value.delivery_time = row.delivery_time
+        // form.value.delivery_time = row.delivery_time
       }
     }
     // 选择材料BOM后

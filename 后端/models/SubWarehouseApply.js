@@ -193,7 +193,7 @@ const SubWarehouseApply = sequelize.define('SubWarehouseApply', {
     type: DataTypes.INTEGER(1),
     allowNull: true,
     defaultValue: 0,
-    comment: '状态（0审批中/1通过/2拒绝）'
+    comment: '状态（0审批中/1通过/2拒绝/3反审核/4待提交）'
   },
   is_deleted: {
     type: DataTypes.INTEGER(1),

@@ -20,6 +20,12 @@ const SubWarehouseType = sequelize.define('SubWarehouseType', {
     allowNull: false,
     comment: '仓库类型'
   },
+  sort: {
+    type: DataTypes.INTEGER(5),
+    allowNull: true,
+    defaultValue: 0,
+    comment: '排序'
+  }
 }, {
   sequelize,
   modelName: 'sub_warehouse_type',
