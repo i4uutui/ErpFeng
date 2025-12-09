@@ -141,6 +141,9 @@ SubMaterialMent.belongsTo(SubMaterialQuote, { foreignKey: 'quote_id', as: 'quote
 SubMaterialMent.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 SubMaterialMent.belongsTo(SubMaterialOrder, { foreignKey: 'order_id', as: 'ment' })
 SubMaterialOrder.hasMany(SubMaterialMent, { foreignKey: 'order_id', as: 'order' })
+SubMaterialOrder.belongsTo(SubSupplierInfo, { foreignKey: 'supplier_id', as: 'supplier' })
+SubMaterialOrder.belongsTo(SubProductNotice, { foreignKey: 'notice_id', as: 'notice' })
+SubMaterialOrder.belongsTo(SubProductCode, { foreignKey: 'product_id', as: 'product' })
 
 subOutscriptionOrder.belongsTo(SubOutsourcingOrder, { foreignKey: 'order_id', as: 'out' })
 SubOutsourcingOrder.hasMany(subOutscriptionOrder, { foreignKey: 'order_id', as: 'order' })

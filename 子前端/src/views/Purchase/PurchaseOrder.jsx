@@ -143,14 +143,14 @@ export default defineComponent({
                   <ElTableColumn prop="no" label="采购单号" />
                   <ElTableColumn prop="notice" label="生产订单号">
                     {({row}) => {
-                      const str = row.notice_id == 0 ? '非管控材料' : row.notice
+                      const str = row.notice_id == 0 ? '非管控材料' : row.notice.notice
                       return str
                     }}
                   </ElTableColumn>
-                  <ElTableColumn prop="supplier_code" label="供应商编码" />
-                  <ElTableColumn prop="supplier_abbreviation" label="供应商名称" />
-                  <ElTableColumn prop="product_code" label="产品编码" />
-                  <ElTableColumn prop="product_name" label="产品名称" />
+                  <ElTableColumn prop="supplier.supplier_code" label="供应商编码" />
+                  <ElTableColumn prop="supplier.supplier_abbreviation" label="供应商名称" />
+                  <ElTableColumn prop="product.product_code" label="产品编码" />
+                  <ElTableColumn prop="product.product_name" label="产品名称" />
                   <ElTableColumn prop="created_at" label="创建时间" />
                   <ElTableColumn label="操作" width="200" fixed="right">
                     {{

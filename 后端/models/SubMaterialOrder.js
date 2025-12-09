@@ -24,44 +24,15 @@ const SubMaterialOrder = sequelize.define('SubMaterialOrder', {
     allowNull: true,
     comment: ' 生产订单ID'
   },
-  notice: {
-    type: DataTypes.STRING(20),
-    allowNull: true,
-    comment: ' 生产订单号'
-  },
   supplier_id: {
     type: DataTypes.INTEGER,
     allowNull: true,
     comment: ' 供应商ID'
   },
-  supplier_code: {
-    type: DataTypes.STRING(20),
-    allowNull: true,
-    defaultValue: null,
-    comment: '供应商编码'
-  },
-  supplier_abbreviation: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    defaultValue: null,
-    comment: '供应商名称'
-  },
   product_id: {
     type: DataTypes.INTEGER,
     allowNull: true,
     comment: ' 产品ID'
-  },
-  product_code: {
-    type: DataTypes.STRING(20),
-    allowNull: true,
-    defaultValue: null,
-    comment: '产品编码'
-  },
-  product_name: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    defaultValue: null,
-    comment: '产品名称'
   },
   no: {
     type: DataTypes.STRING(50),

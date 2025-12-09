@@ -377,6 +377,7 @@ export default defineComponent({
     }
     // 选择采购单后，获取材料数据
     const getMaterialList = async (order) => {
+      console.log(4);
       const arr = deepClone(order)
       const list = arr.map(e => ({...e, id: e.material_id}))
       materialList.value = list
@@ -696,7 +697,7 @@ export default defineComponent({
                   <ElTableColumn prop="plan" label="供应商/制程" width="120" />
                   <ElTableColumn prop="code" label="材料编码" width="90" />
                   <ElTableColumn prop="name" label="材料名称" width="100" />
-                  <ElTableColumn prop="quantity" label="数量">
+                  <ElTableColumn prop="quantity" label="订单数量" width="100">
                     {({row}) => <span>{ row.quantity ? row.quantity : 0 }</span>}
                   </ElTableColumn>
                   <ElTableColumn prop="model_spec" label="型号&规格" width="110" />
@@ -713,6 +714,11 @@ export default defineComponent({
                   <ElTableColumn label="交易单位" width="90">
                     {({row}) => <span>{ calcUnit.value.find(e => e.id == row.unit)?.name }</span>}
                   </ElTableColumn>
+                  <ElTableColumn prop="bom_quantity" label="BOM数量" width="90" />
+                  <ElTableColumn label="申领数量" width="90">
+                    {({row}) => <span>{ row.sen_quantity }</span>}
+                  </ElTableColumn>
+                  <ElTableColumn prop="shi_quantity" label="物料实领数量" width="120" />
                   <ElTableColumn label="总价(元)" width="110">
                     {({row}) => {
                       if(!isEmptyValue(row)){
@@ -850,9 +856,9 @@ export default defineComponent({
                   <>
                     <ElFormItem label="材料编码" prop="item_id">
                       <ElSelect v-model={ form.value.item_id } multiple={false} filterable remote remote-show-suffix valueKey="id" placeholder="请选择材料编码" onChange={ (row) => materialChange(row) }>
-                        {materialList.value.map((e, index) => e && (
-                          <ElOption value={ e.id } label={ e.material_code } disabled={ form.value.procure_id ? !e.is_houser : false } key={ index } />
-                        ))}
+                        {materialList.value.map((e, index) => {
+                          return <ElOption value={ e.id } label={ e.material_code } disabled={ form.value.procure_id ? !e.is_houser : false } key={ index } />
+                        })}
                       </ElSelect>
                     </ElFormItem>
                     <ElFormItem label="材料名称">

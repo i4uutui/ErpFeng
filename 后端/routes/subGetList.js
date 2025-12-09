@@ -713,9 +713,12 @@ router.get('/getMaterialOrderList', authMiddleware, async (req, res) => {
         [Op.ne]: ''
       }
     },
-    attributes: ['id', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'no', 'created_at'],
+    attributes: ['id', 'notice_id', 'supplier_id', 'product_id', 'no', 'created_at'],
     include: [
-      { model: SubMaterialMent, as: 'order', attributes: ['id', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'usage_unit', 'price', 'order_number', 'number', 'delivery_time', 'order_id', 'is_houser'] }
+      { model: SubMaterialMent, as: 'order', attributes: ['id', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'usage_unit', 'price', 'order_number', 'number', 'delivery_time', 'order_id', 'is_houser'] },
+      { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_code', 'supplier_abbreviation'] },
+      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice'] },
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name'] }
     ],
     order: [['id', 'ASC']],
   })

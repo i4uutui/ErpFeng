@@ -178,7 +178,7 @@ router.post('/warehouse_apply', authMiddleware, async (req, res) => {
  *       - 仓库管理(WareHouse)
  */
 router.post('/add_ware_data', authMiddleware, async (req, res) => {
-  const { procure_id = null, sale_id = null, ware_id = null, house_id = null, operate = null, type = null, material_bom_id = null, house_name = null, plan_id = null, plan = null, notice_id = null, item_id = null, code = null, name = null, model_spec = null, other_features = null, quantity = null, pay_quantity = null, buy_price = null, price = null, inv_unit = null, unit = null } = req.body
+  const { procure_id = null, sale_id = null, ware_id = null, house_id = null, operate = null, type = null, material_bom_id = null, house_name = null, plan_id = null, plan = null, notice_id = null, item_id = null, code = null, name = null, model_spec = null, other_features = null, quantity = null, pay_quantity = null, bom_quantity = null, sen_quantity = null, shi_quantity = null, buy_price = null, price = null, inv_unit = null, unit = null } = req.body
   const { id: userId, company_id, name: userName } = req.user;
 
   const transaction = await sequelize.transaction()
@@ -238,8 +238,11 @@ router.post('/add_ware_data', authMiddleware, async (req, res) => {
         name: e.material?.material_name,
         model_spec: e.material?.model,
         other_features: e.material?.other_features,
-        quantity: quantity || null,
+        quantity: contItem.quantity || null,
         pay_quantity: pay_quantity || null,
+        bom_quantity: e.number,
+        sen_quantity:  contItem.quantity || null,
+        shi_quantity: type == 18 ? PreciseMath.mul(contItem.quantity, e.number) : null,
         buy_price: contItem.buy_price || null,
         price: contItem.price || null,
         total_price: totalPrice || null,
@@ -252,8 +255,31 @@ router.post('/add_ware_data', authMiddleware, async (req, res) => {
         status: 4,
       };
     })
+    const applyWhere = { company_id, ware_id, house_id, operate, type: [17, 18], apply_id: userId, status: 4 }
+    const applyList = await SubWarehouseApply.findAll({
+      where: applyWhere,
+      raw: true
+    })
+
+    if(applyList.length){
+      const result = data.map(item => {
+        const matchArr2 = applyList.find(i => i.item_id === item.item_id);
+        if(matchArr2?.id){
+          return {
+            item_id: item.item_id,
+            quantity: matchArr2.quantity,
+            shi_quantity: type == 18 ? PreciseMath.mul(matchArr2.quantity, matchArr2.bom_quantity) : null,
+            id: matchArr2.id,
+            ...item
+          };
+        }else{
+          return item
+        }
+      });
+    }
+
     try {
-      const updata = ['company_id', 'user_id', 'procure_id', 'sale_id', 'ware_id', 'house_id', 'operate', 'type', 'house_name', 'plan_id', 'plan', 'notice_id', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'quantity', 'pay_quantity', 'buy_price', 'price', 'total_price', 'inv_unit', 'unit', 'is_buying', 'apply_id', 'apply_name', 'step', 'status']
+      const updata = ['company_id', 'user_id', 'procure_id', 'sale_id', 'ware_id', 'house_id', 'operate', 'type', 'house_name', 'plan_id', 'plan', 'notice_id', 'item_id', 'code', 'name', 'model_spec', 'other_features', 'quantity', 'pay_quantity', 'bom_quantity', 'sen_quantity', 'shi_quantity', 'buy_price', 'price', 'total_price', 'inv_unit', 'unit', 'is_buying', 'apply_id', 'apply_name', 'step', 'status']
       await SubWarehouseApply.bulkCreate(data, { updateOnDuplicate: updata, transaction })
       await transaction.commit();
 
@@ -287,6 +313,9 @@ router.post('/add_ware_data', authMiddleware, async (req, res) => {
         other_features,
         quantity: quantity || null,
         pay_quantity: pay_quantity || null,
+        bom_quantity: bom_quantity || null,
+        sen_quantity: null,
+        shi_quantity: null,
         buy_price: buy_price || null,
         price: price || null,
         total_price: total_price || null,
@@ -334,6 +363,9 @@ router.post('/add_ware_data', authMiddleware, async (req, res) => {
         other_features,
         quantity: quantity || null,
         pay_quantity: pay_quantity || content.pay_quantity || null,
+        bom_quantity: bom_quantity || content.bom_quantity || null,
+        sen_quantity: null,
+        shi_quantity: null,
         buy_price: buy_price || content.buy_price || null,
         price: price || content.price || null,
         inv_unit: inv_unit || content.inv_unit || null,
@@ -415,10 +447,13 @@ router.post('/add_wareHouse_order', authMiddleware, async (req, res) => {
         }
       })
     })
-    await SubApprovalUser.bulkCreate(resData, {
-      updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status'],
-      transaction
-    })
+    const statusData = resData.filter(o => o.status == 4)
+    if(statusData.length){
+      await SubApprovalUser.bulkCreate(resData, {
+        updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status'],
+        transaction
+      })
+    }
     await transaction.commit()
     res.json({ message: '提交成功', code: 200 });
   } catch (error) {

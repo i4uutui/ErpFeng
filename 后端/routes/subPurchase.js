@@ -633,11 +633,14 @@ router.post('/add_material_ment', authMiddleware, async (req, res) => {
         }
       })
     })
+    const statusData = resData.filter(o => o.status == 4)
+    if(statusData.length){
+      await SubApprovalUser.bulkCreate(statusData, {
+        updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status'],
+        transaction
+      })
+    }
     
-    await SubApprovalUser.bulkCreate(resData, {
-      updateOnDuplicate: ['user_id', 'user_name', 'type', 'step', 'company_id', 'source_id', 'user_time', 'status'],
-      transaction
-    })
     await transaction.commit()
     res.json({ message: '提交成功', code: 200 });
   } catch (error) {
@@ -745,13 +748,8 @@ router.post('/handlePurchaseIsBuying', authMiddleware, async (req, res) => {
       // 初始化分组：存储供应商信息 + 关联的采购作业IDs
       result[groupKey] = {
         notice_id: item.notice_id,
-        notice: item.notice,
         supplier_id: item.supplier_id,
-        supplier_code: item.supplier_code,
-        supplier_abbreviation: item.supplier_abbreviation,
         product_id: item.product_id,
-        product_code: item.product_code,
-        product_name: item.product_name,
         subMaterialIds: [item.id], // 关联的采购作业ID数组
         company_id,
         user_id: userId,
@@ -763,7 +761,6 @@ router.post('/handlePurchaseIsBuying', authMiddleware, async (req, res) => {
     return result;
   }, {});
   const groups = Object.values(supplierGroups);
-
   // 批量创建采购单
   const purchaseOrders = await SubMaterialOrder.bulkCreate(groups,
     { returning: true } // 返回创建后的完整数据（包含自动生成的id）
@@ -850,9 +847,12 @@ router.get('/get_gurchase_order', authMiddleware, async (req, res) => {
 
   const { count, rows } = await SubMaterialOrder.findAndCountAll({
     where: { company_id },
-    attributes: ['id', 'notice_id', 'notice', 'supplier_id', 'supplier_code', 'supplier_abbreviation', 'product_id', 'product_code', 'product_name', 'no', 'created_at'],
+    attributes: ['id', 'notice_id', 'supplier_id', 'product_id', 'no', 'created_at'],
     include: [
-      { model: SubMaterialMent, as: 'order', attributes: ['id', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'usage_unit', 'price', 'order_number', 'number', 'delivery_time', 'order_id', 'apply_id', 'apply_name', 'apply_time'] }
+      { model: SubMaterialMent, as: 'order', attributes: ['id', 'material_id', 'material_code', 'material_name', 'model_spec', 'other_features', 'unit', 'usage_unit', 'price', 'order_number', 'number', 'delivery_time', 'order_id', 'apply_id', 'apply_name', 'apply_time'] },
+      { model: SubSupplierInfo, as: 'supplier', attributes: ['id', 'supplier_code', 'supplier_abbreviation'] },
+      { model: SubProductNotice, as: 'notice', attributes: ['id', 'notice'] },
+      { model: SubProductCode, as: 'product', attributes: ['id', 'product_code', 'product_name'] }
     ],
     order: [['id', 'ASC']],
     distinct: true,
@@ -878,78 +878,5 @@ router.get('/get_gurchase_order', authMiddleware, async (req, res) => {
     code: 200 
   });
 })
-
-/**
- * @swagger
- * /api/printers:
- *   get:
- *     summary: 获取打印机列表
- *     tags:
- *       - 采购单(Purchase)
- */
-router.get('/printers', authMiddleware, async (req, res) => {
-  const printers = await getPrinters();
-  if(printers){
-    res.json({ data: printers, code: 200 });
-    return
-  }
-  const defaultPrinter = await getDefaultPrinter();
-  if(defaultPrinter){
-    res.json({ data: [defaultPrinter], code: 200 });
-    return
-  }
-  res.json({ message: '获取打印机失败，请检查', code: 401 })
-})
-/**
- * @swagger
- * /api/printers:
- *   post:
- *     summary: 执行打印
- *     tags:
- *       - 采购单(Purchase)
- */
-router.post('/printers', upload.single('file'), authMiddleware, async (req, res) => {
-  const { printerName, printerType, no, ids } = req.body;
-  const tempFilePath = req.file.path;
-  const { id: userId, company_id } = req.user;
-
-  if (!req.file) {
-    return res.status(400).json({ message: '未上传文件', code: 400 });
-  }
-  const options = {
-    orientation: 'portrait',
-  };
-  if (printerName) {
-    options.printer = printerName;
-  }
-
-  // 执行打印
-  try {
-    await print(tempFilePath, options)
-    const result = await SubNoEncoding.create({ company_id, no, print_type: printerType })
-    const printId = result.toJSON()
-    const dataValue = JSON.parse(ids).map(o => ({ id: o, print_id: printId.id }))
-    
-    if(printerType == 'ES'){
-      await SubMaterialMent.bulkCreate(dataValue, {
-        updateOnDuplicate: ['print_id']
-      })
-    }else if(printerType == 'TV'){
-      await subOutscriptionOrder.bulkCreate(dataValue, {
-        updateOnDuplicate: ['print_id']
-      })
-    }else{
-      await SubWarehouseApply.bulkCreate(dataValue, {
-        updateOnDuplicate: ['print_id']
-      })
-    }
-    fs.unlinkSync(tempFilePath); // 清理文件
-    res.json({ message: '已通知打印机进行打印', code: 200 })
-  } catch (error) {
-    console.log(error);
-    fs.unlinkSync(tempFilePath); // 出错也要清理文件
-    res.json({ message: '打印失败或操作超时', code: 401 })
-  }
-});
 
 module.exports = router;

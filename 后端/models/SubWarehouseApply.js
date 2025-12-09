@@ -135,6 +135,24 @@ const SubWarehouseApply = sequelize.define('SubWarehouseApply', {
     defaultValue: null,
     comment: '支付数量'
   },
+  bom_quantity: {
+    type: DataTypes.INTEGER(20),
+    allowNull: true,
+    defaultValue: null,
+    comment: 'BOM数量'
+  },
+  sen_quantity: {
+    type: DataTypes.INTEGER(20),
+    allowNull: true,
+    defaultValue: null,
+    comment: '申领数量'
+  },
+  shi_quantity: {
+    type: DataTypes.INTEGER(20),
+    allowNull: true,
+    defaultValue: null,
+    comment: '实领数量'
+  },
   buy_price: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true,
